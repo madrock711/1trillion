@@ -1,14 +1,87 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
-  <link href='/style.css' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breath Timer</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Hello, world!</h1>
-  <button onclick="console.log('hello');">Press me</button>
-  <script defer type="text/javascript" src="/main.js"></script>
+    <div class="br-embed" role="region" aria-label="Breath Timer Embed">
+      <!-- 1) 구조 (HTML) -->
+      <div class="br-wrapper" aria-label="Inhale–Exhale Breath Trainer">
+        <div class="br-title">🫁 호흡 트레이너 — 들숨(빨강) / 날숨(파랑)</div>
+
+        <div class="br-layout">
+          <!-- Left: Circular timer -->
+          <div class="br-timer">
+            <div class="br-circle" data-phase="INHALE" aria-live="polite" aria-atomic="true">
+              <svg class="br-ring" viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="br-track" cx="60" cy="60" r="52" />
+                <circle class="br-progress" cx="60" cy="60" r="52" />
+              </svg>
+              <!-- breathing bubbles -->
+              <div class="br-bubble br-bubble-in"></div>
+              <div class="br-bubble br-bubble-ex"></div>
+
+              <div class="br-center">
+                <div class="br-phase" id="br-phase-label">들숨</div>
+                <div class="br-time" id="br-time">4.00</div>
+              </div>
+            </div>
+
+            <div class="br-controls">
+              <button class="br-btn primary" id="br-start" type="button">Start</button>
+              <button class="br-btn" id="br-skip" type="button" title="다음 단계로 즉시 전환">Skip</button>
+              <button class="br-btn danger" id="br-reset" type="button">Reset</button>
+            </div>
+          </div>
+
+          <!-- Right: Settings (Sync 버튼을 안내 글자 아래로 이동) -->
+          <div class="br-settings" aria-label="Breath settings">
+            <div class="br-setting-stack">
+              <!-- 들숨 입력 -->
+              <div class="br-row">
+                <label for="br-in-sec">들숨 (초)</label>
+                <input id="br-in-sec" class="br-input" type="number" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" min="1" step="0.5" value="4" />
+              </div>
+              <div class="br-nudge-row" aria-label="Inhale adjust buttons">
+                <button class="br-nudge" id="br-in-dec" type="button" aria-label="들숨 감소">◀</button>
+                <div class="br-nudge-label">-0.5 / +0.5</div>
+                <button class="br-nudge" id="br-in-inc" type="button" aria-label="들숨 증가">▶</button>
+              </div>
+
+              <!-- 날숨 입력 -->
+              <div class="br-row">
+                <label for="br-ex-sec">날숨 (초)</label>
+                <input id="br-ex-sec" class="br-input" type="number" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" min="1" step="0.5" value="4" />
+              </div>
+              <div class="br-nudge-row" aria-label="Exhale adjust buttons">
+                <button class="br-nudge" id="br-ex-dec" type="button" aria-label="날숨 감소">◀</button>
+                <div class="br-nudge-label">-0.5 / +0.5</div>
+                <button class="br-nudge" id="br-ex-inc" type="button" aria-label="날숨 증가">▶</button>
+              </div>
+            </div>
+
+            <div class="br-note">기본은 1:1 동기화. <b>==</b> (동기화) / <b>=/</b> (개별설정) 버튼으로 전환하세요.</div>
+            <!-- Sync 토글을 안내 글자 아래로 이동 -->
+            <div class="br-row center">
+              <button id="br-sync" class="br-sync-mini" type="button" aria-pressed="true" title="Sync inhale & exhale">==</button>
+            </div>
+
+            <div class="br-status">
+              <div>라운드: <span id="br-round">1</span></div>
+              <div>단계: <span id="br-step">들숨</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total time (no chart / no error log) -->
+        <div class="br-total" aria-live="polite">
+          <div class="br-total-label">총 시간</div>
+          <div class="br-total-time" id="br-total">00:00</div>
+        </div>
+      </div>
+    <script src="main.js"></script>
 </body>
 </html>

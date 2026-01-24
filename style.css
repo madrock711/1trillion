@@ -1,1 +1,59 @@
-/* Add styles here */
+.br-embed .br-wrapper{max-width:920px;margin:28px auto;padding:20px 18px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.06);font-family: 'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;color:#111827}
+    .br-embed .br-title{font-size:1.1rem;font-weight:800;margin-bottom:14px}
+
+    .br-embed .br-layout{display:grid;grid-template-columns:1fr;gap:18px}
+    @media(min-width:880px){.br-embed .br-layout{grid-template-columns: 1.1fr .9fr}}
+
+    /* Circular timer */
+    .br-embed .br-timer{display:flex;flex-direction:column;align-items:center;gap:12px}
+    .br-embed .br-circle{width:260px;height:260px;border-radius:50%;position:relative;display:grid;place-items:center;transition:background .25s ease;overflow:hidden}
+    .br-embed .br-circle[data-phase="INHALE"]{background: radial-gradient(ellipse at center, rgba(239,68,68,.14), rgba(239,68,68,0));}
+    .br-embed .br-circle[data-phase="EXHALE"]{background: radial-gradient(ellipse at center, rgba(59,130,246,.14), rgba(59,130,246,0));}
+
+    .br-embed .br-ring{position:absolute;inset:0;transform:rotate(-90deg)}
+    .br-embed .br-track{fill:none;stroke:#e5e7eb;stroke-width:10}
+    .br-embed .br-progress{fill:none;stroke:#ef4444;/* default inhale */ stroke-width:10;stroke-linecap:round;stroke-dasharray: 326; stroke-dashoffset: 326; transition: stroke .2s ease}
+
+    /* breathing bubbles */
+    .br-embed .br-bubble{position:absolute;inset:0;margin:auto;width:84%;height:84%;border-radius:50%;pointer-events:none;transform:scale(0.2);opacity:.9;}
+    .br-embed .br-bubble-in{background:radial-gradient(ellipse at center, rgba(239,68,68,.28), rgba(239,68,68,0) 70%)}
+    .br-embed .br-bubble-ex{background:radial-gradient(ellipse at center, rgba(59,130,246,.28), rgba(59,130,246,0) 70%)}
+
+    .br-embed .br-center{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+    .br-embed .br-phase{font-weight:800;font-size:14px;color:#374151}
+    .br-embed .br-time{font-variant-numeric:tabular-nums;font-size:2.2rem;font-weight:900;letter-spacing:.5px;color:#111827}
+
+    .br-embed .br-controls{display:flex;gap:8px;flex-wrap:wrap}
+    .br-embed .br-btn{appearance:none;border:1px solid #d1d5db;background:#fff;padding:10px 16px;border-radius:12px;cursor:pointer;font-weight:700}
+    .br-embed .br-btn.primary{background:#111827;border-color:#111827;color:#fff}
+    .br-embed .br-btn.danger{background:#fee2e2;border-color:#fecaca;color:#991b1b}
+    .br-embed .br-btn.xs{padding:4px 8px;font-size:12px;border-radius:8px}
+
+    /* Settings */
+    .br-embed .br-settings{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px}
+    .br-embed .br-setting-stack{display:flex;flex-direction:column;gap:10px}
+    .br-embed .br-row{display:grid;grid-template-columns: 1fr 1fr;gap:10px;align-items:center}
+    .br-embed .br-row.center{display:flex;justify-content:center;margin-top:8px}
+    .br-embed .br-row label{font-size:14px;color:#374151}
+    .br-embed .br-input{width:100%;border:1px solid #d1d5db;border-radius:12px;padding:12px 12px;font-size:16px;background:#fff}
+    .br-embed .br-input:disabled{background:#f3f4f6;color:#6b7280}
+
+    /* 모바일 친화 숫자 조절 버튼 */
+    .br-embed .br-nudge-row{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:10px;margin-top:-6px;margin-bottom:6px}
+    .br-embed .br-nudge{appearance:none;border:1px solid #d1d5db;background:#fff;border-radius:12px;padding:10px;font-weight:900;cursor:pointer;touch-action:manipulation}
+    .br-embed .br-nudge:active{transform:scale(0.98)}
+    .br-embed .br-nudge-label{font-size:12px;color:#6b7280;text-align:center}
+
+    .br-embed .br-sync-mini{width:72px;height:40px;border:1px solid #d1d5db;border-radius:12px;background:#fff;font-weight:900;cursor:pointer}
+    .br-embed .br-sync-mini[aria-pressed="true"]{background:#111827;color:#fff;border-color:#111827}
+    .br-embed .br-note{font-size:12.5px;color:#6b7280;margin-top:10px}
+    .br-embed .br-status{display:flex;gap:16px;margin-top:8px;font-size:12px;color:#374151}
+
+    /* Total time */
+    .br-embed .br-total{margin-top:16px;padding:14px 12px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;display:flex;align-items:center;justify-content:space-between}
+    .br-embed .br-total-label{font-size:14px;color:#374151;font-weight:700}
+    .br-embed .br-total-time{font-variant-numeric:tabular-nums;font-weight:900;font-size:1.6rem;color:#111827}
+
+    /* Pulse on phase switch */
+    .br-embed .pulse{animation: brPulse .6s ease-out}
+    @keyframes brPulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
