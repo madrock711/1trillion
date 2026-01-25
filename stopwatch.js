@@ -170,7 +170,7 @@
         const now = performance.now();
         const elapsed = now - startTs; // 현재 구간만 표기
         elTime.textContent = fmt(elapsed);
-        requestAnimationFrame(tick);
+        tickRaf = requestAnimationFrame(tick);
       }
 
       function recordCurrent(ms){
@@ -223,7 +223,7 @@
         btnLap.disabled = false;
         // 어떤 칸이 채워질지 미리 강조
         setActiveHighlight();
-        requestAnimationFrame(tick);
+        tickRaf = requestAnimationFrame(tick);
       });
 
       btnLap.addEventListener('click', function(){
@@ -281,4 +281,3 @@
       // --- 초기 렌더 ---
       drawChart();
     });
-  </script>
