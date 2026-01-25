@@ -3,85 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Breath Timer</title>
+    <title>Timer Apps</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="br-embed" role="region" aria-label="Breath Timer Embed">
-      <!-- 1) 구조 (HTML) -->
-      <div class="br-wrapper" aria-label="Inhale–Exhale Breath Trainer">
-        <div class="br-title">🫁 호흡 트레이너 — 들숨(빨강) / 날숨(파랑)</div>
 
-        <div class="br-layout">
-          <!-- Left: Circular timer -->
-          <div class="br-timer">
-            <div class="br-circle" data-phase="INHALE" aria-live="polite" aria-atomic="true">
-              <svg class="br-ring" viewBox="0 0 120 120" aria-hidden="true">
-                <circle class="br-track" cx="60" cy="60" r="52" />
-                <circle class="br-progress" cx="60" cy="60" r="52" />
-              </svg>
-              <!-- breathing bubbles -->
-              <div class="br-bubble br-bubble-in"></div>
-              <div class="br-bubble br-bubble-ex"></div>
+    <div class="tabs">
+        <div class="tab-link active" data-tab="breathing">Breathing Timer</div>
+        <div class="tab-link" data-tab="co2">CO2 Table Timer</div>
+    </div>
 
-              <div class="br-center">
-                <div class="br-phase" id="br-phase-label">들숨</div>
-                <div class="br-time" id="br-time">4.00</div>
-              </div>
+    <div id="breathing" class="tab-content active">
+        <div class="br-embed" role="region" aria-label="Breath Timer Embed">
+            <!-- 1) 구조 (HTML) -->
+            <div class="br-wrapper" aria-label="Inhale–Exhale Breath Trainer">
+                <div class="br-title">🫁 호흡 트레이너 — 들숨(빨강) / 날숨(파랑)</div>
+
+                <div class="br-layout">
+                    <!-- Left: Circular timer -->
+                    <div class="br-timer">
+                        <div class="br-circle" data-phase="INHALE" aria-live="polite" aria-atomic="true">
+                            <svg class="br-ring" viewBox="0 0 120 120" aria-hidden="true">
+                                <circle class="br-track" cx="60" cy="60" r="52"></circle>
+                                <circle class="br-progress" cx="60" cy="60" r="52"></circle>
+                            </svg>
+                            <!-- breathing bubbles -->
+                            <div class="br-bubble br-bubble-in"></div>
+                            <div class="br-bubble br-bubble-ex"></div>
+
+                            <div class="br-center">
+                                <div class="br-phase" id="br-phase-label">들숨</div>
+                                <div class="br-time" id="br-time">4.00</div>
+                            </div>
+                        </div>
+
+                        <div class="br-controls">
+                            <button class="br-btn primary" id="br-start" type="button">Start</button>
+                            <button class="br-btn" id="br-skip" type="button" title="다음 단계로 즉시 전환">Skip</button>
+                            <button class="br-btn danger" id="br-reset" type="button">Reset</button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Settings (Sync 버튼을 안내 글자 아래로 이동) -->
+                    <div class="br-settings" aria-label="Breath settings">
+                        <div class="br-setting-stack">
+                            <!-- 들숨 입력 -->
+                            <div class="br-row">
+                                <label for="br-in-sec">들숨 (초)</label>
+                                <input id="br-in-sec" class="br-input" type="number" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" min="1" step="0.5" value="4">
+                            </div>
+                            <div class="br-nudge-row" aria-label="Inhale adjust buttons">
+                                <button class="br-nudge" id="br-in-dec" type="button" aria-label="들숨 감소">◀</button>
+                                <div class="br-nudge-label">-0.5 / +0.5</div>
+                                <button class="br-nudge" id="br-in-inc" type="button" aria-label="들숨 증가">▶</button>
+                            </div>
+
+                            <!-- 날숨 입력 -->
+                            <div class="br-row">
+                                <label for="br-ex-sec">날숨 (초)</label>
+                                <input id="br-ex-sec" class="br-input" type="number" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" min="1" step="0.5" value="4">
+                            </div>
+                            <div class="br-nudge-row" aria-label="Exhale adjust buttons">
+                                <button class="br-nudge" id="br-ex-dec" type="button" aria-label="날숨 감소">◀</button>
+                                <div class="br-nudge-label">-0.5 / +0.5</div>
+                                <button class="br-nudge" id="br-ex-inc" type="button" aria-label="날숨 증가">▶</button>
+                            </div>
+                        </div>
+
+                        <div class="br-note">기본은 1:1 동기화. <b>==</b> (동기화) / <b>=/</b> (개별설정) 버튼으로 전환하세요.</div>
+                        <!-- Sync 토글을 안내 글자 아래로 이동 -->
+                        <div class="br-row center">
+                            <button id="br-sync" class="br-sync-mini" type="button" aria-pressed="true" title="Sync inhale & exhale">==</button>
+                        </div>
+
+                        <div class="br-status">
+                            <div>라운드: <span id="br-round">1</span></div>
+                            <div>단계: <span id="br-step">들숨</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total time (no chart / no error log) -->
+                <div class="br-total" aria-live="polite">
+                    <div class="br-total-label">총 시간</div>
+                    <div class="br-total-time" id="br-total">00:00</div>
+                </div>
             </div>
-
-            <div class="br-controls">
-              <button class="br-btn primary" id="br-start" type="button">Start</button>
-              <button class="br-btn" id="br-skip" type="button" title="다음 단계로 즉시 전환">Skip</button>
-              <button class="br-btn danger" id="br-reset" type="button">Reset</button>
-            </div>
-          </div>
-
-          <!-- Right: Settings (Sync 버튼을 안내 글자 아래로 이동) -->
-          <div class="br-settings" aria-label="Breath settings">
-            <div class="br-setting-stack">
-              <!-- 들숨 입력 -->
-              <div class="br-row">
-                <label for="br-in-sec">들숨 (초)</label>
-                <input id="br-in-sec" class="br-input" type="number" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" min="1" step="0.5" value="4" />
-              </div>
-              <div class="br-nudge-row" aria-label="Inhale adjust buttons">
-                <button class="br-nudge" id="br-in-dec" type="button" aria-label="들숨 감소">◀</button>
-                <div class="br-nudge-label">-0.5 / +0.5</div>
-                <button class="br-nudge" id="br-in-inc" type="button" aria-label="들숨 증가">▶</button>
-              </div>
-
-              <!-- 날숨 입력 -->
-              <div class="br-row">
-                <label for="br-ex-sec">날숨 (초)</label>
-                <input id="br-ex-sec" class="br-input" type="number" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" min="1" step="0.5" value="4" />
-              </div>
-              <div class="br-nudge-row" aria-label="Exhale adjust buttons">
-                <button class="br-nudge" id="br-ex-dec" type="button" aria-label="날숨 감소">◀</button>
-                <div class="br-nudge-label">-0.5 / +0.5</div>
-                <button class="br-nudge" id="br-ex-inc" type="button" aria-label="날숨 증가">▶</button>
-              </div>
-            </div>
-
-            <div class="br-note">기본은 1:1 동기화. <b>==</b> (동기화) / <b>=/</b> (개별설정) 버튼으로 전환하세요.</div>
-            <!-- Sync 토글을 안내 글자 아래로 이동 -->
-            <div class="br-row center">
-              <button id="br-sync" class="br-sync-mini" type="button" aria-pressed="true" title="Sync inhale & exhale">==</button>
-            </div>
-
-            <div class="br-status">
-              <div>라운드: <span id="br-round">1</span></div>
-              <div>단계: <span id="br-step">들숨</span></div>
-            </div>
-          </div>
         </div>
+    </div>
 
-        <!-- Total time (no chart / no error log) -->
-        <div class="br-total" aria-live="polite">
-          <div class="br-total-label">총 시간</div>
-          <div class="br-total-time" id="br-total">00:00</div>
+    <div id="co2" class="tab-content">
+        <div class="sw-embed" role="region" aria-label="Stopwatch Embed">
+            <!-- 1) 구조(HTML) 먼저 -->
+            <div class="clockbox-wrapper">
+                <div class="clockbox" id="sw-root" aria-label="Stopwatch">
+                    <div class="clockbox-title">⏱ 스톱워치 (Start / Lap / Stop / Reset — Lap과 Rest를 교대로 기록)</div>
+
+                    <div id="sw-time" class="sw-time" aria-live="polite">00:00:00.000</div>
+
+                    <div class="sw-controls">
+                        <button id="sw-start" class="sw-btn primary" type="button">Start</button>
+                        <button id="sw-lap" class="sw-btn" type="button" disabled>Lap</button>
+                        <button id="sw-reset" class="sw-btn danger" type="button">Reset</button>
+                    </div>
+
+                    <div class="sw-grid">
+                        <div class="sw-panel">
+                            <h3>Records</h3>
+                            <table class="sw-list" id="sw-table">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Lap (s)</th>
+                                    <th>Rest (s)</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <div class="sw-note">측정 중에는 다음에 기록될 칸이 색으로 표시됩니다. (Lap=빨강, Rest=파랑)</div>
+                        </div>
+
+                        <div class="sw-panel">
+                            <h3>Lap/Rest Chart (s)</h3>
+                            <div class="sw-legend"><span class="sw-dot lap"></span> Lap &nbsp;&nbsp; <span class="sw-dot rest"></span> Rest</div>
+                            <canvas id="sw-chart" width="640" height="300" aria-label="Lap/Rest chart"></canvas>
+                            <div class="sw-footer">
+                                <button id="sw-export-csv" class="sw-btn" type="button">Export CSV</button>
+                                <button id="sw-export-json" class="sw-btn" type="button">Export JSON</button>
+                                <button id="sw-export-png" class="sw-btn" type="button">Export Chart PNG</button>
+                                <button id="sw-copy" class="sw-btn" type="button">Copy as Text</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="sw-error" style="display:none; margin-top:10px; text-align:left"></div>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
+
     <script src="main.js"></script>
+    <script src="stopwatch.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.tab-link');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.getAttribute('data-tab');
+
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    contents.forEach(content => {
+                        if (content.id === target) {
+                            content.classList.add('active');
+                        } else {
+                            content.classList.remove('active');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
 </body>
 </html>

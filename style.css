@@ -57,3 +57,77 @@
     /* Pulse on phase switch */
     .br-embed .pulse{animation: brPulse .6s ease-out}
     @keyframes brPulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+
+/* ===== Scoped styles (only inside .sw-embed) ===== */
+    .sw-embed .clockbox-wrapper { display:flex; justify-content:center; margin:30px auto; }
+    .sw-embed .clockbox { background:#f8f9fa; border-radius:10px; padding:20px 30px; box-shadow:0 2px 10px rgba(0,0,0,.1); max-width:720px; width:100%; text-align:center; font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif; }
+    .sw-embed .clockbox-title { font-size:1.2rem; font-weight:700; margin-bottom:16px; color:#333; }
+
+    .sw-embed .sw-time { font-variant-numeric: tabular-nums; font-size:2rem; font-weight:800; color:#222; margin-bottom:12px; }
+
+    .sw-embed .sw-controls { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; position:relative; z-index:10; }
+    .sw-embed .sw-btn { appearance:none; border:1px solid #d1d5db; background:#fff; padding:8px 14px; border-radius:10px; cursor:pointer; font-weight:600; user-select:none; -webkit-user-select:none; display:inline-block; position:relative; z-index:11; }
+    .sw-embed .sw-btn.primary { background:#111827; color:#fff; border-color:#111827; }
+    .sw-embed .sw-btn.danger { background:#fee2e2; color:#991b1b; border-color:#fecaca; }
+    .sw-embed .sw-btn[disabled] { opacity:.5; cursor:not-allowed; }
+
+    .sw-embed .sw-grid { display:grid; grid-template-columns: 1fr; gap:12px; }
+
+    .sw-embed .sw-panel { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:12px; text-align:left; }
+    .sw-embed .sw-panel h3 { margin:0 0 8px; font-size:14px; color:#374151; }
+
+    .sw-embed table.sw-list { width:100%; border-collapse:collapse; font-size:13px; }
+    .sw-embed .sw-list th, .sw-embed .sw-list td { padding:6px 4px; border-bottom:1px dashed #e5e7eb; text-align:right; }
+    .sw-embed .sw-list th:first-child, .sw-embed .sw-list td:first-child { text-align:left; }
+
+    .sw-embed canvas#sw-chart { width:100%; height:220px; border:1px solid #e5e7eb; border-radius:8px; background:#fff; display:block; pointer-events:none; position:relative; z-index:0; }
+
+    .sw-embed .sw-footer { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+    .sw-embed .sw-note { font-size:12px; color:#6b7280; margin-top:6px; }
+    .sw-embed .sw-legend { display:flex; align-items:center; gap:12px; font-size:12px; color:#374151; margin:4px 0 8px; }
+    .sw-embed .sw-dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+    .sw-embed .sw-dot.lap { background:#ef4444; }
+    .sw-embed .sw-dot.rest { background:#3b82f6; }
+
+    /* 숫자 가독성: 정수부 크게, 소수부 작게 */
+    .sw-embed .sw-sec{display:inline-flex; align-items:flex-end; justify-content:flex-end;}
+    .sw-embed .sw-sec .int{font-size:1.35em; font-weight:700; line-height:1;}
+    .sw-embed .sw-sec .dec{font-size:.85em; opacity:.8; margin-left:1px; line-height:1;}
+
+    /* ▼ 기록 대상 칸 하이라이트 & 저장 플래시 ▼ */
+    .sw-embed td.lap.active  { background: rgba(239, 68, 68, .10); transition: background .2s ease; }
+    .sw-embed td.rest.active { background: rgba(59, 130, 246, .10); transition: background .2s ease; }
+    .sw-embed td.saved { animation: swSaved .6s ease-out; }
+    @keyframes swSaved {
+      0%   { box-shadow: inset 0 0 0 0 rgba(0,0,0,0); }
+      40%  { box-shadow: inset 0 0 0 2px rgba(16,185,129,.35); }
+      100% { box-shadow: inset 0 0 0 0 rgba(0,0,0,0); }
+    }
+
+/* Tabs */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 20px;
+}
+.tab-link {
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  margin-right: 5px;
+  font-weight: 600;
+}
+.tab-link.active {
+  background-color: #fff;
+  border-bottom: 1px solid #fff;
+  margin-bottom: -1px;
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
