@@ -42,6 +42,20 @@
         var lastTickTs = 0;
         var totalElapsedMs = 0; // 총 시간
 
+        // Audio elements
+        var inhaleAudio = document.getElementById('inhale-sound');
+        var exhaleAudio = document.getElementById('exhale-sound');
+        var volumeSlider = root.querySelector('#br-volume');
+
+        if (inhaleAudio && exhaleAudio && volumeSlider) {
+            function updateVolume() {
+                inhaleAudio.volume = volumeSlider.value;
+                exhaleAudio.volume = volumeSlider.value;
+            }
+            volumeSlider.addEventListener('input', updateVolume);
+            updateVolume(); // Set initial volume
+        }
+
         function getInEl(){ return q('#br-in-sec'); }
         function getExEl(){ return q('#br-ex-sec'); }
 
@@ -92,6 +106,11 @@
           if(timeLbl) timeLbl.textContent = fmtDec(phaseTargetMs);
           if(ringProg) ringProg.style.strokeDashoffset = String(CIRC);
           updateBubbles(0);
+          if (phase === 'INHALE' && inhaleAudio) {
+              inhaleAudio.play();
+          } else if (phase === 'EXHALE' && exhaleAudio) {
+              exhaleAudio.play();
+          }
         }
 
         function nextPhase(){
