@@ -95,7 +95,7 @@
       }
 
       // --- Chart ---
-      function drawChart(){
+      function drawChart(live){
         const W = canvas.width, H = canvas.height;
         ctx.clearRect(0,0,W,H);
         ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,W,H);
@@ -106,7 +106,8 @@
         ctx.moveTo(pad.l, H - pad.b); ctx.lineTo(pad.l, pad.t);
         ctx.stroke();
 
-        if(sets.length === 0){
+        const hasLive = live && typeof live.ms === 'number';
+        if(sets.length === 0 && !hasLive){
           ctx.fillStyle = '#9ca3af';
           ctx.font = '12px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
           ctx.fillText(t('sw.chartEmpty'), pad.l + 8, H/2);
@@ -115,6 +116,16 @@
 
         const lapsS  = sets.map(s=> typeof s.lapMs  === 'number' ? s.lapMs/1000  : null);
         const restsS = sets.map(s=> typeof s.restMs === 'number' ? s.restMs/1000 : null);
+        let seriesCount = Math.max(lapsS.length, restsS.length);
+        if(hasLive){
+          const idx = Math.max(0, (live.setIndex || currentSet) - 1);
+          seriesCount = Math.max(seriesCount, idx + 1);
+          while(lapsS.length < seriesCount) lapsS.push(null);
+          while(restsS.length < seriesCount) restsS.push(null);
+          const sec = live.ms / 1000;
+          if(live.type === 'LAP') lapsS[idx] = sec;
+          if(live.type === 'REST') restsS[idx] = sec;
+        }
         const values = [...lapsS, ...restsS].filter(v=>v!=null);
         if(values.length === 0){
           ctx.fillStyle = '#9ca3af';
@@ -125,7 +136,7 @@
         const maxV = Math.max(...values);
         const minV = Math.min(...values);
         const range = Math.max(0.01, maxV - Math.min(minV, maxV-0.01));
-        const xStep = (W - pad.l - pad.r) / Math.max(1, sets.length - 1);
+        const xStep = (W - pad.l - pad.r) / Math.max(1, seriesCount - 1);
         const yScale= (H - pad.t - pad.b) / range;
 
         // grid labels
@@ -162,7 +173,7 @@
         drawSeries(restsS, COLOR_REST, COLOR_REST);
 
         ctx.fillStyle = '#6b7280';
-        sets.forEach((_,i)=>{ const x = pad.l + xStep * i; ctx.fillText(String(i+1), x-3, H-8); });
+        for(let i=0;i<seriesCount;i++){ const x = pad.l + xStep * i; ctx.fillText(String(i+1), x-3, H-8); }
       }
 
       // --- View ---
@@ -171,6 +182,7 @@
         const now = performance.now();
         const elapsed = now - startTs; // 현재 구간만 표기
         elTime.textContent = fmt(elapsed);
+        drawChart({ms: elapsed, type: nextType, setIndex: currentSet});
         tickRaf = requestAnimationFrame(tick);
       }
 
