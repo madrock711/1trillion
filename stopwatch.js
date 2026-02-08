@@ -200,7 +200,7 @@
               ctx.rect(pad.l, pad.t, W - pad.l - pad.r, H - pad.t - pad.b);
               ctx.clip();
               ctx.beginPath();
-              ctx.strokeStyle = pointFill;
+              ctx.strokeStyle = phase > 0.85 ? '#000000' : pointFill;
               ctx.globalAlpha = 0.9 * fade;
               ctx.lineWidth = lineW;
               ctx.arc(x, y, radius, 0, Math.PI*2);
