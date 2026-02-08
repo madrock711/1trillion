@@ -275,6 +275,8 @@ main {
     padding: 2rem;
     border-radius: 12px;
     margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
 }
 .blog-post h3 {
     font-size: 1.5rem;
@@ -283,9 +285,142 @@ main {
     margin-top: 0;
     margin-bottom: 1rem;
 }
+.blog-post h3 .guide-title-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 2px;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+.blog-post h3 .guide-title-icon {
+    margin-left: 6px;
+    font-size: 0.95em;
+    color: var(--text-secondary);
+}
+.blog-post h3 .guide-title-link:hover,
+.blog-post h3 .guide-title-link:focus-visible {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+}
 .blog-post p {
     color: var(--text-secondary);
     line-height: 1.7;
+}
+.blog-post[data-tab="co2"]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 240'><rect width='600' height='240' fill='none'/><g stroke='rgba(255,255,255,0.06)' stroke-width='1'><line x1='40' y1='30' x2='560' y2='30'/><line x1='40' y1='70' x2='560' y2='70'/><line x1='40' y1='110' x2='560' y2='110'/><line x1='40' y1='150' x2='560' y2='150'/><line x1='40' y1='190' x2='560' y2='190'/><line x1='40' y1='30' x2='40' y2='210'/><line x1='140' y1='30' x2='140' y2='210'/><line x1='240' y1='30' x2='240' y2='210'/><line x1='340' y1='30' x2='340' y2='210'/><line x1='440' y1='30' x2='440' y2='210'/><line x1='540' y1='30' x2='540' y2='210'/></g><polyline fill='none' stroke='rgba(239,68,68,0.28)' stroke-width='3' points='40,90 140,90 240,90 340,90 440,90 540,90'/><polyline fill='none' stroke='rgba(59,130,246,0.28)' stroke-width='3' points='40,190 140,170 240,150 340,130 440,110 540,90'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 20px center;
+    background-size: 520px 220px;
+    opacity: 0.45;
+    pointer-events: none;
+    z-index: 0;
+}
+.blog-post[data-tab="co2"] > * {
+    position: relative;
+    z-index: 1;
+}
+.guide-graph {
+    margin: 1.2rem 0 1.4rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: rgba(10, 10, 10, 0.35);
+}
+.guide-graph-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.6rem;
+}
+.guide-graph svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+.guide-graph figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+.guide-details {
+    margin: 1.2rem 0 0.6rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: rgba(10, 10, 10, 0.35);
+}
+.guide-details summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--text-primary);
+    list-style: none;
+}
+.guide-details summary::-webkit-details-marker {
+    display: none;
+}
+.guide-details summary::after {
+    content: "+";
+    float: right;
+    color: var(--text-secondary);
+}
+.guide-details[open] summary::after {
+    content: "–";
+}
+.guide-details-body {
+    margin-top: 0.7rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+.guide-details-body ul {
+    margin: 0.6rem 0 0;
+    padding-left: 1.2rem;
+}
+.guide-details-body li {
+    margin: 0.4rem 0;
+}
+.guide-details-body h4,
+.guide-details-body h5,
+.guide-details-body h6 {
+    margin: 0.8rem 0 0.4rem;
+    color: var(--text-primary);
+}
+.guide-details-body hr {
+    border: 0;
+    border-top: 1px dashed rgba(255, 255, 255, 0.12);
+    margin: 1rem 0;
+}
+.guide-details-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.6rem 0 1rem;
+    font-size: 0.95rem;
+}
+.guide-details-body th,
+.guide-details-body td {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 10px;
+    text-align: left;
+}
+.guide-details-body th {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-primary);
+}
+.guide-details-body .checklist {
+    list-style: none;
+    padding-left: 0;
+}
+.guide-details-body .checklist li {
+    position: relative;
+    padding-left: 20px;
+}
+.guide-details-body .checklist li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--accent-color);
 }
 .button.back-to-timers-button {
     display: inline-block;

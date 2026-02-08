@@ -190,9 +190,56 @@
             <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
         </article>
         <article class="blog-post" data-tab="co2">
-            <h3 data-i18n="blog.post2.title">Push Your Limits with CO2 Table Training</h3>
+            <h3>
+                <a class="guide-title-link" href="https://alien711.tistory.com/entry/freediving-co2-table-training" target="_blank" rel="noopener" data-i18n="blog.post2.title">Push Your Limits with CO2 Table Training</a>
+                <span class="guide-title-icon" aria-hidden="true">↗</span>
+            </h3>
             <p data-i18n="blog.post2.p1">For athletes looking to gain a serious competitive edge, CO2 Table Training is a game-changer. This advanced technique involves a series of timed breath holds and recoveries, designed to improve your body's tolerance to carbon dioxide and the efficiency of your oxygen utilization.</p>
             <p data-i18n="blog.post2.p2">Our CO2 Table Timer guides you through these challenging workouts with precision. By systematically increasing the duration of your breath holds, you train your body to perform better under the demanding conditions of high-intensity exercise. The benefits include increased endurance, delayed onset of fatigue, and a stronger dive reflex. Use our CO2 Table Timer to unlock new levels of performance and redefine your limits.</p>
+            <figure class="guide-graph" aria-label="CO2 table sample graph">
+                <div class="guide-graph-title" data-i18n="blog.post2.chartTitle">Typical CO2 Table Shape (Sample)</div>
+                <svg viewBox="0 0 600 240" role="img" aria-hidden="true">
+                    <rect x="0" y="0" width="600" height="240" fill="transparent"></rect>
+                    <g stroke="rgba(255,255,255,0.08)" stroke-width="1">
+                        <line x1="40" y1="30" x2="560" y2="30"></line>
+                        <line x1="40" y1="70" x2="560" y2="70"></line>
+                        <line x1="40" y1="110" x2="560" y2="110"></line>
+                        <line x1="40" y1="150" x2="560" y2="150"></line>
+                        <line x1="40" y1="190" x2="560" y2="190"></line>
+                        <line x1="40" y1="30" x2="40" y2="210"></line>
+                        <line x1="140" y1="30" x2="140" y2="210"></line>
+                        <line x1="240" y1="30" x2="240" y2="210"></line>
+                        <line x1="340" y1="30" x2="340" y2="210"></line>
+                        <line x1="440" y1="30" x2="440" y2="210"></line>
+                        <line x1="540" y1="30" x2="540" y2="210"></line>
+                    </g>
+                    <polyline fill="none" stroke="rgba(239,68,68,0.9)" stroke-width="3" points="40,90 140,90 240,90 340,90 440,90 540,90"></polyline>
+                    <polyline fill="none" stroke="rgba(59,130,246,0.9)" stroke-width="3" points="40,190 140,170 240,150 340,130 440,110 540,90"></polyline>
+                    <g fill="rgba(239,68,68,0.9)">
+                        <circle cx="40" cy="90" r="4"></circle>
+                        <circle cx="140" cy="90" r="4"></circle>
+                        <circle cx="240" cy="90" r="4"></circle>
+                        <circle cx="340" cy="90" r="4"></circle>
+                        <circle cx="440" cy="90" r="4"></circle>
+                        <circle cx="540" cy="90" r="4"></circle>
+                    </g>
+                    <g fill="rgba(59,130,246,0.9)">
+                        <circle cx="40" cy="190" r="4"></circle>
+                        <circle cx="140" cy="170" r="4"></circle>
+                        <circle cx="240" cy="150" r="4"></circle>
+                        <circle cx="340" cy="130" r="4"></circle>
+                        <circle cx="440" cy="110" r="4"></circle>
+                        <circle cx="540" cy="90" r="4"></circle>
+                    </g>
+                </svg>
+                <figcaption data-i18n="blog.post2.chartCaption">Flat red line = fixed breath-hold. Blue line steps down = shorter rest each round.</figcaption>
+            </figure>
+            <p data-i18n="blog.post2.p3">How to use the timer: press Start to begin, Lap to log the current segment and switch between breath-hold and rest, Stop to end and save the session, and Reset to clear. Records are listed as Lap → Rest pairs for easy review.</p>
+            <p data-i18n="blog.post2.p4">Analyze your progress at a glance with the chart (Lap=red, Rest=blue). Export CSV or JSON for spreadsheets, or save a PNG chart for your training log. Train 2–3 times per week, start on dry land, and never train alone.</p>
+            <details class="guide-details">
+                <summary data-i18n="blog.post2.readMoreTitle">Read more</summary>
+                <div class="guide-details-body" data-i18n="blog.post2.readMoreHtml" data-i18n-html="blog.post2.readMoreHtml"></div>
+            </details>
             <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
         </article>
     </section>
@@ -214,7 +261,7 @@
         <p data-i18n="footer.rights">&copy; 2026 Timer.app. All rights reserved.</p>
     </footer>
 
-    <script src="i18n.js?v=20260208-3"></script>
+    <script src="i18n.js?v=20260208-12"></script>
     <script src="main.js?v=20260208-3"></script>
     <script src="stopwatch.js?v=20260208-3"></script>
     <audio id="inhale-sound" src="assets/sounds/inhale.mp3" preload="auto"></audio>
