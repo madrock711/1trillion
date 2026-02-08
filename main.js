@@ -151,7 +151,6 @@
           var t = e.target; if(!t) return; if(!root.contains(t)) return;
           try{
             if(t.id==='br-start'){ running? pause(): start(); }
-            else if(t.id==='br-skip'){ if(running) nextPhase(); }
             else if(t.id==='br-reset'){ reset(); }
             else if(t.id==='br-sync'){ syncOn = !syncOn; applySyncUI(); }
             else if(t.id==='br-in-dec'){ var inn=getInEl(); adjustValue(inn, -1); if(syncOn){ var ex=getExEl(); if(ex) ex.value=inn.value; } if(phase==='INHALE'){ phaseTargetMs = secToMs(getInhale()); }
