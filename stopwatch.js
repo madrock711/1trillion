@@ -191,14 +191,18 @@
             ctx.beginPath(); ctx.fillStyle = pointFill; ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
             if(live && live.type === seriesType && (live.setIndex - 1) === i){
               const phase = (nowTs % 1000) / 1000;
-              const radius = 4 + phase * 8;
+              const radius = 6 + phase * 40;
+              ctx.save();
+              ctx.beginPath();
+              ctx.rect(pad.l, pad.t, W - pad.l - pad.r, H - pad.t - pad.b);
+              ctx.clip();
               ctx.beginPath();
               ctx.strokeStyle = pointFill;
-              ctx.globalAlpha = 0.35 * (1 - phase);
-              ctx.lineWidth = 2;
+              ctx.globalAlpha = 0.6 * (1 - phase);
+              ctx.lineWidth = 2.5;
               ctx.arc(x, y, radius, 0, Math.PI*2);
               ctx.stroke();
-              ctx.globalAlpha = 1;
+              ctx.restore();
             }
           });
         }
