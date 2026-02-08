@@ -192,8 +192,9 @@
             if(live && live.type === seriesType && (live.setIndex - 1) === i){
               const phase = (nowTs % 1000) / 1000;
               const easeOut = 1 - Math.pow(1 - phase, 3);
-              const radius = 6 + easeOut * 40;
-              const fade = 1 - easeOut;
+              const inv = 1 - easeOut;
+              const radius = 6 + inv * 40;
+              const fade = inv;
               const lineW = 10 * fade;
               ctx.save();
               ctx.beginPath();
