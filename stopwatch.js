@@ -193,15 +193,15 @@
               const phase = (nowTs % 2000) / 2000;
               const easeOut = 1 - Math.pow(1 - phase, 3);
               const radius = 6 + easeOut * 40;
-              const fade = 0.25 + 0.75 * easeOut;
-              const lineW = 10 * (1 - 0.5 * easeOut);
+              const fade = 1 - easeOut;
+              const lineW = 10 * fade;
               ctx.save();
               ctx.beginPath();
               ctx.rect(pad.l, pad.t, W - pad.l - pad.r, H - pad.t - pad.b);
               ctx.clip();
               ctx.beginPath();
               ctx.strokeStyle = pointFill;
-              ctx.globalAlpha = fade;
+              ctx.globalAlpha = 0.9 * fade;
               ctx.lineWidth = lineW;
               ctx.arc(x, y, radius, 0, Math.PI*2);
               ctx.stroke();
