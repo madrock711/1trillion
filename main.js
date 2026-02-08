@@ -78,7 +78,7 @@
           var btn=q('#br-sync'), ex=getExEl(), inn=getInEl();
           if(!btn||!ex||!inn) return;
           btn.setAttribute('aria-pressed', syncOn?'true':'false');
-          btn.textContent = syncOn ? '==' : '=/' ;
+          btn.textContent = syncOn ? '=' : '≠' ;
           ex.disabled = !!syncOn;
           if(syncOn){ ex.value = inn.value; }
         }

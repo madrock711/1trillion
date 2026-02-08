@@ -66,9 +66,10 @@
                         <div class="br-settings" aria-label="Breath settings">
                             <div class="br-setting-stack">
                                 <!-- 들숨 입력 -->
-                                <div class="br-row">
-                                    <label for="br-in-sec">들숨 (초)</label>
+                                <div class="br-row br-row-unit">
+                                    <label for="br-in-sec">들숨</label>
                                     <input id="br-in-sec" class="br-input" type="number" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" min="1" step="0.5" value="4">
+                                    <span class="br-unit">(초)</span>
                                 </div>
                                 <div class="br-nudge-row" aria-label="Inhale adjust buttons">
                                     <button class="br-nudge" id="br-in-dec" type="button" aria-label="들숨 감소">◀</button>
@@ -77,9 +78,10 @@
                                 </div>
 
                                 <!-- 날숨 입력 -->
-                                <div class="br-row">
-                                    <label for="br-ex-sec">날숨 (초)</label>
+                                <div class="br-row br-row-unit">
+                                    <label for="br-ex-sec">날숨</label>
                                     <input id="br-ex-sec" class="br-input" type="number" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" min="1" step="0.5" value="4">
+                                    <span class="br-unit">(초)</span>
                                 </div>
                                 <div class="br-nudge-row" aria-label="Exhale adjust buttons">
                                     <button class="br-nudge" id="br-ex-dec" type="button" aria-label="날숨 감소">◀</button>
@@ -88,10 +90,10 @@
                                 </div>
                             </div>
 
-                            <div class="br-note">기본은 1:1 동기화. <b>==</b> (동기화) / <b>=/</b> (개별설정) 버튼으로 전환하세요.</div>
+                            <div class="br-note">기본은 1:1 동기화. <b>=</b> (동기화) / <b>≠</b> (개별설정) 버튼으로 전환하세요.</div>
                             <!-- Sync 토글을 안내 글자 아래로 이동 -->
                             <div class="br-row center">
-                                <button id="br-sync" class="br-sync-mini" type="button" aria-pressed="true" title="Sync inhale & exhale">==</button>
+                                <button id="br-sync" class="br-sync-mini" type="button" aria-pressed="true" title="Sync inhale & exhale">=</button>
                             </div>
                             
                             <div class="br-row">
