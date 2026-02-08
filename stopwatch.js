@@ -192,7 +192,7 @@
             if(live && live.type === seriesType && (live.setIndex - 1) === i){
               const phase = (nowTs % 1000) / 1000;
               const radius = 6 + phase * 40;
-              const lineW = 3 * (1 - phase);
+              const lineW = 10 * (1 - phase);
               ctx.save();
               ctx.beginPath();
               ctx.rect(pad.l, pad.t, W - pad.l - pad.r, H - pad.t - pad.b);
