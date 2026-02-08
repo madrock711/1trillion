@@ -193,7 +193,7 @@
               const phase = (nowTs % 2000) / 2000;
               const easeOut = 1 - Math.pow(1 - phase, 3);
               const radius = 6 + easeOut * 40;
-              const fade = 1 - easeOut;
+              const fade = 1 - phase;
               const lineW = 10 * fade;
               ctx.save();
               ctx.beginPath();
