@@ -190,7 +190,7 @@
             const y = (H - pad.b) - (val - minV) * yScale;
             ctx.beginPath(); ctx.fillStyle = pointFill; ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
             if(live && live.type === seriesType && (live.setIndex - 1) === i){
-              const phase = (nowTs % 1000) / 1000;
+              const phase = (nowTs % 2000) / 2000;
               const easeOut = 1 - Math.pow(1 - phase, 3);
               const radius = 6 + easeOut * 40;
               const fade = 0.25 + 0.75 * easeOut;
