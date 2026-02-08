@@ -5,6 +5,7 @@
       // --- scope 탐지 ---
       const scriptEl = document.currentScript;
       const root = (scriptEl && scriptEl.closest('.sw-embed')) || document.querySelector('.sw-embed') || document;
+      const t = (key)=> (window.appI18n && typeof window.appI18n.t === 'function') ? window.appI18n.t(key) : key;
 
       // --- DOM (scoped) ---
       const elTime   = root.querySelector('#sw-time');
@@ -108,7 +109,7 @@
         if(sets.length === 0){
           ctx.fillStyle = '#9ca3af';
           ctx.font = '12px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
-          ctx.fillText('Lap → Lap, Rest가 교대로 기록됩니다. Start(Stop)으로 현재 구간을 종료/기록합니다.', pad.l + 8, H/2);
+          ctx.fillText(t('sw.chartEmpty'), pad.l + 8, H/2);
           return;
         }
 
@@ -118,7 +119,7 @@
         if(values.length === 0){
           ctx.fillStyle = '#9ca3af';
           ctx.font = '12px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
-          ctx.fillText('아직 기록이 없습니다. Lap을 눌러 기록을 시작하세요.', pad.l + 8, H/2);
+          ctx.fillText(t('sw.chartNoRecords'), pad.l + 8, H/2);
           return;
         }
         const maxV = Math.max(...values);
@@ -136,7 +137,7 @@
           const v = minV + (range/steps)*i;
           const y = (H - pad.b) - (v - minV) * yScale;
           ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
-          ctx.fillText(v.toFixed(2)+'s', 4, y+4);
+          ctx.fillText(v.toFixed(2) + t('unit.secondsShort'), 4, y+4);
         }
 
         function drawSeries(arr, stroke, pointFill){
@@ -209,7 +210,7 @@
           cancelAnimationFrame(tickRaf);
           const seg = performance.now() - startTs;
           recordCurrent(seg);
-          btnStart.textContent = 'Start';
+          btnStart.textContent = t('sw.start');
           btnLap.disabled = true;
           elTime.textContent = '00:00:00.000';
           // 정지 시 하이라이트 제거
@@ -219,7 +220,7 @@
         // Start: 현재 기대 타입(nextType) 구간 측정 시작
         startTs = performance.now();
         running = true;
-        btnStart.textContent = 'Stop';
+        btnStart.textContent = t('sw.stop');
         btnLap.disabled = false;
         // 어떤 칸이 채워질지 미리 강조
         setActiveHighlight();
@@ -240,7 +241,7 @@
       btnReset.addEventListener('click', function(){
         running = false; cancelAnimationFrame(tickRaf);
         clearAll(); elTime.textContent = '00:00:00.000';
-        btnStart.textContent = 'Start';
+        btnStart.textContent = t('sw.start');
         btnLap.disabled = true;
         clearActive();
       });
@@ -268,7 +269,15 @@
       btnCSV && btnCSV.addEventListener('click', ()=> download('stopwatch_sets.csv', 'text/csv', toCSV()));
       btnJSON&& btnJSON.addEventListener('click', ()=> download('stopwatch_sets.json', 'application/json', toJSON()));
       btnPNG && btnPNG.addEventListener('click', ()=> { const dataUrl = canvas.toDataURL('image/png'); const a=document.createElement('a'); a.href=dataUrl; a.download='stopwatch_chart.png'; document.body.appendChild(a); a.click(); a.remove(); });
-      btnCopy&& btnCopy.addEventListener('click', async ()=>{ try { await navigator.clipboard.writeText(toCSV()); btnCopy.textContent='Copied!'; setTimeout(()=>btnCopy.textContent='Copy as Text', 1200);} catch(e){ alert('복사 실패: '+e.message);} });
+      btnCopy&& btnCopy.addEventListener('click', async ()=>{ try { await navigator.clipboard.writeText(toCSV()); btnCopy.textContent = t('sw.copied'); setTimeout(()=>{ btnCopy.textContent = t('sw.copy'); }, 1200);} catch(e){ alert(t('sw.copyFail') + e.message);} });
+
+      function applyLanguageState(){
+        if(btnStart) btnStart.textContent = running ? t('sw.stop') : t('sw.start');
+        drawChart();
+      }
+
+      document.addEventListener('app:lang', function(){ applyLanguageState(); }, false);
+      applyLanguageState();
 
       // --- 런타임 에러 표시 ---
       window.addEventListener('error', function(ev){

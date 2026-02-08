@@ -17,6 +17,9 @@
       function init(root){
         root.setAttribute('data-br-initialized','1');
         function q(sel){ return root.querySelector(sel); }
+        function t(key){
+          return (window.appI18n && typeof window.appI18n.t === 'function') ? window.appI18n.t(key) : key;
+        }
 
         var circle   = q('.br-circle');
         var ringProg = q('.br-progress');
@@ -97,8 +100,8 @@
         function setPhase(newPhase){
           phase = newPhase;
           if(circle) circle.setAttribute('data-phase', phase);
-          if(phaseLbl) phaseLbl.textContent = (phase==='INHALE'?'들숨':'날숨');
-          if(stepEl) stepEl.textContent = (phase==='INHALE'?'들숨':'날숨');
+          if(phaseLbl) phaseLbl.textContent = (phase==='INHALE'? t('breath.inhale') : t('breath.exhale'));
+          if(stepEl) stepEl.textContent = (phase==='INHALE'? t('breath.inhale') : t('breath.exhale'));
           if(ringProg) ringProg.style.stroke = (phase==='INHALE'? RED: BLUE);
           phaseTargetMs = secToMs(phase==='INHALE'? getInhale(): getExhale());
           phaseElapsedMs = 0; lastTickTs = Date.now();
@@ -117,9 +120,9 @@
           if(phase==='INHALE') setPhase('EXHALE'); else setPhase('INHALE');
         }
 
-        function start(){ if(running) return; running=true; var b=q('#br-start'); if(b) b.textContent='Pause'; lastTickTs=Date.now(); requestAnimationFrame(tick); }
-        function pause(){ if(!running) return; running=false; var b=q('#br-start'); if(b) b.textContent='Start'; }
-        function reset(){ running=false; var b=q('#br-start'); if(b) b.textContent='Start'; phaseElapsedMs=0; totalElapsedMs=0; round=1; if(roundEl) roundEl.textContent='1'; setPhase('INHALE'); if(totalLbl) totalLbl.textContent='00:00'; }
+        function start(){ if(running) return; running=true; var b=q('#br-start'); if(b) b.textContent = t('breath.pause'); lastTickTs=Date.now(); requestAnimationFrame(tick); }
+        function pause(){ if(!running) return; running=false; var b=q('#br-start'); if(b) b.textContent = t('breath.start'); }
+        function reset(){ running=false; var b=q('#br-start'); if(b) b.textContent = t('breath.start'); phaseElapsedMs=0; totalElapsedMs=0; round=1; if(roundEl) roundEl.textContent='1'; setPhase('INHALE'); if(totalLbl) totalLbl.textContent='00:00'; }
 
         function tick(ts){
           if(!running) return;
@@ -175,7 +178,17 @@
           }catch(err){ /* swallow */ }
         }, false);
 
+        function applyLanguageState(){
+          var b=q('#br-start');
+          if(b) b.textContent = running ? t('breath.pause') : t('breath.start');
+          if(phaseLbl) phaseLbl.textContent = (phase==='INHALE'? t('breath.inhale') : t('breath.exhale'));
+          if(stepEl) stepEl.textContent = (phase==='INHALE'? t('breath.inhale') : t('breath.exhale'));
+        }
+
+        document.addEventListener('app:lang', function(){ applyLanguageState(); }, false);
+
         applySyncUI(); setPhase('INHALE'); if(totalLbl) totalLbl.textContent = '00:00';
+        applyLanguageState();
       }
 
       function startWhenReady(){
