@@ -134,8 +134,8 @@
           return;
         }
         const maxV = Math.max(...values);
-        const minV = Math.min(...values);
-        const range = Math.max(0.01, maxV - Math.min(minV, maxV-0.01));
+        const minV = 0;
+        const range = Math.max(0.01, maxV - minV);
         const xStep = (W - pad.l - pad.r) / Math.max(1, seriesCount - 1);
         const yScale= (H - pad.t - pad.b) / range;
 
