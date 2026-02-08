@@ -120,6 +120,7 @@
         const W = canvas.width, H = canvas.height;
         ctx.clearRect(0,0,W,H);
         ctx.fillStyle = '#0f1115'; ctx.fillRect(0,0,W,H);
+        const nowTs = performance.now();
         const pad = {l:40, r:12, t:12, b:28};
         ctx.strokeStyle = '#2a2f38'; ctx.lineWidth = 1;
         ctx.beginPath();
@@ -172,7 +173,7 @@
           ctx.fillText(v.toFixed(2) + t('unit.secondsShort'), 4, y+4);
         }
 
-        function drawSeries(arr, stroke, pointFill){
+        function drawSeries(arr, stroke, pointFill, seriesType){
           ctx.beginPath();
           let started=false;
           arr.forEach((val,i)=>{
@@ -188,10 +189,21 @@
             const x = pad.l + xStep * i;
             const y = (H - pad.b) - (val - minV) * yScale;
             ctx.beginPath(); ctx.fillStyle = pointFill; ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
+            if(live && live.type === seriesType && (live.setIndex - 1) === i){
+              const phase = (nowTs % 1000) / 1000;
+              const radius = 4 + phase * 8;
+              ctx.beginPath();
+              ctx.strokeStyle = pointFill;
+              ctx.globalAlpha = 0.35 * (1 - phase);
+              ctx.lineWidth = 2;
+              ctx.arc(x, y, radius, 0, Math.PI*2);
+              ctx.stroke();
+              ctx.globalAlpha = 1;
+            }
           });
         }
-        drawSeries(lapsS,  COLOR_LAP, COLOR_LAP);
-        drawSeries(restsS, COLOR_REST, COLOR_REST);
+        drawSeries(lapsS,  COLOR_LAP, COLOR_LAP, 'LAP');
+        drawSeries(restsS, COLOR_REST, COLOR_REST, 'REST');
 
         ctx.fillStyle = '#6b7280';
         for(let i=0;i<seriesCount;i++){ const x = pad.l + xStep * i; ctx.fillText(String(i+1), x-3, H-8); }
