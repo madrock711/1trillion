@@ -182,10 +182,16 @@
     </main>
 
     <section id="subscribe" class="container">
-        <h2 class="subscribe-title" data-i18n="subscribe.title">Updates</h2>
-        <p class="subscribe-desc" data-i18n="subscribe.body">We publish new training tools and improvements regularly. If you want updates, bookmark this page or reach out.</p>
-        <p class="subscribe-note" data-i18n="subscribe.note">Email subscriptions are in preparation.</p>
-        <a class="button subscribe-cta" href="mailto:hello@timer.app" data-i18n="subscribe.cta">Contact</a>
+        <h2 class="subscribe-title" data-i18n="subscribe.title">Contact</h2>
+        <p class="subscribe-desc" data-i18n="subscribe.body">Have feedback or a feature request? Send a quick message.</p>
+        <form class="subscribe-form" action="https://formspree.io/f/mkovnybk" method="POST">
+            <label class="sr-only" for="contact-email" data-i18n="subscribe.emailLabel">Email</label>
+            <input id="contact-email" name="email" type="email" required placeholder="you@example.com" data-i18n="subscribe.emailPlaceholder" data-i18n-attr="placeholder">
+            <label class="sr-only" for="contact-message" data-i18n="subscribe.messageLabel">Message</label>
+            <textarea id="contact-message" name="message" rows="4" required placeholder="Tell us what you need." data-i18n="subscribe.messagePlaceholder" data-i18n-attr="placeholder"></textarea>
+            <button class="button subscribe-cta" type="submit" data-i18n="subscribe.cta">Send</button>
+        </form>
+        <p class="subscribe-note" data-i18n="subscribe.note">We will reply within 1–2 business days.</p>
     </section>
 
     <section id="blog-posts" class="container">

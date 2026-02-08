@@ -68,10 +68,14 @@
       'blog.post2.p1': 'For athletes looking to gain a serious competitive edge, CO2 Table Training is a game-changer. This advanced technique involves a series of timed breath holds and recoveries, designed to improve your body\'s tolerance to carbon dioxide and the efficiency of your oxygen utilization.',
       'blog.post2.p2': 'Our CO2 Table Timer guides you through these challenging workouts with precision. By systematically increasing the duration of your breath holds, you train your body to perform better under the demanding conditions of high-intensity exercise. The benefits include increased endurance, delayed onset of fatigue, and a stronger dive reflex. Use our CO2 Table Timer to unlock new levels of performance and redefine your limits.',
       'blog.backToTimers': 'Back to Timers',
-      'subscribe.title': 'Updates',
-      'subscribe.body': 'We publish new training tools and improvements regularly. If you want updates, bookmark this page or reach out.',
-      'subscribe.note': 'Email subscriptions are in preparation.',
-      'subscribe.cta': 'Contact',
+      'subscribe.title': 'Contact',
+      'subscribe.body': 'Have feedback or a feature request? Send a quick message.',
+      'subscribe.note': 'We will reply within 1–2 business days.',
+      'subscribe.cta': 'Send',
+      'subscribe.emailLabel': 'Email',
+      'subscribe.messageLabel': 'Message',
+      'subscribe.emailPlaceholder': 'you@example.com',
+      'subscribe.messagePlaceholder': 'Tell us what you need.',
       'footer.rights': '© 2026 Timer.app. All rights reserved.'
     },
     ko: {
@@ -142,10 +146,14 @@
       'blog.post2.p1': '경쟁력을 크게 끌어올리고 싶은 선수에게 CO2 테이블 훈련은 게임 체인저입니다. 이 고급 훈련은 숨참기와 회복을 시간 단위로 반복하며, 이산화탄소 내성과 산소 활용 효율을 높이도록 설계되었습니다.',
       'blog.post2.p2': 'CO2 테이블 타이머는 도전적인 세션을 정밀하게 안내합니다. 숨참기 시간을 단계적으로 늘려 고강도 환경에서도 더 잘 버틸 수 있도록 훈련하며, 지구력 향상, 피로 지연, 강한 다이빙 반사 같은 효과를 기대할 수 있습니다. CO2 테이블 타이머로 새로운 퍼포먼스 레벨을 열어보세요.',
       'blog.backToTimers': '타이머로 돌아가기',
-      'subscribe.title': '업데이트',
-      'subscribe.body': '새로운 훈련 도구와 개선 사항을 꾸준히 공개합니다. 업데이트가 필요하다면 이 페이지를 북마크하거나 연락해 주세요.',
-      'subscribe.note': '이메일 구독은 준비 중입니다.',
-      'subscribe.cta': '문의하기',
+      'subscribe.title': '문의하기',
+      'subscribe.body': '피드백이나 기능 요청이 있나요? 간단한 메시지를 보내주세요.',
+      'subscribe.note': '1~2 영업일 내에 답변드립니다.',
+      'subscribe.cta': '보내기',
+      'subscribe.emailLabel': '이메일',
+      'subscribe.messageLabel': '메시지',
+      'subscribe.emailPlaceholder': 'you@example.com',
+      'subscribe.messagePlaceholder': '필요한 내용을 알려주세요.',
       'footer.rights': '© 2026 Timer.app. 모든 권리 보유.'
     }
   };
