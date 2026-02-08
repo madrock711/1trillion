@@ -119,9 +119,9 @@
       function drawChart(live){
         const W = canvas.width, H = canvas.height;
         ctx.clearRect(0,0,W,H);
-        ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,W,H);
+        ctx.fillStyle = '#0f1115'; ctx.fillRect(0,0,W,H);
         const pad = {l:40, r:12, t:12, b:28};
-        ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 1;
+        ctx.strokeStyle = '#2a2f38'; ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(pad.l, H - pad.b); ctx.lineTo(W - pad.r, H - pad.b);
         ctx.moveTo(pad.l, H - pad.b); ctx.lineTo(pad.l, pad.t);
@@ -161,8 +161,8 @@
         const yScale= (H - pad.t - pad.b) / range;
 
         // grid labels
-        ctx.strokeStyle = '#f3f4f6';
-        ctx.fillStyle = '#111827';
+        ctx.strokeStyle = '#242a33';
+        ctx.fillStyle = '#cbd5e1';
         ctx.font = '12px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
         const steps = 4;
         for(let i=0;i<=steps;i++){
