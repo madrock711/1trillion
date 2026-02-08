@@ -162,7 +162,7 @@
 
         // grid labels
         ctx.strokeStyle = '#f3f4f6';
-        ctx.fillStyle = '#cbd5e1';
+        ctx.fillStyle = '#111827';
         ctx.font = '12px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
         const steps = 4;
         for(let i=0;i<=steps;i++){
