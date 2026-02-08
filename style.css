@@ -137,6 +137,12 @@ main {
     padding: 2rem 0;
 }
 
+.site-intro {
+    margin: 0 0 16px;
+    color: var(--text-secondary);
+    font-size: 0.98rem;
+}
+
 /* --- Tabs --- */
 .tabs {
   display: flex;
@@ -298,6 +304,40 @@ main {
     background-color: var(--accent-color);
     color: var(--bg-dark);
     border-color: var(--accent-color);
+}
+
+/* Subscribe Section */
+#subscribe {
+    padding: 1.5rem 0 2.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+#subscribe .subscribe-title {
+    margin: 0 0 8px;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+#subscribe .subscribe-desc {
+    margin: 0 0 6px;
+    color: var(--text-secondary);
+}
+
+#subscribe .subscribe-note {
+    margin: 0 0 14px;
+    color: #8b8b8b;
+    font-size: 0.9rem;
+}
+
+.button.subscribe-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    background-color: var(--accent-color);
+    color: var(--bg-dark);
+    font-weight: 700;
 }
 
 /* --- Footer --- */

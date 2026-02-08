@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="page.title">Timer App</title>
-    <link rel="stylesheet" href="style.css?v=20260208-2">
+    <meta name="description" content="Breathing and CO2 table timers with guided training and detailed records." data-i18n="meta.description" data-i18n-attr="content">
+    <meta name="robots" content="index,follow">
+    <meta property="og:title" content="Timer App" data-i18n="og.title" data-i18n-attr="content">
+    <meta property="og:description" content="Breathing and CO2 table timers with guided training and detailed records." data-i18n="og.description" data-i18n-attr="content">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Timer App" data-i18n="twitter.title" data-i18n-attr="content">
+    <meta name="twitter:description" content="Breathing and CO2 table timers with guided training and detailed records." data-i18n="twitter.description" data-i18n-attr="content">
+    <link rel="stylesheet" href="style.css?v=20260208-3">
 </head>
 <body>
     <header>
         <div class="container">
             <div class="header-left">
-                <span class="header-title" data-i18n="header.title">Grind</span>
+                <h1 class="header-title" data-i18n="header.title">Grind</h1>
                 <nav>
                     <a href="#blog-posts" data-i18n="nav.blog">App Guide</a>
                     <a href="#subscribe" class="button subscribe-button" data-i18n="nav.subscribe">Subscribe</a>
@@ -26,6 +34,7 @@
     </header>
 
     <main class="container" id="timers">
+        <p class="site-intro" data-i18n="site.intro">Focused timers for breath training and CO2 table practice, with clear guidance and exportable records.</p>
         <div class="tabs">
             <div class="tab-link active" data-tab="breathing" data-i18n="tabs.breathing">Breathing Timer</div>
             <div class="tab-link" data-tab="co2" data-i18n="tabs.co2">CO2 Table Timer</div>
@@ -172,6 +181,13 @@
         </div>
     </main>
 
+    <section id="subscribe" class="container">
+        <h2 class="subscribe-title" data-i18n="subscribe.title">Updates</h2>
+        <p class="subscribe-desc" data-i18n="subscribe.body">We publish new training tools and improvements regularly. If you want updates, bookmark this page or reach out.</p>
+        <p class="subscribe-note" data-i18n="subscribe.note">Email subscriptions are in preparation.</p>
+        <a class="button subscribe-cta" href="mailto:hello@timer.app" data-i18n="subscribe.cta">Contact</a>
+    </section>
+
     <section id="blog-posts" class="container">
         <h2 class="blog-title" data-i18n="blog.title">App Guide</h2>
         <article class="blog-post" data-tab="breathing">
@@ -192,9 +208,9 @@
         <p data-i18n="footer.rights">&copy; 2026 Timer.app. All rights reserved.</p>
     </footer>
 
-    <script src="i18n.js?v=20260208-2"></script>
-    <script src="main.js?v=20260208-2"></script>
-    <script src="stopwatch.js?v=20260208-2"></script>
+    <script src="i18n.js?v=20260208-3"></script>
+    <script src="main.js?v=20260208-3"></script>
+    <script src="stopwatch.js?v=20260208-3"></script>
     <audio id="inhale-sound" src="assets/sounds/inhale.mp3" preload="auto"></audio>
     <audio id="exhale-sound" src="assets/sounds/exhale.mp3" preload="auto"></audio>
     <script>
