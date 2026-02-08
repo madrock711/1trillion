@@ -162,8 +162,8 @@
 
         // grid labels
         ctx.strokeStyle = '#f3f4f6';
-        ctx.fillStyle = '#6b7280';
-        ctx.font = '11px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '12px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
         const steps = 4;
         for(let i=0;i<=steps;i++){
           const v = minV + (range/steps)*i;
@@ -204,6 +204,16 @@
         const elapsed = now - startTs; // 현재 구간만 표기
         elTime.textContent = fmt(elapsed);
         drawChart({ms: elapsed, type: nextType, setIndex: currentSet});
+        if(autoMode && autoIdx < autoSegments.length){
+          const tr = ensureRowForSet(currentSet);
+          if(tr){
+            const cell = tr.querySelector(nextType==='LAP' ? 'td.lap' : 'td.rest');
+            if(cell){
+              const remaining = Math.max(0, autoSegments[autoIdx] - elapsed);
+              cell.innerHTML = formatSecHTML(remaining/1000);
+            }
+          }
+        }
         tickRaf = requestAnimationFrame(tick);
       }
 
