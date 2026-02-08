@@ -192,6 +192,7 @@
             if(live && live.type === seriesType && (live.setIndex - 1) === i){
               const phase = (nowTs % 1000) / 1000;
               const radius = 6 + phase * 40;
+              const lineW = 3 * (1 - phase);
               ctx.save();
               ctx.beginPath();
               ctx.rect(pad.l, pad.t, W - pad.l - pad.r, H - pad.t - pad.b);
@@ -199,7 +200,7 @@
               ctx.beginPath();
               ctx.strokeStyle = pointFill;
               ctx.globalAlpha = 0.6 * (1 - phase);
-              ctx.lineWidth = 2.5;
+              ctx.lineWidth = lineW;
               ctx.arc(x, y, radius, 0, Math.PI*2);
               ctx.stroke();
               ctx.restore();
