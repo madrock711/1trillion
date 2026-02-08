@@ -12,6 +12,7 @@
       const btnStart = root.querySelector('#sw-start');
       const btnLap   = root.querySelector('#sw-lap');
       const btnReset = root.querySelector('#sw-reset');
+      const btnAuto  = root.querySelector('#sw-auto');
       const tableEl  = root.querySelector('#sw-table');
       let tblBody = null;
       if (tableEl) {
@@ -74,6 +75,17 @@
       let currentSet= 1;          // 현재 # 인덱스
       let sets = [];              // [{n, lapMs:null|number, restMs:null|number}]
       let tickRaf   = null;
+      let autoMode  = false;
+      let autoTimer = null;
+      let autoIdx   = 0;
+      const autoSegments = [
+        120000, 105000,
+        120000,  90000,
+        120000,  75000,
+        120000,  60000,
+        120000,  45000,
+        120000,  30000
+      ];
 
       // --- 하이라이트 유틸 ---
       function clearActive(){
@@ -92,6 +104,15 @@
         if(!cell) return;
         cell.classList.add('saved');
         setTimeout(()=>cell.classList.remove('saved'), 650);
+      }
+      function clearAutoTimer(){
+        if(autoTimer){ clearTimeout(autoTimer); autoTimer = null; }
+      }
+      function stopAuto(){
+        autoMode = false;
+        autoIdx = 0;
+        clearAutoTimer();
+        if(btnAuto) btnAuto.disabled = false;
       }
 
       // --- Chart ---
@@ -213,17 +234,19 @@
 
       // --- Controls ---
       const stopBubble = (e)=>{ e.stopPropagation(); };
-      [btnStart, btnLap, btnReset].forEach(el=>{ if(el){ el.addEventListener('click', stopBubble); el.addEventListener('touchstart', stopBubble, {passive:false}); }});
+      [btnStart, btnLap, btnReset, btnAuto].forEach(el=>{ if(el){ el.addEventListener('click', stopBubble); el.addEventListener('touchstart', stopBubble, {passive:false}); }});
 
       btnStart.addEventListener('click', function(){
         if(running){
           // Stop: 현재 구간 기록 후 정지
           running = false;
           cancelAnimationFrame(tickRaf);
+          clearAutoTimer();
           const seg = performance.now() - startTs;
           recordCurrent(seg);
           btnStart.textContent = t('sw.start');
           btnLap.disabled = true;
+          stopAuto();
           elTime.textContent = '00:00:00.000';
           // 정지 시 하이라이트 제거
           clearActive();
@@ -240,7 +263,7 @@
       });
 
       btnLap.addEventListener('click', function(){
-        if(!running) return;
+        if(!running || autoMode) return;
         const seg = performance.now() - startTs; // 현재 구간 기록
         recordCurrent(seg);
         // 랩 이후 다음 구간을 0부터 측정
@@ -252,11 +275,54 @@
 
       btnReset.addEventListener('click', function(){
         running = false; cancelAnimationFrame(tickRaf);
+        clearAutoTimer(); stopAuto();
         clearAll(); elTime.textContent = '00:00:00.000';
         btnStart.textContent = t('sw.start');
         btnLap.disabled = true;
         clearActive();
       });
+
+      if(btnAuto){
+        btnAuto.addEventListener('click', function(){
+          if(running || autoMode) return;
+          // start auto routine from scratch
+          clearAll();
+          autoMode = true;
+          autoIdx = 0;
+          if(btnAuto) btnAuto.disabled = true;
+          btnLap.disabled = true;
+          nextType = 'LAP';
+          currentSet = 1;
+          startTs = performance.now();
+          running = true;
+          btnStart.textContent = t('sw.stop');
+          setActiveHighlight();
+          tickRaf = requestAnimationFrame(tick);
+          function advance(){
+            if(!running || !autoMode) return;
+            const seg = performance.now() - startTs;
+            recordCurrent(seg);
+            autoIdx += 1;
+            if(autoIdx >= autoSegments.length){
+              running = false;
+              cancelAnimationFrame(tickRaf);
+              btnStart.textContent = t('sw.start');
+              btnLap.disabled = true;
+              elTime.textContent = '00:00:00.000';
+              clearActive();
+              stopAuto();
+              return;
+            }
+            startTs = performance.now();
+            elTime.textContent = '00:00:00.000';
+            setActiveHighlight();
+            clearAutoTimer();
+            autoTimer = setTimeout(advance, autoSegments[autoIdx]);
+          }
+          clearAutoTimer();
+          autoTimer = setTimeout(advance, autoSegments[autoIdx]);
+        });
+      }
 
       // --- Export ---
       function toCSV(){
