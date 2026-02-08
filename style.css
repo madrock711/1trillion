@@ -52,6 +52,7 @@ header .container {
     align-items: center;
     gap: 1.5rem;
     flex-grow: 1; /* Allow header-left to take available space */
+    position: relative;
 }
 
 .header-title {
@@ -59,6 +60,10 @@ header .container {
     font-weight: 700;
     color: var(--text-primary);
     white-space: nowrap; /* Prevent title from wrapping */
+    text-align: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 header nav {
@@ -67,6 +72,21 @@ header nav {
     gap: 1.5rem;
     margin-left: auto; /* Push nav to the right within header-left */
     flex-wrap: wrap; /* Allow nav items to wrap */
+}
+
+@media (max-width: 720px) {
+    .header-left {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .header-title {
+        position: static;
+        transform: none;
+    }
+    header nav {
+        margin-left: 0;
+        justify-content: center;
+    }
 }
 
 header nav a {
