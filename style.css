@@ -321,22 +321,6 @@ main {
     color: var(--text-secondary);
     line-height: 1.7;
 }
-.blog-post[data-tab="co2"]::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 240'><rect width='600' height='240' fill='none'/><g stroke='rgba(255,255,255,0.06)' stroke-width='1'><line x1='40' y1='30' x2='560' y2='30'/><line x1='40' y1='70' x2='560' y2='70'/><line x1='40' y1='110' x2='560' y2='110'/><line x1='40' y1='150' x2='560' y2='150'/><line x1='40' y1='190' x2='560' y2='190'/><line x1='40' y1='30' x2='40' y2='210'/><line x1='140' y1='30' x2='140' y2='210'/><line x1='240' y1='30' x2='240' y2='210'/><line x1='340' y1='30' x2='340' y2='210'/><line x1='440' y1='30' x2='440' y2='210'/><line x1='540' y1='30' x2='540' y2='210'/></g><polyline fill='none' stroke='rgba(239,68,68,0.28)' stroke-width='3' points='40,90 140,90 240,90 340,90 440,90 540,90'/><polyline fill='none' stroke='rgba(59,130,246,0.28)' stroke-width='3' points='40,190 140,170 240,150 340,130 440,110 540,90'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 20px center;
-    background-size: 520px 220px;
-    opacity: 0.45;
-    pointer-events: none;
-    z-index: 0;
-}
-.blog-post[data-tab="co2"] > * {
-    position: relative;
-    z-index: 1;
-}
 .guide-graph {
     margin: 1.2rem 0 1.4rem;
     padding: 1rem 1.2rem;
@@ -359,6 +343,11 @@ main {
     margin-top: 0.5rem;
     font-size: 0.85rem;
     color: var(--text-secondary);
+}
+/* Ensure no CO2 background watermark remains */
+.blog-post[data-tab="co2"]::before {
+    content: none !important;
+    background-image: none !important;
 }
 .guide-details {
     margin: 1.2rem 0 0.6rem;
