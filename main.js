@@ -205,4 +205,69 @@
         window.addEventListener('load', startWhenReady, false);
         setTimeout(startWhenReady, 0);
       }
+
+      function initSubscribeForm(){
+        var form = document.querySelector('.subscribe-form');
+        if(!form) return;
+        var statusEl = document.querySelector('.subscribe-status');
+        var submitBtn = form.querySelector('button[type="submit"]');
+        var sending = false;
+
+        function t(key){
+          return (window.appI18n && typeof window.appI18n.t === 'function') ? window.appI18n.t(key) : key;
+        }
+
+        function setStatus(state, key){
+          if(!statusEl) return;
+          statusEl.dataset.state = state || '';
+          statusEl.dataset.key = key || '';
+          statusEl.textContent = key ? t(key) : '';
+          if(!key){
+            statusEl.classList.add('is-hidden');
+          } else {
+            statusEl.classList.remove('is-hidden');
+          }
+        }
+
+        function updateStatusLanguage(){
+          if(!statusEl) return;
+          var key = statusEl.dataset.key;
+          if(key){ statusEl.textContent = t(key); }
+        }
+
+        form.addEventListener('submit', function(e){
+          e.preventDefault();
+          if(sending) return;
+          sending = true;
+          if(submitBtn) submitBtn.disabled = true;
+          setStatus('sending', 'subscribe.sending');
+
+          var endpoint = form.getAttribute('action');
+          var payload = new FormData(form);
+
+          fetch(endpoint, {
+            method: 'POST',
+            body: payload,
+            headers: { 'Accept': 'application/json' }
+          }).then(function(res){
+            if(res.ok){
+              form.reset();
+              setStatus('success', 'subscribe.success');
+              return;
+            }
+            return res.json().catch(function(){ return null; }).then(function(){
+              throw new Error('subscribe_failed');
+            });
+          }).catch(function(){
+            setStatus('error', 'subscribe.error');
+          }).finally(function(){
+            sending = false;
+            if(submitBtn) submitBtn.disabled = false;
+          });
+        }, false);
+
+        document.addEventListener('app:lang', updateStatusLanguage, false);
+      }
+
+      initSubscribeForm();
     })();

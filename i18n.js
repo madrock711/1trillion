@@ -83,6 +83,9 @@
       'subscribe.emailPlaceholder': 'you@example.com',
       'subscribe.messageLabel': 'Message',
       'subscribe.messagePlaceholder': 'Tell us what you need.',
+      'subscribe.sending': 'Subscribing...',
+      'subscribe.success': 'Thanks! You are subscribed.',
+      'subscribe.error': 'Something went wrong. Please try again.',
       'footer.rights': '© 2026 Timer.app. All rights reserved.'
     },
     ko: {
@@ -168,6 +171,9 @@
       'subscribe.emailPlaceholder': 'you@example.com',
       'subscribe.messageLabel': '메시지',
       'subscribe.messagePlaceholder': '필요한 내용을 알려주세요.',
+      'subscribe.sending': '구독 중...',
+      'subscribe.success': '감사합니다! 구독이 완료되었습니다.',
+      'subscribe.error': '문제가 발생했습니다. 다시 시도해 주세요.',
       'footer.rights': '© 2026 Timer.app. 모든 권리 보유.'
     }
   };
