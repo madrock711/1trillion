@@ -308,7 +308,7 @@
     var bothTop = qs('#foot-both-top');
     var angleEl = qs('#foot-angle');
     var angleVal = angleEl ? angleEl.value : 'top';
-    if(bothTop && bothTop.checked){
+    if(bothTop && bothTop.checked && angleVal === 'top'){
       if(angleEl) angleEl.value = 'top';
       updateCaptureTarget();
       cb('top');
