@@ -310,7 +310,7 @@ function setPreviewForTopBoth(dataUrl){
     return { mode: 'fallback', slot: fallbackSlot };
   }
 
-  function detectAngleHeuristic(dataUrl){
+function detectAngleHeuristic(dataUrl){
     return new Promise(function(resolve){
       var img = new Image();
       img.onload = function(){
@@ -392,7 +392,7 @@ function setPreviewForTopBoth(dataUrl){
         }
         var components = countComponents(threshold);
         if(components >= 2){
-          resolve('top');
+          resolve({ angle: 'top', conf: 0.85 });
           return;
         }
         var w = Math.max(1, bounds.maxX - bounds.minX);
@@ -400,19 +400,19 @@ function setPreviewForTopBoth(dataUrl){
         var ratio = h / w;
         var imgRatio = img.height / img.width;
         if(components === 1 && imgRatio > 1.25){
-          resolve('side');
+          resolve({ angle: 'side', conf: 0.6 });
           return;
         }
         if(components === 1 && imgRatio < 0.8){
-          resolve('top');
+          resolve({ angle: 'top', conf: 0.6 });
           return;
         }
-        if(components === 1 && ratio > 1.05){
-          resolve('side');
+        if(components === 1 && ratio > 1.08){
+          resolve({ angle: 'side', conf: 0.55 });
           return;
         }
-        if(components === 1 && ratio < 0.7){
-          resolve('top');
+        if(components === 1 && ratio < 0.65){
+          resolve({ angle: 'top', conf: 0.55 });
           return;
         }
         resolve(null);
@@ -422,7 +422,7 @@ function setPreviewForTopBoth(dataUrl){
     });
   }
 
-  function detectAngleWithPose(dataUrl){
+function detectAngleWithPose(dataUrl){
     return new Promise(function(resolve){
       loadPoseLandmarker().then(function(model){
         if(!model) return resolve(null);
@@ -454,12 +454,12 @@ function setPreviewForTopBoth(dataUrl){
             return;
           }
           var ratio = width / height;
-          if(ratio < 0.28){
-            resolve('side');
+          if(ratio < 0.22){
+            resolve({ angle: 'side', conf: 0.75 });
             return;
           }
-          if(ratio > 0.55){
-            resolve('top');
+          if(ratio > 0.62){
+            resolve({ angle: 'top', conf: 0.75 });
             return;
           }
           resolve(null);
@@ -485,24 +485,24 @@ function setPreviewForTopBoth(dataUrl){
       cb('top');
       return;
     }
-    detectAngleWithPose(dataUrl).then(function(angle){
-      if(angle){
-        if(angleEl) angleEl.value = angle;
+    detectAngleWithPose(dataUrl).then(function(result){
+      if(result && result.angle && result.conf >= 0.7){
+        if(angleEl) angleEl.value = result.angle;
         updateCaptureTarget();
-        updateCaptureStatus(angle === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
-        cb(angle);
+        updateCaptureStatus(result.angle === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
+        cb(result.angle);
         return;
       }
       detectAngleHeuristic(dataUrl).then(function(fallback){
-        if(!fallback){
+        if(!fallback || !fallback.angle || fallback.conf < 0.6){
           updateCaptureStatus('foot.autoAngleFailed', currentTargetLabel());
           cb(null);
           return;
         }
-        if(angleEl) angleEl.value = fallback;
+        if(angleEl) angleEl.value = fallback.angle;
         updateCaptureTarget();
-        updateCaptureStatus(fallback === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
-        cb(fallback);
+        updateCaptureStatus(fallback.angle === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
+        cb(fallback.angle);
       });
     });
   }
