@@ -290,7 +290,8 @@ function setPreviewForTopBoth(dataUrl){
 
   function setPreviewByAngle(angleVal, dataUrl){
     var bothTop = qs('#foot-both-top');
-    if(angleVal === 'top' && bothTop && bothTop.checked){
+    var topFilled = state.captures['left-top'] && state.captures['right-top'];
+    if(angleVal === 'top' && bothTop && bothTop.checked && !topFilled){
       setPreviewForTopBoth(dataUrl);
       return { mode: 'both-top' };
     }
