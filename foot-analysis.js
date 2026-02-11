@@ -64,6 +64,20 @@
     else { status.classList.remove('is-error'); }
   }
 
+  var slotOrder = ['left-top', 'left-side', 'right-top', 'right-side'];
+
+  function currentTargetLabel(){
+    var sideEl = qs('#foot-side');
+    var angleEl = qs('#foot-angle');
+    var side = t('foot.' + (sideEl ? sideEl.value : 'left'));
+    var angle = t('foot.angle' + ((angleEl ? angleEl.value : 'top') === 'top' ? 'Top' : 'Side'));
+    return { side: side, angle: angle };
+  }
+
+  function updateCaptureTarget(){
+    updateCaptureStatus('foot.captureTarget', currentTargetLabel());
+  }
+
   function hapticPulse(){
     if(navigator && typeof navigator.vibrate === 'function'){
       navigator.vibrate(20);
@@ -96,6 +110,27 @@
     var a = angle ? angle.value : 'top';
     var s = side ? side.value : 'left';
     return s + '-' + a;
+  }
+
+  function setSelectsForSlot(key){
+    var parts = key.split('-');
+    if(parts.length !== 2) return;
+    var sideEl = qs('#foot-side');
+    var angleEl = qs('#foot-angle');
+    if(sideEl) sideEl.value = parts[0];
+    if(angleEl) angleEl.value = parts[1];
+    updateCaptureTarget();
+  }
+
+  function autoAdvanceSlot(){
+    var current = slotKey();
+    var currentIndex = slotOrder.indexOf(current);
+    for(var i = currentIndex + 1; i < slotOrder.length; i++){
+      if(!state.captures[slotOrder[i]]){
+        setSelectsForSlot(slotOrder[i]);
+        return;
+      }
+    }
   }
 
   function setPreview(key, dataUrl){
@@ -261,6 +296,7 @@
       angle: t('foot.angle' + ((qs('#foot-angle') ? qs('#foot-angle').value : 'top') === 'top' ? 'Top' : 'Side'))
     });
     hapticPulse();
+    autoAdvanceSlot();
   }
 
   function loadUpload(file){
@@ -273,6 +309,7 @@
         angle: t('foot.angle' + ((qs('#foot-angle') ? qs('#foot-angle').value : 'top') === 'top' ? 'Top' : 'Side'))
       });
       hapticPulse();
+      autoAdvanceSlot();
     };
     reader.readAsDataURL(file);
   }
@@ -516,6 +553,7 @@
     updateMeasureStatus();
     updateCalibrationStatus();
     updateCaptureStatus('foot.captureIdle');
+    updateCaptureTarget();
   }
 
   function saveHistory(){
@@ -586,6 +624,8 @@
     var clearHistory = qs('#foot-clear-history');
     var scaleSel = qs('#foot-scale');
     var refInput = qs('#foot-ref-length');
+    var angleSel = qs('#foot-angle');
+    var sideSel = qs('#foot-side');
     var canvas = qs('#foot-measure-canvas');
     var measureRef = qs('#foot-measure-ref');
     var measureFoot = qs('#foot-measure-foot');
@@ -601,6 +641,8 @@
     if(shareBtn) shareBtn.addEventListener('click', copySummary);
     if(scaleSel) scaleSel.addEventListener('change', updateCalibrationStatus);
     if(refInput) refInput.addEventListener('input', updateCalibrationStatus);
+    if(angleSel) angleSel.addEventListener('change', updateCaptureTarget);
+    if(sideSel) sideSel.addEventListener('change', updateCaptureTarget);
     if(canvas) canvas.addEventListener('click', handleCanvasClick);
     if(measureRef) measureRef.addEventListener('click', function(){
       if(!state.activeSlot){ return; }
@@ -637,6 +679,7 @@
     updateMeasureStatus();
     updateCalibrationStatus();
     updateCaptureStatus('foot.captureIdle');
+    updateCaptureTarget();
     document.querySelectorAll('.foot-preview-slot').forEach(function(slot){
       slot.addEventListener('click', function(){
         var key = slot.getAttribute('data-slot');
