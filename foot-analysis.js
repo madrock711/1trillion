@@ -703,6 +703,7 @@
     var stopBtn = qs('#foot-stop-camera');
     var captureBtn = qs('#foot-capture-btn');
     var upload = qs('#foot-upload');
+    var uploadBtn = qs('#foot-upload-btn');
     var analyzeBtn = qs('#foot-analyze-btn');
     var resetBtn = qs('#foot-reset');
     var saveBtn = qs('#foot-save');
@@ -715,6 +716,7 @@
     if(startBtn) startBtn.addEventListener('click', startCamera);
     if(stopBtn) stopBtn.addEventListener('click', stopCamera);
     if(captureBtn) captureBtn.addEventListener('click', captureFrame);
+    if(uploadBtn && upload) uploadBtn.addEventListener('click', function(){ upload.click(); });
     if(upload) upload.addEventListener('change', function(e){ loadUpload(e.target.files[0]); });
     if(analyzeBtn) analyzeBtn.addEventListener('click', analyze);
     if(resetBtn) resetBtn.addEventListener('click', resetAll);

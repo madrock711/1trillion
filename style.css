@@ -750,15 +750,9 @@ footer {
 }
 
 .foot-upload {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
-    padding: 8px 12px;
-    border-radius: 10px;
-    border: 1px dashed var(--border-color);
-    cursor: pointer;
-    color: var(--text-secondary);
 }
 
 .foot-upload input {
