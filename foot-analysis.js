@@ -281,7 +281,13 @@ function fileToDataUrl(file, cb){
     reader.readAsDataURL(file);
   }
 
-  function detectAngleOnly(dataUrl){
+  function detectAngleOnly(dataUrl, preferHeuristic){
+    if(preferHeuristic){
+      return detectAngleHeuristic(dataUrl).then(function(fallback){
+        if(!fallback || !fallback.angle) return null;
+        return fallback;
+      });
+    }
     return detectAngleWithPose(dataUrl).then(function(result){
       if(result && result.angle && result.conf >= 0.7) return result;
       return detectAngleHeuristic(dataUrl).then(function(fallback){
@@ -647,7 +653,7 @@ function detectAngleWithPose(dataUrl){
       return new Promise(function(resolve){
         fileToDataUrl(file, function(dataUrl){
           if(!dataUrl) return resolve(null);
-          detectAngleOnly(dataUrl).then(function(info){
+          detectAngleOnly(dataUrl, true).then(function(info){
             var angleVal = (info && info.angle) || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
             resolve({ dataUrl: dataUrl, angle: angleVal, info: info || {} });
           });
@@ -659,14 +665,25 @@ function detectAngleWithPose(dataUrl){
       var used = new Set();
       var topFilled = state.captures['left-top'] && state.captures['right-top'];
       if(bothTop && bothTop.checked){
+        var topIndex = -1;
+        var bestScore = -1;
         for(var i=0;i<valid.length;i++){
           var it = valid[i];
-          if(it.angle === 'top' && it.info && it.info.bothFeet){
-            setPreviewForTopBoth(it.dataUrl);
-            used.add(i);
-            topFilled = true;
+          if(it.info && it.info.bothFeet){
+            topIndex = i;
             break;
           }
+          var ratio = typeof it.info.ratio === 'number' ? it.info.ratio : 1;
+          var score = 1.2 - ratio;
+          if(score > bestScore){
+            bestScore = score;
+            topIndex = i;
+          }
+        }
+        if(topIndex >= 0 && bestScore > 0.35){
+          setPreviewForTopBoth(valid[topIndex].dataUrl);
+          used.add(topIndex);
+          topFilled = true;
         }
       }
       function placeByAngle(angle, url, info){
