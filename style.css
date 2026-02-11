@@ -141,6 +141,7 @@ main {
     margin: 0 0 16px;
     color: var(--text-secondary);
     font-size: 0.98rem;
+    text-align: center;
 }
 
 /* --- Tabs --- */
