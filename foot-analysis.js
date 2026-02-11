@@ -175,6 +175,74 @@
     setPreview('right-top', dataUrl);
   }
 
+  function detectAngleFromDataUrl(dataUrl){
+    return new Promise(function(resolve){
+      var img = new Image();
+      img.onload = function(){
+        var canvas = document.createElement('canvas');
+        var size = 96;
+        canvas.width = size;
+        canvas.height = size;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, size, size);
+        var data = ctx.getImageData(0, 0, size, size).data;
+        var sum = 0;
+        var count = size * size;
+        for(var i=0;i<data.length;i+=4){
+          var gray = (data[i] + data[i+1] + data[i+2]) / 3;
+          sum += gray;
+        }
+        var mean = sum / count;
+        var threshold = 20;
+        var minX = size, minY = size, maxX = 0, maxY = 0;
+        var fg = 0;
+        for(var y=0;y<size;y++){
+          for(var x=0;x<size;x++){
+            var idx = (y * size + x) * 4;
+            var gray2 = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+            if(Math.abs(gray2 - mean) > threshold){
+              fg++;
+              if(x < minX) minX = x;
+              if(y < minY) minY = y;
+              if(x > maxX) maxX = x;
+              if(y > maxY) maxY = y;
+            }
+          }
+        }
+        if(fg < 120){
+          resolve(null);
+          return;
+        }
+        var w = Math.max(1, maxX - minX);
+        var h = Math.max(1, maxY - minY);
+        var ratio = h / w;
+        resolve(ratio > 0.8 ? 'side' : 'top');
+      };
+      img.onerror = function(){ resolve(null); };
+      img.src = dataUrl;
+    });
+  }
+
+  function applyAngleDetection(dataUrl, cb){
+    var auto = qs('#foot-auto-angle');
+    if(!auto || !auto.checked){
+      cb(null);
+      return;
+    }
+    detectAngleFromDataUrl(dataUrl).then(function(angle){
+      if(!angle){
+        updateCaptureStatus('foot.autoAngleFailed', currentTargetLabel());
+        cb(null);
+        return;
+      }
+      var angleEl = qs('#foot-angle');
+      if(angleEl) angleEl.value = angle;
+      updateCaptureTarget();
+      updateCaptureStatus(angle === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
+      cb(angle);
+    });
+  }
+
   function selectPreview(key){
     state.activeSlot = key;
     setCurrentSlot(key, true);
@@ -198,40 +266,45 @@
     var ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     var dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-    var angleVal = qs('#foot-angle') ? qs('#foot-angle').value : 'top';
-    var bothTop = qs('#foot-both-top');
-    if(angleVal === 'top' && bothTop && bothTop.checked){
-      setPreviewForTopBoth(dataUrl);
-      updateCaptureStatus('foot.captureDoneBoth');
-    } else {
-      setPreview(slotKey(), dataUrl);
-      updateCaptureStatus('foot.captureDone', {
-        side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
-        angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
-      });
-    }
-    hapticPulse();
-    autoAdvanceSlot();
-  }
-
-  function loadUpload(file){
-    if(!file) return;
-    var reader = new FileReader();
-    reader.onload = function(e){
-      var angleVal = qs('#foot-angle') ? qs('#foot-angle').value : 'top';
+    applyAngleDetection(dataUrl, function(detected){
+      var angleVal = detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
       var bothTop = qs('#foot-both-top');
       if(angleVal === 'top' && bothTop && bothTop.checked){
-        setPreviewForTopBoth(e.target.result);
-        updateCaptureStatus('foot.uploadDoneBoth');
+        setPreviewForTopBoth(dataUrl);
+        updateCaptureStatus('foot.captureDoneBoth');
       } else {
-        setPreview(slotKey(), e.target.result);
-        updateCaptureStatus('foot.uploadDone', {
+        setPreview(slotKey(), dataUrl);
+        updateCaptureStatus('foot.captureDone', {
           side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
           angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
         });
       }
       hapticPulse();
       autoAdvanceSlot();
+    });
+  }
+
+  function loadUpload(file){
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var dataUrl = e.target.result;
+      applyAngleDetection(dataUrl, function(detected){
+        var angleVal = detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
+        var bothTop = qs('#foot-both-top');
+        if(angleVal === 'top' && bothTop && bothTop.checked){
+          setPreviewForTopBoth(dataUrl);
+          updateCaptureStatus('foot.uploadDoneBoth');
+        } else {
+          setPreview(slotKey(), dataUrl);
+          updateCaptureStatus('foot.uploadDone', {
+            side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
+            angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
+          });
+        }
+        hapticPulse();
+        autoAdvanceSlot();
+      });
     };
     reader.readAsDataURL(file);
   }
