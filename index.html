@@ -38,6 +38,7 @@
         <div class="tabs">
             <div class="tab-link active" data-tab="breathing" data-i18n="tabs.breathing">Breathing Timer</div>
             <div class="tab-link" data-tab="co2" data-i18n="tabs.co2">CO2 Table Timer</div>
+            <div class="tab-link" data-tab="foot" data-i18n="tabs.foot">Foot Analysis</div>
         </div>
 
         <div id="breathing" class="tab-content active">
@@ -179,6 +180,221 @@
                 </div>
             </div>
         </div>
+
+        <div id="foot" class="tab-content">
+            <section class="foot-app" aria-label="Foot analysis app" data-i18n="foot.appAria" data-i18n-attr="aria-label">
+                <header class="foot-hero">
+                    <div>
+                        <div class="foot-kicker" data-i18n="foot.kicker">발 사진 기반 암벽화 추천</div>
+                        <h2 class="foot-title" data-i18n="foot.title">발분석</h2>
+                        <p class="foot-subtitle" data-i18n="foot.subtitle">촬영 → 분석 → 추천까지 3단계로 진행됩니다. 기준 객체(A4/카드)를 함께 촬영해 주세요.</p>
+                    </div>
+                    <div class="foot-badges">
+                        <span class="foot-badge" data-i18n="foot.badgeLocal">로컬 우선 처리</span>
+                        <span class="foot-badge" data-i18n="foot.badgePrivacy">민감정보 보호</span>
+                        <span class="foot-badge" data-i18n="foot.badgeMvp">MVP 데모</span>
+                    </div>
+                </header>
+
+                <div class="foot-steps" role="list">
+                    <div class="foot-step is-active" data-step="1" role="listitem">
+                        <div class="foot-step-num">1</div>
+                        <div class="foot-step-text" data-i18n="foot.step1">촬영</div>
+                    </div>
+                    <div class="foot-step" data-step="2" role="listitem">
+                        <div class="foot-step-num">2</div>
+                        <div class="foot-step-text" data-i18n="foot.step2">분석</div>
+                    </div>
+                    <div class="foot-step" data-step="3" role="listitem">
+                        <div class="foot-step-num">3</div>
+                        <div class="foot-step-text" data-i18n="foot.step3">추천</div>
+                    </div>
+                </div>
+
+                <div class="foot-grid">
+                    <section class="foot-card" id="foot-capture">
+                        <div class="foot-card-header">
+                            <h3 data-i18n="foot.captureTitle">1. 촬영 및 업로드</h3>
+                            <div class="foot-controls">
+                                <button class="foot-btn" id="foot-start-camera" type="button" data-i18n="foot.startCamera">카메라 시작</button>
+                                <button class="foot-btn ghost" id="foot-stop-camera" type="button" data-i18n="foot.stopCamera">카메라 종료</button>
+                            </div>
+                        </div>
+                        <div class="foot-camera">
+                            <video id="foot-video" playsinline autoplay muted></video>
+                            <div class="foot-guide">
+                                <div class="foot-guide-frame"></div>
+                                <div class="foot-guide-text" data-i18n="foot.guideText">발과 기준 객체가 프레임 안에 오도록 맞춰주세요.</div>
+                            </div>
+                        </div>
+                        <div class="foot-capture-row">
+                            <label class="foot-field">
+                                <span data-i18n="foot.footSide">촬영 각도</span>
+                                <select id="foot-angle">
+                                    <option value="top" data-i18n="foot.angleTop">위에서</option>
+                                    <option value="side" data-i18n="foot.angleSide">옆면</option>
+                                </select>
+                            </label>
+                            <label class="foot-field">
+                                <span data-i18n="foot.footSelect">발 선택</span>
+                                <select id="foot-side">
+                                    <option value="left" data-i18n="foot.left">왼발</option>
+                                    <option value="right" data-i18n="foot.right">오른발</option>
+                                </select>
+                            </label>
+                            <button class="foot-btn primary" id="foot-capture-btn" type="button" data-i18n="foot.capture">촬영</button>
+                            <label class="foot-upload">
+                                <input id="foot-upload" type="file" accept="image/*" capture="environment">
+                                <span data-i18n="foot.upload">업로드</span>
+                            </label>
+                        </div>
+                        <ul class="foot-tips">
+                            <li data-i18n="foot.tip1">자연광에서 촬영하고 그림자를 최소화하세요.</li>
+                            <li data-i18n="foot.tip2">A4 용지나 신용카드가 발 옆에 완전히 보이게 배치하세요.</li>
+                            <li data-i18n="foot.tip3">발끝과 뒤꿈치가 잘린 경우 재촬영하세요.</li>
+                        </ul>
+                        <div class="foot-preview-grid" id="foot-preview-grid">
+                            <div class="foot-preview-slot" data-slot="left-top">
+                                <span data-i18n="foot.previewLeftTop">왼발 위</span>
+                            </div>
+                            <div class="foot-preview-slot" data-slot="left-side">
+                                <span data-i18n="foot.previewLeftSide">왼발 옆</span>
+                            </div>
+                            <div class="foot-preview-slot" data-slot="right-top">
+                                <span data-i18n="foot.previewRightTop">오른발 위</span>
+                            </div>
+                            <div class="foot-preview-slot" data-slot="right-side">
+                                <span data-i18n="foot.previewRightSide">오른발 옆</span>
+                            </div>
+                        </div>
+                        <div class="foot-measure">
+                            <div class="foot-measure-header">
+                                <h4 data-i18n="foot.measureTitle">측정 워크벤치</h4>
+                                <div class="foot-measure-status" id="foot-measure-status" data-i18n="foot.measureIdle">프리뷰를 선택하세요.</div>
+                            </div>
+                            <div class="foot-measure-body">
+                                <canvas id="foot-measure-canvas" width="640" height="360"></canvas>
+                                <div class="foot-measure-actions">
+                                    <button class="foot-btn ghost" id="foot-measure-ref" type="button" data-i18n="foot.measureRef">기준 객체 2점 지정</button>
+                                    <button class="foot-btn ghost" id="foot-measure-foot" type="button" data-i18n="foot.measureFoot">발 길이 2점 지정</button>
+                                    <button class="foot-btn ghost" id="foot-measure-reset" type="button" data-i18n="foot.measureReset">측정 초기화</button>
+                                </div>
+                                <p class="foot-measure-note" data-i18n="foot.measureNote">선택한 이미지 위에서 두 점을 클릭해 픽셀 길이를 측정합니다.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="foot-card" id="foot-analysis">
+                        <div class="foot-card-header">
+                            <h3 data-i18n="foot.analysisTitle">2. 측정 및 분석</h3>
+                            <div class="foot-progress" id="foot-progress">0%</div>
+                        </div>
+                        <div class="foot-form">
+                            <label class="foot-field">
+                                <span data-i18n="foot.scaleObject">기준 객체</span>
+                                <select id="foot-scale">
+                                    <option value="a4" data-i18n="foot.scaleA4">A4 용지 (210mm x 297mm)</option>
+                                    <option value="card" data-i18n="foot.scaleCard">신용카드 (85.6mm x 53.98mm)</option>
+                                    <option value="none" data-i18n="foot.scaleNone">없음 (간이 추정)</option>
+                                </select>
+                            </label>
+                            <label class="foot-field">
+                                <span data-i18n="foot.refLength">기준 길이 (mm)</span>
+                                <input id="foot-ref-length" type="number" min="50" max="400" placeholder="예: 297">
+                            </label>
+                            <label class="foot-field">
+                                <span data-i18n="foot.userLength">직접 입력 길이 (mm)</span>
+                                <input id="foot-length-input" type="number" min="200" max="320" placeholder="예: 255">
+                            </label>
+                            <label class="foot-field">
+                                <span data-i18n="foot.fitPref">핏 선호도</span>
+                                <select id="foot-fit">
+                                    <option value="comfort" data-i18n="foot.fitComfort">컴포트</option>
+                                    <option value="balanced" data-i18n="foot.fitBalanced">밸런스</option>
+                                    <option value="performance" data-i18n="foot.fitPerformance">퍼포먼스</option>
+                                </select>
+                            </label>
+                            <label class="foot-field">
+                                <span data-i18n="foot.level">레벨</span>
+                                <select id="foot-level">
+                                    <option value="beginner" data-i18n="foot.levelBeginner">초보자</option>
+                                    <option value="intermediate" data-i18n="foot.levelIntermediate">중급자</option>
+                                    <option value="advanced" data-i18n="foot.levelAdvanced">상급자</option>
+                                </select>
+                            </label>
+                            <label class="foot-field">
+                                <span data-i18n="foot.climbType">암벽 유형</span>
+                                <select id="foot-type">
+                                    <option value="bouldering" data-i18n="foot.typeBouldering">볼더링</option>
+                                    <option value="sport" data-i18n="foot.typeSport">스포츠클라이밍</option>
+                                    <option value="multi" data-i18n="foot.typeMulti">멀티피치</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="foot-actions">
+                            <button class="foot-btn primary" id="foot-analyze-btn" type="button" data-i18n="foot.analyze">분석 시작</button>
+                            <button class="foot-btn ghost" id="foot-reset" type="button" data-i18n="foot.reset">초기화</button>
+                        </div>
+                        <div class="foot-results" id="foot-results">
+                            <div class="foot-result">
+                                <span data-i18n="foot.resultLength">발 길이</span>
+                                <strong id="foot-result-length">-</strong>
+                            </div>
+                            <div class="foot-result">
+                                <span data-i18n="foot.resultWidth">발 너비</span>
+                                <strong id="foot-result-width">-</strong>
+                            </div>
+                            <div class="foot-result">
+                                <span data-i18n="foot.resultInstep">발등 높이</span>
+                                <strong id="foot-result-instep">-</strong>
+                            </div>
+                            <div class="foot-result">
+                                <span data-i18n="foot.resultArch">아치 유형</span>
+                                <strong id="foot-result-arch">-</strong>
+                            </div>
+                            <div class="foot-result">
+                                <span data-i18n="foot.resultToe">발가락 형태</span>
+                                <strong id="foot-result-toe">-</strong>
+                            </div>
+                            <div class="foot-result">
+                                <span data-i18n="foot.resultBall">발볼 너비</span>
+                                <strong id="foot-result-ball">-</strong>
+                            </div>
+                        </div>
+                        <div class="foot-calibration" id="foot-calibration">
+                            <div><span data-i18n="foot.calRefPx">기준 픽셀</span>: <strong id="foot-cal-ref">-</strong></div>
+                            <div><span data-i18n="foot.calFootPx">발 픽셀</span>: <strong id="foot-cal-foot">-</strong></div>
+                            <div><span data-i18n="foot.calScale">스케일</span>: <strong id="foot-cal-scale">-</strong></div>
+                        </div>
+                        <div class="foot-note" id="foot-accuracy-note" data-i18n="foot.accuracyNote">정확도: 기준 객체가 있을수록 향상됩니다. 결과는 참고용입니다.</div>
+                        <div class="foot-note foot-privacy-note" data-i18n="foot.privacyNote">발 사진은 서버에 저장되지 않으며, 브라우저에서만 처리됩니다.</div>
+                    </section>
+                </div>
+
+                <section class="foot-card foot-reco" id="foot-recommendations">
+                    <div class="foot-card-header">
+                        <h3 data-i18n="foot.recoTitle">3. 암벽화 추천</h3>
+                        <div class="foot-actions">
+                            <button class="foot-btn ghost" id="foot-save" type="button" data-i18n="foot.save">결과 저장</button>
+                            <button class="foot-btn ghost" id="foot-share" type="button" data-i18n="foot.share">요약 복사</button>
+                        </div>
+                    </div>
+                    <div class="foot-reco-grid" id="foot-reco-grid">
+                        <div class="foot-reco-empty" data-i18n="foot.recoEmpty">분석 후 추천이 표시됩니다.</div>
+                    </div>
+                </section>
+
+                <section class="foot-card foot-history" id="foot-history">
+                    <div class="foot-card-header">
+                        <h3 data-i18n="foot.historyTitle">측정 이력</h3>
+                        <button class="foot-btn ghost" id="foot-clear-history" type="button" data-i18n="foot.clearHistory">이력 삭제</button>
+                    </div>
+                    <div class="foot-history-list" id="foot-history-list">
+                        <div class="foot-history-empty" data-i18n="foot.historyEmpty">저장된 이력이 없습니다.</div>
+                    </div>
+                </section>
+            </section>
+        </div>
     </main>
 
     <section id="blog-posts" class="container">
@@ -246,6 +462,16 @@
             </details>
             <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
         </article>
+        <article class="blog-post" data-tab="foot">
+            <h3 data-i18n="blog.post3.title">Foot Photo Analysis Guide</h3>
+            <p data-i18n="blog.post3.p1">Foot analysis improves climbing shoe comfort and performance. Use a bright, even light source and include a reference object like an A4 sheet or a credit card to improve scale accuracy.</p>
+            <p data-i18n="blog.post3.p2">Capture both top and side views for each foot. This helps estimate length, width, instep height, arch type, and toe shape so recommendations match your foot volume and intended climbing style.</p>
+            <details class="guide-details">
+                <summary data-i18n="blog.post3.readMoreTitle">Read more</summary>
+                <div class="guide-details-body" data-i18n="blog.post3.readMoreHtml" data-i18n-html="blog.post3.readMoreHtml"></div>
+            </details>
+            <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
+        </article>
     </section>
 
     <section id="subscribe" class="container">
@@ -266,8 +492,9 @@
         <p data-i18n="footer.rights">&copy; 2026 Timer.app. All rights reserved.</p>
     </footer>
 
-    <script src="i18n.js?v=20260209-2"></script>
+    <script src="i18n.js?v=20260211-1"></script>
     <script src="main.js?v=20260209-1"></script>
+    <script src="foot-analysis.js?v=20260211-1"></script>
     <script src="stopwatch.js?v=20260208-3"></script>
     <audio id="inhale-sound" src="assets/sounds/inhale.mp3" preload="auto"></audio>
     <audio id="exhale-sound" src="assets/sounds/exhale.mp3" preload="auto"></audio>
@@ -299,11 +526,14 @@
                     });
 
                     updateGuide(target);
+                    document.dispatchEvent(new CustomEvent('app:tab', { detail: { tab: target } }));
                 });
             });
 
             const activeTab = document.querySelector('.tab-link.active');
-            updateGuide(activeTab ? activeTab.getAttribute('data-tab') : 'breathing');
+            const initialTab = activeTab ? activeTab.getAttribute('data-tab') : 'breathing';
+            updateGuide(initialTab);
+            document.dispatchEvent(new CustomEvent('app:tab', { detail: { tab: initialTab } }));
         });
     </script>
     <script>
