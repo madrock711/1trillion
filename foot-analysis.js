@@ -248,7 +248,7 @@ function setPreviewForTopBoth(dataUrl){
       canvas.height = img.width;
       var ctx = canvas.getContext('2d');
       ctx.translate(canvas.width / 2, canvas.height / 2);
-      ctx.rotate(Math.PI / 2);
+      ctx.rotate(-Math.PI / 2);
       ctx.drawImage(img, -img.width / 2, -img.height / 2);
       cb(canvas.toDataURL('image/jpeg', 0.9));
     };
@@ -297,6 +297,68 @@ function fileToDataUrl(file, cb){
     });
   }
 
+  function detectSideFoot(dataUrl){
+    return new Promise(function(resolve){
+      var img = new Image();
+      img.onload = function(){
+        var size = 160;
+        var canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, size, size);
+        var data = ctx.getImageData(0, 0, size, size).data;
+        var sum = 0;
+        var count = size * size;
+        for(var i=0;i<data.length;i+=4){
+          sum += (data[i] + data[i+1] + data[i+2]) / 3;
+        }
+        var mean = sum / count;
+        var threshold = 18;
+        var minX = size, minY = size, maxX = 0, maxY = 0;
+        for(var y=0;y<size;y++){
+          for(var x=0;x<size;x++){
+            var idx = (y * size + x) * 4;
+            var g = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+            if(Math.abs(g - mean) > threshold){
+              if(x < minX) minX = x;
+              if(y < minY) minY = y;
+              if(x > maxX) maxX = x;
+              if(y > maxY) maxY = y;
+            }
+          }
+        }
+        if(maxX <= minX || maxY <= minY){
+          resolve(null);
+          return;
+        }
+        var topLimit = minY + Math.floor((maxY - minY) * 0.45);
+        var midX = (minX + maxX) / 2;
+        var leftCount = 0;
+        var rightCount = 0;
+        for(var y=minY;y<=topLimit;y++){
+          for(var x=minX;x<=maxX;x++){
+            var idx2 = (y * size + x) * 4;
+            var g2 = (data[idx2] + data[idx2+1] + data[idx2+2]) / 3;
+            if(Math.abs(g2 - mean) > threshold){
+              if(x < midX) leftCount++;
+              else rightCount++;
+            }
+          }
+        }
+        if(leftCount === rightCount){
+          resolve(null);
+          return;
+        }
+        var toeSide = leftCount > rightCount ? 'left' : 'right';
+        var footSide = toeSide === 'left' ? 'right' : 'left';
+        resolve(footSide);
+      };
+      img.onerror = function(){ resolve(null); };
+      img.src = dataUrl;
+    });
+  }
+
   function nextEmptySlot(keys){
     for(var i=0;i<keys.length;i++){
       if(!state.captures[keys[i]]) return keys[i];
@@ -318,7 +380,8 @@ function fileToDataUrl(file, cb){
       return { mode: 'top', slot: topSlot };
     }
     if(angleVal === 'side'){
-      var sideSlot = nextEmptySlot(['left-side', 'right-side']) || slotKey();
+      var preferred = meta && meta.footSide ? (meta.footSide === 'right' ? 'right-side' : 'left-side') : null;
+      var sideSlot = preferred && !state.captures[preferred] ? preferred : nextEmptySlot(['left-side', 'right-side']) || slotKey();
       setPreview(sideSlot, dataUrl);
       return { mode: 'side', slot: sideSlot };
     }
@@ -600,6 +663,26 @@ function detectAngleWithPose(dataUrl){
       applyAngleDetection(dataUrl, function(detected){
         detectAngleOnly(dataUrl).then(function(info){
           var angleVal = (info && info.angle) || detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
+          if(angleVal === 'side'){
+            detectSideFoot(dataUrl).then(function(sideFoot){
+              if(info) info.footSide = sideFoot;
+              else info = { footSide: sideFoot };
+              rotateForAngle(angleVal, dataUrl, function(rotated){
+                var result = setPreviewByAngle(angleVal, rotated, info);
+                if(result.mode === 'both-top'){
+                  updateCaptureStatus('foot.uploadDoneBoth');
+                } else {
+                  updateCaptureStatus('foot.uploadDone', {
+                    side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
+                    angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
+                  });
+                }
+                hapticPulse();
+                autoAdvanceSlot();
+              });
+            });
+            return;
+          }
           rotateForAngle(angleVal, dataUrl, function(rotated){
             var result = setPreviewByAngle(angleVal, rotated, info);
             if(result.mode === 'both-top'){
@@ -655,7 +738,15 @@ function detectAngleWithPose(dataUrl){
           if(!dataUrl) return resolve(null);
           detectAngleOnly(dataUrl, true).then(function(info){
             var angleVal = (info && info.angle) || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
-            resolve({ dataUrl: dataUrl, angle: angleVal, info: info || {} });
+            if(angleVal === 'side'){
+              detectSideFoot(dataUrl).then(function(sideFoot){
+                if(info) info.footSide = sideFoot;
+                else info = { footSide: sideFoot };
+                resolve({ dataUrl: dataUrl, angle: angleVal, info: info || {} });
+              });
+            } else {
+              resolve({ dataUrl: dataUrl, angle: angleVal, info: info || {} });
+            }
           });
         });
       });
