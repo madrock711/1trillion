@@ -348,15 +348,134 @@ function setPreviewForTopBoth(dataUrl){
         var upperCx = upperX / upperN;
         var lowerCx = lowerX / lowerN;
         var delta = upperCx - lowerCx;
-        if(Math.abs(delta) < 2){
+        if(Math.abs(delta) >= 2){
+          // Toe mass shifts opposite to ankle direction in these side-shot captures.
+          resolve(delta > 0 ? 'left' : 'right');
+          return;
+        }
+        // Fallback: compare top-region mass on left/right halves.
+        var topLimit = minY + Math.floor(h * 0.45);
+        var midX = (minX + maxX) / 2;
+        var leftCount = 0;
+        var rightCount = 0;
+        for(var yy=minY;yy<=topLimit;yy++){
+          for(var xx=minX;xx<=maxX;xx++){
+            var idx3 = (yy * size + xx) * 4;
+            var g3 = (data[idx3] + data[idx3+1] + data[idx3+2]) / 3;
+            if(Math.abs(g3 - mean) > threshold){
+              if(xx < midX) leftCount++;
+              else rightCount++;
+            }
+          }
+        }
+        if(leftCount === rightCount){
           resolve(null);
           return;
         }
-        // Toe mass shifts opposite to ankle direction in these side-shot captures.
-        resolve(delta > 0 ? 'left' : 'right');
+        var toeSide = leftCount > rightCount ? 'left' : 'right';
+        var footSide = toeSide === 'left' ? 'right' : 'left';
+        resolve(footSide);
       };
       img.onerror = function(){ resolve(null); };
       img.src = dataUrl;
+    });
+  }
+
+  function detectBothFeetTop(dataUrl){
+    return new Promise(function(resolve){
+      var img = new Image();
+      img.onload = function(){
+        var size = 180;
+        var canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, size, size);
+        var data = ctx.getImageData(0, 0, size, size).data;
+        var count = size * size;
+        var sum = 0;
+        for(var i=0;i<data.length;i+=4){
+          sum += (data[i] + data[i+1] + data[i+2]) / 3;
+        }
+        var mean = sum / count;
+        var threshold = 16;
+        var minX = size, minY = size, maxX = 0, maxY = 0;
+        for(var y=0;y<size;y++){
+          for(var x=0;x<size;x++){
+            var idx = (y * size + x) * 4;
+            var g = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+            if(Math.abs(g - mean) > threshold){
+              if(x < minX) minX = x;
+              if(y < minY) minY = y;
+              if(x > maxX) maxX = x;
+              if(y > maxY) maxY = y;
+            }
+          }
+        }
+        if(maxX <= minX || maxY <= minY){
+          resolve(false);
+          return;
+        }
+        var h = Math.max(1, maxY - minY);
+        var yStart = minY + Math.floor(h * 0.30);
+        var xStart = minX;
+        var xEnd = maxX;
+        var w = Math.max(1, xEnd - xStart + 1);
+        var leftPeak = 0, rightPeak = 0, centerPeak = 0;
+        for(var xx=xStart;xx<=xEnd;xx++){
+          var col = 0;
+          for(var yy=yStart;yy<=maxY;yy++){
+            var idx2 = (yy * size + xx) * 4;
+            var g2 = (data[idx2] + data[idx2+1] + data[idx2+2]) / 3;
+            if(Math.abs(g2 - mean) > threshold) col++;
+          }
+          var rel = (xx - xStart) / w;
+          if(rel < 0.35){
+            if(col > leftPeak) leftPeak = col;
+          } else if(rel > 0.65){
+            if(col > rightPeak) rightPeak = col;
+          } else {
+            if(col > centerPeak) centerPeak = col;
+          }
+        }
+        var minPeak = Math.min(leftPeak, rightPeak);
+        var strongSides = leftPeak > 12 && rightPeak > 12;
+        var centerGap = centerPeak < minPeak * 0.72;
+        resolve(strongSides && centerGap);
+      };
+      img.onerror = function(){ resolve(false); };
+      img.src = dataUrl;
+    });
+  }
+
+  function resolveAutoPlacement(dataUrl, detected, info){
+    return new Promise(function(resolve){
+      var meta = info || {};
+      var angleVal = normalizeAngleByMeta((meta.angle || detected || 'top'), meta);
+      if(meta.bothFeet){
+        resolve({ angle: 'top', meta: meta });
+        return;
+      }
+      detectBothFeetTop(dataUrl).then(function(isBothTop){
+        if(isBothTop){
+          meta.bothFeet = true;
+          meta.footSide = null;
+          resolve({ angle: 'top', meta: meta });
+          return;
+        }
+        detectSideFoot(dataUrl).then(function(sideFoot){
+          if(sideFoot){
+            meta.footSide = sideFoot;
+            resolve({ angle: 'side', meta: meta });
+            return;
+          }
+          if(angleVal === 'side'){
+            resolve({ angle: 'side', meta: meta });
+            return;
+          }
+          resolve({ angle: 'top', meta: meta });
+        });
+      });
     });
   }
 
@@ -650,20 +769,22 @@ function detectAngleWithPose(dataUrl){
     var dataUrl = canvas.toDataURL('image/jpeg', 0.9);
     applyAngleDetection(dataUrl, function(detected){
       detectAngleOnly(dataUrl).then(function(info){
-        var meta = info || {};
-        var angleVal = normalizeAngleByMeta((meta.angle || detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top')), meta);
-        rotateForAngle(angleVal, dataUrl, meta, function(rotated){
-          var result = setPreviewByAngle(angleVal, rotated, meta);
-          if(result.mode === 'both-top'){
-            updateCaptureStatus('foot.captureDoneBoth');
-          } else {
-            updateCaptureStatus('foot.captureDone', {
-              side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
-              angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
-            });
-          }
-          hapticPulse();
-          autoAdvanceSlot();
+        resolveAutoPlacement(dataUrl, detected, info).then(function(resolved){
+          var meta = resolved.meta || {};
+          var angleVal = resolved.angle || 'top';
+          rotateForAngle(angleVal, dataUrl, meta, function(rotated){
+            var result = setPreviewByAngle(angleVal, rotated, meta);
+            if(result.mode === 'both-top'){
+              updateCaptureStatus('foot.captureDoneBoth');
+            } else {
+              updateCaptureStatus('foot.captureDone', {
+                side: t('foot.' + (meta.footSide || 'left')),
+                angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
+              });
+            }
+            hapticPulse();
+            autoAdvanceSlot();
+          });
         });
       });
     });
@@ -675,39 +796,22 @@ function detectAngleWithPose(dataUrl){
       if(!dataUrl) return;
       applyAngleDetection(dataUrl, function(detected){
         detectAngleOnly(dataUrl).then(function(info){
-          var meta = info || {};
-          var angleVal = normalizeAngleByMeta((meta.angle || detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top')), meta);
-          if(angleVal === 'side'){
-            detectSideFoot(dataUrl).then(function(sideFoot){
-              meta.footSide = sideFoot || meta.footSide || null;
-              rotateForAngle(angleVal, dataUrl, meta, function(rotated){
-                var result = setPreviewByAngle(angleVal, rotated, meta);
-                if(result.mode === 'both-top'){
-                  updateCaptureStatus('foot.uploadDoneBoth');
-                } else {
-                  updateCaptureStatus('foot.uploadDone', {
-                    side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
-                    angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
-                  });
-                }
-                hapticPulse();
-                autoAdvanceSlot();
-              });
+          resolveAutoPlacement(dataUrl, detected, info).then(function(resolved){
+            var meta = resolved.meta || {};
+            var angleVal = resolved.angle || 'top';
+            rotateForAngle(angleVal, dataUrl, meta, function(rotated){
+              var result = setPreviewByAngle(angleVal, rotated, meta);
+              if(result.mode === 'both-top'){
+                updateCaptureStatus('foot.uploadDoneBoth');
+              } else {
+                updateCaptureStatus('foot.uploadDone', {
+                  side: t('foot.' + (meta.footSide || 'left')),
+                  angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
+                });
+              }
+              hapticPulse();
+              autoAdvanceSlot();
             });
-            return;
-          }
-          rotateForAngle(angleVal, dataUrl, meta, function(rotated){
-            var result = setPreviewByAngle(angleVal, rotated, meta);
-            if(result.mode === 'both-top'){
-              updateCaptureStatus('foot.uploadDoneBoth');
-            } else {
-              updateCaptureStatus('foot.uploadDone', {
-                side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
-                angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
-              });
-            }
-            hapticPulse();
-            autoAdvanceSlot();
           });
         });
       });
@@ -725,21 +829,25 @@ function detectAngleWithPose(dataUrl){
         if(!file) return;
         fileToDataUrl(file, function(dataUrl){
           if(!dataUrl) return next();
-          var angleVal = qs('#foot-angle') ? qs('#foot-angle').value : 'top';
-          var meta = {};
-          rotateForAngle(angleVal, dataUrl, meta, function(rotated){
-            var result = setPreviewByAngle(angleVal, rotated, meta);
-            if(result.mode === 'both-top'){
-              updateCaptureStatus('foot.uploadDoneBoth');
-            } else {
-              updateCaptureStatus('foot.uploadDone', {
-                side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
-                angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
+          detectAngleOnly(dataUrl).then(function(info){
+            resolveAutoPlacement(dataUrl, null, info).then(function(resolved){
+              var angleVal = resolved.angle || 'top';
+              var meta = resolved.meta || {};
+              rotateForAngle(angleVal, dataUrl, meta, function(rotated){
+                var result = setPreviewByAngle(angleVal, rotated, meta);
+                if(result.mode === 'both-top'){
+                  updateCaptureStatus('foot.uploadDoneBoth');
+                } else {
+                  updateCaptureStatus('foot.uploadDone', {
+                    side: t('foot.' + (meta.footSide || 'left')),
+                    angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
+                  });
+                }
+                hapticPulse();
+                autoAdvanceSlot();
+                next();
               });
-            }
-            hapticPulse();
-            autoAdvanceSlot();
-            next();
+            });
           });
         });
       }
@@ -770,25 +878,8 @@ function detectAngleWithPose(dataUrl){
         fileToDataUrl(file, function(dataUrl){
           if(!dataUrl) return resolve(null);
           detectAngleOnly(dataUrl).then(function(info){
-            var meta = info || {};
-            var angleVal = normalizeAngleByMeta((meta.angle || (qs('#foot-angle') ? qs('#foot-angle').value : 'top')), meta);
-            if(meta.bothFeet){
-              resolve({ dataUrl: dataUrl, angle: angleVal, info: meta });
-              return;
-            }
-            var likelySide = angleVal === 'side' || (typeof meta.ratio === 'number' && meta.ratio > 1.05);
-            if(!likelySide){
-              resolve({ dataUrl: dataUrl, angle: angleVal, info: meta });
-              return;
-            }
-            detectSideFoot(dataUrl).then(function(sideFoot){
-              if(sideFoot) meta.footSide = sideFoot;
-              if(!meta.bothFeet && meta.footSide){
-                angleVal = 'side';
-              } else if(!meta.bothFeet && typeof meta.ratio === 'number' && meta.ratio > 1.05){
-                angleVal = 'side';
-              }
-              resolve({ dataUrl: dataUrl, angle: angleVal, info: meta });
+            resolveAutoPlacement(dataUrl, null, info).then(function(resolved){
+              resolve({ dataUrl: dataUrl, angle: resolved.angle, info: resolved.meta || {} });
             });
           });
         });
@@ -841,8 +932,8 @@ function detectAngleWithPose(dataUrl){
         placeByAngle(angle, valid[i].dataUrl, valid[i].info);
       }
       updateCaptureStatus('foot.uploadDone', {
-        side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
-        angle: t('foot.angle' + ((qs('#foot-angle') ? qs('#foot-angle').value : 'top') === 'top' ? 'Top' : 'Side'))
+        side: t('foot.left'),
+        angle: t('foot.angleTop')
       });
       hapticPulse();
       autoAdvanceSlot();
