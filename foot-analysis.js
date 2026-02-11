@@ -149,11 +149,10 @@
   }
 
   function computeSlotFromSelects(){
-    var angle = qs('#foot-angle');
-    var side = qs('#foot-side');
-    var a = angle ? angle.value : 'top';
-    var s = side ? side.value : 'left';
-    return s + '-' + a;
+    for(var i=0;i<slotOrder.length;i++){
+      if(!state.captures[slotOrder[i]]) return slotOrder[i];
+    }
+    return 'left-top';
   }
   
   function slotKey(){
@@ -230,11 +229,6 @@ function setPreviewForTopBoth(dataUrl){
     setPreviewSilent('left-top', dataUrl);
     setPreviewSilent('right-top', dataUrl);
     selectPreview('left-top');
-  }
-
-  function selectedFootSide(){
-    var sideEl = qs('#foot-side');
-    return sideEl ? sideEl.value : 'left';
   }
 
   function normalizeAngleByMeta(angleVal, meta){
@@ -507,11 +501,17 @@ function detectAngleHeuristic(dataUrl){
         var components = comp.count;
         var bothFeet = false;
         if(components >= 2 && comp.large.length >= 2){
-          var a = comp.large[0];
-          var b = comp.large[1];
+          var sorted = comp.large.slice().sort(function(a, b){ return b.area - a.area; });
+          var a = sorted[0];
+          var b = sorted[1];
           var dx = Math.abs(a.cx - b.cx);
-          var bothLow = a.cy > size * 0.3 && b.cy > size * 0.3;
-          if(dx > size * 0.18 && bothLow){
+          var bothLow = Math.min(a.cy, b.cy) > size * 0.25;
+          var minPairX = Math.min(a.minX, b.minX);
+          var maxPairX = Math.max(a.maxX, b.maxX);
+          var pairWidth = Math.max(1, maxPairX - minPairX);
+          var pairHeight = Math.max(1, Math.max(a.cy, b.cy) - Math.min(a.cy, b.cy) + Math.sqrt(Math.max(a.area, b.area)));
+          var pairWide = (pairWidth / pairHeight) > 1.05;
+          if(dx > size * 0.14 && bothLow && pairWide){
             bothFeet = true;
           }
         }
@@ -649,9 +649,6 @@ function detectAngleWithPose(dataUrl){
       detectAngleOnly(dataUrl).then(function(info){
         var meta = info || {};
         var angleVal = normalizeAngleByMeta((meta.angle || detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top')), meta);
-        if(angleVal === 'side' && !meta.footSide){
-          meta.footSide = selectedFootSide();
-        }
         rotateForAngle(angleVal, dataUrl, meta, function(rotated){
           var result = setPreviewByAngle(angleVal, rotated, meta);
           if(result.mode === 'both-top'){
@@ -679,7 +676,7 @@ function detectAngleWithPose(dataUrl){
           var angleVal = normalizeAngleByMeta((meta.angle || detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top')), meta);
           if(angleVal === 'side'){
             detectSideFoot(dataUrl).then(function(sideFoot){
-              meta.footSide = sideFoot || meta.footSide || selectedFootSide();
+              meta.footSide = sideFoot || meta.footSide || null;
               rotateForAngle(angleVal, dataUrl, meta, function(rotated){
                 var result = setPreviewByAngle(angleVal, rotated, meta);
                 if(result.mode === 'both-top'){
@@ -726,7 +723,7 @@ function detectAngleWithPose(dataUrl){
         fileToDataUrl(file, function(dataUrl){
           if(!dataUrl) return next();
           var angleVal = qs('#foot-angle') ? qs('#foot-angle').value : 'top';
-          var meta = angleVal === 'side' ? { footSide: selectedFootSide() } : {};
+          var meta = {};
           rotateForAngle(angleVal, dataUrl, meta, function(rotated){
             var result = setPreviewByAngle(angleVal, rotated, meta);
             if(result.mode === 'both-top'){
@@ -753,6 +750,7 @@ function detectAngleWithPose(dataUrl){
       if(info.bothFeet) score += 1000;
       if(typeof info.components === 'number' && info.components >= 2) score += 180;
       if(item.angle === 'top') score += 90;
+      if(item.angle === 'side') score -= 120;
       if(info.footSide) score -= 140;
       if(typeof info.imgRatio === 'number'){
         if(info.imgRatio < 1){
@@ -772,6 +770,11 @@ function detectAngleWithPose(dataUrl){
             var meta = info || {};
             var angleVal = normalizeAngleByMeta((meta.angle || (qs('#foot-angle') ? qs('#foot-angle').value : 'top')), meta);
             if(meta.bothFeet){
+              resolve({ dataUrl: dataUrl, angle: angleVal, info: meta });
+              return;
+            }
+            var likelySide = angleVal === 'side' || (typeof meta.imgRatio === 'number' && meta.imgRatio > 1.08);
+            if(!likelySide){
               resolve({ dataUrl: dataUrl, angle: angleVal, info: meta });
               return;
             }
@@ -802,7 +805,18 @@ function detectAngleWithPose(dataUrl){
             topIndex = i;
           }
         }
-        if(topIndex >= 0 && bestScore >= 90){
+        if(topIndex < 0 && valid.length){
+          topIndex = 0;
+          var bestRatio = 99;
+          for(var k=0;k<valid.length;k++){
+            var ratio = valid[k].info && typeof valid[k].info.imgRatio === 'number' ? valid[k].info.imgRatio : 99;
+            if(ratio < bestRatio){
+              bestRatio = ratio;
+              topIndex = k;
+            }
+          }
+        }
+        if(topIndex >= 0){
           setPreviewForTopBoth(valid[topIndex].dataUrl);
           used.add(topIndex);
           topFilled = true;
@@ -811,9 +825,6 @@ function detectAngleWithPose(dataUrl){
       function placeByAngle(angle, url, info){
         var meta = info || {};
         var normalizedAngle = normalizeAngleByMeta(angle, meta);
-        if(normalizedAngle === 'side' && !meta.footSide){
-          meta.footSide = selectedFootSide();
-        }
         rotateForAngle(normalizedAngle, url, meta, function(rotated){
           setPreviewByAngle(normalizedAngle, rotated, meta);
         });
