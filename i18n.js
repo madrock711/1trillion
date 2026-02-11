@@ -223,7 +223,7 @@
       'tabs.breathing': '호흡 타이머',
       'tabs.co2': 'CO2 테이블 타이머',
       'tabs.foot': '발 분석',
-      'site.intro': '호흡 훈련과 CO2 테이블 연습을 위한 집중 타이머로, 명확한 가이드와 내보내기 가능한 기록을 제공합니다.',
+      'site.intro': '연마를 위한 도구들의 모음입니다. 훈련부터 분석까지, 가장 필요한 기능들.',
       'foot.appAria': '발 분석 앱',
       'foot.kicker': '암벽화 핏 랩',
       'foot.title': '발 분석',
