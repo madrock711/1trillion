@@ -72,6 +72,11 @@
   }
 
   function updateCaptureTarget(){
+    var bothTop = qs('#foot-both-top');
+    if(bothTop && bothTop.checked && (qs('#foot-angle') ? qs('#foot-angle').value : 'top') === 'top'){
+      updateCaptureStatus('foot.captureTargetBoth', currentTargetLabel());
+      return;
+    }
     updateCaptureStatus('foot.captureTarget', currentTargetLabel());
   }
 
@@ -133,6 +138,18 @@
   function autoAdvanceSlot(){
     var current = slotKey();
     var currentIndex = slotOrder.indexOf(current);
+    var angleVal = qs('#foot-angle') ? qs('#foot-angle').value : 'top';
+    var bothTop = qs('#foot-both-top');
+    if(angleVal === 'top' && bothTop && bothTop.checked){
+      if(!state.captures['left-side']){
+        setCurrentSlot('left-side', true);
+        return;
+      }
+      if(!state.captures['right-side']){
+        setCurrentSlot('right-side', true);
+        return;
+      }
+    }
     for(var i = currentIndex + 1; i < slotOrder.length; i++){
       if(!state.captures[slotOrder[i]]){
         setCurrentSlot(slotOrder[i], true);
@@ -151,6 +168,11 @@
     img.alt = key;
     slot.appendChild(img);
     selectPreview(key);
+  }
+
+  function setPreviewForTopBoth(dataUrl){
+    setPreview('left-top', dataUrl);
+    setPreview('right-top', dataUrl);
   }
 
   function selectPreview(key){
@@ -176,11 +198,18 @@
     var ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     var dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-    setPreview(slotKey(), dataUrl);
-    updateCaptureStatus('foot.captureDone', {
-      side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
-      angle: t('foot.angle' + ((qs('#foot-angle') ? qs('#foot-angle').value : 'top') === 'top' ? 'Top' : 'Side'))
-    });
+    var angleVal = qs('#foot-angle') ? qs('#foot-angle').value : 'top';
+    var bothTop = qs('#foot-both-top');
+    if(angleVal === 'top' && bothTop && bothTop.checked){
+      setPreviewForTopBoth(dataUrl);
+      updateCaptureStatus('foot.captureDoneBoth');
+    } else {
+      setPreview(slotKey(), dataUrl);
+      updateCaptureStatus('foot.captureDone', {
+        side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
+        angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
+      });
+    }
     hapticPulse();
     autoAdvanceSlot();
   }
@@ -189,11 +218,18 @@
     if(!file) return;
     var reader = new FileReader();
     reader.onload = function(e){
-      setPreview(slotKey(), e.target.result);
-      updateCaptureStatus('foot.uploadDone', {
-        side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
-        angle: t('foot.angle' + ((qs('#foot-angle') ? qs('#foot-angle').value : 'top') === 'top' ? 'Top' : 'Side'))
-      });
+      var angleVal = qs('#foot-angle') ? qs('#foot-angle').value : 'top';
+      var bothTop = qs('#foot-both-top');
+      if(angleVal === 'top' && bothTop && bothTop.checked){
+        setPreviewForTopBoth(e.target.result);
+        updateCaptureStatus('foot.uploadDoneBoth');
+      } else {
+        setPreview(slotKey(), e.target.result);
+        updateCaptureStatus('foot.uploadDone', {
+          side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
+          angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
+        });
+      }
       hapticPulse();
       autoAdvanceSlot();
     };
@@ -230,53 +266,72 @@
     updateProgress(10);
     setStep(2);
 
-    var lengthMm = estimateLength();
-    var seed = Math.round(lengthMm) + (count * 7);
-    var widthMm = Math.round(lengthMm * 0.39);
-    var widthRatio = widthMm / lengthMm;
-    var widthType = widthRatio < 0.37 ? t('foot.widthNarrow') : (widthRatio > 0.41 ? t('foot.widthWide') : t('foot.widthNormal'));
+    function computeFootResult(sideKey, seedOffset){
+      var baseLength = estimateLength();
+      var lengthMm = Math.max(200, Math.min(320, baseLength + (seedOffset % 2 ? -1 : 1)));
+      var seed = Math.round(lengthMm) + (count * 7) + seedOffset;
+      var widthMm = Math.round(lengthMm * 0.39);
+      var widthRatio = widthMm / lengthMm;
+      var widthType = widthRatio < 0.37 ? t('foot.widthNarrow') : (widthRatio > 0.41 ? t('foot.widthWide') : t('foot.widthNormal'));
 
-    var hasSide = !!(state.captures['left-side'] || state.captures['right-side']);
-    var instep = hasSide ? pickBySeed([t('foot.instepMid'), t('foot.instepHigh')], seed + 3) : pickBySeed([t('foot.instepLow'), t('foot.instepMid')], seed + 5);
-    if(widthRatio > 0.41 && instep === t('foot.instepLow')) instep = t('foot.instepMid');
-    if(widthRatio < 0.37 && instep === t('foot.instepHigh')) instep = t('foot.instepMid');
+      var hasSide = !!state.captures[sideKey + '-side'];
+      var instep = hasSide ? pickBySeed([t('foot.instepMid'), t('foot.instepHigh')], seed + 3) : pickBySeed([t('foot.instepLow'), t('foot.instepMid')], seed + 5);
+      if(widthRatio > 0.41 && instep === t('foot.instepLow')) instep = t('foot.instepMid');
+      if(widthRatio < 0.37 && instep === t('foot.instepHigh')) instep = t('foot.instepMid');
 
-    var arch = pickBySeed([t('foot.archFlat'), t('foot.archNormal'), t('foot.archHigh')], seed + 11);
-    if(widthRatio > 0.41) arch = t('foot.archFlat');
-    if(widthRatio < 0.37) arch = t('foot.archHigh');
+      var arch = pickBySeed([t('foot.archFlat'), t('foot.archNormal'), t('foot.archHigh')], seed + 11);
+      if(widthRatio > 0.41) arch = t('foot.archFlat');
+      if(widthRatio < 0.37) arch = t('foot.archHigh');
 
-    var toe = t('foot.toeGreek');
-    if(lengthMm >= 270 && widthRatio < 0.38) toe = t('foot.toeEgypt');
-    if(widthRatio > 0.41) toe = t('foot.toeRoman');
+      var toe = t('foot.toeGreek');
+      if(lengthMm >= 270 && widthRatio < 0.38) toe = t('foot.toeEgypt');
+      if(widthRatio > 0.41) toe = t('foot.toeRoman');
 
-    var ball = widthType;
+      return {
+        lengthMm: lengthMm,
+        widthMm: widthMm,
+        widthType: widthType,
+        instep: instep,
+        arch: arch,
+        toe: toe,
+        ball: widthType
+      };
+    }
 
-    state.results = {
-      lengthMm: lengthMm,
-      widthMm: widthMm,
-      widthType: widthType,
-      instep: instep,
-      arch: arch,
-      toe: toe,
-      ball: ball
-    };
+    var left = computeFootResult('left', 1);
+    var right = computeFootResult('right', 7);
+    state.results = { left: left, right: right };
 
     setTimeout(function(){ updateProgress(55); }, 200);
     setTimeout(function(){ updateProgress(100); }, 600);
 
     setTimeout(function(){
-      var l = qs('#foot-result-length');
-      var w = qs('#foot-result-width');
-      var i = qs('#foot-result-instep');
-      var a = qs('#foot-result-arch');
-      var tEl = qs('#foot-result-toe');
-      var b = qs('#foot-result-ball');
-      if(l) l.textContent = lengthMm + ' mm';
-      if(w) w.textContent = widthMm + ' mm (' + widthType + ')';
-      if(i) i.textContent = instep;
-      if(a) a.textContent = arch;
-      if(tEl) tEl.textContent = toe;
-      if(b) b.textContent = ball;
+      var l = state.results.left;
+      var r = state.results.right;
+      var lLen = qs('#foot-result-left-length');
+      var lWidth = qs('#foot-result-left-width');
+      var lInstep = qs('#foot-result-left-instep');
+      var lArch = qs('#foot-result-left-arch');
+      var lToe = qs('#foot-result-left-toe');
+      var lBall = qs('#foot-result-left-ball');
+      var rLen = qs('#foot-result-right-length');
+      var rWidth = qs('#foot-result-right-width');
+      var rInstep = qs('#foot-result-right-instep');
+      var rArch = qs('#foot-result-right-arch');
+      var rToe = qs('#foot-result-right-toe');
+      var rBall = qs('#foot-result-right-ball');
+      if(lLen) lLen.textContent = l.lengthMm + ' mm';
+      if(lWidth) lWidth.textContent = l.widthMm + ' mm (' + l.widthType + ')';
+      if(lInstep) lInstep.textContent = l.instep;
+      if(lArch) lArch.textContent = l.arch;
+      if(lToe) lToe.textContent = l.toe;
+      if(lBall) lBall.textContent = l.ball;
+      if(rLen) rLen.textContent = r.lengthMm + ' mm';
+      if(rWidth) rWidth.textContent = r.widthMm + ' mm (' + r.widthType + ')';
+      if(rInstep) rInstep.textContent = r.instep;
+      if(rArch) rArch.textContent = r.arch;
+      if(rToe) rToe.textContent = r.toe;
+      if(rBall) rBall.textContent = r.ball;
       buildRecommendations();
       setStep(3);
     }, 650);
@@ -296,7 +351,8 @@
 
     var level = qs('#foot-level') ? qs('#foot-level').value : 'beginner';
     var type = qs('#foot-type') ? qs('#foot-type').value : 'bouldering';
-    var widthType = state.results.widthType;
+    var widthType = state.results.left.widthType;
+    var lengthMm = Math.max(state.results.left.lengthMm, state.results.right.lengthMm);
 
     var models = [
       { brand: 'La Sportiva', model: 'Tarantula', level: 'beginner', types: ['sport', 'multi'], width: 'normal', last: 'neutral', volume: 'mid', price: '$$' },
@@ -325,19 +381,31 @@
       if(item.level === level) score += 10;
       if(item.types.indexOf(type) > -1) score += 10;
       if(item.width === targetWidth) score += 12;
-      if(state.results.instep === t('foot.instepHigh') && item.volume === 'high') score += 8;
-      if(state.results.instep === t('foot.instepLow') && item.volume === 'low') score += 8;
-      if(state.results.arch === t('foot.archHigh') && item.last === 'aggressive') score += 6;
-      if(state.results.arch === t('foot.archFlat') && item.last === 'neutral') score += 6;
-      if(state.results.instep === t('foot.instepHigh') && item.width === 'wide') score += 4;
-      if(state.results.instep === t('foot.instepLow') && item.width === 'narrow') score += 4;
+    if(state.results.left.instep === t('foot.instepHigh') || state.results.right.instep === t('foot.instepHigh')) {
+      if(item.volume === 'high') score += 8;
+    }
+    if(state.results.left.instep === t('foot.instepLow') || state.results.right.instep === t('foot.instepLow')) {
+      if(item.volume === 'low') score += 8;
+    }
+    if(state.results.left.arch === t('foot.archHigh') || state.results.right.arch === t('foot.archHigh')) {
+      if(item.last === 'aggressive') score += 6;
+    }
+    if(state.results.left.arch === t('foot.archFlat') || state.results.right.arch === t('foot.archFlat')) {
+      if(item.last === 'neutral') score += 6;
+    }
+    if(state.results.left.instep === t('foot.instepHigh') || state.results.right.instep === t('foot.instepHigh')) {
+      if(item.width === 'wide') score += 4;
+    }
+    if(state.results.left.instep === t('foot.instepLow') || state.results.right.instep === t('foot.instepLow')) {
+      if(item.width === 'narrow') score += 4;
+    }
       score = Math.min(95, score);
       return { item: item, score: score };
     }).sort(function(a,b){ return b.score - a.score; });
 
     grid.innerHTML = '';
 
-    var advice = sizeAdvice(state.results.lengthMm);
+    var advice = sizeAdvice(lengthMm);
     scored.slice(0, 6).forEach(function(entry){
       var card = document.createElement('div');
       card.className = 'foot-reco-card';
@@ -375,9 +443,11 @@
       slot.classList.remove('is-active');
     });
     var resIds = ['length','width','instep','arch','toe','ball'];
-    resIds.forEach(function(id){
-      var el = qs('#foot-result-' + id);
-      if(el) el.textContent = '-';
+    ['left','right'].forEach(function(side){
+      resIds.forEach(function(id){
+        var el = qs('#foot-result-' + side + '-' + id);
+        if(el) el.textContent = '-';
+      });
     });
     var grid = qs('#foot-reco-grid');
     if(grid) grid.innerHTML = '<div class="foot-reco-empty">' + t('foot.recoEmpty') + '</div>';
@@ -391,12 +461,13 @@
   function saveHistory(){
     if(!state.results) return;
     var history = JSON.parse(localStorage.getItem('footAnalysisHistory') || '[]');
+    var maxLen = Math.max(state.results.left.lengthMm, state.results.right.lengthMm);
     var entry = {
       date: new Date().toISOString(),
-      lengthMm: state.results.lengthMm,
-      widthType: state.results.widthType,
-      arch: state.results.arch,
-      toe: state.results.toe
+      lengthMm: maxLen,
+      widthType: state.results.left.widthType + '/' + state.results.right.widthType,
+      arch: state.results.left.arch + '/' + state.results.right.arch,
+      toe: state.results.left.toe + '/' + state.results.right.toe
     };
     history.unshift(entry);
     history = history.slice(0, 8);
@@ -427,11 +498,12 @@
 
   function copySummary(){
     if(!state.results) return;
+    var maxLen = Math.max(state.results.left.lengthMm, state.results.right.lengthMm);
     var summary = t('foot.shareTemplate')
-      .replace('{length}', state.results.lengthMm)
-      .replace('{width}', state.results.widthType)
-      .replace('{arch}', state.results.arch)
-      .replace('{toe}', state.results.toe);
+      .replace('{length}', maxLen)
+      .replace('{width}', state.results.left.widthType + '/' + state.results.right.widthType)
+      .replace('{arch}', state.results.left.arch + '/' + state.results.right.arch)
+      .replace('{toe}', state.results.left.toe + '/' + state.results.right.toe);
 
     if(navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(summary).then(function(){

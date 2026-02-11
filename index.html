@@ -223,6 +223,10 @@
                                     <option value="right" data-i18n="foot.right">오른발</option>
                                 </select>
                             </label>
+                            <label class="foot-field foot-check">
+                                <input id="foot-both-top" type="checkbox" checked>
+                                <span data-i18n="foot.bothTop">위에서 양발 함께 촬영</span>
+                            </label>
                             <button class="foot-btn primary" id="foot-capture-btn" type="button" data-i18n="foot.capture">촬영</button>
                             <label class="foot-upload">
                                 <input id="foot-upload" type="file" accept="image/*" capture="environment">
@@ -299,29 +303,59 @@
                             <button class="foot-btn ghost" id="foot-reset" type="button" data-i18n="foot.reset">초기화</button>
                         </div>
                         <div class="foot-results" id="foot-results">
-                            <div class="foot-result">
-                                <span data-i18n="foot.resultLength">발 길이</span>
-                                <strong id="foot-result-length">-</strong>
+                            <div class="foot-result-group">
+                                <div class="foot-result-title" data-i18n="foot.left">왼발</div>
+                                <div class="foot-result">
+                                    <span data-i18n="foot.resultLength">발 길이</span>
+                                    <strong id="foot-result-left-length">-</strong>
+                                </div>
+                                <div class="foot-result">
+                                    <span data-i18n="foot.resultWidth">발 너비</span>
+                                    <strong id="foot-result-left-width">-</strong>
+                                </div>
+                                <div class="foot-result">
+                                    <span data-i18n="foot.resultInstep">발등 높이</span>
+                                    <strong id="foot-result-left-instep">-</strong>
+                                </div>
+                                <div class="foot-result">
+                                    <span data-i18n="foot.resultArch">아치 유형</span>
+                                    <strong id="foot-result-left-arch">-</strong>
+                                </div>
+                                <div class="foot-result">
+                                    <span data-i18n="foot.resultToe">발가락 형태</span>
+                                    <strong id="foot-result-left-toe">-</strong>
+                                </div>
+                                <div class="foot-result">
+                                    <span data-i18n="foot.resultBall">발볼 너비</span>
+                                    <strong id="foot-result-left-ball">-</strong>
+                                </div>
                             </div>
-                            <div class="foot-result">
-                                <span data-i18n="foot.resultWidth">발 너비</span>
-                                <strong id="foot-result-width">-</strong>
-                            </div>
-                            <div class="foot-result">
-                                <span data-i18n="foot.resultInstep">발등 높이</span>
-                                <strong id="foot-result-instep">-</strong>
-                            </div>
-                            <div class="foot-result">
-                                <span data-i18n="foot.resultArch">아치 유형</span>
-                                <strong id="foot-result-arch">-</strong>
-                            </div>
-                            <div class="foot-result">
-                                <span data-i18n="foot.resultToe">발가락 형태</span>
-                                <strong id="foot-result-toe">-</strong>
-                            </div>
-                            <div class="foot-result">
-                                <span data-i18n="foot.resultBall">발볼 너비</span>
-                                <strong id="foot-result-ball">-</strong>
+                            <div class="foot-result-group">
+                                <div class="foot-result-title" data-i18n="foot.right">오른발</div>
+                                <div class="foot-result">
+                                    <span data-i18n="foot.resultLength">발 길이</span>
+                                    <strong id="foot-result-right-length">-</strong>
+                                </div>
+                                <div class="foot-result">
+                                    <span data-i18n="foot.resultWidth">발 너비</span>
+                                    <strong id="foot-result-right-width">-</strong>
+                                </div>
+                                <div class="foot-result">
+                                    <span data-i18n="foot.resultInstep">발등 높이</span>
+                                    <strong id="foot-result-right-instep">-</strong>
+                                </div>
+                                <div class="foot-result">
+                                    <span data-i18n="foot.resultArch">아치 유형</span>
+                                    <strong id="foot-result-right-arch">-</strong>
+                                </div>
+                                <div class="foot-result">
+                                    <span data-i18n="foot.resultToe">발가락 형태</span>
+                                    <strong id="foot-result-right-toe">-</strong>
+                                </div>
+                                <div class="foot-result">
+                                    <span data-i18n="foot.resultBall">발볼 너비</span>
+                                    <strong id="foot-result-right-ball">-</strong>
+                                </div>
                             </div>
                         </div>
                         <div class="foot-note" id="foot-accuracy-note" data-i18n="foot.accuracyNote">정확도: 기준 객체가 있을수록 향상됩니다. 결과는 참고용입니다.</div>
