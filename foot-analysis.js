@@ -50,9 +50,30 @@
     if(video){ video.srcObject = null; }
   }
 
+  function updateCaptureStatus(messageKey, replacements, isError){
+    var status = qs('#foot-capture-status');
+    if(!status) return;
+    var msg = t(messageKey);
+    if(replacements){
+      Object.keys(replacements).forEach(function(key){
+        msg = msg.replace('{' + key + '}', replacements[key]);
+      });
+    }
+    status.textContent = msg;
+    if(isError){ status.classList.add('is-error'); }
+    else { status.classList.remove('is-error'); }
+  }
+
+  function hapticPulse(){
+    if(navigator && typeof navigator.vibrate === 'function'){
+      navigator.vibrate(20);
+    }
+  }
+
   function startCamera(){
     var video = qs('#foot-video');
     if(!video || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      updateCaptureStatus('foot.cameraUnsupported', null, true);
       alert(t('foot.cameraUnsupported'));
       return;
     }
@@ -61,8 +82,10 @@
         state.stream = stream;
         video.srcObject = stream;
         video.play().catch(function(){ /* ignore */ });
+        updateCaptureStatus('foot.cameraReady');
       })
       .catch(function(){
+        updateCaptureStatus('foot.cameraDenied', null, true);
         alert(t('foot.cameraDenied'));
       });
   }
@@ -222,6 +245,7 @@
   function captureFrame(){
     var video = qs('#foot-video');
     if(!video || !state.stream){
+      updateCaptureStatus('foot.captureNoCamera', null, true);
       alert(t('foot.captureNoCamera'));
       return;
     }
@@ -232,6 +256,11 @@
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     var dataUrl = canvas.toDataURL('image/jpeg', 0.9);
     setPreview(slotKey(), dataUrl);
+    updateCaptureStatus('foot.captureDone', {
+      side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
+      angle: t('foot.angle' + ((qs('#foot-angle') ? qs('#foot-angle').value : 'top') === 'top' ? 'Top' : 'Side'))
+    });
+    hapticPulse();
   }
 
   function loadUpload(file){
@@ -239,6 +268,11 @@
     var reader = new FileReader();
     reader.onload = function(e){
       setPreview(slotKey(), e.target.result);
+      updateCaptureStatus('foot.uploadDone', {
+        side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
+        angle: t('foot.angle' + ((qs('#foot-angle') ? qs('#foot-angle').value : 'top') === 'top' ? 'Top' : 'Side'))
+      });
+      hapticPulse();
     };
     reader.readAsDataURL(file);
   }
@@ -481,6 +515,7 @@
     renderCanvas();
     updateMeasureStatus();
     updateCalibrationStatus();
+    updateCaptureStatus('foot.captureIdle');
   }
 
   function saveHistory(){
@@ -601,6 +636,7 @@
     updateProgress(0);
     updateMeasureStatus();
     updateCalibrationStatus();
+    updateCaptureStatus('foot.captureIdle');
     document.querySelectorAll('.foot-preview-slot').forEach(function(slot){
       slot.addEventListener('click', function(){
         var key = slot.getAttribute('data-slot');
