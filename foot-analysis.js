@@ -211,48 +211,59 @@
     selectPreview('left-top');
   }
 
-  function detectAngleHeuristic(dataUrl){
+function detectAngleHeuristic(dataUrl){
     return new Promise(function(resolve){
       var img = new Image();
       img.onload = function(){
         var canvas = document.createElement('canvas');
-        var size = 96;
+        var size = 160;
         canvas.width = size;
         canvas.height = size;
         var ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, size, size);
         var data = ctx.getImageData(0, 0, size, size).data;
         var sum = 0;
+        var sumSq = 0;
         var count = size * size;
         for(var i=0;i<data.length;i+=4){
           var gray = (data[i] + data[i+1] + data[i+2]) / 3;
           sum += gray;
+          sumSq += gray * gray;
         }
         var mean = sum / count;
-        var threshold = 20;
-        var minX = size, minY = size, maxX = 0, maxY = 0;
-        var fg = 0;
-        for(var y=0;y<size;y++){
-          for(var x=0;x<size;x++){
-            var idx = (y * size + x) * 4;
-            var gray2 = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-            if(Math.abs(gray2 - mean) > threshold){
-              fg++;
-              if(x < minX) minX = x;
-              if(y < minY) minY = y;
-              if(x > maxX) maxX = x;
-              if(y > maxY) maxY = y;
+        var variance = Math.max(0, sumSq / count - mean * mean);
+        var std = Math.sqrt(variance);
+        var threshold = Math.max(10, Math.min(40, std * 0.7));
+        function findBounds(th){
+          var minX = size, minY = size, maxX = 0, maxY = 0;
+          var fg = 0;
+          for(var y=0;y<size;y++){
+            for(var x=0;x<size;x++){
+              var idx = (y * size + x) * 4;
+              var gray2 = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+              if(Math.abs(gray2 - mean) > th){
+                fg++;
+                if(x < minX) minX = x;
+                if(y < minY) minY = y;
+                if(x > maxX) maxX = x;
+                if(y > maxY) maxY = y;
+              }
             }
           }
+          if(fg < 80) return null;
+          return { minX: minX, minY: minY, maxX: maxX, maxY: maxY };
         }
-        if(fg < 120){
+        var bounds = findBounds(threshold) || findBounds(Math.max(8, threshold * 0.7));
+        if(!bounds){
           resolve(null);
           return;
         }
-        var w = Math.max(1, maxX - minX);
-        var h = Math.max(1, maxY - minY);
+        var w = Math.max(1, bounds.maxX - bounds.minX);
+        var h = Math.max(1, bounds.maxY - bounds.minY);
         var ratio = h / w;
-        resolve(ratio > 0.8 ? 'side' : 'top');
+        var imgRatio = img.height / img.width;
+        if(imgRatio > 1.15) resolve('side');
+        else resolve(ratio > 0.9 ? 'side' : 'top');
       };
       img.onerror = function(){ resolve(null); };
       img.src = dataUrl;

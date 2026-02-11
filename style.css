@@ -775,12 +775,15 @@ footer {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
+    max-width: 680px;
+    margin: 0 auto;
 }
 
 .foot-preview-slot {
     border: 1px dashed var(--border-color);
     border-radius: 12px;
     min-height: 120px;
+    aspect-ratio: 4 / 3;
     display: grid;
     place-items: center;
     color: var(--text-secondary);
