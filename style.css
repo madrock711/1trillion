@@ -145,8 +145,11 @@ main {
 
 /* --- Tabs --- */
 .tabs {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 6px;
   border-bottom: 1px solid var(--border-color);
+  padding-bottom: 6px;
   margin-bottom: 20px;
 }
 .tab-link {
@@ -154,17 +157,19 @@ main {
   cursor: pointer;
   background-color: var(--bg-light);
   border: 1px solid var(--border-color);
-  border-bottom: none;
   border-radius: 8px 8px 0 0;
-  margin-right: 5px;
   font-weight: 600;
   color: var(--text-secondary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .tab-link.active {
   background-color: var(--bg-dark);
-  border-bottom: 1px solid var(--bg-dark);
+  border-color: var(--border-color);
   color: var(--text-primary);
-  margin-bottom: -1px;
+  box-shadow: inset 0 -2px 0 var(--accent-color);
 }
 .tab-content {
   display: none;
