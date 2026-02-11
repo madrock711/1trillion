@@ -86,24 +86,6 @@
     }
   }
 
-  var angleModel = null;
-  var angleModelLoading = null;
-
-  function loadAngleModel(){
-    if(angleModel) return Promise.resolve(angleModel);
-    if(angleModelLoading) return angleModelLoading;
-    if(!window.tf || !window.tf.loadGraphModel) return Promise.resolve(null);
-    angleModelLoading = window.tf.loadGraphModel('assets/models/foot-angle/model.json')
-      .then(function(model){
-        angleModel = model;
-        return model;
-      })
-      .catch(function(){
-        return null;
-      });
-    return angleModelLoading;
-  }
-
   function startCamera(){
     var video = qs('#foot-video');
     if(!video || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
@@ -241,66 +223,23 @@
     });
   }
 
-  function detectAngleWithModel(dataUrl){
-    return new Promise(function(resolve){
-      loadAngleModel().then(function(model){
-        if(!model || !window.tf) return resolve(null);
-        var img = new Image();
-        img.onload = function(){
-          var size = 96;
-          var canvas = document.createElement('canvas');
-          canvas.width = size;
-          canvas.height = size;
-          var ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, size, size);
-          var input = window.tf.tidy(function(){
-            var tensor = window.tf.browser.fromPixels(canvas).toFloat().div(255);
-            return tensor.expandDims(0);
-          });
-          var output = model.predict(input);
-          Promise.resolve(output.data()).then(function(scores){
-            window.tf.dispose([input, output]);
-            var topScore = scores[0] || 0;
-            var sideScore = scores[1] || 0;
-            resolve(topScore >= sideScore ? 'top' : 'side');
-          }).catch(function(){
-            window.tf.dispose([input, output]);
-            resolve(null);
-          });
-        };
-        img.onerror = function(){ resolve(null); };
-        img.src = dataUrl;
-      });
-    });
-  }
-
   function applyAngleDetection(dataUrl, cb){
     var auto = qs('#foot-auto-angle');
     if(!auto || !auto.checked){
       cb(null);
       return;
     }
-    detectAngleWithModel(dataUrl).then(function(angle){
-      if(angle){
-        var angleEl = qs('#foot-angle');
-        if(angleEl) angleEl.value = angle;
-        updateCaptureTarget();
-        updateCaptureStatus(angle === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
-        cb(angle);
+    detectAngleHeuristic(dataUrl).then(function(angle){
+      if(!angle){
+        updateCaptureStatus('foot.autoAngleFailed', currentTargetLabel());
+        cb(null);
         return;
       }
-      detectAngleHeuristic(dataUrl).then(function(fallback){
-        if(!fallback){
-          updateCaptureStatus('foot.autoAngleFailed', currentTargetLabel());
-          cb(null);
-          return;
-        }
-        var angleEl2 = qs('#foot-angle');
-        if(angleEl2) angleEl2.value = fallback;
-        updateCaptureTarget();
-        updateCaptureStatus(fallback === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
-        cb(fallback);
-      });
+      var angleEl = qs('#foot-angle');
+      if(angleEl) angleEl.value = angle;
+      updateCaptureTarget();
+      updateCaptureStatus(angle === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
+      cb(angle);
     });
   }
 
