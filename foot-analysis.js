@@ -86,6 +86,35 @@
     }
   }
 
+  var poseLandmarker = null;
+  var poseLoading = null;
+
+  function loadPoseLandmarker(){
+    if(poseLandmarker) return Promise.resolve(poseLandmarker);
+    if(poseLoading) return poseLoading;
+    if(!window.vision || !window.vision.PoseLandmarker || !window.vision.FilesetResolver){
+      return Promise.resolve(null);
+    }
+    poseLoading = window.vision.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm')
+      .then(function(resolver){
+        return window.vision.PoseLandmarker.createFromOptions(resolver, {
+          baseOptions: {
+            modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task'
+          },
+          runningMode: 'IMAGE',
+          numPoses: 1
+        });
+      })
+      .then(function(model){
+        poseLandmarker = model;
+        return model;
+      })
+      .catch(function(){
+        return null;
+      });
+    return poseLoading;
+  }
+
   function startCamera(){
     var video = qs('#foot-video');
     if(!video || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
@@ -223,23 +252,73 @@
     });
   }
 
+  function detectAngleWithPose(dataUrl){
+    return new Promise(function(resolve){
+      loadPoseLandmarker().then(function(model){
+        if(!model) return resolve(null);
+        var img = new Image();
+        img.onload = function(){
+          var canvas = document.createElement('canvas');
+          var size = 256;
+          canvas.width = size;
+          canvas.height = size;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, size, size);
+          var result = model.detect(canvas);
+          if(!result || !result.landmarks || !result.landmarks.length){
+            resolve(null);
+            return;
+          }
+          var lm = result.landmarks[0] || [];
+          var ls = lm[11];
+          var rs = lm[12];
+          var lh = lm[23];
+          if(!ls || !rs || !lh){
+            resolve(null);
+            return;
+          }
+          var width = Math.abs(rs.x - ls.x);
+          var height = Math.abs(lh.y - ls.y);
+          if(height <= 0){
+            resolve(null);
+            return;
+          }
+          var ratio = width / height;
+          resolve(ratio < 0.35 ? 'side' : 'top');
+        };
+        img.onerror = function(){ resolve(null); };
+        img.src = dataUrl;
+      });
+    });
+  }
+
   function applyAngleDetection(dataUrl, cb){
     var auto = qs('#foot-auto-angle');
     if(!auto || !auto.checked){
       cb(null);
       return;
     }
-    detectAngleHeuristic(dataUrl).then(function(angle){
-      if(!angle){
-        updateCaptureStatus('foot.autoAngleFailed', currentTargetLabel());
-        cb(null);
+    detectAngleWithPose(dataUrl).then(function(angle){
+      if(angle){
+        var angleEl = qs('#foot-angle');
+        if(angleEl) angleEl.value = angle;
+        updateCaptureTarget();
+        updateCaptureStatus(angle === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
+        cb(angle);
         return;
       }
-      var angleEl = qs('#foot-angle');
-      if(angleEl) angleEl.value = angle;
-      updateCaptureTarget();
-      updateCaptureStatus(angle === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
-      cb(angle);
+      detectAngleHeuristic(dataUrl).then(function(fallback){
+        if(!fallback){
+          updateCaptureStatus('foot.autoAngleFailed', currentTargetLabel());
+          cb(null);
+          return;
+        }
+        var angleEl2 = qs('#foot-angle');
+        if(angleEl2) angleEl2.value = fallback;
+        updateCaptureTarget();
+        updateCaptureStatus(fallback === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
+        cb(fallback);
+      });
     });
   }
 
