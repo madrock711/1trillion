@@ -418,6 +418,51 @@
     return t('foot.sizeBalanced').replace('{mm}', lengthMm);
   }
 
+  function getStreetSize(){
+    var sizeEl = qs('#foot-street-size');
+    var scaleEl = qs('#foot-street-scale');
+    var sizeVal = sizeEl ? Number(sizeEl.value) : 0;
+    if(!sizeVal || isNaN(sizeVal)) return null;
+    return { value: sizeVal, scale: scaleEl ? scaleEl.value : 'eu' };
+  }
+
+  function sizeTipForBrand(brand, level, fit, climbType, street){
+    function scaleLabel(scale){
+      if(scale === 'usm') return 'US(M)';
+      if(scale === 'usw') return 'US(W)';
+      return 'EU';
+    }
+    function fmtStreet(val, scale){
+      return val + ' ' + scaleLabel(scale);
+    }
+    if(brand === 'Evolv'){
+      if(street){
+        var delta = level === 'beginner' ? 2 : (level === 'intermediate' ? 1 : 0);
+        return fmtStreet(street.value, street.scale) + ' + ' + delta;
+      }
+      return t('foot.sizeTipEvolv');
+    }
+    if(brand === 'Black Diamond'){
+      if(street && street.scale === 'eu'){
+        if(fit === 'comfort') return 'EU ' + street.value + ' → ' + (street.value - 1).toFixed(1) + ' ~ ' + (street.value - 0.5).toFixed(1);
+        if(fit === 'performance') return 'EU ' + street.value + ' → ' + (street.value - 2.5).toFixed(1) + ' ~ ' + (street.value - 2).toFixed(1);
+        return 'EU ' + street.value + ' → ' + (street.value - 2).toFixed(1) + ' ~ ' + (street.value - 1.5).toFixed(1);
+      }
+      return t('foot.sizeTipBlackDiamond');
+    }
+    if(brand === 'Scarpa'){
+      return t('foot.sizeTipScarpa');
+    }
+    if(brand === 'Tenaya'){
+      return t('foot.sizeTipTenaya');
+    }
+    if(brand === 'La Sportiva'){
+      if(climbType === 'multi') return t('foot.sizeTipLaSportivaMulti');
+      return t('foot.sizeTipLaSportivaPerf');
+    }
+    return '';
+  }
+
   function buildRecommendations(){
     var grid = qs('#foot-reco-grid');
     if(!grid || !state.results) return;
@@ -428,18 +473,14 @@
     var lengthMm = Math.max(state.results.left.lengthMm, state.results.right.lengthMm);
 
     var models = [
-      { brand: 'La Sportiva', model: 'Tarantula', level: 'beginner', types: ['sport', 'multi'], width: 'normal', last: 'neutral', volume: 'mid', price: '$$' },
-      { brand: 'Scarpa', model: 'Origin', level: 'beginner', types: ['sport', 'multi'], width: 'wide', last: 'neutral', volume: 'high', price: '$$' },
-      { brand: 'Evolv', model: 'Kronos', level: 'beginner', types: ['sport', 'multi'], width: 'normal', last: 'neutral', volume: 'mid', price: '$$' },
-      { brand: 'Black Diamond', model: 'Momentum', level: 'beginner', types: ['sport', 'multi'], width: 'normal', last: 'neutral', volume: 'mid', price: '$$' },
-      { brand: 'Tenaya', model: 'Tanta', level: 'intermediate', types: ['bouldering', 'sport'], width: 'normal', last: 'slightly downturned', volume: 'mid', price: '$$$' },
-      { brand: 'La Sportiva', model: 'Katana Lace', level: 'intermediate', types: ['sport', 'multi'], width: 'narrow', last: 'slightly downturned', volume: 'low', price: '$$$' },
-      { brand: 'Scarpa', model: 'Vapor V', level: 'intermediate', types: ['sport', 'bouldering'], width: 'normal', last: 'slightly downturned', volume: 'mid', price: '$$$' },
-      { brand: 'Five Ten', model: 'Anasazi', level: 'intermediate', types: ['sport', 'multi'], width: 'narrow', last: 'neutral', volume: 'low', price: '$$$' },
-      { brand: 'La Sportiva', model: 'Solution Comp', level: 'advanced', types: ['bouldering'], width: 'normal', last: 'aggressive', volume: 'mid', price: '$$$$' },
-      { brand: 'Scarpa', model: 'Instinct VS', level: 'advanced', types: ['bouldering', 'sport'], width: 'wide', last: 'aggressive', volume: 'high', price: '$$$$' },
-      { brand: 'Tenaya', model: 'Iati', level: 'advanced', types: ['sport', 'bouldering'], width: 'narrow', last: 'aggressive', volume: 'low', price: '$$$$' },
-      { brand: 'Evolv', model: 'Shaman', level: 'advanced', types: ['bouldering', 'sport'], width: 'wide', last: 'aggressive', volume: 'high', price: '$$$$' }
+      { brand: 'La Sportiva', model: 'Performance Series', level: 'advanced', types: ['bouldering', 'sport'], width: 'normal', price: '$$$$' },
+      { brand: 'La Sportiva', model: 'All-day Comfort', level: 'beginner', types: ['sport', 'multi'], width: 'normal', price: '$$' },
+      { brand: 'Scarpa', model: 'Performance Line', level: 'advanced', types: ['bouldering', 'sport'], width: 'wide', price: '$$$$' },
+      { brand: 'Scarpa', model: 'Comfort Line', level: 'beginner', types: ['sport', 'multi'], width: 'normal', price: '$$' },
+      { brand: 'Evolv', model: 'Training Line', level: 'beginner', types: ['sport', 'multi'], width: 'normal', price: '$$' },
+      { brand: 'Evolv', model: 'Performance Line', level: 'advanced', types: ['bouldering', 'sport'], width: 'wide', price: '$$$$' },
+      { brand: 'Black Diamond', model: 'Momentum Series', level: 'beginner', types: ['sport', 'multi'], width: 'normal', price: '$$' },
+      { brand: 'Tenaya', model: 'Precision Line', level: 'intermediate', types: ['sport', 'bouldering'], width: 'narrow', price: '$$$' }
     ];
 
     function widthMatch(){
@@ -455,18 +496,6 @@
       if(item.types.indexOf(type) > -1) score += 10;
       if(item.width === targetWidth) score += 12;
     if(state.results.left.instep === t('foot.instepHigh') || state.results.right.instep === t('foot.instepHigh')) {
-      if(item.volume === 'high') score += 8;
-    }
-    if(state.results.left.instep === t('foot.instepLow') || state.results.right.instep === t('foot.instepLow')) {
-      if(item.volume === 'low') score += 8;
-    }
-    if(state.results.left.arch === t('foot.archHigh') || state.results.right.arch === t('foot.archHigh')) {
-      if(item.last === 'aggressive') score += 6;
-    }
-    if(state.results.left.arch === t('foot.archFlat') || state.results.right.arch === t('foot.archFlat')) {
-      if(item.last === 'neutral') score += 6;
-    }
-    if(state.results.left.instep === t('foot.instepHigh') || state.results.right.instep === t('foot.instepHigh')) {
       if(item.width === 'wide') score += 4;
     }
     if(state.results.left.instep === t('foot.instepLow') || state.results.right.instep === t('foot.instepLow')) {
@@ -479,9 +508,11 @@
     grid.innerHTML = '';
 
     var advice = sizeAdvice(lengthMm);
+    var street = getStreetSize();
     scored.slice(0, 6).forEach(function(entry){
       var card = document.createElement('div');
       card.className = 'foot-reco-card';
+      var sizeTip = sizeTipForBrand(entry.item.brand, level, fit, type, street);
       card.innerHTML = '' +
         '<div class="foot-reco-top">' +
           '<div>' +
@@ -493,9 +524,8 @@
         '<div class="foot-reco-meta">' +
           '<span>' + t('foot.recoLevel') + ': ' + t('foot.level.' + entry.item.level) + '</span>' +
           '<span>' + t('foot.recoType') + ': ' + t('foot.type.' + entry.item.types[0]) + '</span>' +
-          '<span>' + t('foot.recoLast') + ': ' + entry.item.last + '</span>' +
           '<span>' + t('foot.recoWidth') + ': ' + entry.item.width + '</span>' +
-          '<span>' + t('foot.recoVolume') + ': ' + entry.item.volume + '</span>' +
+          (sizeTip ? '<span>' + t('foot.recoSize') + ': ' + sizeTip + '</span>' : '') +
         '</div>' +
         '<div class="foot-reco-footer">' +
           '<span class="foot-reco-price">' + entry.item.price + '</span>' +
