@@ -170,6 +170,8 @@
     var angleVal = qs('#foot-angle') ? qs('#foot-angle').value : 'top';
     var bothTop = qs('#foot-both-top');
     if(angleVal === 'top' && bothTop && bothTop.checked){
+      var angleEl = qs('#foot-angle');
+      if(angleEl) angleEl.value = 'side';
       if(!state.captures['left-side']){
         setCurrentSlot('left-side', true);
         return;
@@ -187,7 +189,7 @@
     }
   }
 
-  function setPreview(key, dataUrl){
+  function setPreviewSilent(key, dataUrl){
     state.captures[key] = dataUrl;
     var slot = qs('.foot-preview-slot[data-slot="' + key + '"]');
     if(!slot) return;
@@ -196,12 +198,17 @@
     img.src = dataUrl;
     img.alt = key;
     slot.appendChild(img);
+  }
+
+  function setPreview(key, dataUrl){
+    setPreviewSilent(key, dataUrl);
     selectPreview(key);
   }
 
   function setPreviewForTopBoth(dataUrl){
-    setPreview('left-top', dataUrl);
-    setPreview('right-top', dataUrl);
+    setPreviewSilent('left-top', dataUrl);
+    setPreviewSilent('right-top', dataUrl);
+    selectPreview('left-top');
   }
 
   function detectAngleHeuristic(dataUrl){
@@ -301,7 +308,9 @@
     var bothTop = qs('#foot-both-top');
     var angleEl = qs('#foot-angle');
     var angleVal = angleEl ? angleEl.value : 'top';
-    if(bothTop && bothTop.checked && angleVal === 'top'){
+    if(bothTop && bothTop.checked){
+      if(angleEl) angleEl.value = 'top';
+      updateCaptureTarget();
       cb('top');
       return;
     }
