@@ -887,7 +887,8 @@ footer {
 }
 
 .foot-result-row-toe {
-    grid-template-columns: 1fr 68px 110px 110px;
+    grid-template-columns: 1fr 100px 110px 110px;
+    min-height: 72px;
 }
 
 .foot-result-row-toe > span {
@@ -907,14 +908,14 @@ footer {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 8px;
 }
 
 .foot-toe-guide {
-    height: 18px;
+    height: 34px;
     width: auto;
-    max-width: 30px;
-    border-radius: 4px;
+    max-width: 48px;
+    border-radius: 6px;
     object-fit: contain;
     border: 1px solid var(--border-color);
     background: #111;
