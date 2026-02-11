@@ -1,7 +1,7 @@
 (function(){
   var MESSAGES = {
     en: {
-      'page.title': 'Timer App',
+      'page.title': '연마',
       'meta.description': 'Breathing and CO2 table timers with guided training and detailed records.',
       'og.title': 'Timer App',
       'og.description': 'Breathing and CO2 table timers with guided training and detailed records.',
@@ -213,7 +213,7 @@
       'footer.rights': '© 2026 Timer.app. All rights reserved.'
     },
     ko: {
-      'page.title': '타이머 앱',
+      'page.title': '연마',
       'meta.description': '호흡 및 CO2 테이블 훈련을 위한 타이머와 상세 기록을 제공합니다.',
       'og.title': '타이머 앱',
       'og.description': '호흡 및 CO2 테이블 훈련을 위한 타이머와 상세 기록을 제공합니다.',
