@@ -89,29 +89,42 @@
   var poseLandmarker = null;
   var poseLoading = null;
 
-  function loadPoseLandmarker(){
-    if(poseLandmarker) return Promise.resolve(poseLandmarker);
-    if(poseLoading) return poseLoading;
-    if(!window.vision || !window.vision.PoseLandmarker || !window.vision.FilesetResolver){
-      return Promise.resolve(null);
-    }
-    poseLoading = window.vision.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm')
-      .then(function(resolver){
-        return window.vision.PoseLandmarker.createFromOptions(resolver, {
-          baseOptions: {
-            modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task'
-          },
-          runningMode: 'IMAGE',
-          numPoses: 1
-        });
-      })
-      .then(function(model){
-        poseLandmarker = model;
-        return model;
+  function loadVisionModule(){
+    if(window._visionModule) return Promise.resolve(window._visionModule);
+    return import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.21/+esm')
+      .then(function(mod){
+        window._visionModule = mod;
+        return mod;
       })
       .catch(function(){
         return null;
       });
+  }
+
+  function loadPoseLandmarker(){
+    if(poseLandmarker) return Promise.resolve(poseLandmarker);
+    if(poseLoading) return poseLoading;
+    poseLoading = loadVisionModule().then(function(vision){
+      if(!vision || !vision.PoseLandmarker || !vision.FilesetResolver){
+        return null;
+      }
+      return vision.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.21/wasm')
+        .then(function(resolver){
+          return vision.PoseLandmarker.createFromOptions(resolver, {
+            baseOptions: {
+              modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task'
+            },
+            runningMode: 'IMAGE',
+            numPoses: 1
+          });
+        });
+    }).then(function(model){
+      if(!model) return null;
+      poseLandmarker = model;
+      return model;
+    }).catch(function(){
+      return null;
+    });
     return poseLoading;
   }
 
@@ -243,6 +256,31 @@ function setPreviewForTopBoth(dataUrl){
     img.src = dataUrl;
   }
 
+  function fileToDataUrl(file, cb){
+    if(!file){
+      cb(null);
+      return;
+    }
+    if(window.createImageBitmap){
+      createImageBitmap(file, { imageOrientation: 'from-image' }).then(function(bitmap){
+        var canvas = document.createElement('canvas');
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(bitmap, 0, 0);
+        cb(canvas.toDataURL('image/jpeg', 0.9));
+      }).catch(function(){
+        var reader = new FileReader();
+        reader.onload = function(e){ cb(e.target.result); };
+        reader.readAsDataURL(file);
+      });
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e){ cb(e.target.result); };
+    reader.readAsDataURL(file);
+  }
+
   function nextEmptySlot(keys){
     for(var i=0;i<keys.length;i++){
       if(!state.captures[keys[i]]) return keys[i];
@@ -271,7 +309,7 @@ function setPreviewForTopBoth(dataUrl){
     return { mode: 'fallback', slot: fallbackSlot };
   }
 
-function detectAngleHeuristic(dataUrl){
+  function detectAngleHeuristic(dataUrl){
     return new Promise(function(resolve){
       var img = new Image();
       img.onload = function(){
@@ -294,6 +332,39 @@ function detectAngleHeuristic(dataUrl){
         var variance = Math.max(0, sumSq / count - mean * mean);
         var std = Math.sqrt(variance);
         var threshold = Math.max(10, Math.min(40, std * 0.7));
+        function countComponents(th){
+          var mask = new Uint8Array(count);
+          for(var p=0, idx=0;p<data.length;p+=4, idx++){
+            var g = (data[p] + data[p+1] + data[p+2]) / 3;
+            if(Math.abs(g - mean) > th) mask[idx] = 1;
+          }
+          var visited = new Uint8Array(count);
+          var components = 0;
+          var minArea = 220;
+          for(var y=0;y<size;y++){
+            for(var x=0;x<size;x++){
+              var pos = y * size + x;
+              if(!mask[pos] || visited[pos]) continue;
+              var stack = [pos];
+              visited[pos] = 1;
+              var area = 0;
+              while(stack.length){
+                var cur = stack.pop();
+                area++;
+                var cy = (cur / size) | 0;
+                var cx = cur - cy * size;
+                var n;
+                if(cx > 0){ n = cur - 1; if(mask[n] && !visited[n]){ visited[n]=1; stack.push(n);} }
+                if(cx < size - 1){ n = cur + 1; if(mask[n] && !visited[n]){ visited[n]=1; stack.push(n);} }
+                if(cy > 0){ n = cur - size; if(mask[n] && !visited[n]){ visited[n]=1; stack.push(n);} }
+                if(cy < size - 1){ n = cur + size; if(mask[n] && !visited[n]){ visited[n]=1; stack.push(n);} }
+              }
+              if(area >= minArea) components++;
+              if(components >= 2) return components;
+            }
+          }
+          return components;
+        }
         function findBounds(th){
           var minX = size, minY = size, maxX = 0, maxY = 0;
           var fg = 0;
@@ -318,23 +389,28 @@ function detectAngleHeuristic(dataUrl){
           resolve(null);
           return;
         }
+        var components = countComponents(threshold);
+        if(components >= 2){
+          resolve('top');
+          return;
+        }
         var w = Math.max(1, bounds.maxX - bounds.minX);
         var h = Math.max(1, bounds.maxY - bounds.minY);
         var ratio = h / w;
         var imgRatio = img.height / img.width;
-        if(imgRatio > 1.25){
+        if(components === 1 && imgRatio > 1.25){
           resolve('side');
           return;
         }
-        if(imgRatio < 0.8){
+        if(components === 1 && imgRatio < 0.8){
           resolve('top');
           return;
         }
-        if(ratio > 1.05){
+        if(components === 1 && ratio > 1.05){
           resolve('side');
           return;
         }
-        if(ratio < 0.7){
+        if(components === 1 && ratio < 0.7){
           resolve('top');
           return;
         }
@@ -473,9 +549,8 @@ function detectAngleHeuristic(dataUrl){
 
   function loadUpload(file){
     if(!file) return;
-    var reader = new FileReader();
-    reader.onload = function(e){
-      var dataUrl = e.target.result;
+    fileToDataUrl(file, function(dataUrl){
+      if(!dataUrl) return;
       applyAngleDetection(dataUrl, function(detected){
         var angleVal = detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
         rotateForAngle(angleVal, dataUrl, function(rotated){
@@ -492,8 +567,7 @@ function detectAngleHeuristic(dataUrl){
           autoAdvanceSlot();
         });
       });
-    };
-    reader.readAsDataURL(file);
+    });
   }
 
   function loadUploads(files){
@@ -503,9 +577,8 @@ function detectAngleHeuristic(dataUrl){
     function next(){
       var file = list[idx++];
       if(!file) return;
-      var reader = new FileReader();
-      reader.onload = function(e){
-        var dataUrl = e.target.result;
+      fileToDataUrl(file, function(dataUrl){
+        if(!dataUrl) return next();
         applyAngleDetection(dataUrl, function(detected){
           var angleVal = detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
           rotateForAngle(angleVal, dataUrl, function(rotated){
@@ -523,8 +596,7 @@ function detectAngleHeuristic(dataUrl){
             next();
           });
         });
-      };
-      reader.readAsDataURL(file);
+      });
     }
     next();
   }
