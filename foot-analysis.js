@@ -448,9 +448,9 @@ function setPreviewForTopBoth(dataUrl){
         var minSide = Math.min(leftMass, rightMass);
         var maxSide = Math.max(leftMass, rightMass);
         var spreadWide = w > size * 0.45;
-        var bothSidesStrong = leftMass > fgCount * 0.22 && rightMass > fgCount * 0.22;
-        var centerGap = centerMass < minSide * 0.95;
-        var notTooBiased = maxSide === 0 ? false : (minSide / maxSide) > 0.35;
+        var bothSidesStrong = leftMass > fgCount * 0.28 && rightMass > fgCount * 0.28;
+        var centerGap = centerMass < minSide * 0.70;
+        var notTooBiased = maxSide === 0 ? false : (minSide / maxSide) > 0.55;
         resolve(spreadWide && bothSidesStrong && centerGap && notTooBiased);
       };
       img.onerror = function(){ resolve(false); };
@@ -466,6 +466,23 @@ function setPreviewForTopBoth(dataUrl){
         resolve({ angle: 'top', meta: meta });
         return;
       }
+      var sideLikely = angleVal === 'side' || (typeof meta.ratio === 'number' && meta.ratio >= 1.0);
+      if(sideLikely){
+        detectSideFoot(dataUrl).then(function(sideFoot){
+          if(sideFoot){
+            meta.footSide = sideFoot;
+            resolve({ angle: 'side', meta: meta });
+            return;
+          }
+          // If heuristic strongly says side, prefer side even when left/right is uncertain.
+          if(angleVal === 'side' || (typeof meta.ratio === 'number' && meta.ratio > 1.08)){
+            resolve({ angle: 'side', meta: meta });
+            return;
+          }
+          resolve({ angle: 'top', meta: meta });
+        });
+        return;
+      }
       detectBothFeetTop(dataUrl).then(function(isBothTop){
         if(isBothTop){
           meta.bothFeet = true;
@@ -476,10 +493,6 @@ function setPreviewForTopBoth(dataUrl){
         detectSideFoot(dataUrl).then(function(sideFoot){
           if(sideFoot){
             meta.footSide = sideFoot;
-            resolve({ angle: 'side', meta: meta });
-            return;
-          }
-          if(angleVal === 'side'){
             resolve({ angle: 'side', meta: meta });
             return;
           }
