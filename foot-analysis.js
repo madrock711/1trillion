@@ -956,18 +956,18 @@ function detectAngleWithPose(dataUrl){
     return null;
   }
 
-  function setToeResult(el, label){
-    if(!el) return;
+  function setToeGuideImage(label){
+    var labelEl = qs('.foot-result-row span[data-i18n="foot.resultToe"]');
+    if(!labelEl) return;
+    var old = labelEl.querySelector('.foot-toe-guide');
+    if(old) old.remove();
     var imgSrc = toeImageForLabel(label);
-    if(!imgSrc){
-      el.textContent = label;
-      return;
-    }
-    el.innerHTML = '' +
-      '<span class="foot-toe-cell">' +
-        '<span class="foot-toe-text">' + label + '</span>' +
-        '<img class="foot-toe-thumb" src="' + imgSrc + '" alt="' + label + '">' +
-      '</span>';
+    if(!imgSrc) return;
+    var img = document.createElement('img');
+    img.className = 'foot-toe-guide';
+    img.src = imgSrc;
+    img.alt = label || 'toe shape';
+    labelEl.appendChild(img);
   }
 
   function estimateLength(){
@@ -1051,14 +1051,15 @@ function detectAngleWithPose(dataUrl){
       if(lWidth) lWidth.textContent = l.widthMm + ' mm';
       if(lInstep) lInstep.textContent = l.instep;
       if(lArch) lArch.textContent = l.arch;
-      if(lToe) setToeResult(lToe, l.toe);
+      if(lToe) lToe.textContent = l.toe;
       if(lBall) lBall.textContent = l.ball;
       if(rLen) rLen.textContent = r.lengthMm + ' mm';
       if(rWidth) rWidth.textContent = r.widthMm + ' mm';
       if(rInstep) rInstep.textContent = r.instep;
       if(rArch) rArch.textContent = r.arch;
-      if(rToe) setToeResult(rToe, r.toe);
+      if(rToe) rToe.textContent = r.toe;
       if(rBall) rBall.textContent = r.ball;
+      setToeGuideImage(l.toe || r.toe);
       buildRecommendations();
       setStep(3);
     }, 650);
