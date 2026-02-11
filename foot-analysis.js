@@ -567,6 +567,34 @@
     { cm: 29.5, eu: 47, usW: '14', usM: '13', uk: '12' }
   ];
 
+  var BD_SIZE_TABLE = [
+    { cm: 21.72, eu: 35, usW: '4.5', usM: '3.5' },
+    { cm: 22.05, eu: 35.5, usW: '5', usM: '4' },
+    { cm: 22.38, eu: 36, usW: '5.5', usM: '4.5' },
+    { cm: 22.71, eu: 36.5, usW: '5.5+', usM: '4.5+' },
+    { cm: 23.04, eu: 37, usW: '6', usM: '5' },
+    { cm: 23.37, eu: 37.5, usW: '6.5', usM: '5.5' },
+    { cm: 23.7, eu: 38, usW: '7', usM: '6' },
+    { cm: 24.03, eu: 38.5, usW: '7.5', usM: '6.5' },
+    { cm: 24.36, eu: 39, usW: '7.5+', usM: '6.5+' },
+    { cm: 24.69, eu: 39.5, usW: '8', usM: '7' },
+    { cm: 25.02, eu: 40, usW: '8.5', usM: '7.5' },
+    { cm: 25.35, eu: 40.5, usW: '9', usM: '8' },
+    { cm: 25.68, eu: 41, usW: '9.5', usM: '8.5' },
+    { cm: 26.01, eu: 41.5, usW: '9.5+', usM: '8.5+' },
+    { cm: 26.34, eu: 42, usW: '10', usM: '9' },
+    { cm: 26.67, eu: 42.5, usW: '10.5', usM: '9.5' },
+    { cm: 27, eu: 43, usW: '11', usM: '10' },
+    { cm: 27.33, eu: 43.5, usW: '11.5', usM: '10.5' },
+    { cm: 27.66, eu: 44, usW: '11.5+', usM: '10.5+' },
+    { cm: 27.99, eu: 44.5, usW: '12', usM: '11' },
+    { cm: 28.32, eu: 45, usW: '12.5', usM: '11.5' },
+    { cm: 28.65, eu: 45.5, usW: '13', usM: '12' },
+    { cm: 28.98, eu: 46, usW: '13.5', usM: '12.5' },
+    { cm: 29.31, eu: 46.5, usW: '13.5+', usM: '12.5+' },
+    { cm: 29.64, eu: 47, usW: '14', usM: '13' }
+  ];
+
   function closestTenayaSize(cm){
     if(!cm) return null;
     var best = TENAYA_SIZE_TABLE[0];
@@ -575,6 +603,20 @@
       var diff = Math.abs(cm - TENAYA_SIZE_TABLE[i].cm);
       if(diff < bestDiff){
         best = TENAYA_SIZE_TABLE[i];
+        bestDiff = diff;
+      }
+    }
+    return best;
+  }
+
+  function closestBdSize(cm){
+    if(!cm) return null;
+    var best = BD_SIZE_TABLE[0];
+    var bestDiff = Math.abs(cm - best.cm);
+    for(var i=1;i<BD_SIZE_TABLE.length;i++){
+      var diff = Math.abs(cm - BD_SIZE_TABLE[i].cm);
+      if(diff < bestDiff){
+        best = BD_SIZE_TABLE[i];
         bestDiff = diff;
       }
     }
@@ -598,6 +640,10 @@
       return t('foot.sizeTipEvolv');
     }
     if(brand === 'Black Diamond'){
+      var row = closestBdSize(footCm);
+      if(row){
+        return 'EU ' + row.eu + ' / US ' + row.usM + ' / ' + row.usW;
+      }
       if(street && street.scale === 'eu'){
         if(fit === 'comfort') return 'EU ' + street.value + ' → ' + (street.value - 1).toFixed(1) + ' ~ ' + (street.value - 0.5).toFixed(1);
         if(fit === 'performance') return 'EU ' + street.value + ' → ' + (street.value - 2.5).toFixed(1) + ' ~ ' + (street.value - 2).toFixed(1);
