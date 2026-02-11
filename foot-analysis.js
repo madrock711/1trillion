@@ -4,6 +4,7 @@
   var state = {
     stream: null,
     activeSlot: null,
+    currentSlot: null,
     measureMode: null,
     measurePoints: [],
     canvasTransform: null,
@@ -104,12 +105,24 @@
       });
   }
 
-  function slotKey(){
+  function computeSlotFromSelects(){
     var angle = qs('#foot-angle');
     var side = qs('#foot-side');
     var a = angle ? angle.value : 'top';
     var s = side ? side.value : 'left';
     return s + '-' + a;
+  }
+  
+  function slotKey(){
+    if(state.currentSlot) return state.currentSlot;
+    state.currentSlot = computeSlotFromSelects();
+    return state.currentSlot;
+  }
+
+  function setCurrentSlot(key, syncSelects){
+    state.currentSlot = key;
+    if(syncSelects) setSelectsForSlot(key);
+    updateCaptureTarget();
   }
 
   function setSelectsForSlot(key){
@@ -119,7 +132,6 @@
     var angleEl = qs('#foot-angle');
     if(sideEl) sideEl.value = parts[0];
     if(angleEl) angleEl.value = parts[1];
-    updateCaptureTarget();
   }
 
   function autoAdvanceSlot(){
@@ -127,7 +139,7 @@
     var currentIndex = slotOrder.indexOf(current);
     for(var i = currentIndex + 1; i < slotOrder.length; i++){
       if(!state.captures[slotOrder[i]]){
-        setSelectsForSlot(slotOrder[i]);
+        setCurrentSlot(slotOrder[i], true);
         return;
       }
     }
@@ -147,6 +159,7 @@
 
   function selectPreview(key){
     state.activeSlot = key;
+    setCurrentSlot(key, true);
     var slots = document.querySelectorAll('.foot-preview-slot');
     slots.forEach(function(slot){
       if(slot.getAttribute('data-slot') === key){ slot.classList.add('is-active'); }
@@ -554,6 +567,7 @@
     updateCalibrationStatus();
     updateCaptureStatus('foot.captureIdle');
     updateCaptureTarget();
+    state.currentSlot = computeSlotFromSelects();
   }
 
   function saveHistory(){
@@ -626,6 +640,8 @@
     var refInput = qs('#foot-ref-length');
     var angleSel = qs('#foot-angle');
     var sideSel = qs('#foot-side');
+    var angleSel = qs('#foot-angle');
+    var sideSel = qs('#foot-side');
     var canvas = qs('#foot-measure-canvas');
     var measureRef = qs('#foot-measure-ref');
     var measureFoot = qs('#foot-measure-foot');
@@ -641,6 +657,12 @@
     if(shareBtn) shareBtn.addEventListener('click', copySummary);
     if(scaleSel) scaleSel.addEventListener('change', updateCalibrationStatus);
     if(refInput) refInput.addEventListener('input', updateCalibrationStatus);
+    if(angleSel) angleSel.addEventListener('change', function(){
+      setCurrentSlot(computeSlotFromSelects(), false);
+    });
+    if(sideSel) sideSel.addEventListener('change', function(){
+      setCurrentSlot(computeSlotFromSelects(), false);
+    });
     if(angleSel) angleSel.addEventListener('change', updateCaptureTarget);
     if(sideSel) sideSel.addEventListener('change', updateCaptureTarget);
     if(canvas) canvas.addEventListener('click', handleCanvasClick);
@@ -680,6 +702,7 @@
     updateCalibrationStatus();
     updateCaptureStatus('foot.captureIdle');
     updateCaptureTarget();
+    state.currentSlot = computeSlotFromSelects();
     document.querySelectorAll('.foot-preview-slot').forEach(function(slot){
       slot.addEventListener('click', function(){
         var key = slot.getAttribute('data-slot');
