@@ -298,8 +298,23 @@ function detectAngleHeuristic(dataUrl){
         var h = Math.max(1, bounds.maxY - bounds.minY);
         var ratio = h / w;
         var imgRatio = img.height / img.width;
-        if(imgRatio > 1.15) resolve('side');
-        else resolve(ratio > 0.9 ? 'side' : 'top');
+        if(imgRatio > 1.25){
+          resolve('side');
+          return;
+        }
+        if(imgRatio < 0.8){
+          resolve('top');
+          return;
+        }
+        if(ratio > 1.05){
+          resolve('side');
+          return;
+        }
+        if(ratio < 0.7){
+          resolve('top');
+          return;
+        }
+        resolve(null);
       };
       img.onerror = function(){ resolve(null); };
       img.src = dataUrl;
@@ -338,7 +353,15 @@ function detectAngleHeuristic(dataUrl){
             return;
           }
           var ratio = width / height;
-          resolve(ratio < 0.35 ? 'side' : 'top');
+          if(ratio < 0.28){
+            resolve('side');
+            return;
+          }
+          if(ratio > 0.55){
+            resolve('top');
+            return;
+          }
+          resolve(null);
         };
         img.onerror = function(){ resolve(null); };
         img.src = dataUrl;
