@@ -417,31 +417,41 @@ function setPreviewForTopBoth(dataUrl){
           return;
         }
         var h = Math.max(1, maxY - minY);
-        var yStart = minY + Math.floor(h * 0.30);
+        var yStart = minY + Math.floor(h * 0.35);
         var xStart = minX;
         var xEnd = maxX;
-        var w = Math.max(1, xEnd - xStart + 1);
-        var leftPeak = 0, rightPeak = 0, centerPeak = 0;
-        for(var xx=xStart;xx<=xEnd;xx++){
-          var col = 0;
-          for(var yy=yStart;yy<=maxY;yy++){
+        var w = Math.max(1, xEnd - xStart);
+        var leftMass = 0;
+        var rightMass = 0;
+        var centerMass = 0;
+        var fgCount = 0;
+        for(var yy=yStart;yy<=maxY;yy++){
+          for(var xx=xStart;xx<=xEnd;xx++){
             var idx2 = (yy * size + xx) * 4;
             var g2 = (data[idx2] + data[idx2+1] + data[idx2+2]) / 3;
-            if(Math.abs(g2 - mean) > threshold) col++;
-          }
-          var rel = (xx - xStart) / w;
-          if(rel < 0.35){
-            if(col > leftPeak) leftPeak = col;
-          } else if(rel > 0.65){
-            if(col > rightPeak) rightPeak = col;
-          } else {
-            if(col > centerPeak) centerPeak = col;
+            if(Math.abs(g2 - mean) <= threshold) continue;
+            fgCount++;
+            var rel = (xx - xStart) / w;
+            if(rel < 0.42){
+              leftMass++;
+            } else if(rel > 0.58){
+              rightMass++;
+            } else {
+              centerMass++;
+            }
           }
         }
-        var minPeak = Math.min(leftPeak, rightPeak);
-        var strongSides = leftPeak > 12 && rightPeak > 12;
-        var centerGap = centerPeak < minPeak * 0.72;
-        resolve(strongSides && centerGap);
+        if(fgCount < 220){
+          resolve(false);
+          return;
+        }
+        var minSide = Math.min(leftMass, rightMass);
+        var maxSide = Math.max(leftMass, rightMass);
+        var spreadWide = w > size * 0.45;
+        var bothSidesStrong = leftMass > fgCount * 0.22 && rightMass > fgCount * 0.22;
+        var centerGap = centerMass < minSide * 0.95;
+        var notTooBiased = maxSide === 0 ? false : (minSide / maxSide) > 0.35;
+        resolve(spreadWide && bothSidesStrong && centerGap && notTooBiased);
       };
       img.onerror = function(){ resolve(false); };
       img.src = dataUrl;
