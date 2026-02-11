@@ -256,7 +256,7 @@ function setPreviewForTopBoth(dataUrl){
     img.src = dataUrl;
   }
 
-  function fileToDataUrl(file, cb){
+function fileToDataUrl(file, cb){
     if(!file){
       cb(null);
       return;
@@ -281,6 +281,16 @@ function setPreviewForTopBoth(dataUrl){
     reader.readAsDataURL(file);
   }
 
+  function detectAngleOnly(dataUrl){
+    return detectAngleWithPose(dataUrl).then(function(result){
+      if(result && result.angle && result.conf >= 0.7) return result;
+      return detectAngleHeuristic(dataUrl).then(function(fallback){
+        if(!fallback || !fallback.angle) return null;
+        return fallback;
+      });
+    });
+  }
+
   function nextEmptySlot(keys){
     for(var i=0;i<keys.length;i++){
       if(!state.captures[keys[i]]) return keys[i];
@@ -288,10 +298,11 @@ function setPreviewForTopBoth(dataUrl){
     return null;
   }
 
-  function setPreviewByAngle(angleVal, dataUrl){
+function setPreviewByAngle(angleVal, dataUrl, meta){
     var bothTop = qs('#foot-both-top');
     var topFilled = state.captures['left-top'] && state.captures['right-top'];
-    if(angleVal === 'top' && bothTop && bothTop.checked && !topFilled){
+    var bothHint = meta && meta.components >= 2;
+    if(angleVal === 'top' && bothTop && bothTop.checked && !topFilled && bothHint){
       setPreviewForTopBoth(dataUrl);
       return { mode: 'both-top' };
     }
@@ -392,7 +403,7 @@ function detectAngleHeuristic(dataUrl){
         }
         var components = countComponents(threshold);
         if(components >= 2){
-          resolve({ angle: 'top', conf: 0.85 });
+          resolve({ angle: 'top', conf: 0.9, components: components, imgRatio: img.height / img.width, ratio: 0.6 });
           return;
         }
         var w = Math.max(1, bounds.maxX - bounds.minX);
@@ -400,19 +411,19 @@ function detectAngleHeuristic(dataUrl){
         var ratio = h / w;
         var imgRatio = img.height / img.width;
         if(components === 1 && imgRatio > 1.25){
-          resolve({ angle: 'side', conf: 0.6 });
+          resolve({ angle: 'side', conf: 0.6, components: components, imgRatio: imgRatio, ratio: ratio });
           return;
         }
         if(components === 1 && imgRatio < 0.8){
-          resolve({ angle: 'top', conf: 0.6 });
+          resolve({ angle: 'top', conf: 0.6, components: components, imgRatio: imgRatio, ratio: ratio });
           return;
         }
         if(components === 1 && ratio > 1.08){
-          resolve({ angle: 'side', conf: 0.55 });
+          resolve({ angle: 'side', conf: 0.55, components: components, imgRatio: imgRatio, ratio: ratio });
           return;
         }
         if(components === 1 && ratio < 0.65){
-          resolve({ angle: 'top', conf: 0.55 });
+          resolve({ angle: 'top', conf: 0.55, components: components, imgRatio: imgRatio, ratio: ratio });
           return;
         }
         resolve(null);
@@ -455,11 +466,11 @@ function detectAngleWithPose(dataUrl){
           }
           var ratio = width / height;
           if(ratio < 0.22){
-            resolve({ angle: 'side', conf: 0.75 });
+            resolve({ angle: 'side', conf: 0.75, ratio: ratio });
             return;
           }
           if(ratio > 0.62){
-            resolve({ angle: 'top', conf: 0.75 });
+            resolve({ angle: 'top', conf: 0.75, ratio: ratio });
             return;
           }
           resolve(null);
@@ -531,35 +542,14 @@ function detectAngleWithPose(dataUrl){
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     var dataUrl = canvas.toDataURL('image/jpeg', 0.9);
     applyAngleDetection(dataUrl, function(detected){
-      var angleVal = detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
-      rotateForAngle(angleVal, dataUrl, function(rotated){
-        var result = setPreviewByAngle(angleVal, rotated);
-        if(result.mode === 'both-top'){
-          updateCaptureStatus('foot.captureDoneBoth');
-        } else {
-          updateCaptureStatus('foot.captureDone', {
-            side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
-            angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
-          });
-        }
-        hapticPulse();
-        autoAdvanceSlot();
-      });
-    });
-  }
-
-  function loadUpload(file){
-    if(!file) return;
-    fileToDataUrl(file, function(dataUrl){
-      if(!dataUrl) return;
-      applyAngleDetection(dataUrl, function(detected){
-        var angleVal = detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
+      detectAngleOnly(dataUrl).then(function(info){
+        var angleVal = (info && info.angle) || detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
         rotateForAngle(angleVal, dataUrl, function(rotated){
-          var result = setPreviewByAngle(angleVal, rotated);
+          var result = setPreviewByAngle(angleVal, rotated, info);
           if(result.mode === 'both-top'){
-            updateCaptureStatus('foot.uploadDoneBoth');
+            updateCaptureStatus('foot.captureDoneBoth');
           } else {
-            updateCaptureStatus('foot.uploadDone', {
+            updateCaptureStatus('foot.captureDone', {
               side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
               angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
             });
@@ -571,17 +561,43 @@ function detectAngleWithPose(dataUrl){
     });
   }
 
+  function loadUpload(file){
+    if(!file) return;
+    fileToDataUrl(file, function(dataUrl){
+      if(!dataUrl) return;
+      applyAngleDetection(dataUrl, function(detected){
+        detectAngleOnly(dataUrl).then(function(info){
+          var angleVal = (info && info.angle) || detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
+          rotateForAngle(angleVal, dataUrl, function(rotated){
+            var result = setPreviewByAngle(angleVal, rotated, info);
+            if(result.mode === 'both-top'){
+              updateCaptureStatus('foot.uploadDoneBoth');
+            } else {
+              updateCaptureStatus('foot.uploadDone', {
+                side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
+                angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
+              });
+            }
+            hapticPulse();
+            autoAdvanceSlot();
+          });
+        });
+      });
+    });
+  }
+
   function loadUploads(files){
     if(!files || !files.length) return;
     var list = Array.prototype.slice.call(files);
-    var idx = 0;
-    function next(){
-      var file = list[idx++];
-      if(!file) return;
-      fileToDataUrl(file, function(dataUrl){
-        if(!dataUrl) return next();
-        applyAngleDetection(dataUrl, function(detected){
-          var angleVal = detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
+    var auto = qs('#foot-auto-angle');
+    if(!auto || !auto.checked){
+      var idx = 0;
+      function next(){
+        var file = list[idx++];
+        if(!file) return;
+        fileToDataUrl(file, function(dataUrl){
+          if(!dataUrl) return next();
+          var angleVal = qs('#foot-angle') ? qs('#foot-angle').value : 'top';
           rotateForAngle(angleVal, dataUrl, function(rotated){
             var result = setPreviewByAngle(angleVal, rotated);
             if(result.mode === 'both-top'){
@@ -597,9 +613,54 @@ function detectAngleWithPose(dataUrl){
             next();
           });
         });
-      });
+      }
+      next();
+      return;
     }
-    next();
+    Promise.all(list.map(function(file){
+      return new Promise(function(resolve){
+        fileToDataUrl(file, function(dataUrl){
+          if(!dataUrl) return resolve(null);
+          detectAngleOnly(dataUrl).then(function(info){
+            var angleVal = (info && info.angle) || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
+            resolve({ dataUrl: dataUrl, angle: angleVal, info: info || {} });
+          });
+        });
+      });
+    })).then(function(items){
+      var valid = items.filter(Boolean);
+      var bothTop = qs('#foot-both-top');
+      var used = new Set();
+      var topFilled = state.captures['left-top'] && state.captures['right-top'];
+      if(bothTop && bothTop.checked){
+        for(var i=0;i<valid.length;i++){
+          var it = valid[i];
+          if(it.angle === 'top' && it.info && it.info.components >= 2){
+            setPreviewForTopBoth(it.dataUrl);
+            used.add(i);
+            topFilled = true;
+            break;
+          }
+        }
+      }
+      function placeByAngle(angle, url, info){
+        rotateForAngle(angle, url, function(rotated){
+          setPreviewByAngle(angle, rotated, info);
+        });
+      }
+      for(var i=0;i<valid.length;i++){
+        if(used.has(i)) continue;
+        var angle = valid[i].angle;
+        if(topFilled && angle === 'top') angle = 'side';
+        placeByAngle(angle, valid[i].dataUrl, valid[i].info);
+      }
+      updateCaptureStatus('foot.uploadDone', {
+        side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
+        angle: t('foot.angle' + ((qs('#foot-angle') ? qs('#foot-angle').value : 'top') === 'top' ? 'Top' : 'Side'))
+      });
+      hapticPulse();
+      autoAdvanceSlot();
+    });
   }
 
   function countCaptures(){
