@@ -911,8 +911,8 @@ footer {
     max-width: 72px;
     border-radius: 6px;
     object-fit: contain;
-    border: 1px solid var(--border-color);
-    background: #111;
+    border: 0;
+    background: transparent;
 }
 
 .foot-toe-guide.mirror {
