@@ -193,11 +193,19 @@
     state.captures[key] = dataUrl;
     var slot = qs('.foot-preview-slot[data-slot="' + key + '"]');
     if(!slot) return;
-    slot.innerHTML = '';
+    var oldImg = slot.querySelector('img');
+    if(oldImg) oldImg.remove();
     var img = document.createElement('img');
     img.src = dataUrl;
     img.alt = key;
     slot.appendChild(img);
+    slot.classList.add('has-image');
+    if(!slot.querySelector('.foot-preview-label')){
+      var label = document.createElement('span');
+      label.className = 'foot-preview-label';
+      label.textContent = slot.getAttribute('data-label') || '';
+      slot.appendChild(label);
+    }
   }
 
   function setPreview(key, dataUrl){
@@ -758,8 +766,16 @@ function detectAngleHeuristic(dataUrl){
     state.results = null;
     var slots = document.querySelectorAll('.foot-preview-slot');
     slots.forEach(function(slot){
-      var label = slot.getAttribute('data-slot') || '';
-      slot.innerHTML = '<span>' + (t('foot.preview.' + label) || label) + '</span>';
+      var img = slot.querySelector('img');
+      if(img) img.remove();
+      slot.classList.remove('has-image');
+      var labelEl = slot.querySelector('.foot-preview-label');
+      if(!labelEl){
+        labelEl = document.createElement('span');
+        labelEl.className = 'foot-preview-label';
+        labelEl.textContent = slot.getAttribute('data-label') || '';
+        slot.appendChild(labelEl);
+      }
       slot.classList.remove('is-active');
     });
     var resIds = ['length','width','instep','arch','toe','ball'];
