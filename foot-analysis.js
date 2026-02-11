@@ -292,19 +292,10 @@ function fileToDataUrl(file, cb){
     reader.readAsDataURL(file);
   }
 
-  function detectAngleOnly(dataUrl, preferHeuristic){
-    if(preferHeuristic){
-      return detectAngleHeuristic(dataUrl).then(function(fallback){
-        if(!fallback || !fallback.angle) return null;
-        return fallback;
-      });
-    }
-    return detectAngleWithPose(dataUrl).then(function(result){
-      if(result && result.angle && result.conf >= 0.7) return result;
-      return detectAngleHeuristic(dataUrl).then(function(fallback){
-        if(!fallback || !fallback.angle) return null;
-        return fallback;
-      });
+  function detectAngleOnly(dataUrl){
+    return detectAngleHeuristic(dataUrl).then(function(result){
+      if(!result || !result.angle) return null;
+      return result;
     });
   }
 
@@ -616,25 +607,16 @@ function detectAngleWithPose(dataUrl){
       cb('top');
       return;
     }
-    detectAngleWithPose(dataUrl).then(function(result){
-      if(result && result.angle && result.conf >= 0.7){
-        if(angleEl) angleEl.value = result.angle;
-        updateCaptureTarget();
-        updateCaptureStatus(result.angle === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
-        cb(result.angle);
+    detectAngleOnly(dataUrl).then(function(result){
+      if(!result || !result.angle || result.conf < 0.55){
+        updateCaptureStatus('foot.autoAngleFailed', currentTargetLabel());
+        cb(null);
         return;
       }
-      detectAngleHeuristic(dataUrl).then(function(fallback){
-        if(!fallback || !fallback.angle || fallback.conf < 0.6){
-          updateCaptureStatus('foot.autoAngleFailed', currentTargetLabel());
-          cb(null);
-          return;
-        }
-        if(angleEl) angleEl.value = fallback.angle;
-        updateCaptureTarget();
-        updateCaptureStatus(fallback.angle === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
-        cb(fallback.angle);
-      });
+      if(angleEl) angleEl.value = result.angle;
+      updateCaptureTarget();
+      updateCaptureStatus(result.angle === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
+      cb(result.angle);
     });
   }
 
@@ -1180,6 +1162,8 @@ function detectAngleWithPose(dataUrl){
     updateCaptureStatus('foot.captureIdle');
     updateCaptureTarget();
     state.currentSlot = computeSlotFromSelects();
+    var upload = qs('#foot-upload');
+    if(upload) upload.value = '';
   }
 
   function saveHistory(){
@@ -1260,11 +1244,13 @@ function detectAngleWithPose(dataUrl){
     if(captureBtn) captureBtn.addEventListener('click', captureFrame);
     if(uploadBtn && upload) uploadBtn.addEventListener('click', function(){ upload.click(); });
     if(upload) upload.addEventListener('change', function(e){
+      var files = e.target.files;
       if(e.target.files && e.target.files.length > 1){
-        loadUploads(e.target.files);
+        loadUploads(files);
       } else {
-        loadUpload(e.target.files[0]);
+        loadUpload(files[0]);
       }
+      e.target.value = '';
     });
     if(analyzeBtn) analyzeBtn.addEventListener('click', analyze);
     if(resetBtn) resetBtn.addEventListener('click', resetAll);
