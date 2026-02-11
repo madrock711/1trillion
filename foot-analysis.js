@@ -386,13 +386,27 @@ function fileToDataUrl(file, cb){
       return { mode: 'both-top' };
     }
     if(angleVal === 'top'){
-      var topSlot = nextEmptySlot(['left-top', 'right-top']) || slotKey();
+      var topSlot = nextEmptySlot(['left-top', 'right-top']);
+      if(!topSlot){
+        return { mode: 'top-skip' };
+      }
       setPreview(topSlot, dataUrl);
       return { mode: 'top', slot: topSlot };
     }
     if(angleVal === 'side'){
       var preferred = meta && meta.footSide ? (meta.footSide === 'right' ? 'right-side' : 'left-side') : null;
-      var sideSlot = preferred && !state.captures[preferred] ? preferred : nextEmptySlot(['left-side', 'right-side']) || slotKey();
+      var sideSlot = null;
+      if(preferred && !state.captures[preferred]){
+        sideSlot = preferred;
+      } else {
+        sideSlot = nextEmptySlot(['left-side', 'right-side']);
+      }
+      if(!sideSlot && preferred){
+        sideSlot = preferred;
+      }
+      if(!sideSlot){
+        return { mode: 'side-skip' };
+      }
       setPreview(sideSlot, dataUrl);
       return { mode: 'side', slot: sideSlot };
     }
@@ -753,15 +767,15 @@ function detectAngleWithPose(dataUrl){
         fileToDataUrl(file, function(dataUrl){
           if(!dataUrl) return resolve(null);
           detectAngleOnly(dataUrl, true).then(function(info){
-            var angleVal = (info && info.angle) || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
+            var meta = info || {};
+            var angleVal = normalizeAngleByMeta((meta.angle || (qs('#foot-angle') ? qs('#foot-angle').value : 'top')), meta);
             if(angleVal === 'side'){
               detectSideFoot(dataUrl).then(function(sideFoot){
-                if(info) info.footSide = sideFoot;
-                else info = { footSide: sideFoot };
-                resolve({ dataUrl: dataUrl, angle: angleVal, info: info || {} });
+                meta.footSide = sideFoot || meta.footSide || null;
+                resolve({ dataUrl: dataUrl, angle: angleVal, info: meta });
               });
             } else {
-              resolve({ dataUrl: dataUrl, angle: angleVal, info: info || {} });
+              resolve({ dataUrl: dataUrl, angle: angleVal, info: meta });
             }
           });
         });
@@ -771,23 +785,33 @@ function detectAngleWithPose(dataUrl){
       var bothTop = qs('#foot-both-top');
       var used = new Set();
       var topFilled = state.captures['left-top'] && state.captures['right-top'];
-      if(bothTop && bothTop.checked){
+      if(bothTop && bothTop.checked && !topFilled){
         var topIndex = -1;
-        var bestScore = -1;
         for(var i=0;i<valid.length;i++){
           var it = valid[i];
           if(it.info && it.info.bothFeet){
             topIndex = i;
             break;
           }
-          var ratio = typeof it.info.ratio === 'number' ? it.info.ratio : 1;
-          var score = 1.2 - ratio;
-          if(score > bestScore){
-            bestScore = score;
-            topIndex = i;
+        }
+        if(topIndex < 0){
+          for(var j=0;j<valid.length;j++){
+            if(valid[j].angle === 'top'){
+              topIndex = j;
+              break;
+            }
           }
         }
-        if(topIndex >= 0 && bestScore > 0.35){
+        if(topIndex < 0){
+          for(var k=0;k<valid.length;k++){
+            var ratio = valid[k].info && typeof valid[k].info.imgRatio === 'number' ? valid[k].info.imgRatio : null;
+            if(ratio !== null && ratio < 1){
+              topIndex = k;
+              break;
+            }
+          }
+        }
+        if(topIndex >= 0){
           setPreviewForTopBoth(valid[topIndex].dataUrl);
           used.add(topIndex);
           topFilled = true;
@@ -806,7 +830,7 @@ function detectAngleWithPose(dataUrl){
       for(var i=0;i<valid.length;i++){
         if(used.has(i)) continue;
         var angle = valid[i].angle;
-        if(topFilled && angle === 'top') angle = 'side';
+        if(topFilled && angle === 'top') continue;
         placeByAngle(angle, valid[i].dataUrl, valid[i].info);
       }
       updateCaptureStatus('foot.uploadDone', {
