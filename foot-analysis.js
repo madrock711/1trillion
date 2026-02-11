@@ -213,10 +213,34 @@
     selectPreview(key);
   }
 
-  function setPreviewForTopBoth(dataUrl){
+function setPreviewForTopBoth(dataUrl){
     setPreviewSilent('left-top', dataUrl);
     setPreviewSilent('right-top', dataUrl);
     selectPreview('left-top');
+  }
+
+  function rotateForAngle(angleVal, dataUrl, cb){
+    if(angleVal !== 'side'){
+      cb(dataUrl);
+      return;
+    }
+    var img = new Image();
+    img.onload = function(){
+      if(img.width <= img.height){
+        cb(dataUrl);
+        return;
+      }
+      var canvas = document.createElement('canvas');
+      canvas.width = img.height;
+      canvas.height = img.width;
+      var ctx = canvas.getContext('2d');
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate(Math.PI / 2);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+      cb(canvas.toDataURL('image/jpeg', 0.9));
+    };
+    img.onerror = function(){ cb(dataUrl); };
+    img.src = dataUrl;
   }
 
   function nextEmptySlot(keys){
@@ -431,19 +455,19 @@ function detectAngleHeuristic(dataUrl){
     var dataUrl = canvas.toDataURL('image/jpeg', 0.9);
     applyAngleDetection(dataUrl, function(detected){
       var angleVal = detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
-      var bothTop = qs('#foot-both-top');
-      if(angleVal === 'top' && bothTop && bothTop.checked){
-        setPreviewForTopBoth(dataUrl);
-        updateCaptureStatus('foot.captureDoneBoth');
-      } else {
-        setPreview(slotKey(), dataUrl);
-        updateCaptureStatus('foot.captureDone', {
-          side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
-          angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
-        });
-      }
-      hapticPulse();
-      autoAdvanceSlot();
+      rotateForAngle(angleVal, dataUrl, function(rotated){
+        var result = setPreviewByAngle(angleVal, rotated);
+        if(result.mode === 'both-top'){
+          updateCaptureStatus('foot.captureDoneBoth');
+        } else {
+          updateCaptureStatus('foot.captureDone', {
+            side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
+            angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
+          });
+        }
+        hapticPulse();
+        autoAdvanceSlot();
+      });
     });
   }
 
@@ -454,17 +478,19 @@ function detectAngleHeuristic(dataUrl){
       var dataUrl = e.target.result;
       applyAngleDetection(dataUrl, function(detected){
         var angleVal = detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
-        var result = setPreviewByAngle(angleVal, dataUrl);
-        if(result.mode === 'both-top'){
-          updateCaptureStatus('foot.uploadDoneBoth');
-        } else {
-          updateCaptureStatus('foot.uploadDone', {
-            side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
-            angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
-          });
-        }
-        hapticPulse();
-        autoAdvanceSlot();
+        rotateForAngle(angleVal, dataUrl, function(rotated){
+          var result = setPreviewByAngle(angleVal, rotated);
+          if(result.mode === 'both-top'){
+            updateCaptureStatus('foot.uploadDoneBoth');
+          } else {
+            updateCaptureStatus('foot.uploadDone', {
+              side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
+              angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
+            });
+          }
+          hapticPulse();
+          autoAdvanceSlot();
+        });
       });
     };
     reader.readAsDataURL(file);
@@ -482,18 +508,20 @@ function detectAngleHeuristic(dataUrl){
         var dataUrl = e.target.result;
         applyAngleDetection(dataUrl, function(detected){
           var angleVal = detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
-          var result = setPreviewByAngle(angleVal, dataUrl);
-          if(result.mode === 'both-top'){
-            updateCaptureStatus('foot.uploadDoneBoth');
-          } else {
-            updateCaptureStatus('foot.uploadDone', {
-              side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
-              angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
-            });
-          }
-          hapticPulse();
-          autoAdvanceSlot();
-          next();
+          rotateForAngle(angleVal, dataUrl, function(rotated){
+            var result = setPreviewByAngle(angleVal, rotated);
+            if(result.mode === 'both-top'){
+              updateCaptureStatus('foot.uploadDoneBoth');
+            } else {
+              updateCaptureStatus('foot.uploadDone', {
+                side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
+                angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
+              });
+            }
+            hapticPulse();
+            autoAdvanceSlot();
+            next();
+          });
         });
       };
       reader.readAsDataURL(file);
