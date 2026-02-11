@@ -298,9 +298,15 @@
       cb(null);
       return;
     }
+    var bothTop = qs('#foot-both-top');
+    var angleEl = qs('#foot-angle');
+    var angleVal = angleEl ? angleEl.value : 'top';
+    if(bothTop && bothTop.checked && angleVal === 'top'){
+      cb('top');
+      return;
+    }
     detectAngleWithPose(dataUrl).then(function(angle){
       if(angle){
-        var angleEl = qs('#foot-angle');
         if(angleEl) angleEl.value = angle;
         updateCaptureTarget();
         updateCaptureStatus(angle === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
@@ -313,8 +319,7 @@
           cb(null);
           return;
         }
-        var angleEl2 = qs('#foot-angle');
-        if(angleEl2) angleEl2.value = fallback;
+        if(angleEl) angleEl.value = fallback;
         updateCaptureTarget();
         updateCaptureStatus(fallback === 'top' ? 'foot.autoAngleTop' : 'foot.autoAngleSide');
         cb(fallback);
