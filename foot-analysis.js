@@ -388,6 +388,39 @@
     reader.readAsDataURL(file);
   }
 
+  function loadUploads(files){
+    if(!files || !files.length) return;
+    var list = Array.prototype.slice.call(files);
+    var idx = 0;
+    function next(){
+      var file = list[idx++];
+      if(!file) return;
+      var reader = new FileReader();
+      reader.onload = function(e){
+        var dataUrl = e.target.result;
+        applyAngleDetection(dataUrl, function(detected){
+          var angleVal = detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
+          var bothTop = qs('#foot-both-top');
+          if(angleVal === 'top' && bothTop && bothTop.checked){
+            setPreviewForTopBoth(dataUrl);
+            updateCaptureStatus('foot.uploadDoneBoth');
+          } else {
+            setPreview(slotKey(), dataUrl);
+            updateCaptureStatus('foot.uploadDone', {
+              side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
+              angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
+            });
+          }
+          hapticPulse();
+          autoAdvanceSlot();
+          next();
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+    next();
+  }
+
   function countCaptures(){
     var count = 0;
     Object.keys(state.captures).forEach(function(key){
@@ -717,7 +750,13 @@
     if(stopBtn) stopBtn.addEventListener('click', stopCamera);
     if(captureBtn) captureBtn.addEventListener('click', captureFrame);
     if(uploadBtn && upload) uploadBtn.addEventListener('click', function(){ upload.click(); });
-    if(upload) upload.addEventListener('change', function(e){ loadUpload(e.target.files[0]); });
+    if(upload) upload.addEventListener('change', function(e){
+      if(e.target.files && e.target.files.length > 1){
+        loadUploads(e.target.files);
+      } else {
+        loadUpload(e.target.files[0]);
+      }
+    });
     if(analyzeBtn) analyzeBtn.addEventListener('click', analyze);
     if(resetBtn) resetBtn.addEventListener('click', resetAll);
     if(saveBtn) saveBtn.addEventListener('click', saveHistory);

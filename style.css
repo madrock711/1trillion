@@ -841,6 +841,7 @@ footer {
     color: var(--text-secondary);
     font-size: 0.8rem;
     text-align: right;
+    white-space: nowrap;
 }
 
 .foot-result-row {
@@ -967,7 +968,7 @@ footer {
     .foot-hero { flex-direction: column; }
     .foot-form { grid-template-columns: 1fr; }
     .foot-results-header { grid-template-columns: 1fr 1fr; }
-    .foot-results-col { text-align: left; }
+    .foot-results-col { text-align: right; }
     .foot-result-row { grid-template-columns: 1fr 1fr; row-gap: 4px; }
     .foot-result-row span { grid-column: 1 / -1; }
     .foot-reco-grid { grid-template-columns: 1fr; }
