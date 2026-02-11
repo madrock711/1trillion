@@ -381,30 +381,18 @@
     setTimeout(function(){
       var l = state.results.left;
       var r = state.results.right;
-      var lLen = qs('#foot-result-left-length');
-      var lWidth = qs('#foot-result-left-width');
-      var lInstep = qs('#foot-result-left-instep');
-      var lArch = qs('#foot-result-left-arch');
-      var lToe = qs('#foot-result-left-toe');
-      var lBall = qs('#foot-result-left-ball');
-      var rLen = qs('#foot-result-right-length');
-      var rWidth = qs('#foot-result-right-width');
-      var rInstep = qs('#foot-result-right-instep');
-      var rArch = qs('#foot-result-right-arch');
-      var rToe = qs('#foot-result-right-toe');
-      var rBall = qs('#foot-result-right-ball');
-      if(lLen) lLen.textContent = l.lengthMm + ' mm';
-      if(lWidth) lWidth.textContent = l.widthMm + ' mm (' + l.widthType + ')';
-      if(lInstep) lInstep.textContent = l.instep;
-      if(lArch) lArch.textContent = l.arch;
-      if(lToe) lToe.textContent = l.toe;
-      if(lBall) lBall.textContent = l.ball;
-      if(rLen) rLen.textContent = r.lengthMm + ' mm';
-      if(rWidth) rWidth.textContent = r.widthMm + ' mm (' + r.widthType + ')';
-      if(rInstep) rInstep.textContent = r.instep;
-      if(rArch) rArch.textContent = r.arch;
-      if(rToe) rToe.textContent = r.toe;
-      if(rBall) rBall.textContent = r.ball;
+      var lenEl = qs('#foot-result-length');
+      var widthEl = qs('#foot-result-width');
+      var instepEl = qs('#foot-result-instep');
+      var archEl = qs('#foot-result-arch');
+      var toeEl = qs('#foot-result-toe');
+      var ballEl = qs('#foot-result-ball');
+      if(lenEl) lenEl.textContent = l.lengthMm + ' mm / ' + r.lengthMm + ' mm';
+      if(widthEl) widthEl.textContent = l.widthMm + ' mm / ' + r.widthMm + ' mm';
+      if(instepEl) instepEl.textContent = l.instep + ' / ' + r.instep;
+      if(archEl) archEl.textContent = l.arch + ' / ' + r.arch;
+      if(toeEl) toeEl.textContent = l.toe + ' / ' + r.toe;
+      if(ballEl) ballEl.textContent = l.ball + ' / ' + r.ball;
       buildRecommendations();
       setStep(3);
     }, 650);
@@ -546,11 +534,9 @@
       slot.classList.remove('is-active');
     });
     var resIds = ['length','width','instep','arch','toe','ball'];
-    ['left','right'].forEach(function(side){
-      resIds.forEach(function(id){
-        var el = qs('#foot-result-' + side + '-' + id);
-        if(el) el.textContent = '-';
-      });
+    resIds.forEach(function(id){
+      var el = qs('#foot-result-' + id);
+      if(el) el.textContent = '-';
     });
     var grid = qs('#foot-reco-grid');
     if(grid) grid.innerHTML = '<div class="foot-reco-empty">' + t('foot.recoEmpty') + '</div>';
