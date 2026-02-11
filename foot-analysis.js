@@ -239,7 +239,7 @@ function setPreviewForTopBoth(dataUrl){
     }
     var img = new Image();
     img.onload = function(){
-      if(img.width <= img.height){
+      if(img.width >= img.height){
         cb(dataUrl);
         return;
       }
@@ -298,10 +298,10 @@ function fileToDataUrl(file, cb){
     return null;
   }
 
-function setPreviewByAngle(angleVal, dataUrl, meta){
+  function setPreviewByAngle(angleVal, dataUrl, meta){
     var bothTop = qs('#foot-both-top');
     var topFilled = state.captures['left-top'] && state.captures['right-top'];
-    var bothHint = meta && meta.components >= 2;
+    var bothHint = meta && meta.bothFeet;
     if(angleVal === 'top' && bothTop && bothTop.checked && !topFilled && bothHint){
       setPreviewForTopBoth(dataUrl);
       return { mode: 'both-top' };
@@ -348,11 +348,14 @@ function detectAngleHeuristic(dataUrl){
           var mask = new Uint8Array(count);
           for(var p=0, idx=0;p<data.length;p+=4, idx++){
             var g = (data[p] + data[p+1] + data[p+2]) / 3;
+            var y = Math.floor(idx / size);
+            if(y < size * 0.18) continue;
             if(Math.abs(g - mean) > th) mask[idx] = 1;
           }
           var visited = new Uint8Array(count);
           var components = 0;
-          var minArea = 220;
+          var minArea = 520;
+          var large = [];
           for(var y=0;y<size;y++){
             for(var x=0;x<size;x++){
               var pos = y * size + x;
@@ -360,9 +363,19 @@ function detectAngleHeuristic(dataUrl){
               var stack = [pos];
               visited[pos] = 1;
               var area = 0;
+              var sumX = 0;
+              var sumY = 0;
+              var minX = size;
+              var maxX = 0;
               while(stack.length){
                 var cur = stack.pop();
                 area++;
+                var cy = (cur / size) | 0;
+                var cx = cur - cy * size;
+                sumX += cx;
+                sumY += cy;
+                if(cx < minX) minX = cx;
+                if(cx > maxX) maxX = cx;
                 var cy = (cur / size) | 0;
                 var cx = cur - cy * size;
                 var n;
@@ -371,11 +384,13 @@ function detectAngleHeuristic(dataUrl){
                 if(cy > 0){ n = cur - size; if(mask[n] && !visited[n]){ visited[n]=1; stack.push(n);} }
                 if(cy < size - 1){ n = cur + size; if(mask[n] && !visited[n]){ visited[n]=1; stack.push(n);} }
               }
-              if(area >= minArea) components++;
-              if(components >= 2) return components;
+              if(area >= minArea){
+                components++;
+                large.push({ area: area, cx: sumX / area, cy: sumY / area, minX: minX, maxX: maxX });
+              }
             }
           }
-          return components;
+          return { count: components, large: large };
         }
         function findBounds(th){
           var minX = size, minY = size, maxX = 0, maxY = 0;
@@ -401,9 +416,20 @@ function detectAngleHeuristic(dataUrl){
           resolve(null);
           return;
         }
-        var components = countComponents(threshold);
-        if(components >= 2){
-          resolve({ angle: 'top', conf: 0.9, components: components, imgRatio: img.height / img.width, ratio: 0.6 });
+        var comp = countComponents(threshold);
+        var components = comp.count;
+        var bothFeet = false;
+        if(components >= 2 && comp.large.length >= 2){
+          var a = comp.large[0];
+          var b = comp.large[1];
+          var dx = Math.abs(a.cx - b.cx);
+          var bothLow = a.cy > size * 0.3 && b.cy > size * 0.3;
+          if(dx > size * 0.18 && bothLow){
+            bothFeet = true;
+          }
+        }
+        if(bothFeet){
+          resolve({ angle: 'top', conf: 0.9, components: components, imgRatio: img.height / img.width, ratio: 0.6, bothFeet: true });
           return;
         }
         var w = Math.max(1, bounds.maxX - bounds.minX);
@@ -411,19 +437,19 @@ function detectAngleHeuristic(dataUrl){
         var ratio = h / w;
         var imgRatio = img.height / img.width;
         if(components === 1 && imgRatio > 1.25){
-          resolve({ angle: 'side', conf: 0.6, components: components, imgRatio: imgRatio, ratio: ratio });
+          resolve({ angle: 'side', conf: 0.6, components: components, imgRatio: imgRatio, ratio: ratio, bothFeet: false });
           return;
         }
         if(components === 1 && imgRatio < 0.8){
-          resolve({ angle: 'top', conf: 0.6, components: components, imgRatio: imgRatio, ratio: ratio });
+          resolve({ angle: 'top', conf: 0.6, components: components, imgRatio: imgRatio, ratio: ratio, bothFeet: false });
           return;
         }
         if(components === 1 && ratio > 1.08){
-          resolve({ angle: 'side', conf: 0.55, components: components, imgRatio: imgRatio, ratio: ratio });
+          resolve({ angle: 'side', conf: 0.55, components: components, imgRatio: imgRatio, ratio: ratio, bothFeet: false });
           return;
         }
         if(components === 1 && ratio < 0.65){
-          resolve({ angle: 'top', conf: 0.55, components: components, imgRatio: imgRatio, ratio: ratio });
+          resolve({ angle: 'top', conf: 0.55, components: components, imgRatio: imgRatio, ratio: ratio, bothFeet: false });
           return;
         }
         resolve(null);
@@ -466,11 +492,11 @@ function detectAngleWithPose(dataUrl){
           }
           var ratio = width / height;
           if(ratio < 0.22){
-            resolve({ angle: 'side', conf: 0.75, ratio: ratio });
+            resolve({ angle: 'side', conf: 0.75, ratio: ratio, bothFeet: false });
             return;
           }
           if(ratio > 0.62){
-            resolve({ angle: 'top', conf: 0.75, ratio: ratio });
+            resolve({ angle: 'top', conf: 0.75, ratio: ratio, bothFeet: false });
             return;
           }
           resolve(null);
@@ -635,7 +661,7 @@ function detectAngleWithPose(dataUrl){
       if(bothTop && bothTop.checked){
         for(var i=0;i<valid.length;i++){
           var it = valid[i];
-          if(it.angle === 'top' && it.info && it.info.components >= 2){
+          if(it.angle === 'top' && it.info && it.info.bothFeet){
             setPreviewForTopBoth(it.dataUrl);
             used.add(i);
             topFilled = true;
