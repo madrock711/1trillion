@@ -244,16 +244,7 @@ function setPreviewForTopBoth(dataUrl){
     return new Promise(function(resolve){
       var img = new Image();
       img.onload = function(){
-        var imgRatio = img.height / Math.max(1, img.width);
-        if(imgRatio > 1.08){
-          resolve({ angle: 'side', conf: 0.6, imgRatio: imgRatio, bothFeet: false });
-          return;
-        }
-        if(imgRatio < 0.95){
-          resolve({ angle: 'top', conf: 0.6, imgRatio: imgRatio, bothFeet: false });
-          return;
-        }
-        resolve({ angle: 'top', conf: 0.5, imgRatio: imgRatio, bothFeet: false });
+        resolve(null);
       };
       img.onerror = function(){ resolve(null); };
       img.src = dataUrl;
@@ -330,27 +321,39 @@ function setPreviewForTopBoth(dataUrl){
           resolve(null);
           return;
         }
-        var topLimit = minY + Math.floor((maxY - minY) * 0.45);
-        var midX = (minX + maxX) / 2;
-        var leftCount = 0;
-        var rightCount = 0;
-        for(var y=minY;y<=topLimit;y++){
+        var h = Math.max(1, maxY - minY);
+        var upperEnd = minY + Math.floor(h * 0.42);
+        var lowerStart = maxY - Math.floor(h * 0.42);
+        var upperX = 0, upperN = 0;
+        var lowerX = 0, lowerN = 0;
+        for(var y=minY;y<=maxY;y++){
           for(var x=minX;x<=maxX;x++){
             var idx2 = (y * size + x) * 4;
             var g2 = (data[idx2] + data[idx2+1] + data[idx2+2]) / 3;
-            if(Math.abs(g2 - mean) > threshold){
-              if(x < midX) leftCount++;
-              else rightCount++;
+            if(Math.abs(g2 - mean) <= threshold) continue;
+            if(y <= upperEnd){
+              upperX += x;
+              upperN++;
+            }
+            if(y >= lowerStart){
+              lowerX += x;
+              lowerN++;
             }
           }
         }
-        if(leftCount === rightCount){
+        if(upperN < 25 || lowerN < 25){
           resolve(null);
           return;
         }
-        var toeSide = leftCount > rightCount ? 'left' : 'right';
-        var footSide = toeSide === 'left' ? 'right' : 'left';
-        resolve(footSide);
+        var upperCx = upperX / upperN;
+        var lowerCx = lowerX / lowerN;
+        var delta = upperCx - lowerCx;
+        if(Math.abs(delta) < 2){
+          resolve(null);
+          return;
+        }
+        // Toe mass shifts opposite to ankle direction in these side-shot captures.
+        resolve(delta > 0 ? 'left' : 'right');
       };
       img.onerror = function(){ resolve(null); };
       img.src = dataUrl;
@@ -752,10 +755,10 @@ function detectAngleWithPose(dataUrl){
       if(item.angle === 'top') score += 90;
       if(item.angle === 'side') score -= 120;
       if(info.footSide) score -= 140;
-      if(typeof info.imgRatio === 'number'){
-        if(info.imgRatio < 1){
-          score += Math.round((1 - info.imgRatio) * 160);
-        } else if(info.imgRatio > 1.08){
+      if(typeof info.ratio === 'number'){
+        if(info.ratio < 0.9){
+          score += Math.round((0.9 - info.ratio) * 220);
+        } else if(info.ratio > 1.08){
           score -= 120;
         }
       }
@@ -773,7 +776,7 @@ function detectAngleWithPose(dataUrl){
               resolve({ dataUrl: dataUrl, angle: angleVal, info: meta });
               return;
             }
-            var likelySide = angleVal === 'side' || (typeof meta.imgRatio === 'number' && meta.imgRatio > 1.08);
+            var likelySide = angleVal === 'side' || (typeof meta.ratio === 'number' && meta.ratio > 1.05);
             if(!likelySide){
               resolve({ dataUrl: dataUrl, angle: angleVal, info: meta });
               return;
@@ -782,7 +785,7 @@ function detectAngleWithPose(dataUrl){
               if(sideFoot) meta.footSide = sideFoot;
               if(!meta.bothFeet && meta.footSide){
                 angleVal = 'side';
-              } else if(!meta.bothFeet && typeof meta.imgRatio === 'number' && meta.imgRatio > 1.08){
+              } else if(!meta.bothFeet && typeof meta.ratio === 'number' && meta.ratio > 1.05){
                 angleVal = 'side';
               }
               resolve({ dataUrl: dataUrl, angle: angleVal, info: meta });
@@ -809,7 +812,7 @@ function detectAngleWithPose(dataUrl){
           topIndex = 0;
           var bestRatio = 99;
           for(var k=0;k<valid.length;k++){
-            var ratio = valid[k].info && typeof valid[k].info.imgRatio === 'number' ? valid[k].info.imgRatio : 99;
+            var ratio = valid[k].info && typeof valid[k].info.ratio === 'number' ? valid[k].info.ratio : 99;
             if(ratio < bestRatio){
               bestRatio = ratio;
               topIndex = k;
