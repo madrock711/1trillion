@@ -229,6 +229,7 @@
                                 <span data-i18n="foot.upload">업로드</span>
                             </label>
                         </div>
+                        <div class="foot-capture-status" id="foot-capture-status" role="status" aria-live="polite" data-i18n="foot.captureIdle">촬영을 시작하세요.</div>
                         <ul class="foot-tips">
                             <li data-i18n="foot.tip1">자연광에서 촬영하고 그림자를 최소화하세요.</li>
                             <li data-i18n="foot.tip2">A4 용지나 신용카드가 발 옆에 완전히 보이게 배치하세요.</li>
@@ -248,21 +249,6 @@
                                 <span data-i18n="foot.previewRightSide">오른발 옆</span>
                             </div>
                         </div>
-                        <div class="foot-measure">
-                            <div class="foot-measure-header">
-                                <h4 data-i18n="foot.measureTitle">측정 워크벤치</h4>
-                                <div class="foot-measure-status" id="foot-measure-status" data-i18n="foot.measureIdle">프리뷰를 선택하세요.</div>
-                            </div>
-                            <div class="foot-measure-body">
-                                <canvas id="foot-measure-canvas" width="640" height="360"></canvas>
-                                <div class="foot-measure-actions">
-                                    <button class="foot-btn ghost" id="foot-measure-ref" type="button" data-i18n="foot.measureRef">기준 객체 2점 지정</button>
-                                    <button class="foot-btn ghost" id="foot-measure-foot" type="button" data-i18n="foot.measureFoot">발 길이 2점 지정</button>
-                                    <button class="foot-btn ghost" id="foot-measure-reset" type="button" data-i18n="foot.measureReset">측정 초기화</button>
-                                </div>
-                                <p class="foot-measure-note" data-i18n="foot.measureNote">선택한 이미지 위에서 두 점을 클릭해 픽셀 길이를 측정합니다.</p>
-                            </div>
-                        </div>
                     </section>
 
                     <section class="foot-card" id="foot-analysis">
@@ -278,10 +264,6 @@
                                     <option value="card" data-i18n="foot.scaleCard">신용카드 (85.6mm x 53.98mm)</option>
                                     <option value="none" data-i18n="foot.scaleNone">없음 (간이 추정)</option>
                                 </select>
-                            </label>
-                            <label class="foot-field">
-                                <span data-i18n="foot.refLength">기준 길이 (mm)</span>
-                                <input id="foot-ref-length" type="number" min="50" max="400" placeholder="예: 297">
                             </label>
                             <label class="foot-field">
                                 <span data-i18n="foot.userLength">직접 입력 길이 (mm)</span>
@@ -341,11 +323,6 @@
                                 <span data-i18n="foot.resultBall">발볼 너비</span>
                                 <strong id="foot-result-ball">-</strong>
                             </div>
-                        </div>
-                        <div class="foot-calibration" id="foot-calibration">
-                            <div><span data-i18n="foot.calRefPx">기준 픽셀</span>: <strong id="foot-cal-ref">-</strong></div>
-                            <div><span data-i18n="foot.calFootPx">발 픽셀</span>: <strong id="foot-cal-foot">-</strong></div>
-                            <div><span data-i18n="foot.calScale">스케일</span>: <strong id="foot-cal-scale">-</strong></div>
                         </div>
                         <div class="foot-note" id="foot-accuracy-note" data-i18n="foot.accuracyNote">정확도: 기준 객체가 있을수록 향상됩니다. 결과는 참고용입니다.</div>
                         <div class="foot-note foot-privacy-note" data-i18n="foot.privacyNote">발 사진은 서버에 저장되지 않으며, 브라우저에서만 처리됩니다.</div>

@@ -5,10 +5,6 @@
     stream: null,
     activeSlot: null,
     currentSlot: null,
-    measureMode: null,
-    measurePoints: [],
-    canvasTransform: null,
-    measurements: {},
     captures: {
       'left-top': null,
       'left-side': null,
@@ -165,129 +161,6 @@
       if(slot.getAttribute('data-slot') === key){ slot.classList.add('is-active'); }
       else { slot.classList.remove('is-active'); }
     });
-    renderCanvas();
-    updateMeasureStatus();
-    updateCalibrationStatus();
-  }
-
-  function updateMeasureStatus(){
-    var status = qs('#foot-measure-status');
-    if(!status) return;
-    if(!state.activeSlot){
-      status.textContent = t('foot.measureIdle');
-      return;
-    }
-    if(state.measureMode === 'ref'){
-      status.textContent = t('foot.measureRefActive');
-    } else if(state.measureMode === 'foot'){
-      status.textContent = t('foot.measureFootActive');
-    } else {
-      status.textContent = t('foot.measureReady').replace('{slot}', state.activeSlot);
-    }
-  }
-
-  function drawMarker(ctx, x, y, color){
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(x, y, 4, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  function drawLine(ctx, p1, p2, color){
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(p1.x, p1.y);
-    ctx.lineTo(p2.x, p2.y);
-    ctx.stroke();
-    drawMarker(ctx, p1.x, p1.y, color);
-    drawMarker(ctx, p2.x, p2.y, color);
-  }
-
-  function renderCanvas(){
-    var canvas = qs('#foot-measure-canvas');
-    if(!canvas) return;
-    var ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if(!state.activeSlot || !state.captures[state.activeSlot]){
-      state.canvasTransform = null;
-      return;
-    }
-    var img = new Image();
-    var dataUrl = state.captures[state.activeSlot];
-    img.onload = function(){
-      var cw = canvas.width;
-      var ch = canvas.height;
-      var scale = Math.min(cw / img.width, ch / img.height);
-      var drawW = img.width * scale;
-      var drawH = img.height * scale;
-      var offsetX = (cw - drawW) / 2;
-      var offsetY = (ch - drawH) / 2;
-      state.canvasTransform = { scale: scale, offsetX: offsetX, offsetY: offsetY, imgW: img.width, imgH: img.height };
-      ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
-
-      var m = state.measurements[state.activeSlot];
-      if(m && m.ref && m.ref.points && m.ref.points.length === 2){
-        drawLine(ctx,
-          toCanvasPoint(m.ref.points[0]),
-          toCanvasPoint(m.ref.points[1]),
-          '#1DB954'
-        );
-      }
-      if(m && m.foot && m.foot.points && m.foot.points.length === 2){
-        drawLine(ctx,
-          toCanvasPoint(m.foot.points[0]),
-          toCanvasPoint(m.foot.points[1]),
-          '#60a5fa'
-        );
-      }
-    };
-    img.src = dataUrl;
-  }
-
-  function toImagePoint(evt){
-    var canvas = qs('#foot-measure-canvas');
-    if(!canvas || !state.canvasTransform) return null;
-    var rect = canvas.getBoundingClientRect();
-    var x = evt.clientX - rect.left;
-    var y = evt.clientY - rect.top;
-    var cx = (x - state.canvasTransform.offsetX) / state.canvasTransform.scale;
-    var cy = (y - state.canvasTransform.offsetY) / state.canvasTransform.scale;
-    if(cx < 0 || cy < 0 || cx > state.canvasTransform.imgW || cy > state.canvasTransform.imgH) return null;
-    return { x: cx, y: cy };
-  }
-
-  function toCanvasPoint(point){
-    return {
-      x: state.canvasTransform.offsetX + (point.x * state.canvasTransform.scale),
-      y: state.canvasTransform.offsetY + (point.y * state.canvasTransform.scale)
-    };
-  }
-
-  function getMeasurement(slot){
-    if(!state.measurements[slot]) state.measurements[slot] = {};
-    return state.measurements[slot];
-  }
-
-  function handleCanvasClick(evt){
-    if(!state.activeSlot || !state.measureMode) return;
-    var pt = toImagePoint(evt);
-    if(!pt) return;
-    var m = getMeasurement(state.activeSlot);
-    var target = state.measureMode === 'ref' ? 'ref' : 'foot';
-    if(!m[target]) m[target] = { points: [] };
-    m[target].points.push(pt);
-    if(m[target].points.length === 2){
-      var p1 = m[target].points[0];
-      var p2 = m[target].points[1];
-      var dx = p1.x - p2.x;
-      var dy = p1.y - p2.y;
-      m[target].px = Math.sqrt(dx * dx + dy * dy);
-      state.measureMode = null;
-    }
-    renderCanvas();
-    updateMeasureStatus();
-    updateCalibrationStatus();
   }
 
   function captureFrame(){
@@ -345,61 +218,11 @@
     var input = qs('#foot-length-input');
     var val = input ? Number(input.value) : 0;
     if(val && !isNaN(val)) return Math.max(200, Math.min(320, val));
-    var calibrated = getCalibratedLength();
-    if(calibrated) return calibrated;
     var scale = qs('#foot-scale');
     var scaleVal = scale ? scale.value : 'none';
     if(scaleVal === 'a4') return 255;
     if(scaleVal === 'card') return 250;
     return 260;
-  }
-
-  function getRefLength(){
-    var manualRef = qs('#foot-ref-length');
-    var manualVal = manualRef ? Number(manualRef.value) : 0;
-    if(manualVal && !isNaN(manualVal)) return manualVal;
-    var scale = qs('#foot-scale');
-    var scaleVal = scale ? scale.value : 'none';
-    if(scaleVal === 'a4') return 297;
-    if(scaleVal === 'card') return 85.6;
-    return 0;
-  }
-
-  function getCalibratedLength(){
-    var refMm = getRefLength();
-    if(!refMm) return 0;
-    var slots = Object.keys(state.measurements);
-    for(var i=0;i<slots.length;i++){
-      var m = state.measurements[slots[i]];
-      if(m && m.ref && m.ref.px && m.foot && m.foot.px){
-        return Math.round((m.foot.px * refMm) / m.ref.px);
-      }
-    }
-    return 0;
-  }
-
-  function updateCalibrationStatus(){
-    var refEl = qs('#foot-cal-ref');
-    var footEl = qs('#foot-cal-foot');
-    var scaleEl = qs('#foot-cal-scale');
-    if(!refEl || !footEl || !scaleEl) return;
-    var refPx = '-';
-    var footPx = '-';
-    var scale = '-';
-    var slots = Object.keys(state.measurements);
-    for(var i=0;i<slots.length;i++){
-      var m = state.measurements[slots[i]];
-      if(m && m.ref && m.ref.px){ refPx = m.ref.px.toFixed(1) + ' px'; }
-      if(m && m.foot && m.foot.px){ footPx = m.foot.px.toFixed(1) + ' px'; }
-      if(m && m.ref && m.ref.px && m.foot && m.foot.px){
-        var refMm = getRefLength();
-        if(refMm){ scale = (refMm / m.ref.px).toFixed(3) + ' mm/px'; }
-        break;
-      }
-    }
-    refEl.textContent = refPx;
-    footEl.textContent = footPx;
-    scaleEl.textContent = scale;
   }
 
   function analyze(){
@@ -543,9 +366,7 @@
 
   function resetAll(){
     state.captures = { 'left-top': null, 'left-side': null, 'right-top': null, 'right-side': null };
-    state.measurements = {};
     state.activeSlot = null;
-    state.measureMode = null;
     state.results = null;
     var slots = document.querySelectorAll('.foot-preview-slot');
     slots.forEach(function(slot){
@@ -562,9 +383,6 @@
     if(grid) grid.innerHTML = '<div class="foot-reco-empty">' + t('foot.recoEmpty') + '</div>';
     updateProgress(0);
     setStep(1);
-    renderCanvas();
-    updateMeasureStatus();
-    updateCalibrationStatus();
     updateCaptureStatus('foot.captureIdle');
     updateCaptureTarget();
     state.currentSlot = computeSlotFromSelects();
@@ -637,15 +455,8 @@
     var shareBtn = qs('#foot-share');
     var clearHistory = qs('#foot-clear-history');
     var scaleSel = qs('#foot-scale');
-    var refInput = qs('#foot-ref-length');
     var angleSel = qs('#foot-angle');
     var sideSel = qs('#foot-side');
-    var angleSel = qs('#foot-angle');
-    var sideSel = qs('#foot-side');
-    var canvas = qs('#foot-measure-canvas');
-    var measureRef = qs('#foot-measure-ref');
-    var measureFoot = qs('#foot-measure-foot');
-    var measureReset = qs('#foot-measure-reset');
 
     if(startBtn) startBtn.addEventListener('click', startCamera);
     if(stopBtn) stopBtn.addEventListener('click', stopCamera);
@@ -655,8 +466,7 @@
     if(resetBtn) resetBtn.addEventListener('click', resetAll);
     if(saveBtn) saveBtn.addEventListener('click', saveHistory);
     if(shareBtn) shareBtn.addEventListener('click', copySummary);
-    if(scaleSel) scaleSel.addEventListener('change', updateCalibrationStatus);
-    if(refInput) refInput.addEventListener('input', updateCalibrationStatus);
+    if(scaleSel) scaleSel.addEventListener('change', updateCaptureTarget);
     if(angleSel) angleSel.addEventListener('change', function(){
       setCurrentSlot(computeSlotFromSelects(), false);
     });
@@ -665,23 +475,6 @@
     });
     if(angleSel) angleSel.addEventListener('change', updateCaptureTarget);
     if(sideSel) sideSel.addEventListener('change', updateCaptureTarget);
-    if(canvas) canvas.addEventListener('click', handleCanvasClick);
-    if(measureRef) measureRef.addEventListener('click', function(){
-      if(!state.activeSlot){ return; }
-      state.measureMode = 'ref';
-      updateMeasureStatus();
-    });
-    if(measureFoot) measureFoot.addEventListener('click', function(){
-      if(!state.activeSlot){ return; }
-      state.measureMode = 'foot';
-      updateMeasureStatus();
-    });
-    if(measureReset) measureReset.addEventListener('click', function(){
-      if(!state.activeSlot) return;
-      state.measurements[state.activeSlot] = {};
-      renderCanvas();
-      updateCalibrationStatus();
-    });
     if(clearHistory) clearHistory.addEventListener('click', function(){
       localStorage.removeItem('footAnalysisHistory');
       renderHistory();
@@ -698,8 +491,6 @@
     attachEvents();
     renderHistory();
     updateProgress(0);
-    updateMeasureStatus();
-    updateCalibrationStatus();
     updateCaptureStatus('foot.captureIdle');
     updateCaptureTarget();
     state.currentSlot = computeSlotFromSelects();
