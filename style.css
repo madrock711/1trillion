@@ -557,10 +557,10 @@ footer {
 }
 
 .foot-hero {
-    display: flex;
-    justify-content: space-between;
-    gap: 18px;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    align-items: start;
     background: radial-gradient(circle at top left, rgba(29,185,84,0.18), transparent 55%),
                 linear-gradient(135deg, rgba(33,33,33,0.9), rgba(14,14,14,0.9));
     border: 1px solid var(--border-color);
@@ -587,60 +587,12 @@ footer {
     line-height: 1.5;
 }
 
-.foot-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: flex-end;
+.foot-privacy-line {
+    margin: 10px 0 0;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
 }
 
-.foot-badge {
-    background: rgba(29,185,84,0.1);
-    color: var(--text-primary);
-    border: 1px solid rgba(29,185,84,0.28);
-    padding: 5px 9px;
-    border-radius: 999px;
-    font-size: 0.72rem;
-}
-
-.foot-steps {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-}
-
-.foot-step {
-    background: var(--bg-light);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    padding: 10px 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    opacity: 0.55;
-    transition: all 0.3s ease;
-}
-
-.foot-step.is-active {
-    opacity: 1;
-    border-color: rgba(29,185,84,0.5);
-    box-shadow: 0 10px 24px rgba(0,0,0,0.25);
-}
-
-.foot-step-num {
-    width: 32px;
-    height: 32px;
-    border-radius: 12px;
-    background: rgba(29,185,84,0.2);
-    color: var(--accent-color);
-    display: grid;
-    place-items: center;
-    font-weight: 700;
-}
-
-.foot-step-text {
-    font-weight: 600;
-}
 
 .foot-grid {
     display: grid;
