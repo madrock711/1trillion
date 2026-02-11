@@ -210,12 +210,6 @@
     selectPreview(key);
   }
 
-function setPreviewForTopBoth(dataUrl){
-    setPreviewSilent('left-top', dataUrl);
-    setPreviewSilent('right-top', dataUrl);
-    selectPreview('left-top');
-  }
-
   function normalizeAngleByMeta(angleVal, meta){
     if(meta && meta.bothFeet) return 'top';
     return angleVal;
@@ -495,30 +489,13 @@ function setPreviewForTopBoth(dataUrl){
   }
 
   function setPreviewByAngle(angleVal, dataUrl, meta){
-    var topFilled = state.captures['left-top'] && state.captures['right-top'];
-    var bothHint = meta && meta.bothFeet;
-    if(angleVal === 'top' && !topFilled && bothHint){
-      setPreviewForTopBoth(dataUrl);
-      return { mode: 'both-top' };
-    }
     if(angleVal === 'top'){
-      if(!topFilled){
-        setPreviewForTopBoth(dataUrl);
-        return { mode: 'both-top' };
-      }
       var topSlot = nextEmptySlot(['left-top', 'right-top']) || 'left-top';
       setPreview(topSlot, dataUrl);
       return { mode: 'top', slot: topSlot };
     }
     if(angleVal === 'side'){
       var preferred = meta && meta.footSide ? (meta.footSide === 'right' ? 'right-side' : 'left-side') : null;
-      var sideFilled = state.captures['left-side'] && state.captures['right-side'];
-      if(!preferred && !sideFilled){
-        setPreviewSilent('left-side', dataUrl);
-        setPreviewSilent('right-side', dataUrl);
-        selectPreview('left-side');
-        return { mode: 'both-side' };
-      }
       var sideSlot = null;
       if(preferred && !state.captures[preferred]){
         sideSlot = preferred;
@@ -926,9 +903,10 @@ function detectAngleWithPose(dataUrl){
           }
         }
         if(topIndex >= 0){
-          setPreviewForTopBoth(valid[topIndex].dataUrl);
+          var preTopSlot = nextEmptySlot(['left-top', 'right-top']) || 'left-top';
+          setPreview(preTopSlot, valid[topIndex].dataUrl);
           used.add(topIndex);
-          topFilled = true;
+          topFilled = !!(state.captures['left-top'] && state.captures['right-top']);
         }
       }
       function placeByAngle(angle, url, info){
