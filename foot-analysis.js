@@ -552,7 +552,36 @@
     return { value: sizeVal, scale: scaleEl ? scaleEl.value : 'eu' };
   }
 
-  function sizeTipForBrand(brand, level, fit, climbType, street){
+  var TENAYA_SIZE_TABLE = [
+    { cm: 22.1, eu: 36, usW: '5.5', usM: '4.5', uk: '3.5' },
+    { cm: 22.8, eu: 37, usW: '6.25', usM: '5.25', uk: '4.25' },
+    { cm: 23.5, eu: 38, usW: '7', usM: '6', uk: '5' },
+    { cm: 24.1, eu: 39, usW: '7.75', usM: '6.75', uk: '5.75' },
+    { cm: 24.8, eu: 40, usW: '8.5', usM: '7.5', uk: '6.5' },
+    { cm: 25.5, eu: 41, usW: '9.25', usM: '8.25', uk: '7.25' },
+    { cm: 26.1, eu: 42, usW: '10', usM: '9', uk: '8' },
+    { cm: 26.8, eu: 43, usW: '10.75', usM: '9.75', uk: '8.75' },
+    { cm: 27.5, eu: 44, usW: '11.5', usM: '10.5', uk: '9.5' },
+    { cm: 28.1, eu: 45, usW: '12.5', usM: '11.5', uk: '10.5' },
+    { cm: 28.8, eu: 46, usW: '13.25', usM: '12.25', uk: '11.25' },
+    { cm: 29.5, eu: 47, usW: '14', usM: '13', uk: '12' }
+  ];
+
+  function closestTenayaSize(cm){
+    if(!cm) return null;
+    var best = TENAYA_SIZE_TABLE[0];
+    var bestDiff = Math.abs(cm - best.cm);
+    for(var i=1;i<TENAYA_SIZE_TABLE.length;i++){
+      var diff = Math.abs(cm - TENAYA_SIZE_TABLE[i].cm);
+      if(diff < bestDiff){
+        best = TENAYA_SIZE_TABLE[i];
+        bestDiff = diff;
+      }
+    }
+    return best;
+  }
+
+  function sizeTipForBrand(brand, level, fit, climbType, street, footCm){
     function scaleLabel(scale){
       if(scale === 'usm') return 'US(M)';
       if(scale === 'usw') return 'US(W)';
@@ -580,11 +609,14 @@
       return t('foot.sizeTipScarpa');
     }
     if(brand === 'Tenaya'){
+      var row = closestTenayaSize(footCm);
+      if(row){
+        return 'EU ' + row.eu + ' / US ' + row.usM + ' / ' + row.usW;
+      }
       return t('foot.sizeTipTenaya');
     }
     if(brand === 'La Sportiva'){
-      if(climbType === 'multi') return t('foot.sizeTipLaSportivaMulti');
-      return t('foot.sizeTipLaSportivaPerf');
+      return t('foot.sizeTipLaSportivaChart');
     }
     return '';
   }
@@ -598,6 +630,7 @@
     var fit = qs('#foot-fit') ? qs('#foot-fit').value : 'balanced';
     var widthType = state.results.left.widthType;
     var lengthMm = Math.max(state.results.left.lengthMm, state.results.right.lengthMm);
+    var footCm = Math.round(lengthMm / 10 * 10) / 10;
 
     var models = [
       { brand: 'La Sportiva', model: 'Performance Series', level: 'advanced', types: ['bouldering', 'sport'], width: 'normal', price: '$$$$' },
@@ -639,7 +672,7 @@
     scored.slice(0, 6).forEach(function(entry){
       var card = document.createElement('div');
       card.className = 'foot-reco-card';
-      var sizeTip = sizeTipForBrand(entry.item.brand, level, fit, type, street);
+      var sizeTip = sizeTipForBrand(entry.item.brand, level, fit, type, street, footCm);
       card.innerHTML = '' +
         '<div class="foot-reco-top">' +
           '<div>' +
