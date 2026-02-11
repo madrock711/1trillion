@@ -109,11 +109,15 @@
           if(timeLbl) timeLbl.textContent = fmtDec(phaseTargetMs);
           if(ringProg) ringProg.style.strokeDashoffset = String(CIRC);
           updateBubbles(0);
-          if (phase === 'INHALE' && inhaleAudio) {
-              inhaleAudio.play();
-          } else if (phase === 'EXHALE' && exhaleAudio) {
-              exhaleAudio.play();
-          }
+        if (phase === 'INHALE' && inhaleAudio) {
+            if (typeof inhaleAudio.canPlayType === 'function' && inhaleAudio.canPlayType('audio/mpeg')) {
+                inhaleAudio.play().catch(function(){ /* ignore */ });
+            }
+        } else if (phase === 'EXHALE' && exhaleAudio) {
+            if (typeof exhaleAudio.canPlayType === 'function' && exhaleAudio.canPlayType('audio/mpeg')) {
+                exhaleAudio.play().catch(function(){ /* ignore */ });
+            }
+        }
         }
 
         function nextPhase(){
