@@ -219,6 +219,34 @@
     selectPreview('left-top');
   }
 
+  function nextEmptySlot(keys){
+    for(var i=0;i<keys.length;i++){
+      if(!state.captures[keys[i]]) return keys[i];
+    }
+    return null;
+  }
+
+  function setPreviewByAngle(angleVal, dataUrl){
+    var bothTop = qs('#foot-both-top');
+    if(angleVal === 'top' && bothTop && bothTop.checked){
+      setPreviewForTopBoth(dataUrl);
+      return { mode: 'both-top' };
+    }
+    if(angleVal === 'top'){
+      var topSlot = nextEmptySlot(['left-top', 'right-top']) || slotKey();
+      setPreview(topSlot, dataUrl);
+      return { mode: 'top', slot: topSlot };
+    }
+    if(angleVal === 'side'){
+      var sideSlot = nextEmptySlot(['left-side', 'right-side']) || slotKey();
+      setPreview(sideSlot, dataUrl);
+      return { mode: 'side', slot: sideSlot };
+    }
+    var fallbackSlot = slotKey();
+    setPreview(fallbackSlot, dataUrl);
+    return { mode: 'fallback', slot: fallbackSlot };
+  }
+
 function detectAngleHeuristic(dataUrl){
     return new Promise(function(resolve){
       var img = new Image();
@@ -403,12 +431,10 @@ function detectAngleHeuristic(dataUrl){
       var dataUrl = e.target.result;
       applyAngleDetection(dataUrl, function(detected){
         var angleVal = detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
-        var bothTop = qs('#foot-both-top');
-        if(angleVal === 'top' && bothTop && bothTop.checked){
-          setPreviewForTopBoth(dataUrl);
+        var result = setPreviewByAngle(angleVal, dataUrl);
+        if(result.mode === 'both-top'){
           updateCaptureStatus('foot.uploadDoneBoth');
         } else {
-          setPreview(slotKey(), dataUrl);
           updateCaptureStatus('foot.uploadDone', {
             side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
             angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
@@ -433,12 +459,10 @@ function detectAngleHeuristic(dataUrl){
         var dataUrl = e.target.result;
         applyAngleDetection(dataUrl, function(detected){
           var angleVal = detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
-          var bothTop = qs('#foot-both-top');
-          if(angleVal === 'top' && bothTop && bothTop.checked){
-            setPreviewForTopBoth(dataUrl);
+          var result = setPreviewByAngle(angleVal, dataUrl);
+          if(result.mode === 'both-top'){
             updateCaptureStatus('foot.uploadDoneBoth');
           } else {
-            setPreview(slotKey(), dataUrl);
             updateCaptureStatus('foot.uploadDone', {
               side: t('foot.' + (qs('#foot-side') ? qs('#foot-side').value : 'left')),
               angle: t('foot.angle' + (angleVal === 'top' ? 'Top' : 'Side'))
