@@ -595,6 +595,7 @@
 
     var level = qs('#foot-level') ? qs('#foot-level').value : 'beginner';
     var type = qs('#foot-type') ? qs('#foot-type').value : 'bouldering';
+    var fit = qs('#foot-fit') ? qs('#foot-fit').value : 'balanced';
     var widthType = state.results.left.widthType;
     var lengthMm = Math.max(state.results.left.lengthMm, state.results.right.lengthMm);
 
@@ -621,12 +622,12 @@
       if(item.level === level) score += 10;
       if(item.types.indexOf(type) > -1) score += 10;
       if(item.width === targetWidth) score += 12;
-    if(state.results.left.instep === t('foot.instepHigh') || state.results.right.instep === t('foot.instepHigh')) {
-      if(item.width === 'wide') score += 4;
-    }
-    if(state.results.left.instep === t('foot.instepLow') || state.results.right.instep === t('foot.instepLow')) {
-      if(item.width === 'narrow') score += 4;
-    }
+      if(state.results.left.instep === t('foot.instepHigh') || state.results.right.instep === t('foot.instepHigh')) {
+        if(item.width === 'wide') score += 4;
+      }
+      if(state.results.left.instep === t('foot.instepLow') || state.results.right.instep === t('foot.instepLow')) {
+        if(item.width === 'narrow') score += 4;
+      }
       score = Math.min(95, score);
       return { item: item, score: score };
     }).sort(function(a,b){ return b.score - a.score; });
