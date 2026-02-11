@@ -64,20 +64,11 @@
   var slotOrder = ['left-top', 'left-side', 'right-top', 'right-side'];
 
   function currentTargetLabel(){
-    var sideEl = qs('#foot-side');
-    var angleEl = qs('#foot-angle');
-    var side = t('foot.' + (sideEl ? sideEl.value : 'left'));
-    var angle = t('foot.angle' + ((angleEl ? angleEl.value : 'top') === 'top' ? 'Top' : 'Side'));
-    return { side: side, angle: angle };
+    return { mode: t('foot.captureAutoTarget') };
   }
 
   function updateCaptureTarget(){
-    var bothTop = qs('#foot-both-top');
-    if(bothTop && bothTop.checked && (qs('#foot-angle') ? qs('#foot-angle').value : 'top') === 'top'){
-      updateCaptureStatus('foot.captureTargetBoth', currentTargetLabel());
-      return;
-    }
-    updateCaptureStatus('foot.captureTarget', currentTargetLabel());
+    updateCaptureStatus('foot.captureAutoTarget');
   }
 
   function hapticPulse(){
@@ -212,12 +203,6 @@
     img.alt = key;
     slot.appendChild(img);
     slot.classList.add('has-image');
-    if(!slot.querySelector('.foot-preview-label')){
-      var label = document.createElement('span');
-      label.className = 'foot-preview-label';
-      label.textContent = slot.getAttribute('data-label') || '';
-      slot.appendChild(label);
-    }
   }
 
   function setPreview(key, dataUrl){
@@ -510,23 +495,30 @@ function setPreviewForTopBoth(dataUrl){
   }
 
   function setPreviewByAngle(angleVal, dataUrl, meta){
-    var bothTop = qs('#foot-both-top');
     var topFilled = state.captures['left-top'] && state.captures['right-top'];
     var bothHint = meta && meta.bothFeet;
-    if(angleVal === 'top' && bothTop && bothTop.checked && !topFilled && bothHint){
+    if(angleVal === 'top' && !topFilled && bothHint){
       setPreviewForTopBoth(dataUrl);
       return { mode: 'both-top' };
     }
     if(angleVal === 'top'){
-      var topSlot = nextEmptySlot(['left-top', 'right-top']);
-      if(!topSlot){
-        return { mode: 'top-skip' };
+      if(!topFilled){
+        setPreviewForTopBoth(dataUrl);
+        return { mode: 'both-top' };
       }
+      var topSlot = nextEmptySlot(['left-top', 'right-top']) || 'left-top';
       setPreview(topSlot, dataUrl);
       return { mode: 'top', slot: topSlot };
     }
     if(angleVal === 'side'){
       var preferred = meta && meta.footSide ? (meta.footSide === 'right' ? 'right-side' : 'left-side') : null;
+      var sideFilled = state.captures['left-side'] && state.captures['right-side'];
+      if(!preferred && !sideFilled){
+        setPreviewSilent('left-side', dataUrl);
+        setPreviewSilent('right-side', dataUrl);
+        selectPreview('left-side');
+        return { mode: 'both-side' };
+      }
       var sideSlot = null;
       if(preferred && !state.captures[preferred]){
         sideSlot = preferred;
@@ -537,7 +529,7 @@ function setPreviewForTopBoth(dataUrl){
         sideSlot = preferred;
       }
       if(!sideSlot){
-        return { mode: 'side-skip' };
+        sideSlot = preferred || 'left-side';
       }
       setPreview(sideSlot, dataUrl);
       return { mode: 'side', slot: sideSlot };
@@ -990,6 +982,13 @@ function detectAngleWithPose(dataUrl){
 
   function analyze(){
     var count = countCaptures();
+    var hasTop = !!(state.captures['left-top'] || state.captures['right-top']);
+    var hasSide = !!(state.captures['left-side'] || state.captures['right-side']);
+    if(!hasTop || !hasSide){
+      updateCaptureStatus('foot.analyzeNeedPhotos', null, true);
+      alert(t('foot.analyzeNeedPhotos'));
+      return;
+    }
     updateProgress(10);
     setStep(2);
 
@@ -1001,8 +1000,8 @@ function detectAngleWithPose(dataUrl){
       var widthRatio = widthMm / lengthMm;
       var widthType = widthRatio < 0.37 ? t('foot.widthNarrow') : (widthRatio > 0.41 ? t('foot.widthWide') : t('foot.widthNormal'));
 
-      var hasSide = !!state.captures[sideKey + '-side'];
-      var instep = hasSide ? pickBySeed([t('foot.instepMid'), t('foot.instepHigh')], seed + 3) : pickBySeed([t('foot.instepLow'), t('foot.instepMid')], seed + 5);
+      var sideAvailable = !!(state.captures['left-side'] || state.captures['right-side']);
+      var instep = sideAvailable ? pickBySeed([t('foot.instepMid'), t('foot.instepHigh')], seed + 3) : pickBySeed([t('foot.instepLow'), t('foot.instepMid')], seed + 5);
       if(widthRatio > 0.41 && instep === t('foot.instepLow')) instep = t('foot.instepMid');
       if(widthRatio < 0.37 && instep === t('foot.instepHigh')) instep = t('foot.instepMid');
 
@@ -1278,13 +1277,6 @@ function detectAngleWithPose(dataUrl){
       var img = slot.querySelector('img');
       if(img) img.remove();
       slot.classList.remove('has-image');
-      var labelEl = slot.querySelector('.foot-preview-label');
-      if(!labelEl){
-        labelEl = document.createElement('span');
-        labelEl.className = 'foot-preview-label';
-        labelEl.textContent = slot.getAttribute('data-label') || '';
-        slot.appendChild(labelEl);
-      }
       slot.classList.remove('is-active');
     });
     var resIds = ['length','width','instep','arch','toe','ball'];
