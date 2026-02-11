@@ -232,23 +232,34 @@ function setPreviewForTopBoth(dataUrl){
     selectPreview('left-top');
   }
 
-  function rotateForAngle(angleVal, dataUrl, cb){
+  function selectedFootSide(){
+    var sideEl = qs('#foot-side');
+    return sideEl ? sideEl.value : 'left';
+  }
+
+  function normalizeAngleByMeta(angleVal, meta){
+    if(meta && meta.bothFeet) return 'top';
+    return angleVal;
+  }
+
+  function rotateForAngle(angleVal, dataUrl, meta, cb){
     if(angleVal !== 'side'){
       cb(dataUrl);
       return;
     }
+    if(meta && meta.bothFeet){
+      cb(dataUrl);
+      return;
+    }
+    var footSide = (meta && meta.footSide) || selectedFootSide();
     var img = new Image();
     img.onload = function(){
-      if(img.width >= img.height){
-        cb(dataUrl);
-        return;
-      }
       var canvas = document.createElement('canvas');
       canvas.width = img.height;
       canvas.height = img.width;
       var ctx = canvas.getContext('2d');
       ctx.translate(canvas.width / 2, canvas.height / 2);
-      ctx.rotate(-Math.PI / 2);
+      ctx.rotate(footSide === 'left' ? Math.PI / 2 : -Math.PI / 2);
       ctx.drawImage(img, -img.width / 2, -img.height / 2);
       cb(canvas.toDataURL('image/jpeg', 0.9));
     };
@@ -638,9 +649,13 @@ function detectAngleWithPose(dataUrl){
     var dataUrl = canvas.toDataURL('image/jpeg', 0.9);
     applyAngleDetection(dataUrl, function(detected){
       detectAngleOnly(dataUrl).then(function(info){
-        var angleVal = (info && info.angle) || detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
-        rotateForAngle(angleVal, dataUrl, function(rotated){
-          var result = setPreviewByAngle(angleVal, rotated, info);
+        var meta = info || {};
+        var angleVal = normalizeAngleByMeta((meta.angle || detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top')), meta);
+        if(angleVal === 'side' && !meta.footSide){
+          meta.footSide = selectedFootSide();
+        }
+        rotateForAngle(angleVal, dataUrl, meta, function(rotated){
+          var result = setPreviewByAngle(angleVal, rotated, meta);
           if(result.mode === 'both-top'){
             updateCaptureStatus('foot.captureDoneBoth');
           } else {
@@ -662,13 +677,13 @@ function detectAngleWithPose(dataUrl){
       if(!dataUrl) return;
       applyAngleDetection(dataUrl, function(detected){
         detectAngleOnly(dataUrl).then(function(info){
-          var angleVal = (info && info.angle) || detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top');
+          var meta = info || {};
+          var angleVal = normalizeAngleByMeta((meta.angle || detected || (qs('#foot-angle') ? qs('#foot-angle').value : 'top')), meta);
           if(angleVal === 'side'){
             detectSideFoot(dataUrl).then(function(sideFoot){
-              if(info) info.footSide = sideFoot;
-              else info = { footSide: sideFoot };
-              rotateForAngle(angleVal, dataUrl, function(rotated){
-                var result = setPreviewByAngle(angleVal, rotated, info);
+              meta.footSide = sideFoot || meta.footSide || selectedFootSide();
+              rotateForAngle(angleVal, dataUrl, meta, function(rotated){
+                var result = setPreviewByAngle(angleVal, rotated, meta);
                 if(result.mode === 'both-top'){
                   updateCaptureStatus('foot.uploadDoneBoth');
                 } else {
@@ -683,8 +698,8 @@ function detectAngleWithPose(dataUrl){
             });
             return;
           }
-          rotateForAngle(angleVal, dataUrl, function(rotated){
-            var result = setPreviewByAngle(angleVal, rotated, info);
+          rotateForAngle(angleVal, dataUrl, meta, function(rotated){
+            var result = setPreviewByAngle(angleVal, rotated, meta);
             if(result.mode === 'both-top'){
               updateCaptureStatus('foot.uploadDoneBoth');
             } else {
@@ -713,8 +728,9 @@ function detectAngleWithPose(dataUrl){
         fileToDataUrl(file, function(dataUrl){
           if(!dataUrl) return next();
           var angleVal = qs('#foot-angle') ? qs('#foot-angle').value : 'top';
-          rotateForAngle(angleVal, dataUrl, function(rotated){
-            var result = setPreviewByAngle(angleVal, rotated);
+          var meta = angleVal === 'side' ? { footSide: selectedFootSide() } : {};
+          rotateForAngle(angleVal, dataUrl, meta, function(rotated){
+            var result = setPreviewByAngle(angleVal, rotated, meta);
             if(result.mode === 'both-top'){
               updateCaptureStatus('foot.uploadDoneBoth');
             } else {
@@ -778,8 +794,13 @@ function detectAngleWithPose(dataUrl){
         }
       }
       function placeByAngle(angle, url, info){
-        rotateForAngle(angle, url, function(rotated){
-          setPreviewByAngle(angle, rotated, info);
+        var meta = info || {};
+        var normalizedAngle = normalizeAngleByMeta(angle, meta);
+        if(normalizedAngle === 'side' && !meta.footSide){
+          meta.footSide = selectedFootSide();
+        }
+        rotateForAngle(normalizedAngle, url, meta, function(rotated){
+          setPreviewByAngle(normalizedAngle, rotated, meta);
         });
       }
       for(var i=0;i<valid.length;i++){
