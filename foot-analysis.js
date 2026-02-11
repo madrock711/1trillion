@@ -242,35 +242,8 @@ function setPreviewForTopBoth(dataUrl){
     return angleVal;
   }
 
-  var ROTATE_SIDE_IMAGE = false;
-
   function rotateForAngle(angleVal, dataUrl, meta, cb){
-    if(!ROTATE_SIDE_IMAGE){
-      cb(dataUrl);
-      return;
-    }
-    if(angleVal !== 'side'){
-      cb(dataUrl);
-      return;
-    }
-    if(meta && meta.bothFeet){
-      cb(dataUrl);
-      return;
-    }
-    var footSide = (meta && meta.footSide) || selectedFootSide();
-    var img = new Image();
-    img.onload = function(){
-      var canvas = document.createElement('canvas');
-      canvas.width = img.height;
-      canvas.height = img.width;
-      var ctx = canvas.getContext('2d');
-      ctx.translate(canvas.width / 2, canvas.height / 2);
-      ctx.rotate(footSide === 'left' ? Math.PI / 2 : -Math.PI / 2);
-      ctx.drawImage(img, -img.width / 2, -img.height / 2);
-      cb(canvas.toDataURL('image/jpeg', 0.9));
-    };
-    img.onerror = function(){ cb(dataUrl); };
-    img.src = dataUrl;
+    cb(dataUrl);
   }
 
   function detectAngleByAspect(dataUrl){
@@ -299,7 +272,7 @@ function setPreviewForTopBoth(dataUrl){
       return;
     }
     if(window.createImageBitmap){
-      createImageBitmap(file, { imageOrientation: 'from-image' }).then(function(bitmap){
+      createImageBitmap(file, { imageOrientation: 'none' }).then(function(bitmap){
         var canvas = document.createElement('canvas');
         canvas.width = bitmap.width;
         canvas.height = bitmap.height;
