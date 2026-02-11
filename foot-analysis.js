@@ -947,6 +947,29 @@ function detectAngleWithPose(dataUrl){
     return list[idx];
   }
 
+  function toeImageForLabel(label){
+    if(!label) return null;
+    var s = String(label).toLowerCase();
+    if(s.indexOf('greek') > -1 || s.indexOf('그리스') > -1) return 'assets/images/FootType_Greek.png';
+    if(s.indexOf('roman') > -1 || s.indexOf('로만') > -1) return 'assets/images/FootType_Roman.png';
+    if(s.indexOf('egypt') > -1 || s.indexOf('이집트') > -1) return 'assets/images/FootType_Egypt.png';
+    return null;
+  }
+
+  function setToeResult(el, label){
+    if(!el) return;
+    var imgSrc = toeImageForLabel(label);
+    if(!imgSrc){
+      el.textContent = label;
+      return;
+    }
+    el.innerHTML = '' +
+      '<span class="foot-toe-cell">' +
+        '<span class="foot-toe-text">' + label + '</span>' +
+        '<img class="foot-toe-thumb" src="' + imgSrc + '" alt="' + label + '">' +
+      '</span>';
+  }
+
   function estimateLength(){
     var input = qs('#foot-length-input');
     var val = input ? Number(input.value) : 0;
@@ -1028,13 +1051,13 @@ function detectAngleWithPose(dataUrl){
       if(lWidth) lWidth.textContent = l.widthMm + ' mm';
       if(lInstep) lInstep.textContent = l.instep;
       if(lArch) lArch.textContent = l.arch;
-      if(lToe) lToe.textContent = l.toe;
+      if(lToe) setToeResult(lToe, l.toe);
       if(lBall) lBall.textContent = l.ball;
       if(rLen) rLen.textContent = r.lengthMm + ' mm';
       if(rWidth) rWidth.textContent = r.widthMm + ' mm';
       if(rInstep) rInstep.textContent = r.instep;
       if(rArch) rArch.textContent = r.arch;
-      if(rToe) rToe.textContent = r.toe;
+      if(rToe) setToeResult(rToe, r.toe);
       if(rBall) rBall.textContent = r.ball;
       buildRecommendations();
       setStep(3);

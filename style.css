@@ -886,6 +886,29 @@ footer {
     text-align: right;
 }
 
+.foot-toe-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    max-width: 100%;
+}
+
+.foot-toe-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.foot-toe-thumb {
+    width: 28px;
+    height: 18px;
+    border-radius: 4px;
+    object-fit: cover;
+    flex: 0 0 auto;
+    border: 1px solid var(--border-color);
+}
+
 .foot-result {
     background: #111;
     border: 1px solid var(--border-color);
