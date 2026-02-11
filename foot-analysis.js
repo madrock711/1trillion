@@ -956,33 +956,24 @@ function detectAngleWithPose(dataUrl){
     return null;
   }
 
-  function setToeGuideImage(leftLabel, rightLabel){
-    var row = qs('#foot-result-row-toe');
-    if(!row) return;
-    var old = row.querySelector('.foot-toe-guide-pair');
-    if(old) old.remove();
-    var leftSrc = toeImageForLabel(leftLabel);
-    var rightSrc = toeImageForLabel(rightLabel);
-    if(!leftSrc && !rightSrc) return;
-    if(!leftSrc) leftSrc = rightSrc;
-    if(!rightSrc) rightSrc = leftSrc;
-
-    var pair = document.createElement('div');
-    pair.className = 'foot-toe-guide-pair';
-
-    var leftImg = document.createElement('img');
-    leftImg.className = 'foot-toe-guide mirror';
-    leftImg.src = leftSrc;
-    leftImg.alt = leftLabel || 'left toe type';
-
-    var rightImg = document.createElement('img');
-    rightImg.className = 'foot-toe-guide';
-    rightImg.src = rightSrc;
-    rightImg.alt = rightLabel || 'right toe type';
-
-    pair.appendChild(leftImg);
-    pair.appendChild(rightImg);
-    row.appendChild(pair);
+  function setToeGuideImage(leftEl, rightEl, leftLabel, rightLabel){
+    function render(el, label, mirror){
+      if(!el) return;
+      var old = el.querySelector('.foot-toe-inline');
+      if(old) old.remove();
+      var src = toeImageForLabel(label);
+      if(!src) return;
+      var box = document.createElement('span');
+      box.className = 'foot-toe-inline';
+      var img = document.createElement('img');
+      img.className = 'foot-toe-guide' + (mirror ? ' mirror' : '');
+      img.src = src;
+      img.alt = label || 'toe type';
+      box.appendChild(img);
+      el.appendChild(box);
+    }
+    render(leftEl, leftLabel, true);
+    render(rightEl, rightLabel, false);
   }
 
   function estimateLength(){
@@ -1074,7 +1065,7 @@ function detectAngleWithPose(dataUrl){
       if(rArch) rArch.textContent = r.arch;
       if(rToe) rToe.textContent = r.toe;
       if(rBall) rBall.textContent = r.ball;
-      setToeGuideImage(l.toe, r.toe);
+      setToeGuideImage(lToe, rToe, l.toe, r.toe);
       buildRecommendations();
       setStep(3);
     }, 650);
