@@ -50,14 +50,54 @@
         var exhaleAudio = document.getElementById('exhale-sound');
         var volumeSlider = root.querySelector('#br-volume');
         var audioUnlocked = false;
+        var audioCtx = null;
+        var gainNode = null;
+        var mediaGraphReady = false;
+
+        function updateVolume() {
+          if(!volumeSlider) return;
+          var v = Number(volumeSlider.value);
+          if(isNaN(v)) v = 0.5;
+          if(inhaleAudio) inhaleAudio.volume = mediaGraphReady ? 1 : v;
+          if(exhaleAudio) exhaleAudio.volume = mediaGraphReady ? 1 : v;
+          if(gainNode){
+            try{
+              if(audioCtx && gainNode.gain && typeof gainNode.gain.setValueAtTime === 'function'){
+                gainNode.gain.setValueAtTime(v, audioCtx.currentTime);
+              } else {
+                gainNode.gain.value = v;
+              }
+            }catch(e){ /* ignore */ }
+          }
+        }
 
         if (inhaleAudio && exhaleAudio && volumeSlider) {
-            function updateVolume() {
-                inhaleAudio.volume = volumeSlider.value;
-                exhaleAudio.volume = volumeSlider.value;
+          volumeSlider.addEventListener('input', updateVolume);
+          volumeSlider.addEventListener('change', updateVolume);
+          updateVolume(); // Set initial volume
+        }
+
+        function ensureAudioGraph(){
+          if(mediaGraphReady) return;
+          var AC = window.AudioContext || window.webkitAudioContext;
+          if(!AC || !inhaleAudio || !exhaleAudio) return;
+          try{
+            audioCtx = audioCtx || new AC();
+            gainNode = gainNode || audioCtx.createGain();
+            gainNode.connect(audioCtx.destination);
+            var inhaleSrc = audioCtx.createMediaElementSource(inhaleAudio);
+            var exhaleSrc = audioCtx.createMediaElementSource(exhaleAudio);
+            inhaleSrc.connect(gainNode);
+            exhaleSrc.connect(gainNode);
+            mediaGraphReady = true;
+            if(volumeSlider){
+              var v = Number(volumeSlider.value);
+              if(!isNaN(v)) gainNode.gain.value = v;
             }
-            volumeSlider.addEventListener('input', updateVolume);
-            updateVolume(); // Set initial volume
+            updateVolume();
+          }catch(e){
+            // If graph setup fails, keep native volume behavior.
+          }
         }
 
         function stopAudio(audio){
@@ -87,6 +127,10 @@
 
         function unlockAudioElements(){
           if(audioUnlocked) return;
+          ensureAudioGraph();
+          if(audioCtx && typeof audioCtx.resume === 'function'){
+            try{ audioCtx.resume(); }catch(e){ /* ignore */ }
+          }
           function prime(a){
             if(!a) return;
             try{
@@ -113,6 +157,7 @@
           }
           prime(inhaleAudio);
           prime(exhaleAudio);
+          updateVolume();
           audioUnlocked = true;
         }
 
