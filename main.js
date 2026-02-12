@@ -49,6 +49,7 @@
         var inhaleAudio = document.getElementById('inhale-sound');
         var exhaleAudio = document.getElementById('exhale-sound');
         var volumeSlider = root.querySelector('#br-volume');
+        var audioUnlocked = false;
 
         if (inhaleAudio && exhaleAudio && volumeSlider) {
             function updateVolume() {
@@ -82,6 +83,37 @@
           if(typeof current.canPlayType === 'function' && !current.canPlayType('audio/mpeg')) return;
           current.loop = true;
           current.play().catch(function(){ /* ignore */ });
+        }
+
+        function unlockAudioElements(){
+          if(audioUnlocked) return;
+          function prime(a){
+            if(!a) return;
+            try{
+              a.muted = true;
+              a.loop = false;
+              a.currentTime = 0;
+              var p = a.play();
+              if(p && typeof p.then === 'function'){
+                p.then(function(){
+                  try{
+                    a.pause();
+                    a.currentTime = 0;
+                    a.muted = false;
+                  }catch(e){ /* ignore */ }
+                }).catch(function(){
+                  try{ a.muted = false; }catch(e){ /* ignore */ }
+                });
+              } else {
+                a.pause();
+                a.currentTime = 0;
+                a.muted = false;
+              }
+            }catch(e){ /* ignore */ }
+          }
+          prime(inhaleAudio);
+          prime(exhaleAudio);
+          audioUnlocked = true;
         }
 
         function getInEl(){ return q('#br-in-sec'); }
@@ -142,7 +174,7 @@
           if(phase==='INHALE') setPhase('EXHALE'); else setPhase('INHALE');
         }
 
-        function start(){ if(running) return; running=true; var b=q('#br-start'); if(b) b.textContent = t('breath.pause'); lastTickTs=Date.now(); playPhaseAudio(); requestAnimationFrame(tick); }
+        function start(){ if(running) return; unlockAudioElements(); running=true; var b=q('#br-start'); if(b) b.textContent = t('breath.pause'); lastTickTs=Date.now(); playPhaseAudio(); requestAnimationFrame(tick); }
         function pause(){ if(!running) return; running=false; var b=q('#br-start'); if(b) b.textContent = t('breath.start'); stopBreathAudio(); }
         function reset(){ running=false; var b=q('#br-start'); if(b) b.textContent = t('breath.start'); phaseElapsedMs=0; totalElapsedMs=0; round=1; if(roundEl) roundEl.textContent='1'; stopBreathAudio(); setPhase('INHALE'); if(totalLbl) totalLbl.textContent='00:00'; }
 
