@@ -62,6 +62,7 @@
         function stopAudio(audio){
           if(!audio) return;
           try{
+            audio.loop = false;
             audio.pause();
             audio.currentTime = 0;
           }catch(e){ /* ignore */ }
@@ -79,6 +80,7 @@
           stopAudio(current);
           if(!current) return;
           if(typeof current.canPlayType === 'function' && !current.canPlayType('audio/mpeg')) return;
+          current.loop = true;
           current.play().catch(function(){ /* ignore */ });
         }
 
