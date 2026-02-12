@@ -55,15 +55,7 @@
         var inhaleGainNode = null;
         var exhaleGainNode = null;
         var mediaGraphReady = false;
-        var audioFadeStopTimer = null;
-        var AUDIO_FADE_MS = 220;
-
-        function clearAudioFadeStopTimer(){
-          if(audioFadeStopTimer){
-            clearTimeout(audioFadeStopTimer);
-            audioFadeStopTimer = null;
-          }
-        }
+        var AUDIO_FADE_IN_MS = 2000;
 
         function updateVolume() {
           if(!volumeSlider) return;
@@ -127,7 +119,6 @@
         }
 
         function stopBreathAudio(){
-          clearAudioFadeStopTimer();
           if(mediaGraphReady && audioCtx && inhaleGainNode && exhaleGainNode){
             try{
               var now = audioCtx.currentTime;
@@ -164,30 +155,27 @@
           var other = getPhaseAudio(!isInhale);
           var currentGain = getPhaseGain(isInhale);
           var otherGain = getPhaseGain(!isInhale);
-          clearAudioFadeStopTimer();
           if(!current) return;
           if(typeof current.canPlayType === 'function' && !current.canPlayType('audio/mpeg')) return;
 
           if(mediaGraphReady && audioCtx && currentGain && otherGain){
+            stopAudio(other);
+            stopAudio(current);
             try{
               if(audioCtx.state === 'suspended' && typeof audioCtx.resume === 'function'){
                 audioCtx.resume();
               }
             }catch(e){ /* ignore */ }
             current.loop = true;
-            if(other) other.loop = true;
-            if(other) other.play().catch(function(){ /* ignore */ });
             current.play().catch(function(){ /* ignore */ });
             try{
               var now = audioCtx.currentTime;
-              var dur = AUDIO_FADE_MS / 1000;
+              var dur = AUDIO_FADE_IN_MS / 1000;
+              otherGain.gain.cancelScheduledValues(now);
+              otherGain.gain.setValueAtTime(0, now);
               currentGain.gain.cancelScheduledValues(now);
               currentGain.gain.setValueAtTime(0, now);
               rampGain(currentGain, 1, now, dur);
-              rampGain(otherGain, 0, now, dur);
-              audioFadeStopTimer = setTimeout(function(){
-                stopAudio(other);
-              }, AUDIO_FADE_MS + 30);
             }catch(e){ /* ignore */ }
             return;
           }
