@@ -51,8 +51,19 @@
         var volumeSlider = root.querySelector('#br-volume');
         var audioUnlocked = false;
         var audioCtx = null;
-        var gainNode = null;
+        var masterGainNode = null;
+        var inhaleGainNode = null;
+        var exhaleGainNode = null;
         var mediaGraphReady = false;
+        var audioFadeStopTimer = null;
+        var AUDIO_FADE_MS = 220;
+
+        function clearAudioFadeStopTimer(){
+          if(audioFadeStopTimer){
+            clearTimeout(audioFadeStopTimer);
+            audioFadeStopTimer = null;
+          }
+        }
 
         function updateVolume() {
           if(!volumeSlider) return;
@@ -60,12 +71,12 @@
           if(isNaN(v)) v = 0.5;
           if(inhaleAudio) inhaleAudio.volume = mediaGraphReady ? 1 : v;
           if(exhaleAudio) exhaleAudio.volume = mediaGraphReady ? 1 : v;
-          if(gainNode){
+          if(masterGainNode){
             try{
-              if(audioCtx && gainNode.gain && typeof gainNode.gain.setValueAtTime === 'function'){
-                gainNode.gain.setValueAtTime(v, audioCtx.currentTime);
+              if(audioCtx && masterGainNode.gain && typeof masterGainNode.gain.setValueAtTime === 'function'){
+                masterGainNode.gain.setValueAtTime(v, audioCtx.currentTime);
               } else {
-                gainNode.gain.value = v;
+                masterGainNode.gain.value = v;
               }
             }catch(e){ /* ignore */ }
           }
@@ -83,17 +94,23 @@
           if(!AC || !inhaleAudio || !exhaleAudio) return;
           try{
             audioCtx = audioCtx || new AC();
-            gainNode = gainNode || audioCtx.createGain();
-            gainNode.connect(audioCtx.destination);
+            masterGainNode = masterGainNode || audioCtx.createGain();
+            inhaleGainNode = inhaleGainNode || audioCtx.createGain();
+            exhaleGainNode = exhaleGainNode || audioCtx.createGain();
+            inhaleGainNode.connect(masterGainNode);
+            exhaleGainNode.connect(masterGainNode);
+            masterGainNode.connect(audioCtx.destination);
             var inhaleSrc = audioCtx.createMediaElementSource(inhaleAudio);
             var exhaleSrc = audioCtx.createMediaElementSource(exhaleAudio);
-            inhaleSrc.connect(gainNode);
-            exhaleSrc.connect(gainNode);
+            inhaleSrc.connect(inhaleGainNode);
+            exhaleSrc.connect(exhaleGainNode);
             mediaGraphReady = true;
             if(volumeSlider){
               var v = Number(volumeSlider.value);
-              if(!isNaN(v)) gainNode.gain.value = v;
+              if(!isNaN(v)) masterGainNode.gain.value = v;
             }
+            inhaleGainNode.gain.value = 0;
+            exhaleGainNode.gain.value = 0;
             updateVolume();
           }catch(e){
             // If graph setup fails, keep native volume behavior.
@@ -110,17 +127,73 @@
         }
 
         function stopBreathAudio(){
+          clearAudioFadeStopTimer();
+          if(mediaGraphReady && audioCtx && inhaleGainNode && exhaleGainNode){
+            try{
+              var now = audioCtx.currentTime;
+              inhaleGainNode.gain.cancelScheduledValues(now);
+              exhaleGainNode.gain.cancelScheduledValues(now);
+              inhaleGainNode.gain.setValueAtTime(0, now);
+              exhaleGainNode.gain.setValueAtTime(0, now);
+            }catch(e){ /* ignore */ }
+          }
           stopAudio(inhaleAudio);
           stopAudio(exhaleAudio);
         }
 
+        function getPhaseAudio(isInhale){
+          return isInhale ? inhaleAudio : exhaleAudio;
+        }
+
+        function getPhaseGain(isInhale){
+          return isInhale ? inhaleGainNode : exhaleGainNode;
+        }
+
+        function rampGain(node, target, now, durationSec){
+          if(!node || !node.gain) return;
+          try{
+            node.gain.cancelScheduledValues(now);
+            node.gain.setValueAtTime(node.gain.value, now);
+            node.gain.linearRampToValueAtTime(target, now + durationSec);
+          }catch(e){ /* ignore */ }
+        }
+
         function playPhaseAudio(){
-          var current = (phase === 'INHALE') ? inhaleAudio : exhaleAudio;
-          var other = (phase === 'INHALE') ? exhaleAudio : inhaleAudio;
-          stopAudio(other);
-          stopAudio(current);
+          var isInhale = (phase === 'INHALE');
+          var current = getPhaseAudio(isInhale);
+          var other = getPhaseAudio(!isInhale);
+          var currentGain = getPhaseGain(isInhale);
+          var otherGain = getPhaseGain(!isInhale);
+          clearAudioFadeStopTimer();
           if(!current) return;
           if(typeof current.canPlayType === 'function' && !current.canPlayType('audio/mpeg')) return;
+
+          if(mediaGraphReady && audioCtx && currentGain && otherGain){
+            try{
+              if(audioCtx.state === 'suspended' && typeof audioCtx.resume === 'function'){
+                audioCtx.resume();
+              }
+            }catch(e){ /* ignore */ }
+            current.loop = true;
+            if(other) other.loop = true;
+            if(other) other.play().catch(function(){ /* ignore */ });
+            current.play().catch(function(){ /* ignore */ });
+            try{
+              var now = audioCtx.currentTime;
+              var dur = AUDIO_FADE_MS / 1000;
+              currentGain.gain.cancelScheduledValues(now);
+              currentGain.gain.setValueAtTime(0, now);
+              rampGain(currentGain, 1, now, dur);
+              rampGain(otherGain, 0, now, dur);
+              audioFadeStopTimer = setTimeout(function(){
+                stopAudio(other);
+              }, AUDIO_FADE_MS + 30);
+            }catch(e){ /* ignore */ }
+            return;
+          }
+
+          stopAudio(other);
+          stopAudio(current);
           current.loop = true;
           current.play().catch(function(){ /* ignore */ });
         }
