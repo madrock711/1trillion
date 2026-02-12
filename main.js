@@ -59,6 +59,29 @@
             updateVolume(); // Set initial volume
         }
 
+        function stopAudio(audio){
+          if(!audio) return;
+          try{
+            audio.pause();
+            audio.currentTime = 0;
+          }catch(e){ /* ignore */ }
+        }
+
+        function stopBreathAudio(){
+          stopAudio(inhaleAudio);
+          stopAudio(exhaleAudio);
+        }
+
+        function playPhaseAudio(){
+          var current = (phase === 'INHALE') ? inhaleAudio : exhaleAudio;
+          var other = (phase === 'INHALE') ? exhaleAudio : inhaleAudio;
+          stopAudio(other);
+          stopAudio(current);
+          if(!current) return;
+          if(typeof current.canPlayType === 'function' && !current.canPlayType('audio/mpeg')) return;
+          current.play().catch(function(){ /* ignore */ });
+        }
+
         function getInEl(){ return q('#br-in-sec'); }
         function getExEl(){ return q('#br-ex-sec'); }
 
@@ -109,24 +132,17 @@
           if(timeLbl) timeLbl.textContent = fmtDec(phaseTargetMs);
           if(ringProg) ringProg.style.strokeDashoffset = String(CIRC);
           updateBubbles(0);
-        if (phase === 'INHALE' && inhaleAudio) {
-            if (typeof inhaleAudio.canPlayType === 'function' && inhaleAudio.canPlayType('audio/mpeg')) {
-                inhaleAudio.play().catch(function(){ /* ignore */ });
-            }
-        } else if (phase === 'EXHALE' && exhaleAudio) {
-            if (typeof exhaleAudio.canPlayType === 'function' && exhaleAudio.canPlayType('audio/mpeg')) {
-                exhaleAudio.play().catch(function(){ /* ignore */ });
-            }
-        }
+          if(running) playPhaseAudio();
+          else stopBreathAudio();
         }
 
         function nextPhase(){
           if(phase==='INHALE') setPhase('EXHALE'); else setPhase('INHALE');
         }
 
-        function start(){ if(running) return; running=true; var b=q('#br-start'); if(b) b.textContent = t('breath.pause'); lastTickTs=Date.now(); requestAnimationFrame(tick); }
-        function pause(){ if(!running) return; running=false; var b=q('#br-start'); if(b) b.textContent = t('breath.start'); }
-        function reset(){ running=false; var b=q('#br-start'); if(b) b.textContent = t('breath.start'); phaseElapsedMs=0; totalElapsedMs=0; round=1; if(roundEl) roundEl.textContent='1'; setPhase('INHALE'); if(totalLbl) totalLbl.textContent='00:00'; }
+        function start(){ if(running) return; running=true; var b=q('#br-start'); if(b) b.textContent = t('breath.pause'); lastTickTs=Date.now(); playPhaseAudio(); requestAnimationFrame(tick); }
+        function pause(){ if(!running) return; running=false; var b=q('#br-start'); if(b) b.textContent = t('breath.start'); stopBreathAudio(); }
+        function reset(){ running=false; var b=q('#br-start'); if(b) b.textContent = t('breath.start'); phaseElapsedMs=0; totalElapsedMs=0; round=1; if(roundEl) roundEl.textContent='1'; stopBreathAudio(); setPhase('INHALE'); if(totalLbl) totalLbl.textContent='00:00'; }
 
         function tick(ts){
           if(!running) return;
