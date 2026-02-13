@@ -45,7 +45,12 @@
             <div class="br-embed" role="region" aria-label="Breath Timer Embed" data-i18n="breath.embed" data-i18n-attr="aria-label">
                 <!-- 1) 구조 (HTML) -->
                 <div class="br-wrapper" aria-label="Inhale–Exhale Breath Trainer" data-i18n="breath.wrapper" data-i18n-attr="aria-label">
-                    <div class="br-title" data-i18n="breath.title">🫁 호흡 트레이너 — 들숨(빨강) / 날숨(파랑)</div>
+                    <div class="tab-head">
+                        <div class="br-title" data-i18n="breath.title">🫁 호흡 트레이너 — 들숨(빨강) / 날숨(파랑)</div>
+                        <button class="share-btn" type="button" data-share-tab="breathing" aria-label="Copy share link for Breathing Timer" data-i18n="share.aria.breathing" data-i18n-attr="aria-label">
+                            <img class="share-icon-img" src="assets/images/share_btn.png" alt="" aria-hidden="true">
+                        </button>
+                    </div>
 
                     <div class="br-layout">
                         <!-- Left: Circular timer -->
@@ -131,7 +136,12 @@
                 <!-- 1) 구조(HTML) 먼저 -->
                 <div class="clockbox-wrapper">
                     <div class="clockbox" id="sw-root" aria-label="Stopwatch" data-i18n="sw.wrapper" data-i18n-attr="aria-label">
-                        <div class="clockbox-title" data-i18n="sw.title">⏱ 스톱워치 (Start / Lap / Stop / Reset — Lap과 Rest를 교대로 기록)</div>
+                        <div class="tab-head">
+                            <div class="clockbox-title" data-i18n="sw.title">⏱ 스톱워치 (Start / Lap / Stop / Reset — Lap과 Rest를 교대로 기록)</div>
+                            <button class="share-btn" type="button" data-share-tab="co2" aria-label="Copy share link for CO2 Table Timer" data-i18n="share.aria.co2" data-i18n-attr="aria-label">
+                                <img class="share-icon-img" src="assets/images/share_btn.png" alt="" aria-hidden="true">
+                            </button>
+                        </div>
 
                         <div id="sw-time" class="sw-time" aria-live="polite">00:00:00.000</div>
 
@@ -186,7 +196,12 @@
                 <header class="foot-hero">
                     <div>
                         <div class="foot-kicker" data-i18n="foot.kicker">발 사진 기반 암벽화 추천</div>
-                        <h2 class="foot-title" data-i18n="foot.title">발분석</h2>
+                        <div class="tab-head">
+                            <h2 class="foot-title" data-i18n="foot.title">발분석</h2>
+                            <button class="share-btn" type="button" data-share-tab="foot" aria-label="Copy share link for Foot Analysis" data-i18n="share.aria.foot" data-i18n-attr="aria-label">
+                                <img class="share-icon-img" src="assets/images/share_btn.png" alt="" aria-hidden="true">
+                            </button>
+                        </div>
                         <p class="foot-subtitle" data-i18n="foot.subtitle">촬영 → 분석 → 추천까지 3단계로 진행됩니다. 기준 객체(A4/카드)를 함께 촬영해 주세요.</p>
                     </div>
                     <p class="foot-privacy-line" data-i18n="foot.privacyLine">사진은 기기에서만 처리되며 업로드되지 않습니다.</p>
@@ -458,6 +473,8 @@
         <p data-i18n="footer.rights">&copy; 2026 Timer.app. All rights reserved.</p>
     </footer>
 
+    <div id="share-toast" class="share-toast" role="status" aria-live="polite"></div>
+
     <script src="i18n.js?v=20260211-2"></script>
     <script src="main.js?v=20260212-2"></script>
     <script src="foot-analysis.js?v=20260211-13"></script>
@@ -476,30 +493,70 @@
                 });
             }
 
+            function isValidTab(target) {
+                return !!document.querySelector('.tab-content#' + target);
+            }
+
+            function updateUrl(target) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('tab', target);
+                url.hash = target;
+                history.replaceState(null, '', url.toString());
+            }
+
+            function activateTab(target, updateLocation) {
+                const tab = document.querySelector('.tab-link[data-tab="' + target + '"]');
+                if (!tab) { return; }
+
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                contents.forEach(content => {
+                    if (content.id === target) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+
+                updateGuide(target);
+                document.dispatchEvent(new CustomEvent('app:tab', { detail: { tab: target } }));
+
+                if (updateLocation) {
+                    updateUrl(target);
+                }
+            }
+
+            function getTabFromUrl() {
+                const params = new URLSearchParams(window.location.search);
+                const paramTarget = params.get('tab');
+                if (isValidTab(paramTarget)) { return paramTarget; }
+                const hashTarget = (location.hash || '').replace('#', '');
+                if (isValidTab(hashTarget)) { return hashTarget; }
+                return '';
+            }
+
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     const target = tab.getAttribute('data-tab');
-
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-
-                    contents.forEach(content => {
-                        if (content.id === target) {
-                            content.classList.add('active');
-                        } else {
-                            content.classList.remove('active');
-                        }
-                    });
-
-                    updateGuide(target);
-                    document.dispatchEvent(new CustomEvent('app:tab', { detail: { tab: target } }));
+                    activateTab(target, true);
                 });
             });
 
             const activeTab = document.querySelector('.tab-link.active');
-            const initialTab = activeTab ? activeTab.getAttribute('data-tab') : 'breathing';
-            updateGuide(initialTab);
-            document.dispatchEvent(new CustomEvent('app:tab', { detail: { tab: initialTab } }));
+            const defaultTab = activeTab ? activeTab.getAttribute('data-tab') : 'breathing';
+            const initialTab = getTabFromUrl() || defaultTab;
+            activateTab(initialTab, initialTab !== defaultTab);
+
+            function syncFromUrl() {
+                const next = getTabFromUrl();
+                if (isValidTab(next)) {
+                    activateTab(next, false);
+                }
+            }
+
+            window.addEventListener('hashchange', syncFromUrl);
+            window.addEventListener('popstate', syncFromUrl);
         });
     </script>
     <script>
