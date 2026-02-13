@@ -1,43 +1,43 @@
-# Project Info
+# 프로젝트 정보
 
-This document summarizes work by app area, using recent git commit messages as the primary source of truth.
+이 문서는 최근 git 커밋 메시지를 기준으로 앱별 변경 사항을 요약합니다.
 
-## Breathing Timer
-- Use 2s fade-in only for breath phase audio (cc6a4ef)
-- Add smooth inhale/exhale crossfade transitions (5e1cbad)
-- Fix iPhone volume slider via Web Audio gain (98f12f1)
-- Unlock both breath audio elements on start for iOS (cb6b997)
-- Loop phase audio during longer timer segments (bb51023)
-- Play only current phase audio in breathing timer (4401a04)
-- Fix audio filename case to match HTML sources (e160708)
-- Add inhale and exhale audio files (205b87a)
-- Create assets/sounds directory (e8ba32e)
-- Shorten breath title and center headings (acbc5e9)
+## 호흡 타이머
+- 호흡 단계 오디오에 2초 페이드인만 적용 (cc6a4ef)
+- 들숨/날숨 크로스페이드 전환 추가 (5e1cbad)
+- iPhone 볼륨 슬라이더 Web Audio 게인 적용 수정 (98f12f1)
+- iOS에서 호흡 오디오 요소들 시작 시 언락 (cb6b997)
+- 긴 구간에서도 단계 오디오 루프 (bb51023)
+- 현재 단계 오디오만 재생하도록 수정 (4401a04)
+- 오디오 파일명 대소문자 불일치 수정 (e160708)
+- 들숨/날숨 오디오 파일 추가 (205b87a)
+- assets/sounds 디렉터리 생성 (e8ba32e)
+- 호흡 타이틀 축약 및 가운데 정렬 (acbc5e9)
 
-## CO2 Table Timer
-- Shorten breath title and center headings (acbc5e9)
-- Adjust share icon and shorten CO2 title (2ed99aa)
+## CO2 테이블 타이머
+- 호흡 타이틀 축약 및 가운데 정렬 (acbc5e9)
+- 공유 아이콘 조정 및 CO2 타이틀 축약 (2ed99aa)
 
-## Foot Analysis
-- Remove CSS border from toe guide images (54c6b3a)
-- Crop 1px border from FootType images (215ae4b)
-- Reduce FootType assets to 128x128 (a0a07e1)
-- Move toe images under each toe-type result (b1b3054)
-- Align toe images on same row and fill toe cell height (adb5787)
-- Enlarge toe guide images and toe row spacing (9da7e75)
-- Mirror toe guide image pair and preserve aspect ratio (14c828c)
-- Use one toe-shape image in result row and add foot type assets (686b426)
+## 발 분석
+- 발가락 가이드 이미지 테두리 제거 (54c6b3a)
+- FootType 이미지 1px 테두리 크롭 (215ae4b)
+- FootType 에셋 128x128 축소 (a0a07e1)
+- 발가락 타입 결과 하단으로 이미지 이동 (b1b3054)
+- 발가락 이미지 정렬 및 셀 높이 맞춤 (adb5787)
+- 발가락 가이드 이미지 확대 및 행 간격 조정 (9da7e75)
+- 발가락 가이드 이미지 미러 및 비율 유지 (14c828c)
+- 결과 행에 단일 발가락 이미지 사용 및 에셋 추가 (686b426)
 
-## Shared UI / Navigation / Branding
-- Add share buttons and deep link support (b2bca2d)
-- Update share icon image (89aa812)
-- Bust share icon cache (3a8e37e)
-- Enlarge share icon (a342ae0)
-- Nudge share icon up (86e4ac7)
-- Adjust share icon and shorten CO2 title (2ed99aa)
-- Align share icon with titles (b151a91)
-- Rename footer brand (8d19ec4)
-- Baseline align share icon (8f3c215)
-- Lower share icon by 4px (e2624b2)
-- Lower share icon further (f5d3ea7)
-- Rename back button label to 앱으로 돌아가기 (a6ad074)
+## 공통 UI / 내비게이션 / 브랜딩
+- 공유 버튼 및 딥링크 지원 추가 (b2bca2d)
+- 공유 아이콘 이미지 업데이트 (89aa812)
+- 공유 아이콘 캐시 무효화 (3a8e37e)
+- 공유 아이콘 확대 (a342ae0)
+- 공유 아이콘 상향 조정 (86e4ac7)
+- 공유 아이콘 조정 및 CO2 타이틀 축약 (2ed99aa)
+- 공유 아이콘 타이틀 정렬 맞춤 (b151a91)
+- 푸터 브랜드명 변경 (8d19ec4)
+- 공유 아이콘 베이스라인 정렬 (8f3c215)
+- 공유 아이콘 하향 4px 조정 (e2624b2)
+- 공유 아이콘 추가 하향 조정 (f5d3ea7)
+- 뒤로가기 버튼 라벨 변경 (a6ad074)
