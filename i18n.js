@@ -218,7 +218,7 @@
       'subscribe.sending': 'Subscribing...',
       'subscribe.success': 'Thanks! You are subscribed.',
       'subscribe.error': 'Something went wrong. Please try again.',
-      'footer.rights': '© 2026 Timer.app. All rights reserved.'
+      'footer.rights': '© 2026 Grind.app. All rights reserved.'
     },
     ko: {
       'page.title': '연마',
@@ -438,7 +438,7 @@
       'subscribe.sending': '구독 중...',
       'subscribe.success': '감사합니다! 구독이 완료되었습니다.',
       'subscribe.error': '문제가 발생했습니다. 다시 시도해 주세요.',
-      'footer.rights': '© 2026 Timer.app. 모든 권리 보유.'
+      'footer.rights': '© 2026 Grind.app. 모든 권리 보유.'
     }
   };
 
