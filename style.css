@@ -190,6 +190,7 @@ main {
 .tab-head .clockbox-title,
 .tab-head .foot-title {
   margin: 0;
+  line-height: 1.2;
 }
 .share-btn {
   display: inline-flex;
@@ -205,7 +206,7 @@ main {
   font-weight: 600;
   cursor: pointer;
   transition: transform .2s ease, opacity .2s ease;
-  margin-top: -5px;
+  align-self: center;
 }
 .share-btn:hover {
   opacity: 0.8;
@@ -225,6 +226,7 @@ main {
   height: auto;
   object-fit: contain;
   display: block;
+  transform: translateY(-1px);
 }
 .share-toast {
   position: fixed;
