@@ -192,6 +192,14 @@ main {
   margin: 0;
   line-height: 1.2;
 }
+.tab-head .br-title,
+.tab-head .clockbox-title {
+  flex: 1;
+  text-align: center;
+}
+.tab-head .share-btn {
+  margin-left: auto;
+}
 .share-btn {
   display: inline-flex;
   align-items: center;
