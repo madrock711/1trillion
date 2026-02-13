@@ -234,6 +234,7 @@ main {
   height: auto;
   object-fit: contain;
   display: block;
+  transform: translateY(4px);
 }
 .share-toast {
   position: fixed;
