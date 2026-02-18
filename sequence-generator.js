@@ -24,6 +24,15 @@
     const maskPreview = root.querySelector('#sequenceMaskPreview');
     const maskClear = root.querySelector('#sequenceMaskClear');
     const maskDrop = root.querySelector('#sequenceMaskDrop');
+    const maskSourceInputs = root.querySelectorAll('input[name="sequenceMaskSource"]');
+    const maskCanvas = root.querySelector('#sequenceMaskCanvas');
+    const maskGenerateBtn = root.querySelector('#sequenceMaskGenerate');
+    const maskDownloadBtn = root.querySelector('#sequenceMaskDownload');
+    const maskEdge = root.querySelector('#sequenceMaskEdge');
+    const maskInner = root.querySelector('#sequenceMaskInner');
+    const maskNoise = root.querySelector('#sequenceMaskNoise');
+    const maskDissolve = root.querySelector('#sequenceMaskDissolve');
+    const maskDistort = root.querySelector('#sequenceMaskDistort');
     let defaultAutoMeta = autoMeta ? autoMeta.innerHTML : '';
 
     let currentVideo = null;
@@ -32,6 +41,7 @@
     let maskCache = null;
     let maskCacheWidth = 0;
     let maskCacheHeight = 0;
+    let generatedMask = null;
 
     function updateLoopModeUI() {
       const loopMode = loopModeSelect.value;
@@ -138,6 +148,7 @@
         maskUrl = '';
       }
       maskImage = null;
+      generatedMask = null;
       maskCache = null;
       maskCacheWidth = 0;
       maskCacheHeight = 0;
@@ -148,6 +159,14 @@
         maskPreview.src = '';
         maskPreview.style.display = 'none';
       }
+    }
+
+    function getMaskSource() {
+      const source = Array.from(maskSourceInputs).find(input => input.checked)?.value || 'upload';
+      if (source === 'generator') {
+        return generatedMask;
+      }
+      return maskImage;
     }
 
     function handleMaskFile(file) {
@@ -176,7 +195,8 @@
     }
 
     function buildMaskCanvases(width, height) {
-      if (!maskImage) { return null; }
+      const sourceImage = getMaskSource();
+      if (!sourceImage) { return null; }
       if (maskCache && maskCacheWidth === width && maskCacheHeight === height) {
         return maskCache;
       }
@@ -186,7 +206,7 @@
       baseCanvas.height = height;
       const baseCtx = baseCanvas.getContext('2d');
       baseCtx.clearRect(0, 0, width, height);
-      baseCtx.drawImage(maskImage, 0, 0, width, height);
+      baseCtx.drawImage(sourceImage, 0, 0, width, height);
       const baseData = baseCtx.getImageData(0, 0, width, height);
       const basePixels = baseData.data;
       // Use luminance as alpha so grayscale masks work even without alpha.
@@ -283,7 +303,7 @@
       const totalFrames = cols * rows;
       const canvas = outputCanvas;
       const ctx = canvas.getContext('2d');
-      const useMask = !!(maskToggle.checked && maskImage);
+      const useMask = !!(maskToggle.checked && getMaskSource());
       const tempCanvas = useMask ? document.createElement('canvas') : null;
       const tempCtx = useMask ? tempCanvas.getContext('2d') : null;
       if (useMask) {
@@ -335,7 +355,7 @@
       const halfFrames = Math.ceil(totalFrames / 2);
       const canvas = outputCanvas;
       const ctx = canvas.getContext('2d');
-      const useMask = !!(maskToggle.checked && maskImage);
+      const useMask = !!(maskToggle.checked && getMaskSource());
       const tempCanvas = useMask ? document.createElement('canvas') : null;
       const tempCtx = useMask ? tempCanvas.getContext('2d') : null;
       if (useMask) {
@@ -394,7 +414,7 @@
       const totalFrames = cols * rows;
       const canvas = outputCanvas;
       const ctx = canvas.getContext('2d');
-      const useMask = !!(maskToggle.checked && maskImage);
+      const useMask = !!(maskToggle.checked && getMaskSource());
 
       if (video.readyState < 2) {
         await new Promise(resolve => video.addEventListener('loadedmetadata', resolve, { once: true }));
@@ -523,8 +543,102 @@
       maskDrop.addEventListener('drop', (e) => {
         e.preventDefault();
         maskDrop.classList.remove('is-drag');
-        const file = e.dataTransfer.files[0];
-        handleMaskFile(file);
+      const file = e.dataTransfer.files[0];
+      handleMaskFile(file);
+    });
+  }
+
+    maskSourceInputs.forEach(input => {
+      input.addEventListener('change', () => {
+        maskCache = null;
+        maskCacheWidth = 0;
+        maskCacheHeight = 0;
+      });
+    });
+
+    function mulberry32(seed) {
+      return function() {
+        let t = seed += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+
+    function generateMaskTexture() {
+      const frameWidth = parseInt(root.querySelector('#sequenceFrameWidth').value, 10) || 128;
+      const frameHeight = parseInt(root.querySelector('#sequenceFrameHeight').value, 10) || 128;
+      const edge = parseFloat(maskEdge.value || '0.25');
+      const inner = parseFloat(maskInner.value || '0.2');
+      const noise = parseFloat(maskNoise.value || '0.15');
+      const dissolve = parseFloat(maskDissolve.value || '0');
+      const distort = parseFloat(maskDistort.value || '0.08');
+
+      maskCanvas.width = frameWidth;
+      maskCanvas.height = frameHeight;
+
+      const ctx = maskCanvas.getContext('2d');
+      const imageData = ctx.createImageData(frameWidth, frameHeight);
+      const data = imageData.data;
+      const rng = mulberry32(Math.floor(Date.now() % 2147483647));
+
+      const invW = 1 / frameWidth;
+      const invH = 1 / frameHeight;
+
+      for (let y = 0; y < frameHeight; y++) {
+        for (let x = 0; x < frameWidth; x++) {
+          const idx = (y * frameWidth + x) * 4;
+          const fx = x * invW;
+          const fy = y * invH;
+          const offsetX = Math.sin((fy + fx) * Math.PI * 4) * distort * 0.5;
+          const offsetY = Math.cos((fx - fy) * Math.PI * 4) * distort * 0.5;
+          const ux = Math.min(1, Math.max(0, fx + offsetX));
+          const uy = Math.min(1, Math.max(0, fy + offsetY));
+          const distX = Math.min(ux, 1 - ux);
+          const distY = Math.min(uy, 1 - uy);
+          const dist = Math.min(distX, distY);
+          const edgeWidth = Math.max(0.001, edge);
+          let alpha = Math.min(1, Math.max(0, dist / edgeWidth));
+
+          const dx = ux - 0.5;
+          const dy = uy - 0.5;
+          const radial = Math.sqrt(dx * dx + dy * dy) * 2;
+          const innerFactor = 1 - Math.min(1, radial);
+          alpha = alpha * (1 - inner) + alpha * innerFactor * inner;
+
+          const n = (rng() + rng()) * 0.5;
+          alpha = alpha * (1 - noise) + alpha * n * noise;
+
+          if (dissolve > 0) {
+            const threshold = dissolve;
+            alpha = alpha * (n > threshold ? 1 : 0);
+          }
+
+          const a = Math.round(alpha * 255);
+          data[idx] = 255;
+          data[idx + 1] = 255;
+          data[idx + 2] = 255;
+          data[idx + 3] = a;
+        }
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+      generatedMask = maskCanvas;
+      maskToggle.checked = true;
+      const generatorRadio = Array.from(maskSourceInputs).find(input => input.value === 'generator');
+      if (generatorRadio) { generatorRadio.checked = true; }
+    }
+
+    if (maskGenerateBtn) {
+      maskGenerateBtn.addEventListener('click', generateMaskTexture);
+    }
+    if (maskDownloadBtn) {
+      maskDownloadBtn.addEventListener('click', () => {
+        if (!generatedMask) { return; }
+        const link = document.createElement('a');
+        link.download = 'mask-texture.png';
+        link.href = generatedMask.toDataURL('image/png');
+        link.click();
       });
     }
 

@@ -432,10 +432,52 @@
                             </label>
                             <button class="sequence-mask-clear" type="button" id="sequenceMaskClear" data-i18n="sequence.maskClear">마스크 해제</button>
                         </div>
+                        <div class="sequence-mask-source">
+                            <label class="sequence-mask-toggle">
+                                <input type="radio" name="sequenceMaskSource" value="upload" checked>
+                                <span data-i18n="sequence.maskSourceUpload">업로드 마스크</span>
+                            </label>
+                            <label class="sequence-mask-toggle">
+                                <input type="radio" name="sequenceMaskSource" value="generator">
+                                <span data-i18n="sequence.maskSourceGen">생성기 마스크</span>
+                            </label>
+                        </div>
                         <div class="sequence-mask-body" id="sequenceMaskDrop">
                             <input type="file" id="sequenceMaskInput" accept="image/*">
                             <img id="sequenceMaskPreview" alt="" />
                             <p class="sequence-mask-hint" data-i18n="sequence.maskHint">알파 채널이 있는 PNG를 권장합니다.</p>
+                        </div>
+                        <div class="sequence-mask-generator">
+                            <div class="sequence-mask-generator-head">
+                                <div class="sequence-mask-title" data-i18n="sequence.maskGenTitle">마스크 텍스처 생성기</div>
+                                <div class="sequence-mask-actions">
+                                    <button class="sequence-mask-clear" type="button" id="sequenceMaskGenerate" data-i18n="sequence.maskGenBtn">마스크 생성</button>
+                                    <button class="sequence-mask-clear" type="button" id="sequenceMaskDownload" data-i18n="sequence.maskGenDownload">다운로드</button>
+                                </div>
+                            </div>
+                            <canvas id="sequenceMaskCanvas" width="256" height="256"></canvas>
+                            <div class="sequence-mask-controls">
+                                <label>
+                                    <span data-i18n="sequence.maskEdgeLabel">엣지 페이드</span>
+                                    <input type="range" id="sequenceMaskEdge" min="0.05" max="0.6" step="0.01" value="0.25">
+                                </label>
+                                <label>
+                                    <span data-i18n="sequence.maskInnerLabel">내부 그라데이션</span>
+                                    <input type="range" id="sequenceMaskInner" min="0" max="1" step="0.01" value="0.2">
+                                </label>
+                                <label>
+                                    <span data-i18n="sequence.maskNoiseLabel">노이즈</span>
+                                    <input type="range" id="sequenceMaskNoise" min="0" max="1" step="0.01" value="0.15">
+                                </label>
+                                <label>
+                                    <span data-i18n="sequence.maskDissolveLabel">디졸브</span>
+                                    <input type="range" id="sequenceMaskDissolve" min="0" max="1" step="0.01" value="0">
+                                </label>
+                                <label>
+                                    <span data-i18n="sequence.maskDistortLabel">디스톨트</span>
+                                    <input type="range" id="sequenceMaskDistort" min="0" max="0.5" step="0.01" value="0.08">
+                                </label>
+                            </div>
                         </div>
                     </div>
 
