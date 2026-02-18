@@ -187,6 +187,21 @@
       const baseCtx = baseCanvas.getContext('2d');
       baseCtx.clearRect(0, 0, width, height);
       baseCtx.drawImage(maskImage, 0, 0, width, height);
+      const baseData = baseCtx.getImageData(0, 0, width, height);
+      const basePixels = baseData.data;
+      // Use luminance as alpha so grayscale masks work even without alpha.
+      for (let i = 0; i < basePixels.length; i += 4) {
+        const r = basePixels[i];
+        const g = basePixels[i + 1];
+        const b = basePixels[i + 2];
+        const a = basePixels[i + 3];
+        const lum = Math.round(0.2126 * r + 0.7152 * g + 0.0722 * b);
+        basePixels[i] = 255;
+        basePixels[i + 1] = 255;
+        basePixels[i + 2] = 255;
+        basePixels[i + 3] = Math.round((a / 255) * lum);
+      }
+      baseCtx.putImageData(baseData, 0, 0);
 
       const invertedCanvas = document.createElement('canvas');
       invertedCanvas.width = width;
