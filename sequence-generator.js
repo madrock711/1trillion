@@ -982,11 +982,28 @@
     }
 
     refreshPresetSelect();
+
+    if (maskPresetSelect) {
+      maskPresetSelect.addEventListener('change', () => {
+        const value = maskPresetSelect.value;
+        if (!value) { return; }
+        if (value.startsWith('builtin:')) {
+          const id = value.replace('builtin:', '');
+          const preset = builtinPresets.find(p => p.id === id);
+          if (preset) {
+            applyMaskSettings(preset.values);
+            if (maskStatus) { maskStatus.textContent = '불러옴: ' + preset.name; }
+          }
+        } else if (value.startsWith('saved:')) {
+          const name = value.replace('saved:', '');
+          const saved = loadSavedPresets();
+          if (saved[name]) {
+            applyMaskSettings(saved[name]);
+            if (maskStatus) { maskStatus.textContent = '불러옴: ' + name; }
+          }
+        }
       });
-      input.addEventListener('change', () => {
-        generateMaskTexture();
-      });
-    });
+    }
 
     root.querySelectorAll('[data-sequence-grid]').forEach((btn) => {
       btn.addEventListener('click', () => {
