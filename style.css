@@ -571,6 +571,29 @@ main {
   flex-wrap: wrap;
 }
 
+.sequence-mask-presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.sequence-mask-preset {
+  border: 1px solid #444;
+  border-radius: 10px;
+  background: #222;
+  color: #fff;
+  padding: 8px 10px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.sequence-mask-preset:hover {
+  background: #2d2d2d;
+  transform: translateY(-1px);
+}
+
 #sequenceMaskCanvas {
   width: 100%;
   max-width: 320px;

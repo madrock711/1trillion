@@ -33,6 +33,7 @@
     const maskNoise = root.querySelector('#sequenceMaskNoise');
     const maskDissolve = root.querySelector('#sequenceMaskDissolve');
     const maskDistort = root.querySelector('#sequenceMaskDistort');
+    const maskPresetButtons = root.querySelectorAll('[data-mask-preset]');
     let defaultAutoMeta = autoMeta ? autoMeta.innerHTML : '';
 
     let currentVideo = null;
@@ -641,6 +642,30 @@
         link.click();
       });
     }
+
+    function applyPreset(name) {
+      const presets = {
+        soft: { edge: 0.35, inner: 0.35, noise: 0.08, dissolve: 0, distort: 0.08 },
+        hard: { edge: 0.12, inner: 0.05, noise: 0.02, dissolve: 0, distort: 0.02 },
+        dissolve: { edge: 0.25, inner: 0.2, noise: 0.25, dissolve: 0.35, distort: 0.12 },
+        noise: { edge: 0.28, inner: 0.15, noise: 0.35, dissolve: 0.05, distort: 0.18 }
+      };
+      const preset = presets[name];
+      if (!preset) { return; }
+      maskEdge.value = preset.edge;
+      maskInner.value = preset.inner;
+      maskNoise.value = preset.noise;
+      maskDissolve.value = preset.dissolve;
+      maskDistort.value = preset.distort;
+      generateMaskTexture();
+    }
+
+    maskPresetButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const preset = btn.getAttribute('data-mask-preset');
+        applyPreset(preset);
+      });
+    });
 
     root.querySelectorAll('[data-sequence-grid]').forEach((btn) => {
       btn.addEventListener('click', () => {
