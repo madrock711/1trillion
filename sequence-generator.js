@@ -36,9 +36,12 @@
     const maskSwirl = root.querySelector('#sequenceMaskSwirl');
     const maskPixelate = root.querySelector('#sequenceMaskPixelate');
     const maskThreshold = root.querySelector('#sequenceMaskThreshold');
+    const maskIntensity = root.querySelector('#sequenceMaskIntensity');
     const maskContrast = root.querySelector('#sequenceMaskContrast');
     const maskGamma = root.querySelector('#sequenceMaskGamma');
     const maskTiling = root.querySelector('#sequenceMaskTiling');
+    const maskSaveBtn = root.querySelector('#sequenceMaskSave');
+    const maskLoadBtn = root.querySelector('#sequenceMaskLoad');
     let defaultAutoMeta = autoMeta ? autoMeta.innerHTML : '';
 
     let currentVideo = null;
@@ -651,6 +654,7 @@
       const swirl = parseFloat(maskSwirl.value || '0.15');
       const pixelate = parseFloat(maskPixelate.value || '0');
       const threshold = parseFloat(maskThreshold.value || '0');
+      const intensity = parseFloat(maskIntensity.value || '1');
       const contrast = parseFloat(maskContrast.value || '1');
       const gamma = parseFloat(maskGamma.value || '1');
       const tiling = parseInt(maskTiling.value || '1', 10);
@@ -749,6 +753,9 @@
           }
 
           let alpha = n * shapeMask;
+          // Ensure outer edge fades to black even when gamma=1
+          alpha *= smoothstep(0, 1, shapeMask);
+          alpha *= intensity;
           if (contrast !== 1) {
             alpha = Math.min(1, Math.max(0, (alpha - 0.5) * contrast + 0.5));
           }
@@ -791,12 +798,69 @@
 
     const realtimeInputs = [
       maskNoiseType, maskShape, maskEdge, maskPolar, maskWarp, maskSwirl,
-      maskPixelate, maskThreshold, maskContrast, maskGamma, maskTiling
+      maskPixelate, maskThreshold, maskIntensity, maskContrast, maskGamma, maskTiling
     ];
     realtimeInputs.forEach((input) => {
       if (!input) { return; }
       input.addEventListener('input', () => {
-        generateMaskTexture();
+    generateMaskTexture();
+
+    function collectMaskSettings() {
+      return {
+        noiseType: maskNoiseType.value,
+        shape: maskShape.value,
+        edge: maskEdge.value,
+        polar: maskPolar.value,
+        warp: maskWarp.value,
+        swirl: maskSwirl.value,
+        pixelate: maskPixelate.value,
+        threshold: maskThreshold.value,
+        intensity: maskIntensity.value,
+        contrast: maskContrast.value,
+        gamma: maskGamma.value,
+        tiling: maskTiling.value
+      };
+    }
+
+    function applyMaskSettings(settings) {
+      if (!settings) { return; }
+      maskNoiseType.value = settings.noiseType ?? maskNoiseType.value;
+      maskShape.value = settings.shape ?? maskShape.value;
+      maskEdge.value = settings.edge ?? maskEdge.value;
+      maskPolar.value = settings.polar ?? maskPolar.value;
+      maskWarp.value = settings.warp ?? maskWarp.value;
+      maskSwirl.value = settings.swirl ?? maskSwirl.value;
+      maskPixelate.value = settings.pixelate ?? maskPixelate.value;
+      maskThreshold.value = settings.threshold ?? maskThreshold.value;
+      maskIntensity.value = settings.intensity ?? maskIntensity.value;
+      maskContrast.value = settings.contrast ?? maskContrast.value;
+      maskGamma.value = settings.gamma ?? maskGamma.value;
+      maskTiling.value = settings.tiling ?? maskTiling.value;
+      generateMaskTexture();
+    }
+
+    if (maskSaveBtn) {
+      maskSaveBtn.addEventListener('click', () => {
+        const data = collectMaskSettings();
+        try {
+          localStorage.setItem('sequenceMaskSettings', JSON.stringify(data));
+        } catch (e) {
+          console.warn('Unable to save mask settings', e);
+        }
+      });
+    }
+
+    if (maskLoadBtn) {
+      maskLoadBtn.addEventListener('click', () => {
+        try {
+          const raw = localStorage.getItem('sequenceMaskSettings');
+          if (!raw) { return; }
+          applyMaskSettings(JSON.parse(raw));
+        } catch (e) {
+          console.warn('Unable to load mask settings', e);
+        }
+      });
+    }
       });
       input.addEventListener('change', () => {
         generateMaskTexture();
