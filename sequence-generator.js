@@ -42,7 +42,6 @@
     const maskGamma = root.querySelector('#sequenceMaskGamma');
     const maskTiling = root.querySelector('#sequenceMaskTiling');
     const maskSaveBtn = root.querySelector('#sequenceMaskSave');
-    const maskLoadBtn = root.querySelector('#sequenceMaskLoad');
     const maskStatus = root.querySelector('#sequenceMaskStatus');
     const maskPresetSelect = root.querySelector('#sequenceMaskPresetSelect');
     let defaultAutoMeta = autoMeta ? autoMeta.innerHTML : '';
@@ -941,44 +940,13 @@
           map[name] = data;
           savePresetsMap(map);
           refreshPresetSelect();
+          if (maskPresetSelect) {
+            maskPresetSelect.value = 'saved:' + name;
+          }
           if (maskStatus) { maskStatus.textContent = '저장됨: ' + name; }
         } catch (e) {
           console.warn('Unable to save mask settings', e);
           if (maskStatus) { maskStatus.textContent = '저장 실패'; }
-        }
-      });
-    }
-
-    if (maskLoadBtn) {
-      maskLoadBtn.addEventListener('click', () => {
-        try {
-          const value = maskPresetSelect ? maskPresetSelect.value : '';
-          if (!value) {
-            if (maskStatus) { maskStatus.textContent = '프리셋 선택 필요'; }
-            return;
-          }
-          if (value.startsWith('builtin:')) {
-            const id = value.replace('builtin:', '');
-            const preset = builtinPresets.find(p => p.id === id);
-            if (preset) {
-              applyMaskSettings(preset.values);
-              if (maskStatus) { maskStatus.textContent = '불러옴: ' + preset.name; }
-            }
-            return;
-          }
-          if (value.startsWith('saved:')) {
-            const name = value.replace('saved:', '');
-            const saved = loadSavedPresets();
-            if (!saved[name]) {
-              if (maskStatus) { maskStatus.textContent = '저장값 없음'; }
-              return;
-            }
-            applyMaskSettings(saved[name]);
-            if (maskStatus) { maskStatus.textContent = '불러옴: ' + name; }
-          }
-        } catch (e) {
-          console.warn('Unable to load mask settings', e);
-          if (maskStatus) { maskStatus.textContent = '불러오기 실패'; }
         }
       });
     }
