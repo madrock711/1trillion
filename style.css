@@ -621,6 +621,21 @@ main {
   color: #fff;
 }
 
+.sequence-mask-control {
+  user-select: none;
+}
+
+.sequence-mask-control span {
+  user-select: none;
+}
+
+.sequence-mask-value {
+  justify-self: end;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
 .sequence-mask-controls input[type="range"] {
   width: 100%;
 }

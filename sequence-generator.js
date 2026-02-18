@@ -803,10 +803,30 @@
       maskNoiseType, maskShape, maskEdge, maskPolar, maskWarp, maskSwirl,
       maskPixelate, maskThreshold, maskIntensity, maskContrast, maskGamma, maskTiling
     ];
+
+    function updateMaskValues() {
+      const valueEls = root.querySelectorAll('[data-mask-value]');
+      valueEls.forEach((el) => {
+        const id = el.getAttribute('data-mask-value');
+        const input = root.querySelector('#' + id);
+        if (!input) { return; }
+        el.textContent = input.value;
+      });
+    }
+
     realtimeInputs.forEach((input) => {
       if (!input) { return; }
       input.addEventListener('input', () => {
-    generateMaskTexture();
+        generateMaskTexture();
+        updateMaskValues();
+      });
+      input.addEventListener('change', () => {
+        generateMaskTexture();
+        updateMaskValues();
+      });
+    });
+
+    updateMaskValues();
 
     function collectMaskSettings() {
       return {
@@ -840,6 +860,7 @@
       maskGamma.value = settings.gamma ?? maskGamma.value;
       maskTiling.value = settings.tiling ?? maskTiling.value;
       generateMaskTexture();
+      updateMaskValues();
     }
 
     if (maskSaveBtn) {
