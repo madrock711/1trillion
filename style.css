@@ -457,6 +457,77 @@ main {
   line-height: 1.4;
 }
 
+.sequence-mask {
+  background: #222;
+  border: 1px solid #444;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.sequence-mask-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sequence-mask-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+.sequence-mask-toggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent-color);
+}
+
+.sequence-mask-clear {
+  border: 1px solid #444;
+  border-radius: 10px;
+  background: #1b1b1b;
+  color: #fff;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.sequence-mask-clear:hover {
+  background: #262626;
+  transform: translateY(-1px);
+}
+
+.sequence-mask-body {
+  display: grid;
+  gap: 10px;
+}
+
+.sequence-mask-body input[type="file"] {
+  color: #fff;
+}
+
+#sequenceMaskPreview {
+  display: none;
+  max-width: 220px;
+  border-radius: 10px;
+  border: 1px solid #444;
+  background: #111;
+}
+
+.sequence-mask-hint {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
 .sequence-controls {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

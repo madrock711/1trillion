@@ -18,9 +18,15 @@
     const fpsInput = root.querySelector('#sequenceFps');
     const autoGridBtn = root.querySelector('#sequenceAutoGrid');
     const autoMeta = root.querySelector('#sequenceAutoMeta');
+    const maskToggle = root.querySelector('#sequenceMaskToggle');
+    const maskInput = root.querySelector('#sequenceMaskInput');
+    const maskPreview = root.querySelector('#sequenceMaskPreview');
+    const maskClear = root.querySelector('#sequenceMaskClear');
     let defaultAutoMeta = autoMeta ? autoMeta.innerHTML : '';
 
     let currentVideo = null;
+    let maskImage = null;
+    let maskUrl = '';
 
     function updateLoopModeUI() {
       const loopMode = loopModeSelect.value;
@@ -121,6 +127,42 @@
       testVideo.load();
     }
 
+    function clearMask() {
+      if (maskUrl) {
+        URL.revokeObjectURL(maskUrl);
+        maskUrl = '';
+      }
+      maskImage = null;
+      maskInput.value = '';
+      maskToggle.checked = false;
+      if (maskPreview) {
+        maskPreview.src = '';
+        maskPreview.style.display = 'none';
+      }
+    }
+
+    function handleMaskFile(file) {
+      if (!file || !file.type.startsWith('image/')) { return; }
+      if (maskUrl) {
+        URL.revokeObjectURL(maskUrl);
+      }
+      maskUrl = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        maskImage = img;
+        if (maskPreview) {
+          maskPreview.src = maskUrl;
+          maskPreview.style.display = 'block';
+        }
+        maskToggle.checked = true;
+      };
+      img.onerror = () => {
+        clearMask();
+        showError('마스크 이미지를 불러올 수 없습니다.');
+      };
+      img.src = maskUrl;
+    }
+
     function seekToTime(video, time) {
       return new Promise((resolve, reject) => {
         if (!isFinite(time) || time < 0) {
@@ -174,6 +216,13 @@
       const totalFrames = cols * rows;
       const canvas = outputCanvas;
       const ctx = canvas.getContext('2d');
+      const useMask = !!(maskToggle.checked && maskImage);
+      const tempCanvas = useMask ? document.createElement('canvas') : null;
+      const tempCtx = useMask ? tempCanvas.getContext('2d') : null;
+      if (useMask) {
+        tempCanvas.width = frameWidth;
+        tempCanvas.height = frameHeight;
+      }
 
       if (video.readyState < 2) {
         await new Promise(resolve => video.addEventListener('loadedmetadata', resolve, { once: true }));
@@ -197,7 +246,16 @@
         const time = (i * interval) % duration;
 
         await seekToTime(video, time);
-        ctx.drawImage(video, col * frameWidth, row * frameHeight, frameWidth, frameHeight);
+        if (useMask) {
+          tempCtx.clearRect(0, 0, frameWidth, frameHeight);
+          tempCtx.drawImage(video, 0, 0, frameWidth, frameHeight);
+          tempCtx.globalCompositeOperation = 'destination-in';
+          tempCtx.drawImage(maskImage, 0, 0, frameWidth, frameHeight);
+          tempCtx.globalCompositeOperation = 'source-over';
+          ctx.drawImage(tempCanvas, col * frameWidth, row * frameHeight);
+        } else {
+          ctx.drawImage(video, col * frameWidth, row * frameHeight, frameWidth, frameHeight);
+        }
 
         const percent = Math.round(((i + 1) / totalFrames) * 100);
         progressBar.style.width = percent + '%';
@@ -211,6 +269,13 @@
       const halfFrames = Math.ceil(totalFrames / 2);
       const canvas = outputCanvas;
       const ctx = canvas.getContext('2d');
+      const useMask = !!(maskToggle.checked && maskImage);
+      const tempCanvas = useMask ? document.createElement('canvas') : null;
+      const tempCtx = useMask ? tempCanvas.getContext('2d') : null;
+      if (useMask) {
+        tempCanvas.width = frameWidth;
+        tempCanvas.height = frameHeight;
+      }
 
       if (video.readyState < 2) {
         await new Promise(resolve => video.addEventListener('loadedmetadata', resolve, { once: true }));
@@ -242,7 +307,16 @@
         const time = (timeIndex * interval) % duration;
 
         await seekToTime(video, time);
-        ctx.drawImage(video, col * frameWidth, row * frameHeight, frameWidth, frameHeight);
+        if (useMask) {
+          tempCtx.clearRect(0, 0, frameWidth, frameHeight);
+          tempCtx.drawImage(video, 0, 0, frameWidth, frameHeight);
+          tempCtx.globalCompositeOperation = 'destination-in';
+          tempCtx.drawImage(maskImage, 0, 0, frameWidth, frameHeight);
+          tempCtx.globalCompositeOperation = 'source-over';
+          ctx.drawImage(tempCanvas, col * frameWidth, row * frameHeight);
+        } else {
+          ctx.drawImage(video, col * frameWidth, row * frameHeight, frameWidth, frameHeight);
+        }
 
         const percent = Math.round(((i + 1) / totalFrames) * 100);
         progressBar.style.width = percent + '%';
@@ -255,6 +329,7 @@
       const totalFrames = cols * rows;
       const canvas = outputCanvas;
       const ctx = canvas.getContext('2d');
+      const useMask = !!(maskToggle.checked && maskImage);
 
       if (video.readyState < 2) {
         await new Promise(resolve => video.addEventListener('loadedmetadata', resolve, { once: true }));
@@ -294,7 +369,16 @@
         if (i < uniqueFrames) {
           const time = cutTime + (i * interval);
           await seekToTime(video, time);
-          ctx.drawImage(video, x, y, frameWidth, frameHeight);
+          if (useMask) {
+            tempCtx.clearRect(0, 0, frameWidth, frameHeight);
+            tempCtx.drawImage(video, 0, 0, frameWidth, frameHeight);
+            tempCtx.globalCompositeOperation = 'destination-in';
+            tempCtx.drawImage(maskImage, 0, 0, frameWidth, frameHeight);
+            tempCtx.globalCompositeOperation = 'source-over';
+            ctx.drawImage(tempCanvas, x, y);
+          } else {
+            ctx.drawImage(video, x, y, frameWidth, frameHeight);
+          }
         } else {
           const overlapIndex = i - uniqueFrames;
           const alpha = (overlapIndex + 1) / overlapFrames;
@@ -321,6 +405,11 @@
           }
 
           tempCtx.putImageData(blendedData, 0, 0);
+          if (useMask) {
+            tempCtx.globalCompositeOperation = 'destination-in';
+            tempCtx.drawImage(maskImage, 0, 0, frameWidth, frameHeight);
+            tempCtx.globalCompositeOperation = 'source-over';
+          }
           ctx.drawImage(tempCanvas, x, y);
         }
 
@@ -349,6 +438,12 @@
       const file = e.target.files[0];
       handleVideoFile(file);
     });
+
+    maskInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      handleMaskFile(file);
+    });
+    maskClear.addEventListener('click', clearMask);
 
     root.querySelectorAll('[data-sequence-grid]').forEach((btn) => {
       btn.addEventListener('click', () => {

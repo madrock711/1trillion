@@ -420,6 +420,21 @@
                         <div id="sequenceVideoInfoContent"></div>
                     </div>
 
+                    <div class="sequence-mask">
+                        <div class="sequence-mask-header">
+                            <label class="sequence-mask-toggle">
+                                <input type="checkbox" id="sequenceMaskToggle">
+                                <span data-i18n="sequence.maskToggle">마스킹 텍스처 사용</span>
+                            </label>
+                            <button class="sequence-mask-clear" type="button" id="sequenceMaskClear" data-i18n="sequence.maskClear">마스크 해제</button>
+                        </div>
+                        <div class="sequence-mask-body">
+                            <input type="file" id="sequenceMaskInput" accept="image/*">
+                            <img id="sequenceMaskPreview" alt="" />
+                            <p class="sequence-mask-hint" data-i18n="sequence.maskHint">알파 채널이 있는 PNG를 권장합니다.</p>
+                        </div>
+                    </div>
+
                     <div class="sequence-controls">
                         <div class="sequence-control-group">
                             <label for="sequenceGridCols" data-i18n="sequence.colsLabel">가로 (Columns)</label>
