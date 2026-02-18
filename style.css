@@ -508,6 +508,15 @@ main {
 .sequence-mask-body {
   display: grid;
   gap: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px dashed transparent;
+  cursor: pointer;
+}
+
+.sequence-mask-body.is-drag {
+  border-color: rgba(78, 205, 196, 0.8);
+  background: rgba(78, 205, 196, 0.08);
 }
 
 .sequence-mask-body input[type="file"] {

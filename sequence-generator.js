@@ -23,6 +23,7 @@
     const maskInput = root.querySelector('#sequenceMaskInput');
     const maskPreview = root.querySelector('#sequenceMaskPreview');
     const maskClear = root.querySelector('#sequenceMaskClear');
+    const maskDrop = root.querySelector('#sequenceMaskDrop');
     let defaultAutoMeta = autoMeta ? autoMeta.innerHTML : '';
 
     let currentVideo = null;
@@ -492,6 +493,25 @@
       handleMaskFile(file);
     });
     maskClear.addEventListener('click', clearMask);
+
+    if (maskDrop) {
+      maskDrop.addEventListener('click', () => {
+        maskInput.click();
+      });
+      maskDrop.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        maskDrop.classList.add('is-drag');
+      });
+      maskDrop.addEventListener('dragleave', () => {
+        maskDrop.classList.remove('is-drag');
+      });
+      maskDrop.addEventListener('drop', (e) => {
+        e.preventDefault();
+        maskDrop.classList.remove('is-drag');
+        const file = e.dataTransfer.files[0];
+        handleMaskFile(file);
+      });
+    }
 
     root.querySelectorAll('[data-sequence-grid]').forEach((btn) => {
       btn.addEventListener('click', () => {
