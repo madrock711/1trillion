@@ -19,6 +19,7 @@
     const autoGridBtn = root.querySelector('#sequenceAutoGrid');
     const autoMeta = root.querySelector('#sequenceAutoMeta');
     const maskToggle = root.querySelector('#sequenceMaskToggle');
+    const maskInvert = root.querySelector('#sequenceMaskInvert');
     const maskInput = root.querySelector('#sequenceMaskInput');
     const maskPreview = root.querySelector('#sequenceMaskPreview');
     const maskClear = root.querySelector('#sequenceMaskClear');
@@ -27,6 +28,9 @@
     let currentVideo = null;
     let maskImage = null;
     let maskUrl = '';
+    let maskCache = null;
+    let maskCacheWidth = 0;
+    let maskCacheHeight = 0;
 
     function updateLoopModeUI() {
       const loopMode = loopModeSelect.value;
@@ -133,8 +137,12 @@
         maskUrl = '';
       }
       maskImage = null;
+      maskCache = null;
+      maskCacheWidth = 0;
+      maskCacheHeight = 0;
       maskInput.value = '';
       maskToggle.checked = false;
+      if (maskInvert) { maskInvert.checked = false; }
       if (maskPreview) {
         maskPreview.src = '';
         maskPreview.style.display = 'none';
@@ -146,6 +154,9 @@
       if (maskUrl) {
         URL.revokeObjectURL(maskUrl);
       }
+      maskCache = null;
+      maskCacheWidth = 0;
+      maskCacheHeight = 0;
       maskUrl = URL.createObjectURL(file);
       const img = new Image();
       img.onload = () => {
@@ -161,6 +172,46 @@
         showError('마스크 이미지를 불러올 수 없습니다.');
       };
       img.src = maskUrl;
+    }
+
+    function buildMaskCanvases(width, height) {
+      if (!maskImage) { return null; }
+      if (maskCache && maskCacheWidth === width && maskCacheHeight === height) {
+        return maskCache;
+      }
+
+      const baseCanvas = document.createElement('canvas');
+      baseCanvas.width = width;
+      baseCanvas.height = height;
+      const baseCtx = baseCanvas.getContext('2d');
+      baseCtx.clearRect(0, 0, width, height);
+      baseCtx.drawImage(maskImage, 0, 0, width, height);
+
+      const invertedCanvas = document.createElement('canvas');
+      invertedCanvas.width = width;
+      invertedCanvas.height = height;
+      const invertedCtx = invertedCanvas.getContext('2d');
+      invertedCtx.drawImage(baseCanvas, 0, 0);
+      const imageData = invertedCtx.getImageData(0, 0, width, height);
+      const data = imageData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        data[i + 3] = 255 - data[i + 3];
+      }
+      invertedCtx.putImageData(imageData, 0, 0);
+
+      maskCache = { baseCanvas, invertedCanvas };
+      maskCacheWidth = width;
+      maskCacheHeight = height;
+      return maskCache;
+    }
+
+    function applyMask(tempCtx, width, height, invert) {
+      const cache = buildMaskCanvases(width, height);
+      if (!cache) { return; }
+      const maskCanvas = invert ? cache.invertedCanvas : cache.baseCanvas;
+      tempCtx.globalCompositeOperation = 'destination-in';
+      tempCtx.drawImage(maskCanvas, 0, 0, width, height);
+      tempCtx.globalCompositeOperation = 'source-over';
     }
 
     function seekToTime(video, time) {
@@ -222,6 +273,7 @@
       if (useMask) {
         tempCanvas.width = frameWidth;
         tempCanvas.height = frameHeight;
+        buildMaskCanvases(frameWidth, frameHeight);
       }
 
       if (video.readyState < 2) {
@@ -249,9 +301,7 @@
         if (useMask) {
           tempCtx.clearRect(0, 0, frameWidth, frameHeight);
           tempCtx.drawImage(video, 0, 0, frameWidth, frameHeight);
-          tempCtx.globalCompositeOperation = 'destination-in';
-          tempCtx.drawImage(maskImage, 0, 0, frameWidth, frameHeight);
-          tempCtx.globalCompositeOperation = 'source-over';
+          applyMask(tempCtx, frameWidth, frameHeight, maskInvert && maskInvert.checked);
           ctx.drawImage(tempCanvas, col * frameWidth, row * frameHeight);
         } else {
           ctx.drawImage(video, col * frameWidth, row * frameHeight, frameWidth, frameHeight);
@@ -275,6 +325,7 @@
       if (useMask) {
         tempCanvas.width = frameWidth;
         tempCanvas.height = frameHeight;
+        buildMaskCanvases(frameWidth, frameHeight);
       }
 
       if (video.readyState < 2) {
@@ -310,9 +361,7 @@
         if (useMask) {
           tempCtx.clearRect(0, 0, frameWidth, frameHeight);
           tempCtx.drawImage(video, 0, 0, frameWidth, frameHeight);
-          tempCtx.globalCompositeOperation = 'destination-in';
-          tempCtx.drawImage(maskImage, 0, 0, frameWidth, frameHeight);
-          tempCtx.globalCompositeOperation = 'source-over';
+          applyMask(tempCtx, frameWidth, frameHeight, maskInvert && maskInvert.checked);
           ctx.drawImage(tempCanvas, col * frameWidth, row * frameHeight);
         } else {
           ctx.drawImage(video, col * frameWidth, row * frameHeight, frameWidth, frameHeight);
@@ -359,6 +408,9 @@
       tempCanvas.width = frameWidth;
       tempCanvas.height = frameHeight;
       const tempCtx = tempCanvas.getContext('2d');
+      if (useMask) {
+        buildMaskCanvases(frameWidth, frameHeight);
+      }
 
       for (let i = 0; i < totalFrames; i++) {
         const row = Math.floor(i / cols);
@@ -372,9 +424,7 @@
           if (useMask) {
             tempCtx.clearRect(0, 0, frameWidth, frameHeight);
             tempCtx.drawImage(video, 0, 0, frameWidth, frameHeight);
-            tempCtx.globalCompositeOperation = 'destination-in';
-            tempCtx.drawImage(maskImage, 0, 0, frameWidth, frameHeight);
-            tempCtx.globalCompositeOperation = 'source-over';
+            applyMask(tempCtx, frameWidth, frameHeight, maskInvert && maskInvert.checked);
             ctx.drawImage(tempCanvas, x, y);
           } else {
             ctx.drawImage(video, x, y, frameWidth, frameHeight);
@@ -406,9 +456,7 @@
 
           tempCtx.putImageData(blendedData, 0, 0);
           if (useMask) {
-            tempCtx.globalCompositeOperation = 'destination-in';
-            tempCtx.drawImage(maskImage, 0, 0, frameWidth, frameHeight);
-            tempCtx.globalCompositeOperation = 'source-over';
+            applyMask(tempCtx, frameWidth, frameHeight, maskInvert && maskInvert.checked);
           }
           ctx.drawImage(tempCanvas, x, y);
         }
