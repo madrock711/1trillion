@@ -571,6 +571,12 @@ main {
   flex-wrap: wrap;
 }
 
+.sequence-mask-status {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  align-self: center;
+}
+
 .sequence-mask-presets {
   display: flex;
   gap: 6px;

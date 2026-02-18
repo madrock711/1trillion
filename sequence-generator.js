@@ -42,6 +42,7 @@
     const maskTiling = root.querySelector('#sequenceMaskTiling');
     const maskSaveBtn = root.querySelector('#sequenceMaskSave');
     const maskLoadBtn = root.querySelector('#sequenceMaskLoad');
+    const maskStatus = root.querySelector('#sequenceMaskStatus');
     let defaultAutoMeta = autoMeta ? autoMeta.innerHTML : '';
 
     let currentVideo = null;
@@ -675,8 +676,10 @@
       for (let y = 0; y < frameHeight; y++) {
         for (let x = 0; x < frameWidth; x++) {
           const idx = (y * frameWidth + x) * 4;
-          let fx = x * invW;
-          let fy = y * invH;
+          const baseFx = x * invW;
+          const baseFy = y * invH;
+          let fx = baseFx;
+          let fy = baseFy;
 
           if (pixelate > 0) {
             const step = Math.max(1, Math.floor(lerp(1, 24, pixelate)));
@@ -737,18 +740,18 @@
 
           let shapeMask = 1;
           if (shape === 'radial') {
-            const dx = fx - 0.5;
-            const dy = fy - 0.5;
+            const dx = baseFx - 0.5;
+            const dy = baseFy - 0.5;
             const d = Math.sqrt(dx * dx + dy * dy) / 0.5;
             shapeMask = 1 - smoothstep(1 - edge, 1, d);
           } else if (shape === 'linear') {
-            const d = Math.abs(fx - 0.5) / 0.5;
+            const d = Math.abs(baseFx - 0.5) / 0.5;
             shapeMask = 1 - smoothstep(1 - edge, 1, d);
           } else if (shape === 'diamond') {
-            const d = (Math.abs(fx - 0.5) + Math.abs(fy - 0.5)) / 0.5;
+            const d = (Math.abs(baseFx - 0.5) + Math.abs(baseFy - 0.5)) / 0.5;
             shapeMask = 1 - smoothstep(1 - edge, 1, d);
           } else {
-            const d = Math.max(Math.abs(fx - 0.5), Math.abs(fy - 0.5)) / 0.5;
+            const d = Math.max(Math.abs(baseFx - 0.5), Math.abs(baseFy - 0.5)) / 0.5;
             shapeMask = 1 - smoothstep(1 - edge, 1, d);
           }
 
@@ -844,8 +847,10 @@
         const data = collectMaskSettings();
         try {
           localStorage.setItem('sequenceMaskSettings', JSON.stringify(data));
+          if (maskStatus) { maskStatus.textContent = '저장됨'; }
         } catch (e) {
           console.warn('Unable to save mask settings', e);
+          if (maskStatus) { maskStatus.textContent = '저장 실패'; }
         }
       });
     }
@@ -854,10 +859,15 @@
       maskLoadBtn.addEventListener('click', () => {
         try {
           const raw = localStorage.getItem('sequenceMaskSettings');
-          if (!raw) { return; }
+          if (!raw) { 
+            if (maskStatus) { maskStatus.textContent = '저장값 없음'; }
+            return; 
+          }
           applyMaskSettings(JSON.parse(raw));
+          if (maskStatus) { maskStatus.textContent = '불러옴'; }
         } catch (e) {
           console.warn('Unable to load mask settings', e);
+          if (maskStatus) { maskStatus.textContent = '불러오기 실패'; }
         }
       });
     }
