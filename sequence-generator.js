@@ -689,6 +689,8 @@
             const mappedY = radius * 2;
             fx = lerp(fx, mappedX, polar);
             fy = lerp(fy, mappedY, polar);
+            fx = Math.min(1, Math.max(0, fx));
+            fy = Math.min(1, Math.max(0, fy));
           }
 
           if (swirl > 0) {
@@ -698,12 +700,22 @@
             const ang = Math.atan2(cy, cx) + radius * swirl * 4;
             fx = 0.5 + Math.cos(ang) * radius;
             fy = 0.5 + Math.sin(ang) * radius;
+            fx = Math.min(1, Math.max(0, fx));
+            fy = Math.min(1, Math.max(0, fy));
           }
 
           if (warp > 0) {
             const warpVal = fbm(fx * tiling * 3, fy * tiling * 3, 3);
             fx = Math.min(1, Math.max(0, fx + (warpVal - 0.5) * warp));
             fy = Math.min(1, Math.max(0, fy + (warpVal - 0.5) * warp));
+          }
+
+          if (fx < 0 || fx > 1 || fy < 0 || fy > 1) {
+            data[idx] = 255;
+            data[idx + 1] = 255;
+            data[idx + 2] = 255;
+            data[idx + 3] = 0;
+            continue;
           }
 
           const nx = fx * tiling * 4;
