@@ -28,12 +28,17 @@
     const maskCanvas = root.querySelector('#sequenceMaskCanvas');
     const maskGenerateBtn = root.querySelector('#sequenceMaskGenerate');
     const maskDownloadBtn = root.querySelector('#sequenceMaskDownload');
+    const maskNoiseType = root.querySelector('#sequenceMaskNoiseType');
+    const maskShape = root.querySelector('#sequenceMaskShape');
     const maskEdge = root.querySelector('#sequenceMaskEdge');
-    const maskInner = root.querySelector('#sequenceMaskInner');
-    const maskNoise = root.querySelector('#sequenceMaskNoise');
-    const maskDissolve = root.querySelector('#sequenceMaskDissolve');
-    const maskDistort = root.querySelector('#sequenceMaskDistort');
-    const maskPresetButtons = root.querySelectorAll('[data-mask-preset]');
+    const maskPolar = root.querySelector('#sequenceMaskPolar');
+    const maskWarp = root.querySelector('#sequenceMaskWarp');
+    const maskSwirl = root.querySelector('#sequenceMaskSwirl');
+    const maskPixelate = root.querySelector('#sequenceMaskPixelate');
+    const maskThreshold = root.querySelector('#sequenceMaskThreshold');
+    const maskContrast = root.querySelector('#sequenceMaskContrast');
+    const maskGamma = root.querySelector('#sequenceMaskGamma');
+    const maskTiling = root.querySelector('#sequenceMaskTiling');
     let defaultAutoMeta = autoMeta ? autoMeta.innerHTML : '';
 
     let currentVideo = null;
@@ -566,14 +571,89 @@
       };
     }
 
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function smoothstep(edge0, edge1, x) {
+      const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0)));
+      return t * t * (3 - 2 * t);
+    }
+
+    function hash2(x, y) {
+      let h = x * 374761393 + y * 668265263;
+      h = (h ^ (h >> 13)) * 1274126177;
+      return (h ^ (h >> 16)) >>> 0;
+    }
+
+    function valueNoise(x, y) {
+      const x0 = Math.floor(x);
+      const y0 = Math.floor(y);
+      const xf = x - x0;
+      const yf = y - y0;
+      const h00 = hash2(x0, y0) / 4294967295;
+      const h10 = hash2(x0 + 1, y0) / 4294967295;
+      const h01 = hash2(x0, y0 + 1) / 4294967295;
+      const h11 = hash2(x0 + 1, y0 + 1) / 4294967295;
+      const u = smoothstep(0, 1, xf);
+      const v = smoothstep(0, 1, yf);
+      return lerp(lerp(h00, h10, u), lerp(h01, h11, u), v);
+    }
+
+    function fbm(x, y, octaves) {
+      let value = 0;
+      let amp = 0.5;
+      let freq = 1;
+      for (let i = 0; i < octaves; i++) {
+        value += valueNoise(x * freq, y * freq) * amp;
+        freq *= 2;
+        amp *= 0.5;
+      }
+      return value;
+    }
+
+    function ridged(x, y) {
+      let sum = 0;
+      let amp = 0.5;
+      let freq = 1;
+      for (let i = 0; i < 4; i++) {
+        const n = valueNoise(x * freq, y * freq);
+        sum += (1 - Math.abs(2 * n - 1)) * amp;
+        freq *= 2;
+        amp *= 0.5;
+      }
+      return sum;
+    }
+
+    function worley(x, y) {
+      const xi = Math.floor(x);
+      const yi = Math.floor(y);
+      let minDist = 10;
+      for (let j = -1; j <= 1; j++) {
+        for (let i = -1; i <= 1; i++) {
+          const hx = hash2(xi + i, yi + j);
+          const hy = hash2(xi + i + 17, yi + j + 29);
+          const fx = (hx / 4294967295);
+          const fy = (hy / 4294967295);
+          const px = xi + i + fx;
+          const py = yi + j + fy;
+          const dx = x - px;
+          const dy = y - py;
+          minDist = Math.min(minDist, Math.sqrt(dx * dx + dy * dy));
+        }
+      }
+      return Math.min(1, minDist);
+    }
+
     function generateMaskTexture() {
       const frameWidth = parseInt(root.querySelector('#sequenceFrameWidth').value, 10) || 128;
       const frameHeight = parseInt(root.querySelector('#sequenceFrameHeight').value, 10) || 128;
-      const edge = parseFloat(maskEdge.value || '0.25');
-      const inner = parseFloat(maskInner.value || '0.2');
-      const noise = parseFloat(maskNoise.value || '0.15');
-      const dissolve = parseFloat(maskDissolve.value || '0');
-      const distort = parseFloat(maskDistort.value || '0.08');
+      const edge = parseFloat(maskEdge.value || '0.28');
+      const polar = parseFloat(maskPolar.value || '0');
+      const warp = parseFloat(maskWarp.value || '0.25');
+      const swirl = parseFloat(maskSwirl.value || '0.15');
+      const pixelate = parseFloat(maskPixelate.value || '0');
+      const threshold = parseFloat(maskThreshold.value || '0');
+      const contrast = parseFloat(maskContrast.value || '1');
+      const gamma = parseFloat(maskGamma.value || '1');
+      const tiling = parseInt(maskTiling.value || '1', 10);
 
       maskCanvas.width = frameWidth;
       maskCanvas.height = frameHeight;
@@ -581,41 +661,93 @@
       const ctx = maskCanvas.getContext('2d');
       const imageData = ctx.createImageData(frameWidth, frameHeight);
       const data = imageData.data;
-      const rng = mulberry32(Math.floor(Date.now() % 2147483647));
+      const rng = mulberry32(1337);
 
       const invW = 1 / frameWidth;
       const invH = 1 / frameHeight;
+      const shape = maskShape.value || 'radial';
+      const noiseType = maskNoiseType.value || 'perlin';
 
       for (let y = 0; y < frameHeight; y++) {
         for (let x = 0; x < frameWidth; x++) {
           const idx = (y * frameWidth + x) * 4;
-          const fx = x * invW;
-          const fy = y * invH;
-          const offsetX = Math.sin((fy + fx) * Math.PI * 4) * distort * 0.5;
-          const offsetY = Math.cos((fx - fy) * Math.PI * 4) * distort * 0.5;
-          const ux = Math.min(1, Math.max(0, fx + offsetX));
-          const uy = Math.min(1, Math.max(0, fy + offsetY));
-          const distX = Math.min(ux, 1 - ux);
-          const distY = Math.min(uy, 1 - uy);
-          const dist = Math.min(distX, distY);
-          const edgeWidth = Math.max(0.001, edge);
-          let alpha = Math.min(1, Math.max(0, dist / edgeWidth));
+          let fx = x * invW;
+          let fy = y * invH;
 
-          const dx = ux - 0.5;
-          const dy = uy - 0.5;
-          const radial = Math.sqrt(dx * dx + dy * dy) * 2;
-          const innerFactor = 1 - Math.min(1, radial);
-          alpha = alpha * (1 - inner) + alpha * innerFactor * inner;
-
-          const n = (rng() + rng()) * 0.5;
-          alpha = alpha * (1 - noise) + alpha * n * noise;
-
-          if (dissolve > 0) {
-            const threshold = dissolve;
-            alpha = alpha * (n > threshold ? 1 : 0);
+          if (pixelate > 0) {
+            const step = Math.max(1, Math.floor(lerp(1, 24, pixelate)));
+            fx = Math.floor(fx * frameWidth / step) * step / frameWidth;
+            fy = Math.floor(fy * frameHeight / step) * step / frameHeight;
           }
 
-          const a = Math.round(alpha * 255);
+          if (polar > 0) {
+            const cx = fx - 0.5;
+            const cy = fy - 0.5;
+            const radius = Math.min(0.5, Math.sqrt(cx * cx + cy * cy));
+            const angle = Math.atan2(cy, cx);
+            const mappedX = (angle / (Math.PI * 2) + 0.5);
+            const mappedY = radius * 2;
+            fx = lerp(fx, mappedX, polar);
+            fy = lerp(fy, mappedY, polar);
+          }
+
+          if (swirl > 0) {
+            const cx = fx - 0.5;
+            const cy = fy - 0.5;
+            const radius = Math.sqrt(cx * cx + cy * cy);
+            const ang = Math.atan2(cy, cx) + radius * swirl * 4;
+            fx = 0.5 + Math.cos(ang) * radius;
+            fy = 0.5 + Math.sin(ang) * radius;
+          }
+
+          if (warp > 0) {
+            const warpVal = fbm(fx * tiling * 3, fy * tiling * 3, 3);
+            fx = Math.min(1, Math.max(0, fx + (warpVal - 0.5) * warp));
+            fy = Math.min(1, Math.max(0, fy + (warpVal - 0.5) * warp));
+          }
+
+          const nx = fx * tiling * 4;
+          const ny = fy * tiling * 4;
+          let n = 0;
+          if (noiseType === 'worley') {
+            n = 1 - worley(nx, ny);
+          } else if (noiseType === 'ridged') {
+            n = ridged(nx, ny);
+          } else if (noiseType === 'white') {
+            n = rng();
+          } else {
+            n = fbm(nx, ny, 4);
+          }
+
+          let shapeMask = 1;
+          if (shape === 'radial') {
+            const dx = fx - 0.5;
+            const dy = fy - 0.5;
+            const d = Math.sqrt(dx * dx + dy * dy) / 0.5;
+            shapeMask = 1 - smoothstep(1 - edge, 1, d);
+          } else if (shape === 'linear') {
+            const d = Math.abs(fx - 0.5) / 0.5;
+            shapeMask = 1 - smoothstep(1 - edge, 1, d);
+          } else if (shape === 'diamond') {
+            const d = (Math.abs(fx - 0.5) + Math.abs(fy - 0.5)) / 0.5;
+            shapeMask = 1 - smoothstep(1 - edge, 1, d);
+          } else {
+            const d = Math.max(Math.abs(fx - 0.5), Math.abs(fy - 0.5)) / 0.5;
+            shapeMask = 1 - smoothstep(1 - edge, 1, d);
+          }
+
+          let alpha = n * shapeMask;
+          if (contrast !== 1) {
+            alpha = Math.min(1, Math.max(0, (alpha - 0.5) * contrast + 0.5));
+          }
+          if (gamma !== 1) {
+            alpha = Math.pow(Math.min(1, Math.max(0, alpha)), 1 / gamma);
+          }
+          if (threshold > 0) {
+            alpha = alpha >= threshold ? 1 : 0;
+          }
+
+          const a = Math.round(Math.min(1, Math.max(0, alpha)) * 255);
           data[idx] = 255;
           data[idx + 1] = 255;
           data[idx + 2] = 255;
@@ -630,6 +762,8 @@
       if (generatorRadio) { generatorRadio.checked = true; }
     }
 
+    generateMaskTexture();
+
     if (maskGenerateBtn) {
       maskGenerateBtn.addEventListener('click', generateMaskTexture);
     }
@@ -643,27 +777,17 @@
       });
     }
 
-    function applyPreset(name) {
-      const presets = {
-        soft: { edge: 0.35, inner: 0.35, noise: 0.08, dissolve: 0, distort: 0.08 },
-        hard: { edge: 0.12, inner: 0.05, noise: 0.02, dissolve: 0, distort: 0.02 },
-        dissolve: { edge: 0.25, inner: 0.2, noise: 0.25, dissolve: 0.35, distort: 0.12 },
-        noise: { edge: 0.28, inner: 0.15, noise: 0.35, dissolve: 0.05, distort: 0.18 }
-      };
-      const preset = presets[name];
-      if (!preset) { return; }
-      maskEdge.value = preset.edge;
-      maskInner.value = preset.inner;
-      maskNoise.value = preset.noise;
-      maskDissolve.value = preset.dissolve;
-      maskDistort.value = preset.distort;
-      generateMaskTexture();
-    }
-
-    maskPresetButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const preset = btn.getAttribute('data-mask-preset');
-        applyPreset(preset);
+    const realtimeInputs = [
+      maskNoiseType, maskShape, maskEdge, maskPolar, maskWarp, maskSwirl,
+      maskPixelate, maskThreshold, maskContrast, maskGamma, maskTiling
+    ];
+    realtimeInputs.forEach((input) => {
+      if (!input) { return; }
+      input.addEventListener('input', () => {
+        generateMaskTexture();
+      });
+      input.addEventListener('change', () => {
+        generateMaskTexture();
       });
     });
 

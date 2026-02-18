@@ -451,12 +451,6 @@
                             <div class="sequence-mask-generator-head">
                                 <div class="sequence-mask-title" data-i18n="sequence.maskGenTitle">마스크 텍스처 생성기</div>
                                 <div class="sequence-mask-actions">
-                                    <div class="sequence-mask-presets">
-                                        <button class="sequence-mask-preset" type="button" data-mask-preset="soft" data-i18n="sequence.maskPresetSoft">Soft Edge</button>
-                                        <button class="sequence-mask-preset" type="button" data-mask-preset="hard" data-i18n="sequence.maskPresetHard">Hard Edge</button>
-                                        <button class="sequence-mask-preset" type="button" data-mask-preset="dissolve" data-i18n="sequence.maskPresetDissolve">Dissolve</button>
-                                        <button class="sequence-mask-preset" type="button" data-mask-preset="noise" data-i18n="sequence.maskPresetNoise">Noise Soft</button>
-                                    </div>
                                     <button class="sequence-mask-clear" type="button" id="sequenceMaskGenerate" data-i18n="sequence.maskGenBtn">마스크 생성</button>
                                     <button class="sequence-mask-clear" type="button" id="sequenceMaskDownload" data-i18n="sequence.maskGenDownload">다운로드</button>
                                 </div>
@@ -464,24 +458,68 @@
                             <canvas id="sequenceMaskCanvas" width="256" height="256"></canvas>
                             <div class="sequence-mask-controls">
                                 <label>
-                                    <span data-i18n="sequence.maskEdgeLabel">엣지 페이드</span>
-                                    <input type="range" id="sequenceMaskEdge" min="0.05" max="0.6" step="0.01" value="0.25">
+                                    <span data-i18n="sequence.maskNoiseTypeLabel">노이즈 알고리즘</span>
+                                    <select id="sequenceMaskNoiseType">
+                                        <option value="perlin" data-i18n="sequence.maskNoisePerlin">Perlin / Simplex</option>
+                                        <option value="worley" data-i18n="sequence.maskNoiseWorley">Worley / Voronoi</option>
+                                        <option value="ridged" data-i18n="sequence.maskNoiseRidged">Ridged Multi-fractal</option>
+                                        <option value="white" data-i18n="sequence.maskNoiseWhite">White Noise</option>
+                                    </select>
                                 </label>
+
                                 <label>
-                                    <span data-i18n="sequence.maskInnerLabel">내부 그라데이션</span>
-                                    <input type="range" id="sequenceMaskInner" min="0" max="1" step="0.01" value="0.2">
+                                    <span data-i18n="sequence.maskShapeLabel">형상</span>
+                                    <select id="sequenceMaskShape">
+                                        <option value="radial" data-i18n="sequence.maskShapeRadial">Radial</option>
+                                        <option value="linear" data-i18n="sequence.maskShapeLinear">Linear</option>
+                                        <option value="diamond" data-i18n="sequence.maskShapeDiamond">Diamond</option>
+                                        <option value="square" data-i18n="sequence.maskShapeSquare">Square</option>
+                                    </select>
                                 </label>
+
                                 <label>
-                                    <span data-i18n="sequence.maskNoiseLabel">노이즈</span>
-                                    <input type="range" id="sequenceMaskNoise" min="0" max="1" step="0.01" value="0.15">
+                                    <span data-i18n="sequence.maskEdgeLabel">Edge Softness</span>
+                                    <input type="range" id="sequenceMaskEdge" min="0.02" max="0.8" step="0.01" value="0.28">
                                 </label>
+
                                 <label>
-                                    <span data-i18n="sequence.maskDissolveLabel">디졸브</span>
-                                    <input type="range" id="sequenceMaskDissolve" min="0" max="1" step="0.01" value="0">
+                                    <span data-i18n="sequence.maskPolarLabel">Polar Coordinates</span>
+                                    <input type="range" id="sequenceMaskPolar" min="0" max="1" step="0.01" value="0">
                                 </label>
+
                                 <label>
-                                    <span data-i18n="sequence.maskDistortLabel">디스톨트</span>
-                                    <input type="range" id="sequenceMaskDistort" min="0" max="0.5" step="0.01" value="0.08">
+                                    <span data-i18n="sequence.maskWarpLabel">UV Warp</span>
+                                    <input type="range" id="sequenceMaskWarp" min="0" max="0.6" step="0.01" value="0.25">
+                                </label>
+
+                                <label>
+                                    <span data-i18n="sequence.maskSwirlLabel">Swirl / Twirl</span>
+                                    <input type="range" id="sequenceMaskSwirl" min="0" max="1" step="0.01" value="0.15">
+                                </label>
+
+                                <label>
+                                    <span data-i18n="sequence.maskPixelateLabel">Pixelate</span>
+                                    <input type="range" id="sequenceMaskPixelate" min="0" max="1" step="0.01" value="0">
+                                </label>
+
+                                <label>
+                                    <span data-i18n="sequence.maskThresholdLabel">Threshold</span>
+                                    <input type="range" id="sequenceMaskThreshold" min="0" max="1" step="0.01" value="0">
+                                </label>
+
+                                <label>
+                                    <span data-i18n="sequence.maskContrastLabel">Contrast</span>
+                                    <input type="range" id="sequenceMaskContrast" min="0.2" max="2" step="0.01" value="1">
+                                </label>
+
+                                <label>
+                                    <span data-i18n="sequence.maskGammaLabel">Gamma</span>
+                                    <input type="range" id="sequenceMaskGamma" min="0.2" max="2.2" step="0.01" value="1">
+                                </label>
+
+                                <label>
+                                    <span data-i18n="sequence.maskTilingLabel">Seamless Tiling</span>
+                                    <input type="range" id="sequenceMaskTiling" min="1" max="6" step="1" value="1">
                                 </label>
                             </div>
                         </div>
