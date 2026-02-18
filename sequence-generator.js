@@ -708,7 +708,9 @@
             const angle = Math.atan2(cy, cx);
             const mappedX = (angle / (Math.PI * 2) + 0.5);
             const mappedY = radius * 2;
-            fx = lerp(fx, mappedX, polar);
+            const seamWidth = 0.04;
+            const seamBlend = smoothstep(0, 1, Math.min(mappedX, 1 - mappedX) / seamWidth);
+            fx = lerp(fx, mappedX, polar * seamBlend);
             fy = lerp(fy, mappedY, polar);
             fx = Math.min(1, Math.max(0, fx));
             fy = Math.min(1, Math.max(0, fy));
