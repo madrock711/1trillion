@@ -36,6 +36,7 @@
     const maskSwirl = root.querySelector('#sequenceMaskSwirl');
     const maskPixelate = root.querySelector('#sequenceMaskPixelate');
     const maskThreshold = root.querySelector('#sequenceMaskThreshold');
+    const maskScale = root.querySelector('#sequenceMaskScale');
     const maskIntensity = root.querySelector('#sequenceMaskIntensity');
     const maskContrast = root.querySelector('#sequenceMaskContrast');
     const maskGamma = root.querySelector('#sequenceMaskGamma');
@@ -43,6 +44,7 @@
     const maskSaveBtn = root.querySelector('#sequenceMaskSave');
     const maskLoadBtn = root.querySelector('#sequenceMaskLoad');
     const maskStatus = root.querySelector('#sequenceMaskStatus');
+    const maskPresetSelect = root.querySelector('#sequenceMaskPresetSelect');
     let defaultAutoMeta = autoMeta ? autoMeta.innerHTML : '';
 
     let currentVideo = null;
@@ -655,6 +657,7 @@
       const swirl = parseFloat(maskSwirl.value || '0.15');
       const pixelate = parseFloat(maskPixelate.value || '0');
       const threshold = parseFloat(maskThreshold.value || '0');
+      const scale = parseFloat(maskScale.value || '1');
       const intensity = parseFloat(maskIntensity.value || '1');
       const contrast = parseFloat(maskContrast.value || '1');
       const gamma = parseFloat(maskGamma.value || '1');
@@ -676,8 +679,19 @@
       for (let y = 0; y < frameHeight; y++) {
         for (let x = 0; x < frameWidth; x++) {
           const idx = (y * frameWidth + x) * 4;
-          const baseFx = x * invW;
-          const baseFy = y * invH;
+          let baseFx = x * invW;
+          let baseFy = y * invH;
+          if (scale !== 1) {
+            baseFx = (baseFx - 0.5) / scale + 0.5;
+            baseFy = (baseFy - 0.5) / scale + 0.5;
+          }
+          if (baseFx < 0 || baseFx > 1 || baseFy < 0 || baseFy > 1) {
+            data[idx] = 255;
+            data[idx + 1] = 255;
+            data[idx + 2] = 255;
+            data[idx + 3] = 0;
+            continue;
+          }
           let fx = baseFx;
           let fy = baseFy;
 
@@ -801,7 +815,7 @@
 
     const realtimeInputs = [
       maskNoiseType, maskShape, maskEdge, maskPolar, maskWarp, maskSwirl,
-      maskPixelate, maskThreshold, maskIntensity, maskContrast, maskGamma, maskTiling
+      maskPixelate, maskThreshold, maskScale, maskIntensity, maskContrast, maskGamma, maskTiling
     ];
 
     function updateMaskValues() {
@@ -817,7 +831,8 @@
     realtimeInputs.forEach((input) => {
       if (!input) { return; }
       input.addEventListener('input', () => {
-        generateMaskTexture();
+    generateMaskTexture();
+    updateMaskValues();
         updateMaskValues();
       });
       input.addEventListener('change', () => {
@@ -838,6 +853,7 @@
         swirl: maskSwirl.value,
         pixelate: maskPixelate.value,
         threshold: maskThreshold.value,
+        scale: maskScale.value,
         intensity: maskIntensity.value,
         contrast: maskContrast.value,
         gamma: maskGamma.value,
@@ -855,6 +871,7 @@
       maskSwirl.value = settings.swirl ?? maskSwirl.value;
       maskPixelate.value = settings.pixelate ?? maskPixelate.value;
       maskThreshold.value = settings.threshold ?? maskThreshold.value;
+      maskScale.value = settings.scale ?? maskScale.value;
       maskIntensity.value = settings.intensity ?? maskIntensity.value;
       maskContrast.value = settings.contrast ?? maskContrast.value;
       maskGamma.value = settings.gamma ?? maskGamma.value;
@@ -863,12 +880,66 @@
       updateMaskValues();
     }
 
+    const builtinPresets = [
+      { id: 'soft', name: 'Soft Edge', values: { noiseType: 'perlin', shape: 'radial', edge: 0.35, polar: 0.05, warp: 0.18, swirl: 0.1, pixelate: 0, threshold: 0, scale: 1, intensity: 1, contrast: 1, gamma: 1, tiling: 1 } },
+      { id: 'hard', name: 'Hard Edge', values: { noiseType: 'perlin', shape: 'square', edge: 0.12, polar: 0, warp: 0.08, swirl: 0, pixelate: 0, threshold: 0.12, scale: 1, intensity: 1, contrast: 1.2, gamma: 1, tiling: 1 } },
+      { id: 'dissolve', name: 'Dissolve', values: { noiseType: 'worley', shape: 'radial', edge: 0.25, polar: 0, warp: 0.25, swirl: 0.2, pixelate: 0, threshold: 0.4, scale: 1, intensity: 1, contrast: 1.15, gamma: 1, tiling: 2 } },
+      { id: 'noise', name: 'Noise Soft', values: { noiseType: 'white', shape: 'radial', edge: 0.3, polar: 0, warp: 0.15, swirl: 0.05, pixelate: 0.15, threshold: 0, scale: 1, intensity: 1, contrast: 0.9, gamma: 1, tiling: 3 } }
+    ];
+
+    function loadSavedPresets() {
+      try {
+        const raw = localStorage.getItem('sequenceMaskPresets');
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function savePresetsMap(map) {
+      try {
+        localStorage.setItem('sequenceMaskPresets', JSON.stringify(map));
+      } catch (e) {
+        console.warn('Unable to save presets map', e);
+      }
+    }
+
+    function refreshPresetSelect() {
+      if (!maskPresetSelect) { return; }
+      const current = maskPresetSelect.value;
+      const placeholderText = maskPresetSelect.querySelector('option')?.textContent || 'Preset';
+      maskPresetSelect.innerHTML = '';
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = placeholderText;
+      maskPresetSelect.appendChild(placeholder);
+      builtinPresets.forEach(preset => {
+        const option = document.createElement('option');
+        option.value = 'builtin:' + preset.id;
+        option.textContent = preset.name;
+        maskPresetSelect.appendChild(option);
+      });
+      const saved = loadSavedPresets();
+      Object.keys(saved).forEach(name => {
+        const option = document.createElement('option');
+        option.value = 'saved:' + name;
+        option.textContent = name;
+        maskPresetSelect.appendChild(option);
+      });
+      if (current) { maskPresetSelect.value = current; }
+    }
+
     if (maskSaveBtn) {
       maskSaveBtn.addEventListener('click', () => {
+        const name = prompt('저장할 이름을 입력하세요');
+        if (!name) { return; }
         const data = collectMaskSettings();
         try {
-          localStorage.setItem('sequenceMaskSettings', JSON.stringify(data));
-          if (maskStatus) { maskStatus.textContent = '저장됨'; }
+          const map = loadSavedPresets();
+          map[name] = data;
+          savePresetsMap(map);
+          refreshPresetSelect();
+          if (maskStatus) { maskStatus.textContent = '저장됨: ' + name; }
         } catch (e) {
           console.warn('Unable to save mask settings', e);
           if (maskStatus) { maskStatus.textContent = '저장 실패'; }
@@ -879,19 +950,38 @@
     if (maskLoadBtn) {
       maskLoadBtn.addEventListener('click', () => {
         try {
-          const raw = localStorage.getItem('sequenceMaskSettings');
-          if (!raw) { 
-            if (maskStatus) { maskStatus.textContent = '저장값 없음'; }
-            return; 
+          const value = maskPresetSelect ? maskPresetSelect.value : '';
+          if (!value) {
+            if (maskStatus) { maskStatus.textContent = '프리셋 선택 필요'; }
+            return;
           }
-          applyMaskSettings(JSON.parse(raw));
-          if (maskStatus) { maskStatus.textContent = '불러옴'; }
+          if (value.startsWith('builtin:')) {
+            const id = value.replace('builtin:', '');
+            const preset = builtinPresets.find(p => p.id === id);
+            if (preset) {
+              applyMaskSettings(preset.values);
+              if (maskStatus) { maskStatus.textContent = '불러옴: ' + preset.name; }
+            }
+            return;
+          }
+          if (value.startsWith('saved:')) {
+            const name = value.replace('saved:', '');
+            const saved = loadSavedPresets();
+            if (!saved[name]) {
+              if (maskStatus) { maskStatus.textContent = '저장값 없음'; }
+              return;
+            }
+            applyMaskSettings(saved[name]);
+            if (maskStatus) { maskStatus.textContent = '불러옴: ' + name; }
+          }
         } catch (e) {
           console.warn('Unable to load mask settings', e);
           if (maskStatus) { maskStatus.textContent = '불러오기 실패'; }
         }
       });
     }
+
+    refreshPresetSelect();
       });
       input.addEventListener('change', () => {
         generateMaskTexture();

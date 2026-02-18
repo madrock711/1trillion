@@ -451,6 +451,9 @@
                             <div class="sequence-mask-generator-head">
                                 <div class="sequence-mask-title" data-i18n="sequence.maskGenTitle">마스크 텍스처 생성기</div>
                                 <div class="sequence-mask-actions">
+                                    <select id="sequenceMaskPresetSelect" class="sequence-mask-select" aria-label="Mask presets" data-placeholder="프리셋 선택">
+                                        <option value="" data-i18n="sequence.maskPresetPlaceholder">프리셋 선택</option>
+                                    </select>
                                     <button class="sequence-mask-clear" type="button" id="sequenceMaskGenerate" data-i18n="sequence.maskGenBtn">마스크 생성</button>
                                     <button class="sequence-mask-clear" type="button" id="sequenceMaskDownload" data-i18n="sequence.maskGenDownload">다운로드</button>
                                     <button class="sequence-mask-clear" type="button" id="sequenceMaskSave" data-i18n="sequence.maskSave">값 저장</button>
@@ -514,6 +517,12 @@
                                     <span data-i18n="sequence.maskThresholdLabel">Threshold</span>
                                     <span class="sequence-mask-value" data-mask-value="sequenceMaskThreshold">0</span>
                                     <input type="range" id="sequenceMaskThreshold" min="0" max="1" step="0.01" value="0">
+                                </label>
+
+                                <label class="sequence-mask-control">
+                                    <span data-i18n="sequence.maskScaleLabel">Scale</span>
+                                    <span class="sequence-mask-value" data-mask-value="sequenceMaskScale">1</span>
+                                    <input type="range" id="sequenceMaskScale" min="0.5" max="3" step="0.01" value="1">
                                 </label>
 
                                 <label class="sequence-mask-control">

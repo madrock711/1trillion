@@ -571,6 +571,16 @@ main {
   flex-wrap: wrap;
 }
 
+.sequence-mask-select {
+  min-width: 160px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #444;
+  background: #222;
+  color: #fff;
+  font-weight: 600;
+}
+
 .sequence-mask-status {
   font-size: 0.8rem;
   color: var(--text-secondary);
