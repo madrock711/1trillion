@@ -416,61 +416,68 @@
       tempCtx.globalCompositeOperation = 'source-over';
     }
 
-    function seekToTime(video, time) {
-      return new Promise((resolve, reject) => {
-        if (!isFinite(time) || time < 0) {
-          reject(new Error(`Invalid time: ${time}`));
-          return;
-        }
-
-        if (!isFinite(video.duration) || video.duration <= 0) {
-          reject(new Error('Video duration is invalid'));
-          return;
-        }
-
-        const safeTime = Math.min(time, video.duration - 0.001);
-        let timeoutId;
-
-        const cleanup = () => {
-          clearTimeout(timeoutId);
-          video.removeEventListener('seeked', onSeeked);
-          video.removeEventListener('error', onError);
-        };
-
-        const finish = () => {
-          cleanup();
-          resolve();
-        };
-
-        const onSeeked = () => {
-          if (typeof video.requestVideoFrameCallback === 'function') {
-            const onFrame = () => finish();
-            video.requestVideoFrameCallback(onFrame);
-          } else {
-            setTimeout(finish, 50);
-          }
-        };
-
-        const onError = (e) => {
-          cleanup();
-          reject(new Error('Video seek error: ' + e.message));
-        };
-
-        timeoutId = setTimeout(() => {
-          cleanup();
-          reject(new Error('Seek timeout'));
-        }, 15000);
-
-        video.addEventListener('seeked', onSeeked, { once: true });
-        video.addEventListener('error', onError, { once: true });
-
+    async function seekToTime(video, time, retries = 1) {
+      for (let attempt = 0; attempt <= retries; attempt++) {
         try {
-          video.currentTime = safeTime;
-        } catch (e) {
-          cleanup();
-          reject(e);
+          await new Promise((resolve, reject) => {
+            if (!isFinite(time) || time < 0) {
+              reject(new Error(`Invalid time: ${time}`));
+              return;
+            }
+
+            if (!isFinite(video.duration) || video.duration <= 0) {
+              reject(new Error('Video duration is invalid'));
+              return;
+            }
+
+            const safeTime = Math.min(time, video.duration - 0.001);
+            let timeoutId;
+
+            const cleanup = () => {
+              clearTimeout(timeoutId);
+              video.removeEventListener('seeked', onSeeked);
+              video.removeEventListener('error', onError);
+            };
+
+            const finish = () => {
+              cleanup();
+              resolve();
+            };
+
+            const onSeeked = () => {
+              if (typeof video.requestVideoFrameCallback === 'function') {
+                const onFrame = () => finish();
+                video.requestVideoFrameCallback(onFrame);
+              } else {
+                setTimeout(finish, 50);
+              }
+            };
+
+            const onError = (e) => {
+              cleanup();
+              reject(new Error('Video seek error: ' + e.message));
+            };
+
+            timeoutId = setTimeout(() => {
+              cleanup();
+              reject(new Error('Seek timeout'));
+            }, 20000);
+
+            video.addEventListener('seeked', onSeeked, { once: true });
+            video.addEventListener('error', onError, { once: true });
+
+            try {
+              video.currentTime = safeTime;
+            } catch (e) {
+              cleanup();
+              reject(e);
+            }
+          });
+          return;
+        } catch (error) {
+          if (attempt >= retries) { throw error; }
         }
-      });
+      }
     }
 
     async function createSamplingVideo(startTime) {
@@ -481,11 +488,19 @@
       sampleVideo.preload = 'auto';
       sampleVideo.muted = true;
       sampleVideo.playsInline = true;
+      sampleVideo.style.position = 'fixed';
+      sampleVideo.style.width = '1px';
+      sampleVideo.style.height = '1px';
+      sampleVideo.style.opacity = '0';
+      sampleVideo.style.pointerEvents = 'none';
+      document.body.appendChild(sampleVideo);
       sampleVideo.src = currentVideoUrl;
       sampleVideo.load();
       await new Promise(resolve => sampleVideo.addEventListener('loadedmetadata', resolve, { once: true }));
       await new Promise(resolve => sampleVideo.addEventListener('canplay', resolve, { once: true }));
-      await seekToTime(sampleVideo, startTime);
+      await sampleVideo.play().catch(() => {});
+      sampleVideo.pause();
+      await seekToTime(sampleVideo, startTime, 1);
       return sampleVideo;
     }
 
@@ -1374,6 +1389,7 @@
           samplingVideo.pause();
           samplingVideo.removeAttribute('src');
           samplingVideo.load();
+          samplingVideo.remove();
           samplingVideo = null;
         }
         currentVideo.loop = wasLooping;
