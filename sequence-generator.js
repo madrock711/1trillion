@@ -624,7 +624,7 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const overlapRatio = overlapPercent / 100;
-      const overlapFrames = Math.ceil(totalFrames * overlapRatio);
+      const overlapFrames = Math.min(totalFrames - 1, Math.max(1, Math.ceil(totalFrames * overlapRatio)));
       const uniqueFrames = totalFrames - overlapFrames;
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = frameWidth;
@@ -689,12 +689,11 @@
           applyMask(tempCtx, frameWidth, frameHeight, maskInvert && maskInvert.checked);
         }
         ctx.drawImage(tempCanvas, x, y);
-        if (i < uniqueFrames) {
-          drawFrameIndex(ctx, x, y, i + 1);
-        } else {
-          const overlapIndex = i - uniqueFrames;
-          drawFrameIndex(ctx, x, y, i + 1, overlapIndex + 1);
-        }
+        const overlapIndex = i - uniqueFrames;
+        const secondaryIndex = (i >= uniqueFrames && overlapIndex >= 0 && overlapIndex < overlapFrames)
+          ? (overlapIndex + 1)
+          : null;
+        drawFrameIndex(ctx, x, y, i + 1, secondaryIndex);
 
         completedSteps += 1;
         updateProgress();
