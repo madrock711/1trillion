@@ -448,13 +448,6 @@
       const overlapRatio = overlapPercent / 100;
       const overlapFrames = Math.ceil(totalFrames * overlapRatio);
       const uniqueFrames = totalFrames - overlapFrames;
-      const overlapDuration = duration * overlapRatio;
-      const cutTime = overlapDuration;
-
-      const samplingDuration = duration - overlapDuration;
-      const interval = uniqueFrames > 1 ? (samplingDuration / (uniqueFrames - 1)) : 0;
-      const overlapInterval = overlapFrames > 1 ? (overlapDuration / (overlapFrames - 1)) : 0;
-
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = frameWidth;
       tempCanvas.height = frameHeight;
@@ -463,41 +456,42 @@
         buildMaskCanvases(frameWidth, frameHeight);
       }
 
+      const baseFrames = new Array(totalFrames);
+      const totalSteps = totalFrames * 2;
+      let completedSteps = 0;
+      const updateProgress = () => {
+        const percent = Math.round((completedSteps / totalSteps) * 100);
+        progressBar.style.width = percent + '%';
+        progressBar.textContent = percent + '%';
+      };
+
+      for (let i = 0; i < totalFrames; i++) {
+        const t = totalFrames > 1 ? (i / (totalFrames - 1)) : 0;
+        const time = Math.min(duration - 0.001, t * duration);
+        await seekToTime(video, time);
+        tempCtx.clearRect(0, 0, frameWidth, frameHeight);
+        tempCtx.drawImage(video, 0, 0, frameWidth, frameHeight);
+        baseFrames[i] = tempCtx.getImageData(0, 0, frameWidth, frameHeight);
+        completedSteps += 1;
+        updateProgress();
+        await new Promise(resolve => setTimeout(resolve, 10));
+      }
+
       for (let i = 0; i < totalFrames; i++) {
         const row = Math.floor(i / cols);
         const col = i % cols;
         const x = col * frameWidth;
         const y = row * frameHeight;
+        let frameData = null;
 
         if (i < uniqueFrames) {
-          const time = uniqueFrames > 1 ? (cutTime + (i * interval)) : cutTime;
-          await seekToTime(video, time);
-          if (useMask) {
-            tempCtx.clearRect(0, 0, frameWidth, frameHeight);
-            tempCtx.drawImage(video, 0, 0, frameWidth, frameHeight);
-            applyMask(tempCtx, frameWidth, frameHeight, maskInvert && maskInvert.checked);
-            ctx.drawImage(tempCanvas, x, y);
-          } else {
-            ctx.drawImage(video, x, y, frameWidth, frameHeight);
-          }
+          frameData = baseFrames[i + overlapFrames];
         } else {
           const overlapIndex = i - uniqueFrames;
           const t = overlapFrames > 1 ? (overlapIndex / (overlapFrames - 1)) : 1;
           const alpha = Math.pow(Math.min(1, Math.max(0, t)), 3);
-
-          const startTime = overlapIndex * overlapInterval;
-          const endTime = (duration - overlapDuration) + (overlapIndex * overlapInterval);
-
-          await seekToTime(video, Math.min(endTime, duration - 0.001));
-          tempCtx.clearRect(0, 0, frameWidth, frameHeight);
-          tempCtx.drawImage(video, 0, 0, frameWidth, frameHeight);
-          const endFrameData = tempCtx.getImageData(0, 0, frameWidth, frameHeight);
-
-          await seekToTime(video, startTime);
-          tempCtx.clearRect(0, 0, frameWidth, frameHeight);
-          tempCtx.drawImage(video, 0, 0, frameWidth, frameHeight);
-          const startFrameData = tempCtx.getImageData(0, 0, frameWidth, frameHeight);
-
+          const startFrameData = baseFrames[overlapIndex];
+          const endFrameData = baseFrames[totalFrames - overlapFrames + overlapIndex];
           const blendedData = tempCtx.createImageData(frameWidth, frameHeight);
           for (let p = 0; p < startFrameData.data.length; p += 4) {
             blendedData.data[p] = endFrameData.data[p] * (1 - alpha) + startFrameData.data[p] * alpha;
@@ -505,17 +499,18 @@
             blendedData.data[p + 2] = endFrameData.data[p + 2] * (1 - alpha) + startFrameData.data[p + 2] * alpha;
             blendedData.data[p + 3] = endFrameData.data[p + 3] * (1 - alpha) + startFrameData.data[p + 3] * alpha;
           }
-
-          tempCtx.putImageData(blendedData, 0, 0);
-          if (useMask) {
-            applyMask(tempCtx, frameWidth, frameHeight, maskInvert && maskInvert.checked);
-          }
-          ctx.drawImage(tempCanvas, x, y);
+          frameData = blendedData;
         }
 
-        const percent = Math.round(((i + 1) / totalFrames) * 100);
-        progressBar.style.width = percent + '%';
-        progressBar.textContent = percent + '%';
+        tempCtx.clearRect(0, 0, frameWidth, frameHeight);
+        tempCtx.putImageData(frameData, 0, 0);
+        if (useMask) {
+          applyMask(tempCtx, frameWidth, frameHeight, maskInvert && maskInvert.checked);
+        }
+        ctx.drawImage(tempCanvas, x, y);
+
+        completedSteps += 1;
+        updateProgress();
         await new Promise(resolve => setTimeout(resolve, 10));
       }
 
