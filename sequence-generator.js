@@ -364,23 +364,33 @@
         const safeTime = Math.min(time, video.duration - 0.001);
         let timeoutId;
 
-        const onSeeked = () => {
+        const cleanup = () => {
           clearTimeout(timeoutId);
           video.removeEventListener('seeked', onSeeked);
           video.removeEventListener('error', onError);
-          setTimeout(resolve, 50);
+        };
+
+        const finish = () => {
+          cleanup();
+          resolve();
+        };
+
+        const onSeeked = () => {
+          if (typeof video.requestVideoFrameCallback === 'function') {
+            const onFrame = () => finish();
+            video.requestVideoFrameCallback(onFrame);
+          } else {
+            setTimeout(finish, 50);
+          }
         };
 
         const onError = (e) => {
-          clearTimeout(timeoutId);
-          video.removeEventListener('seeked', onSeeked);
-          video.removeEventListener('error', onError);
+          cleanup();
           reject(new Error('Video seek error: ' + e.message));
         };
 
         timeoutId = setTimeout(() => {
-          video.removeEventListener('seeked', onSeeked);
-          video.removeEventListener('error', onError);
+          cleanup();
           reject(new Error('Seek timeout'));
         }, 5000);
 
@@ -390,9 +400,7 @@
         try {
           video.currentTime = safeTime;
         } catch (e) {
-          clearTimeout(timeoutId);
-          video.removeEventListener('seeked', onSeeked);
-          video.removeEventListener('error', onError);
+          cleanup();
           reject(e);
         }
       });
@@ -549,7 +557,7 @@
 
       const samplingDuration = duration - overlapDuration;
       const interval = samplingDuration / uniqueFrames;
-      const overlapInterval = overlapDuration / overlapFrames;
+      const overlapSteps = Math.max(1, overlapFrames - 1);
 
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = frameWidth;
@@ -578,10 +586,13 @@
           }
         } else {
           const overlapIndex = i - uniqueFrames;
-          const alpha = (overlapIndex + 1) / overlapFrames;
+          const overlapT = overlapFrames === 1
+            ? 0
+            : (overlapIndex / overlapSteps) * overlapDuration;
+          const alpha = overlapFrames === 1 ? 1 : (overlapIndex / overlapSteps);
 
-          const startTime = trimStartTime + (overlapIndex * overlapInterval);
-          const endTime = (trimEndTime - overlapDuration) + (overlapIndex * overlapInterval);
+          const startTime = trimStartTime + overlapT;
+          const endTime = (trimEndTime - overlapDuration) + overlapT;
 
           await seekToTime(video, Math.min(endTime, trimEndTime - 0.001));
           tempCtx.clearRect(0, 0, frameWidth, frameHeight);
