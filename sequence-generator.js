@@ -359,6 +359,8 @@
         progressBar.textContent = percent + '%';
         await new Promise(resolve => setTimeout(resolve, 10));
       }
+
+      stabilizeLoopEdges(ctx, cols, rows, frameWidth, frameHeight, getStabilizeFrameCount(totalFrames));
     }
 
     async function generatePingPongSpriteSheet(video, cols, rows, frameWidth, frameHeight) {
@@ -419,6 +421,8 @@
         progressBar.textContent = percent + '%';
         await new Promise(resolve => setTimeout(resolve, 10));
       }
+
+      stabilizeLoopEdges(ctx, cols, rows, frameWidth, frameHeight, getStabilizeFrameCount(totalFrames));
     }
 
     async function generateOverlapSpriteSheet(video, cols, rows, frameWidth, frameHeight, overlapPercent) {
@@ -478,7 +482,8 @@
           }
         } else {
           const overlapIndex = i - uniqueFrames;
-          const alpha = (overlapIndex + 1) / overlapFrames;
+          const t = overlapFrames > 1 ? (overlapIndex / (overlapFrames - 1)) : 1;
+          const alpha = Math.pow(Math.min(1, Math.max(0, t)), 3);
 
           const startTime = overlapIndex * overlapInterval;
           const endTime = (duration - overlapDuration) + (overlapIndex * overlapInterval);
@@ -512,6 +517,69 @@
         progressBar.style.width = percent + '%';
         progressBar.textContent = percent + '%';
         await new Promise(resolve => setTimeout(resolve, 10));
+      }
+
+      stabilizeLoopEdges(ctx, cols, rows, frameWidth, frameHeight, getStabilizeFrameCount(totalFrames));
+    }
+
+    function getStabilizeFrameCount(totalFrames) {
+      if (!totalFrames || totalFrames < 3) { return 0; }
+      const target = Math.round(totalFrames * 0.06);
+      const maxByFrames = Math.floor((totalFrames - 1) / 2);
+      return Math.min(Math.max(1, target), Math.min(12, maxByFrames));
+    }
+
+    function getFrameRect(index, cols, frameWidth, frameHeight) {
+      const row = Math.floor(index / cols);
+      const col = index % cols;
+      return {
+        x: col * frameWidth,
+        y: row * frameHeight
+      };
+    }
+
+    function stabilizeLoopEdges(ctx, cols, rows, frameWidth, frameHeight, framesToBlend) {
+      const totalFrames = cols * rows;
+      const maxBlend = Math.min(framesToBlend, Math.floor((totalFrames - 1) / 2));
+      if (!maxBlend || maxBlend < 1) { return; }
+
+      for (let i = 0; i < maxBlend; i++) {
+        const startIndex = i;
+        const endIndex = totalFrames - 1 - i;
+        const t = 1 - (i / maxBlend);
+        const eased = t * t * (3 - 2 * t);
+        const weight = 0.5 * eased;
+
+        const startRect = getFrameRect(startIndex, cols, frameWidth, frameHeight);
+        const endRect = getFrameRect(endIndex, cols, frameWidth, frameHeight);
+        const startData = ctx.getImageData(startRect.x, startRect.y, frameWidth, frameHeight);
+        const endData = ctx.getImageData(endRect.x, endRect.y, frameWidth, frameHeight);
+        const blendedStart = ctx.createImageData(frameWidth, frameHeight);
+        const blendedEnd = ctx.createImageData(frameWidth, frameHeight);
+
+        for (let p = 0; p < startData.data.length; p += 4) {
+          const s0 = startData.data[p];
+          const s1 = startData.data[p + 1];
+          const s2 = startData.data[p + 2];
+          const s3 = startData.data[p + 3];
+          const e0 = endData.data[p];
+          const e1 = endData.data[p + 1];
+          const e2 = endData.data[p + 2];
+          const e3 = endData.data[p + 3];
+
+          blendedStart.data[p] = s0 * (1 - weight) + e0 * weight;
+          blendedStart.data[p + 1] = s1 * (1 - weight) + e1 * weight;
+          blendedStart.data[p + 2] = s2 * (1 - weight) + e2 * weight;
+          blendedStart.data[p + 3] = s3 * (1 - weight) + e3 * weight;
+
+          blendedEnd.data[p] = e0 * (1 - weight) + s0 * weight;
+          blendedEnd.data[p + 1] = e1 * (1 - weight) + s1 * weight;
+          blendedEnd.data[p + 2] = e2 * (1 - weight) + s2 * weight;
+          blendedEnd.data[p + 3] = e3 * (1 - weight) + s3 * weight;
+        }
+
+        ctx.putImageData(blendedStart, startRect.x, startRect.y);
+        ctx.putImageData(blendedEnd, endRect.x, endRect.y);
       }
     }
 
