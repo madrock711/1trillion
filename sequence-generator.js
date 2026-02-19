@@ -457,7 +457,7 @@
         timeoutId = setTimeout(() => {
           cleanup();
           reject(new Error('Seek timeout'));
-        }, 15000);
+        }, 5000);
 
         video.addEventListener('seeked', onSeeked, { once: true });
         video.addEventListener('error', onError, { once: true });
