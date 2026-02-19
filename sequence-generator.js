@@ -15,6 +15,8 @@
     const videoInfoContent = root.querySelector('#sequenceVideoInfoContent');
     const loopModeSelect = root.querySelector('#sequenceLoopMode');
     const overlapControl = root.querySelector('#sequenceOverlapControl');
+    const fadeControl = root.querySelector('#sequenceFadeControl');
+    const fadeCurveSelect = root.querySelector('#sequenceFadeCurve');
     const autoGridBtn = root.querySelector('#sequenceAutoGrid');
     const autoMeta = root.querySelector('#sequenceAutoMeta');
     const trimStartInput = root.querySelector('#sequenceTrimStart');
@@ -64,11 +66,30 @@
     function updateLoopModeUI() {
       const loopMode = loopModeSelect.value;
       overlapControl.style.display = loopMode === 'overlap' ? 'block' : 'none';
+      if (fadeControl) {
+        fadeControl.style.display = loopMode === 'overlap' ? 'block' : 'none';
+      }
     }
 
     function clampTrimTime(time, trim) {
       const endLimit = Math.max(0, trim.end - 0.001);
       return Math.min(Math.max(trim.start, time), endLimit);
+    }
+
+    function applyFadeCurve(t, mode) {
+      const clamped = Math.min(1, Math.max(0, t));
+      switch (mode) {
+        case 'easeIn':
+          return clamped * clamped;
+        case 'easeOut':
+          return 1 - Math.pow(1 - clamped, 2);
+        case 'easeInOut':
+          return clamped * clamped * (3 - 2 * clamped);
+        case 'fastOut':
+          return 1 - Math.pow(1 - clamped, 3);
+        default:
+          return clamped;
+      }
     }
 
     function formatTime(value) {
@@ -621,7 +642,9 @@
           frameData = baseFrames[i];
         } else {
           const overlapIndex = i - uniqueFrames;
-          const alpha = (overlapIndex + 1) / (overlapFrames + 1);
+          const t = (overlapIndex + 1) / (overlapFrames + 1);
+          const curve = fadeCurveSelect ? fadeCurveSelect.value : 'linear';
+          const alpha = applyFadeCurve(t, curve);
           const startIndex = (overlapIndex + 1) % overlapFrames;
           const startFrameData = baseFrames[startIndex];
           const endFrameData = baseFrames[uniqueFrames + overlapIndex];
