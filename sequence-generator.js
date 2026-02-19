@@ -629,6 +629,15 @@
       const overlapRatio = Math.min(0.9, Math.max(0, overlapPercent / 100));
       const overlapFrames = Math.min(totalFrames - 1, Math.max(1, Math.ceil(totalFrames * overlapRatio)));
       const uniqueFrames = totalFrames - overlapFrames;
+      console.log('[overlap]', {
+        totalFrames,
+        overlapPercent,
+        overlapRatio,
+        overlapFrames,
+        uniqueFrames,
+        overlapStartIndex: uniqueFrames + 1,
+        overlapEndIndex: totalFrames
+      });
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = frameWidth;
       tempCanvas.height = frameHeight;
