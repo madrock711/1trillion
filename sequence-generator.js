@@ -616,8 +616,13 @@
 
       const maxOverlapFrames = Math.max(1, totalFrames - 1);
       const safeOverlapFrames = Math.min(Math.max(overlapFrames, 1), maxOverlapFrames);
+      const overlapRatio = safeOverlapFrames / totalFrames;
       const uniqueFrames = totalFrames - safeOverlapFrames;
-      const interval = duration / totalFrames;
+      const overlapDuration = duration * overlapRatio;
+      const cutTime = trimStartTime + overlapDuration;
+
+      const samplingDuration = duration - overlapDuration;
+      const interval = samplingDuration / uniqueFrames;
       const overlapSteps = Math.max(1, safeOverlapFrames - 1);
 
       const tempCanvas = document.createElement('canvas');
@@ -635,7 +640,7 @@
         const y = row * frameHeight;
 
         if (i < uniqueFrames) {
-          const time = trimStartTime + (i * interval);
+          const time = cutTime + (i * interval);
           await seekToTime(video, time);
           if (useMask) {
             tempCtx.clearRect(0, 0, frameWidth, frameHeight);
@@ -648,11 +653,13 @@
         } else {
           const overlapIndex = i - uniqueFrames;
           if (overlapIndex >= safeOverlapFrames) { continue; }
+          const overlapT = safeOverlapFrames === 1
+            ? 0
+            : (overlapIndex / overlapSteps) * overlapDuration;
           const alpha = safeOverlapFrames === 1 ? 1 : (overlapIndex / overlapSteps);
-          const startIndex = overlapIndex;
-          const endIndex = uniqueFrames + overlapIndex;
-          const startTime = trimStartTime + (startIndex * interval);
-          const endTime = trimStartTime + (endIndex * interval);
+
+          const startTime = trimStartTime + overlapT;
+          const endTime = (trimEndTime - overlapDuration) + overlapT;
 
           await seekToTime(video, Math.min(endTime, trimEndTime - 0.001));
           tempCtx.clearRect(0, 0, frameWidth, frameHeight);
