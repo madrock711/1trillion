@@ -485,14 +485,14 @@
         let frameData = null;
 
         if (i < uniqueFrames) {
-          frameData = baseFrames[i + overlapFrames];
+          // Keep base frames as-is for the non-overlap region.
+          frameData = baseFrames[i];
         } else {
           const overlapIndex = i - uniqueFrames;
           const t = overlapFrames > 1 ? (overlapIndex / (overlapFrames - 1)) : 1;
           const alpha = Math.min(1, Math.max(0, t));
-          const shiftedIndex = Math.min(overlapIndex + 1, overlapFrames - 1);
-          const startFrameData = baseFrames[shiftedIndex];
-          const endFrameData = baseFrames[totalFrames - overlapFrames + overlapIndex];
+          const startFrameData = baseFrames[overlapIndex];
+          const endFrameData = baseFrames[uniqueFrames + overlapIndex];
           const blendedData = tempCtx.createImageData(frameWidth, frameHeight);
           for (let p = 0; p < startFrameData.data.length; p += 4) {
             blendedData.data[p] = endFrameData.data[p] * (1 - alpha) + startFrameData.data[p] * alpha;
