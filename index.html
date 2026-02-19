@@ -495,6 +495,14 @@
                             </div>
                         </div>
 
+                        <div class="sequence-control-group" id="sequenceOverlapTrimControl">
+                            <label for="sequenceOverlapTrim" data-i18n="sequence.overlapTrimLabel">앞쪽 제외 프레임</label>
+                            <input type="number" id="sequenceOverlapTrim" value="0" min="0" max="32" step="1">
+                            <div class="sequence-overlap-note" data-i18n="sequence.overlapTrimHint">
+                                앞쪽 프레임을 잘라내고 뒤를 추가 생성해 겹침을 피합니다.
+                            </div>
+                        </div>
+
                         <div class="sequence-control-group" id="sequenceFadeControl">
                             <label for="sequenceFadeCurve" data-i18n="sequence.fadeLabel">크로스페이드 곡선</label>
                             <select id="sequenceFadeCurve">
