@@ -674,6 +674,9 @@
         await new Promise(resolve => setTimeout(resolve, 10));
       }
 
+      const aFrames = baseFrames.slice(0, overlapFrames);
+      const cFrames = baseFrames.slice(uniqueFrames);
+
       for (let i = 0; i < totalFrames; i++) {
         const row = Math.floor(i / cols);
         const col = i % cols;
@@ -689,13 +692,12 @@
           const t = (overlapIndex + 1) / (overlapFrames + 1);
           const curve = fadeCurveSelect ? fadeCurveSelect.value : 'linear';
           const alpha = applyFadeCurve(t, curve);
-          const startIndex = overlapIndex;
-          const startFrameData = baseFrames[startIndex];
-          const endFrameData = baseFrames[uniqueFrames + overlapIndex];
+          const startFrameData = aFrames[overlapIndex];
+          const endFrameData = cFrames[overlapIndex];
           console.log('[overlap-frame]', {
             tileIndex: i + 1,
             overlapIndex: overlapIndex + 1,
-            aIndex: startIndex + 1,
+            aIndex: overlapIndex + 1,
             cIndex: uniqueFrames + overlapIndex + 1,
             alpha: Number(alpha.toFixed(4))
           });
