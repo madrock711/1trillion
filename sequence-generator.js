@@ -93,20 +93,25 @@
       }
     }
 
-    function drawFrameIndex(ctx, x, y, index) {
+    function drawFrameIndex(ctx, x, y, index, secondary) {
       if (!debugIndexToggle || !debugIndexToggle.checked) { return; }
-      const label = String(index);
+      const lines = [String(index)];
+      if (secondary != null) {
+        lines.push(String(secondary));
+      }
       ctx.save();
       ctx.font = '700 12px "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
       const paddingX = 4;
       const paddingY = 2;
-      const metrics = ctx.measureText(label);
-      const boxWidth = metrics.width + (paddingX * 2);
-      const boxHeight = 14 + (paddingY * 2);
+      const widths = lines.map(line => ctx.measureText(line).width);
+      const boxWidth = Math.max(...widths) + (paddingX * 2);
+      const boxHeight = (14 * lines.length) + (paddingY * 2);
       ctx.fillStyle = 'rgba(0,0,0,0.65)';
       ctx.fillRect(x + 4, y + 4, boxWidth, boxHeight);
       ctx.fillStyle = '#fff';
-      ctx.fillText(label, x + 4 + paddingX, y + 4 + paddingY + 12);
+      lines.forEach((line, idx) => {
+        ctx.fillText(line, x + 4 + paddingX, y + 4 + paddingY + 12 + (idx * 14));
+      });
       ctx.restore();
     }
 
@@ -684,7 +689,12 @@
           applyMask(tempCtx, frameWidth, frameHeight, maskInvert && maskInvert.checked);
         }
         ctx.drawImage(tempCanvas, x, y);
-        drawFrameIndex(ctx, x, y, i + 1);
+        if (i < uniqueFrames) {
+          drawFrameIndex(ctx, x, y, i + 1);
+        } else {
+          const overlapIndex = i - uniqueFrames;
+          drawFrameIndex(ctx, x, y, i + 1, overlapIndex + 1);
+        }
 
         completedSteps += 1;
         updateProgress();
