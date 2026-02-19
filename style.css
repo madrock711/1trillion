@@ -486,6 +486,14 @@ main {
   touch-action: none;
 }
 
+#sequenceTrimStart {
+  z-index: 2;
+}
+
+#sequenceTrimEnd {
+  z-index: 3;
+}
+
 .sequence-trim-values {
   display: grid;
   grid-template-columns: repeat(6, auto);

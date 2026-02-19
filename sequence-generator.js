@@ -135,6 +135,31 @@
       });
     }
 
+    function syncTrimHandlePriority(event) {
+      if (!trimStartInput || !trimEndInput) { return; }
+      const startRect = trimStartInput.getBoundingClientRect();
+      const endRect = trimEndInput.getBoundingClientRect();
+      const min = parseFloat(trimStartInput.min || '0');
+      const max = parseFloat(trimStartInput.max || '1');
+      const startValue = parseFloat(trimStartInput.value || '0');
+      const endValue = parseFloat(trimEndInput.value || '0');
+      const startRatio = (startValue - min) / (max - min || 1);
+      const endRatio = (endValue - min) / (max - min || 1);
+      const startX = startRect.left + (startRatio * startRect.width);
+      const endX = endRect.left + (endRatio * endRect.width);
+      const targetX = event && event.clientX != null ? event.clientX : null;
+      if (targetX == null) { return; }
+      const startDist = Math.abs(targetX - startX);
+      const endDist = Math.abs(targetX - endX);
+      if (startDist <= endDist) {
+        trimStartInput.style.zIndex = '4';
+        trimEndInput.style.zIndex = '3';
+      } else {
+        trimStartInput.style.zIndex = '3';
+        trimEndInput.style.zIndex = '4';
+      }
+    }
+
     function getTrimRange() {
       const duration = currentVideo && isFinite(currentVideo.duration) ? currentVideo.duration : 0;
       let start = trimStartInput ? parseFloat(trimStartInput.value || '0') : trimStart;
@@ -725,12 +750,18 @@
 
     if (trimStartInput) {
       trimStartInput.addEventListener('input', () => handleTrimInput('start'));
+      trimStartInput.addEventListener('pointerdown', syncTrimHandlePriority);
     }
     if (trimEndInput) {
       trimEndInput.addEventListener('input', () => handleTrimInput('end'));
+      trimEndInput.addEventListener('pointerdown', syncTrimHandlePriority);
     }
     attachThumbOnlyDrag(trimStartInput);
     attachThumbOnlyDrag(trimEndInput);
+    const trimRange = root.querySelector('.sequence-trim-range');
+    if (trimRange) {
+      trimRange.addEventListener('pointerdown', syncTrimHandlePriority);
+    }
 
     if (videoPreview) {
       videoPreview.addEventListener('play', () => {
