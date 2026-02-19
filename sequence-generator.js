@@ -17,6 +17,7 @@
     const overlapControl = root.querySelector('#sequenceOverlapControl');
     const fadeControl = root.querySelector('#sequenceFadeControl');
     const fadeCurveSelect = root.querySelector('#sequenceFadeCurve');
+    const fpsInput = root.querySelector('#sequenceFps');
     const debugIndexToggle = root.querySelector('#sequenceDebugIndex');
     const autoGridBtn = root.querySelector('#sequenceAutoGrid');
     const autoMeta = root.querySelector('#sequenceAutoMeta');
@@ -91,6 +92,12 @@
         default:
           return clamped;
       }
+    }
+
+    function getFpsValue() {
+      const value = parseFloat(fpsInput?.value || '0');
+      if (!isFinite(value) || value <= 0) { return 24; }
+      return Math.min(240, Math.max(1, value));
     }
 
     function drawFrameIndex(ctx, x, y, index, secondary) {
@@ -511,7 +518,8 @@
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const interval = totalFrames > 1 ? (segmentDuration / (totalFrames - 1)) : 0;
+      const fps = getFpsValue();
+      const interval = fps > 0 ? (1 / fps) : (segmentDuration / Math.max(1, totalFrames - 1));
 
       for (let i = 0; i < totalFrames; i++) {
         const row = Math.floor(i / cols);
@@ -567,7 +575,8 @@
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const interval = halfFrames > 1 ? (segmentDuration / (halfFrames - 1)) : 0;
+      const fps = getFpsValue();
+      const interval = fps > 0 ? (1 / fps) : (segmentDuration / Math.max(1, halfFrames - 1));
       const timeIndices = [];
       for (let i = 0; i < halfFrames; i++) {
         timeIndices.push(i);
@@ -655,9 +664,9 @@
         progressBar.textContent = percent + '%';
       };
 
+      const fps = getFpsValue();
       for (let i = 0; i < totalFrames; i++) {
-        const t = totalFrames > 1 ? (i / (totalFrames - 1)) : 0;
-        const time = clampTrimTime(trim.start + (t * segmentDuration), trim);
+        const time = clampTrimTime(trim.start + (i / fps), trim);
         await seekToTime(video, time);
         tempCtx.clearRect(0, 0, frameWidth, frameHeight);
         tempCtx.drawImage(video, 0, 0, frameWidth, frameHeight);
@@ -1190,7 +1199,8 @@
         gridCols: root.querySelector('#sequenceGridCols')?.value ?? '',
         gridRows: root.querySelector('#sequenceGridRows')?.value ?? '',
         frameWidth: root.querySelector('#sequenceFrameWidth')?.value ?? '',
-        frameHeight: root.querySelector('#sequenceFrameHeight')?.value ?? ''
+        frameHeight: root.querySelector('#sequenceFrameHeight')?.value ?? '',
+        fps: root.querySelector('#sequenceFps')?.value ?? ''
       };
     }
 
@@ -1226,7 +1236,8 @@
         if (input) { input.value = settings.frameHeight; }
       }
       if (settings.fps != null) {
-        // no-op (legacy preset value)
+        const input = root.querySelector('#sequenceFps');
+        if (input) { input.value = settings.fps; }
       }
       generateMaskTexture();
       updateMaskValues();
@@ -1350,8 +1361,8 @@
         return;
       }
       const trim = getTrimRange();
-      const fpsGuess = 24;
-      let frames = Math.max(1, Math.round((trim.duration || currentVideo.duration) * fpsGuess));
+      const fps = getFpsValue();
+      let frames = Math.max(1, Math.round((trim.duration || currentVideo.duration) * fps));
       const maxFrames = 256;
       let clamped = false;
       if (frames > maxFrames) {
