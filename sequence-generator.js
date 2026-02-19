@@ -1331,13 +1331,8 @@
       generateBtn.disabled = true;
       progress.classList.add('is-active');
       previewSection.classList.remove('is-active');
-      const wasLooping = currentVideo.loop;
-      const wasPlaying = !currentVideo.paused && !currentVideo.ended;
-      currentVideo.loop = false;
-      currentVideo.pause();
 
       try {
-        await seekToTime(currentVideo, trim.start);
         if (loopMode === 'pingpong') {
           await generatePingPongSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, trim.start, trim.end);
         } else if (loopMode === 'overlap') {
@@ -1351,8 +1346,6 @@
         alert('오류 발생: ' + error.message);
         console.error(error);
       } finally {
-        currentVideo.loop = wasLooping;
-        if (wasPlaying) { currentVideo.play().catch(() => {}); }
         generateBtn.disabled = false;
         progress.classList.remove('is-active');
       }
