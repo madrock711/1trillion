@@ -728,7 +728,7 @@
         await new Promise(resolve => setTimeout(resolve, 10));
       }
 
-      stabilizeLoopEdges(ctx, cols, rows, frameWidth, frameHeight, getStabilizeFrameCount(totalFrames));
+      // Overlap mode already blends the tail; avoid double blending.
     }
 
     function getStabilizeFrameCount(totalFrames) {
