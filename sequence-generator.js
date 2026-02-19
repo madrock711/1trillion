@@ -15,7 +15,7 @@
     const videoInfoContent = root.querySelector('#sequenceVideoInfoContent');
     const loopModeSelect = root.querySelector('#sequenceLoopMode');
     const overlapControl = root.querySelector('#sequenceOverlapControl');
-    const fpsInput = root.querySelector('#sequenceFps');
+    const totalFramesInput = root.querySelector('#sequenceTotalFrames');
     const autoGridBtn = root.querySelector('#sequenceAutoGrid');
     const autoMeta = root.querySelector('#sequenceAutoMeta');
     const trimStartInput = root.querySelector('#sequenceTrimStart');
@@ -23,6 +23,8 @@
     const trimStartValue = root.querySelector('#sequenceTrimStartValue');
     const trimEndValue = root.querySelector('#sequenceTrimEndValue');
     const trimDurationValue = root.querySelector('#sequenceTrimDurationValue');
+    const trimTotalFramesValue = root.querySelector('#sequenceTrimTotalFrames');
+    const trimSegmentFramesValue = root.querySelector('#sequenceTrimSegmentFrames');
     const maskToggle = root.querySelector('#sequenceMaskToggle');
     const maskInvert = root.querySelector('#sequenceMaskInvert');
     const maskInput = root.querySelector('#sequenceMaskInput');
@@ -81,6 +83,14 @@
       if (trimStartValue) { trimStartValue.textContent = formatTime(trimStart); }
       if (trimEndValue) { trimEndValue.textContent = formatTime(trimEnd); }
       if (trimDurationValue) { trimDurationValue.textContent = formatTime(Math.max(0, trimEnd - trimStart)); }
+      const totalFrames = parseInt(totalFramesInput?.value || '0', 10) || 0;
+      if (trimTotalFramesValue) { trimTotalFramesValue.textContent = String(totalFrames); }
+      if (trimSegmentFramesValue) {
+        const duration = currentVideo && isFinite(currentVideo.duration) ? currentVideo.duration : 0;
+        const ratio = duration > 0 ? Math.max(0, Math.min(1, (trimEnd - trimStart) / duration)) : 0;
+        const segmentFrames = Math.max(0, Math.round(totalFrames * ratio));
+        trimSegmentFramesValue.textContent = String(segmentFrames);
+      }
       const range = root.querySelector('.sequence-trim-range');
       if (range && currentVideo && isFinite(currentVideo.duration) && currentVideo.duration > 0) {
         const duration = currentVideo.duration;
@@ -764,6 +774,11 @@
       trimEndInput.addEventListener('input', () => handleTrimInput('end'));
       trimEndInput.addEventListener('pointerdown', syncTrimHandlePriority);
     }
+    if (totalFramesInput) {
+      totalFramesInput.addEventListener('input', () => {
+        updateTrimLabels();
+      });
+    }
     attachThumbOnlyDrag(trimStartInput);
     attachThumbOnlyDrag(trimEndInput);
     const trimRange = root.querySelector('.sequence-trim-range');
@@ -1120,7 +1135,7 @@
         gridRows: root.querySelector('#sequenceGridRows')?.value ?? '',
         frameWidth: root.querySelector('#sequenceFrameWidth')?.value ?? '',
         frameHeight: root.querySelector('#sequenceFrameHeight')?.value ?? '',
-        fps: root.querySelector('#sequenceFps')?.value ?? ''
+        totalFrames: root.querySelector('#sequenceTotalFrames')?.value ?? ''
       };
     }
 
@@ -1155,8 +1170,11 @@
         const input = root.querySelector('#sequenceFrameHeight');
         if (input) { input.value = settings.frameHeight; }
       }
-      if (settings.fps != null) {
-        const input = root.querySelector('#sequenceFps');
+      if (settings.totalFrames != null) {
+        const input = root.querySelector('#sequenceTotalFrames');
+        if (input) { input.value = settings.totalFrames; }
+      } else if (settings.fps != null) {
+        const input = root.querySelector('#sequenceTotalFrames');
         if (input) { input.value = settings.fps; }
       }
       generateMaskTexture();
@@ -1280,14 +1298,15 @@
         showError('먼저 비디오를 업로드해 주세요.');
         return;
       }
-      const trim = getTrimRange();
-      const fps = Math.max(1, parseInt(fpsInput.value || '24', 10));
-      const duration = trim.duration || currentVideo.duration;
-      let frames = Math.max(1, Math.round(duration * fps));
+      let frames = Math.max(1, parseInt(totalFramesInput?.value || '0', 10) || 0);
       const maxFrames = 256;
       let clamped = false;
       if (frames > maxFrames) {
         frames = maxFrames;
+        clamped = true;
+      }
+      if (!frames) {
+        frames = 64;
         clamped = true;
       }
 
