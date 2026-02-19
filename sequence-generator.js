@@ -670,7 +670,7 @@
           const t = (overlapIndex + 1) / (overlapFrames + 1);
           const curve = fadeCurveSelect ? fadeCurveSelect.value : 'linear';
           const alpha = applyFadeCurve(t, curve);
-          const startIndex = (overlapIndex + 1) % overlapFrames;
+          const startIndex = Math.min(overlapIndex + 1, overlapFrames - 1);
           const startFrameData = baseFrames[startIndex];
           const endFrameData = baseFrames[uniqueFrames + overlapIndex];
           const blendedData = tempCtx.createImageData(frameWidth, frameHeight);
