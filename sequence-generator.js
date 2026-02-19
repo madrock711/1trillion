@@ -452,8 +452,8 @@
       const cutTime = overlapDuration;
 
       const samplingDuration = duration - overlapDuration;
-      const interval = samplingDuration / uniqueFrames;
-      const overlapInterval = overlapDuration / overlapFrames;
+      const interval = uniqueFrames > 1 ? (samplingDuration / (uniqueFrames - 1)) : 0;
+      const overlapInterval = overlapFrames > 1 ? (overlapDuration / (overlapFrames - 1)) : 0;
 
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = frameWidth;
@@ -470,7 +470,7 @@
         const y = row * frameHeight;
 
         if (i < uniqueFrames) {
-          const time = cutTime + (i * interval);
+          const time = uniqueFrames > 1 ? (cutTime + (i * interval)) : cutTime;
           await seekToTime(video, time);
           if (useMask) {
             tempCtx.clearRect(0, 0, frameWidth, frameHeight);
