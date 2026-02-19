@@ -675,12 +675,12 @@
       if (!isFinite(end)) { end = duration; }
       const minGap = 0.05;
       if (source === 'start' && start > end - minGap) {
-        end = Math.min(duration, start + minGap);
-        if (trimEndInput) { trimEndInput.value = String(end); }
+        start = Math.max(0, Math.min(start, end - minGap));
+        if (trimStartInput) { trimStartInput.value = String(start); }
       }
       if (source === 'end' && end < start + minGap) {
-        start = Math.max(0, end - minGap);
-        if (trimStartInput) { trimStartInput.value = String(start); }
+        end = Math.min(duration, Math.max(end, start + minGap));
+        if (trimEndInput) { trimEndInput.value = String(end); }
       }
       trimStart = Math.max(0, Math.min(start, duration));
       trimEnd = Math.max(0, Math.min(end, duration));
