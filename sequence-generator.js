@@ -102,6 +102,39 @@
       updateTrimLabels();
     }
 
+    function attachThumbOnlyDrag(input) {
+      if (!input) { return; }
+      let allowClick = false;
+      const isNearThumb = (event) => {
+        const rect = input.getBoundingClientRect();
+        const min = parseFloat(input.min || '0');
+        const max = parseFloat(input.max || '1');
+        const value = parseFloat(input.value || '0');
+        const ratio = (value - min) / (max - min || 1);
+        const thumbX = rect.left + (ratio * rect.width);
+        const distance = Math.abs(event.clientX - thumbX);
+        return distance <= 16;
+      };
+
+      input.addEventListener('pointerdown', (event) => {
+        if (!isNearThumb(event)) {
+          allowClick = false;
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        allowClick = true;
+      });
+
+      input.addEventListener('click', (event) => {
+        if (!allowClick) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        allowClick = false;
+      });
+    }
+
     function getTrimRange() {
       const duration = currentVideo && isFinite(currentVideo.duration) ? currentVideo.duration : 0;
       let start = trimStartInput ? parseFloat(trimStartInput.value || '0') : trimStart;
@@ -696,6 +729,8 @@
     if (trimEndInput) {
       trimEndInput.addEventListener('input', () => handleTrimInput('end'));
     }
+    attachThumbOnlyDrag(trimStartInput);
+    attachThumbOnlyDrag(trimEndInput);
 
     if (videoPreview) {
       videoPreview.addEventListener('play', () => {

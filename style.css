@@ -483,6 +483,7 @@ main {
   width: 100%;
   margin: 0;
   pointer-events: auto;
+  touch-action: none;
 }
 
 .sequence-trim-values {
