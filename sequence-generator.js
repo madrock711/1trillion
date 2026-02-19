@@ -689,7 +689,7 @@
           const t = (overlapIndex + 1) / (overlapFrames + 1);
           const curve = fadeCurveSelect ? fadeCurveSelect.value : 'linear';
           const alpha = applyFadeCurve(t, curve);
-          const startIndex = Math.min(overlapIndex + 1, overlapFrames - 1);
+          const startIndex = overlapIndex;
           const startFrameData = baseFrames[startIndex];
           const endFrameData = baseFrames[uniqueFrames + overlapIndex];
           console.log('[overlap-frame]', {
