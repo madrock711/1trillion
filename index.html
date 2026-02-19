@@ -420,6 +420,24 @@
                         <div id="sequenceVideoInfoContent"></div>
                     </div>
 
+                    <div class="sequence-trim" id="sequenceTrim">
+                        <div class="sequence-trim-header">
+                            <h4 data-i18n="sequence.trimTitle">구간 자르기 미리보기</h4>
+                            <span class="sequence-trim-meta" id="sequenceTrimMeta">--</span>
+                        </div>
+                        <div class="sequence-trim-row">
+                            <label for="sequenceTrimStart" data-i18n="sequence.trimStart">시작</label>
+                            <input type="range" id="sequenceTrimStart" min="0" max="1" step="0.01" value="0" disabled>
+                            <span class="sequence-trim-value" id="sequenceTrimStartValue">--</span>
+                        </div>
+                        <div class="sequence-trim-row">
+                            <label for="sequenceTrimEnd" data-i18n="sequence.trimEnd">끝</label>
+                            <input type="range" id="sequenceTrimEnd" min="0" max="1" step="0.01" value="1" disabled>
+                            <span class="sequence-trim-value" id="sequenceTrimEndValue">--</span>
+                        </div>
+                        <div class="sequence-trim-note" data-i18n="sequence.trimHint">위 플레이어에서 잘린 구간을 실시간으로 확인할 수 있습니다.</div>
+                    </div>
+
                     <div class="sequence-mask">
                         <div class="sequence-mask-header">
                             <label class="sequence-mask-toggle">

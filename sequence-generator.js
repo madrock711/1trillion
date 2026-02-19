@@ -13,6 +13,12 @@
     const progressBar = root.querySelector('#sequenceProgressBar');
     const videoInfo = root.querySelector('#sequenceVideoInfo');
     const videoInfoContent = root.querySelector('#sequenceVideoInfoContent');
+    const trimSection = root.querySelector('#sequenceTrim');
+    const trimStartInput = root.querySelector('#sequenceTrimStart');
+    const trimEndInput = root.querySelector('#sequenceTrimEnd');
+    const trimStartValue = root.querySelector('#sequenceTrimStartValue');
+    const trimEndValue = root.querySelector('#sequenceTrimEndValue');
+    const trimMeta = root.querySelector('#sequenceTrimMeta');
     const loopModeSelect = root.querySelector('#sequenceLoopMode');
     const overlapControl = root.querySelector('#sequenceOverlapControl');
     const fpsInput = root.querySelector('#sequenceFps');
@@ -53,6 +59,10 @@
     let maskCacheWidth = 0;
     let maskCacheHeight = 0;
     let generatedMask = null;
+    let trimStart = 0;
+    let trimEnd = 0;
+    let trimReady = false;
+    const MIN_TRIM_GAP = 0.05;
 
     function updateLoopModeUI() {
       const loopMode = loopModeSelect.value;
@@ -69,6 +79,8 @@
       videoPreview.style.display = 'none';
       generateBtn.disabled = true;
       videoInfo.style.display = 'none';
+      trimReady = false;
+      setTrimEnabled(false);
     }
 
     function updateAutoMeta(frames, cols, rows, clamped) {
@@ -80,6 +92,75 @@
       const extra = clamped ? ' (최대 256프레임으로 제한됨)' : '';
       autoMeta.textContent = `총 ${frames}프레임 · ${cols}×${rows}${extra}`;
     }
+
+    function formatSeconds(value) {
+      if (!isFinite(value)) { return '--'; }
+      return `${value.toFixed(2)}s`;
+    }
+
+    function setTrimEnabled(enabled) {
+      if (!trimSection) { return; }
+      trimSection.classList.toggle('is-disabled', !enabled);
+      if (trimStartInput) { trimStartInput.disabled = !enabled; }
+      if (trimEndInput) { trimEndInput.disabled = !enabled; }
+      if (!enabled) {
+        if (trimStartValue) { trimStartValue.textContent = '--'; }
+        if (trimEndValue) { trimEndValue.textContent = '--'; }
+        if (trimMeta) { trimMeta.textContent = '--'; }
+      }
+    }
+
+    function normalizeTrim(start, end, duration, preferEnd) {
+      let s = Math.min(Math.max(start, 0), duration);
+      let e = Math.min(Math.max(end, 0), duration);
+      if (e - s < MIN_TRIM_GAP) {
+        if (preferEnd) {
+          s = Math.max(0, e - MIN_TRIM_GAP);
+        } else {
+          e = Math.min(duration, s + MIN_TRIM_GAP);
+        }
+      }
+      return { start: s, end: e };
+    }
+
+    function updateTrimUI(duration) {
+      if (!trimStartInput || !trimEndInput) { return; }
+      trimStartInput.max = duration;
+      trimEndInput.max = duration;
+      trimStartInput.value = trimStart;
+      trimEndInput.value = trimEnd;
+      if (trimStartValue) { trimStartValue.textContent = formatSeconds(trimStart); }
+      if (trimEndValue) { trimEndValue.textContent = formatSeconds(trimEnd); }
+      if (trimMeta) {
+        const length = Math.max(0, trimEnd - trimStart);
+        trimMeta.textContent = `${formatSeconds(trimStart)} - ${formatSeconds(trimEnd)} (${formatSeconds(length)})`;
+      }
+    }
+
+    function setTrimRange(start, end, duration, preferEnd) {
+      const normalized = normalizeTrim(start, end, duration, preferEnd);
+      trimStart = normalized.start;
+      trimEnd = normalized.end;
+      updateTrimUI(duration);
+    }
+
+    function getTrimRange() {
+      if (!currentVideo || !isFinite(currentVideo.duration) || currentVideo.duration <= 0) {
+        return { start: 0, end: 0, duration: 0 };
+      }
+      const duration = currentVideo.duration;
+      if (!trimReady) {
+        return { start: 0, end: duration, duration };
+      }
+      const normalized = normalizeTrim(trimStart, trimEnd, duration, false);
+      return {
+        start: normalized.start,
+        end: normalized.end,
+        duration: Math.max(0, normalized.end - normalized.start)
+      };
+    }
+
+    setTrimEnabled(false);
 
     function handleVideoFile(file) {
       if (!file || !file.type.startsWith('video/')) { return; }
@@ -95,6 +176,8 @@
       generateBtn.disabled = true;
       videoInfo.style.display = 'none';
       previewSection.classList.remove('is-active');
+      trimReady = false;
+      setTrimEnabled(false);
 
       const url = URL.createObjectURL(file);
       const testVideo = document.createElement('video');
@@ -127,6 +210,11 @@
           형식: ${file.type || '알 수 없음'}<br>
           파일크기: ${(file.size / 1024 / 1024).toFixed(2)}MB
         `;
+        trimReady = true;
+        setTrimEnabled(true);
+        trimStart = 0;
+        trimEnd = testVideo.duration;
+        updateTrimUI(testVideo.duration);
         updateAutoMeta();
       };
 
@@ -310,7 +398,7 @@
       });
     }
 
-    async function generateDirectSpriteSheet(video, cols, rows, frameWidth, frameHeight) {
+    async function generateDirectSpriteSheet(video, cols, rows, frameWidth, frameHeight, trimStartTime, trimEndTime) {
       const totalFrames = cols * rows;
       const canvas = outputCanvas;
       const ctx = canvas.getContext('2d');
@@ -327,9 +415,13 @@
         await new Promise(resolve => video.addEventListener('loadedmetadata', resolve, { once: true }));
       }
 
-      const duration = video.duration;
-      if (!duration || !isFinite(duration) || duration <= 0) {
+      const rawDuration = video.duration;
+      if (!rawDuration || !isFinite(rawDuration) || rawDuration <= 0) {
         throw new Error('비디오 duration을 읽을 수 없습니다.');
+      }
+      const duration = Math.max(0, trimEndTime - trimStartTime);
+      if (!duration || duration < MIN_TRIM_GAP) {
+        throw new Error('잘린 구간이 너무 짧습니다.');
       }
 
       canvas.width = cols * frameWidth;
@@ -342,7 +434,7 @@
       for (let i = 0; i < totalFrames; i++) {
         const row = Math.floor(i / cols);
         const col = i % cols;
-        const time = (i * interval) % duration;
+        const time = trimStartTime + ((i * interval) % duration);
 
         await seekToTime(video, time);
         if (useMask) {
@@ -361,7 +453,7 @@
       }
     }
 
-    async function generatePingPongSpriteSheet(video, cols, rows, frameWidth, frameHeight) {
+    async function generatePingPongSpriteSheet(video, cols, rows, frameWidth, frameHeight, trimStartTime, trimEndTime) {
       const totalFrames = cols * rows;
       const halfFrames = Math.ceil(totalFrames / 2);
       const canvas = outputCanvas;
@@ -379,9 +471,13 @@
         await new Promise(resolve => video.addEventListener('loadedmetadata', resolve, { once: true }));
       }
 
-      const duration = video.duration;
-      if (!duration || !isFinite(duration) || duration <= 0) {
+      const rawDuration = video.duration;
+      if (!rawDuration || !isFinite(rawDuration) || rawDuration <= 0) {
         throw new Error('비디오 duration을 읽을 수 없습니다.');
+      }
+      const duration = Math.max(0, trimEndTime - trimStartTime);
+      if (!duration || duration < MIN_TRIM_GAP) {
+        throw new Error('잘린 구간이 너무 짧습니다.');
       }
 
       canvas.width = cols * frameWidth;
@@ -402,7 +498,7 @@
         const row = Math.floor(i / cols);
         const col = i % cols;
         const timeIndex = timeIndices[i];
-        const time = (timeIndex * interval) % duration;
+        const time = trimStartTime + ((timeIndex * interval) % duration);
 
         await seekToTime(video, time);
         if (useMask) {
@@ -421,7 +517,7 @@
       }
     }
 
-    async function generateOverlapSpriteSheet(video, cols, rows, frameWidth, frameHeight, overlapPercent) {
+    async function generateOverlapSpriteSheet(video, cols, rows, frameWidth, frameHeight, overlapPercent, trimStartTime, trimEndTime) {
       const totalFrames = cols * rows;
       const canvas = outputCanvas;
       const ctx = canvas.getContext('2d');
@@ -431,9 +527,13 @@
         await new Promise(resolve => video.addEventListener('loadedmetadata', resolve, { once: true }));
       }
 
-      const duration = video.duration;
-      if (!duration || !isFinite(duration) || duration <= 0) {
+      const rawDuration = video.duration;
+      if (!rawDuration || !isFinite(rawDuration) || rawDuration <= 0) {
         throw new Error('비디오 duration을 읽을 수 없습니다.');
+      }
+      const duration = Math.max(0, trimEndTime - trimStartTime);
+      if (!duration || duration < MIN_TRIM_GAP) {
+        throw new Error('잘린 구간이 너무 짧습니다.');
       }
 
       canvas.width = cols * frameWidth;
@@ -445,7 +545,7 @@
       const overlapFrames = Math.ceil(totalFrames * overlapRatio);
       const uniqueFrames = totalFrames - overlapFrames;
       const overlapDuration = duration * overlapRatio;
-      const cutTime = overlapDuration;
+      const cutTime = trimStartTime + overlapDuration;
 
       const samplingDuration = duration - overlapDuration;
       const interval = samplingDuration / uniqueFrames;
@@ -480,10 +580,10 @@
           const overlapIndex = i - uniqueFrames;
           const alpha = (overlapIndex + 1) / overlapFrames;
 
-          const startTime = overlapIndex * overlapInterval;
-          const endTime = (duration - overlapDuration) + (overlapIndex * overlapInterval);
+          const startTime = trimStartTime + (overlapIndex * overlapInterval);
+          const endTime = (trimEndTime - overlapDuration) + (overlapIndex * overlapInterval);
 
-          await seekToTime(video, Math.min(endTime, duration - 0.001));
+          await seekToTime(video, Math.min(endTime, trimEndTime - 0.001));
           tempCtx.clearRect(0, 0, frameWidth, frameHeight);
           tempCtx.drawImage(video, 0, 0, frameWidth, frameHeight);
           const endFrameData = tempCtx.getImageData(0, 0, frameWidth, frameHeight);
@@ -533,6 +633,49 @@
       const file = e.target.files[0];
       handleVideoFile(file);
     });
+
+    if (trimStartInput) {
+      trimStartInput.addEventListener('input', () => {
+        if (!trimReady || !currentVideo) { return; }
+        const duration = currentVideo.duration;
+        const startValue = parseFloat(trimStartInput.value || '0');
+        setTrimRange(startValue, trimEnd, duration, false);
+        currentVideo.currentTime = Math.min(Math.max(trimStart, 0), duration - 0.001);
+        if (currentVideo.paused) { currentVideo.play().catch(() => {}); }
+      });
+    }
+
+    if (trimEndInput) {
+      trimEndInput.addEventListener('input', () => {
+        if (!trimReady || !currentVideo) { return; }
+        const duration = currentVideo.duration;
+        const endValue = parseFloat(trimEndInput.value || '0');
+        setTrimRange(trimStart, endValue, duration, true);
+        currentVideo.currentTime = Math.min(Math.max(trimEnd, 0), duration - 0.001);
+        if (currentVideo.paused) { currentVideo.play().catch(() => {}); }
+      });
+    }
+
+    if (videoPreview) {
+      videoPreview.addEventListener('seeking', () => {
+        if (!trimReady || !currentVideo) { return; }
+        if (videoPreview.currentTime < trimStart || videoPreview.currentTime > trimEnd) {
+          videoPreview.currentTime = trimStart;
+        }
+      });
+      videoPreview.addEventListener('timeupdate', () => {
+        if (!trimReady || !currentVideo) { return; }
+        if (trimEnd <= trimStart) { return; }
+        if (videoPreview.currentTime < trimStart) {
+          videoPreview.currentTime = trimStart;
+          return;
+        }
+        if (videoPreview.currentTime >= trimEnd) {
+          videoPreview.currentTime = trimStart;
+          if (!videoPreview.paused) { videoPreview.play().catch(() => {}); }
+        }
+      });
+    }
 
     maskInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
@@ -999,7 +1142,12 @@
         return;
       }
       const fps = Math.max(1, parseInt(fpsInput.value || '24', 10));
-      const duration = currentVideo.duration;
+      const trim = getTrimRange();
+      const duration = trim.duration || currentVideo.duration;
+      if (!duration || duration < MIN_TRIM_GAP) {
+        showError('잘린 구간이 너무 짧습니다.');
+        return;
+      }
       let frames = Math.max(1, Math.round(duration * fps));
       const maxFrames = 256;
       let clamped = false;
@@ -1033,6 +1181,11 @@
       const frameHeight = parseInt(root.querySelector('#sequenceFrameHeight').value, 10);
       const loopMode = loopModeSelect.value;
       const overlapPercent = parseInt(root.querySelector('#sequenceOverlapPercent').value, 10);
+      const trim = getTrimRange();
+      if (!trim.duration || trim.duration < MIN_TRIM_GAP) {
+        showError('잘린 구간이 너무 짧습니다.');
+        return;
+      }
 
       generateBtn.disabled = true;
       progress.classList.add('is-active');
@@ -1040,11 +1193,11 @@
 
       try {
         if (loopMode === 'pingpong') {
-          await generatePingPongSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight);
+          await generatePingPongSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, trim.start, trim.end);
         } else if (loopMode === 'overlap') {
-          await generateOverlapSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, overlapPercent);
+          await generateOverlapSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, overlapPercent, trim.start, trim.end);
         } else {
-          await generateDirectSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight);
+          await generateDirectSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, trim.start, trim.end);
         }
         previewSection.classList.add('is-active');
         previewSection.scrollIntoView({ behavior: 'smooth' });
