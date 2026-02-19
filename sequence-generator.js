@@ -492,7 +492,7 @@
           const alpha = Math.min(1, Math.max(0, t));
           const shiftedIndex = Math.min(overlapIndex + 1, overlapFrames - 1);
           const startFrameData = baseFrames[shiftedIndex];
-          const endFrameData = baseFrames[totalFrames - overlapFrames + overlapIndex + 1];
+          const endFrameData = baseFrames[totalFrames - overlapFrames + overlapIndex];
           const blendedData = tempCtx.createImageData(frameWidth, frameHeight);
           for (let p = 0; p < startFrameData.data.length; p += 4) {
             blendedData.data[p] = endFrameData.data[p] * (1 - alpha) + startFrameData.data[p] * alpha;
