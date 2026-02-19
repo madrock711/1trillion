@@ -263,7 +263,6 @@
 
         videoPreview.src = url;
         videoPreview.style.display = 'block';
-        videoPreview.loop = true;
         currentVideo = videoPreview;
         generateBtn.disabled = false;
 
@@ -719,7 +718,7 @@
         const startValue = parseFloat(trimStartInput.value || '0');
         setTrimRange(startValue, trimEnd, duration, false);
         currentVideo.currentTime = Math.min(Math.max(trimStart, 0), duration - 0.001);
-        currentVideo.pause();
+        if (currentVideo.paused) { currentVideo.play().catch(() => {}); }
       });
     }
 
@@ -730,7 +729,7 @@
         const endValue = parseFloat(trimEndInput.value || '0');
         setTrimRange(trimStart, endValue, duration, true);
         currentVideo.currentTime = Math.min(Math.max(trimEnd, 0), duration - 0.001);
-        currentVideo.pause();
+        if (currentVideo.paused) { currentVideo.play().catch(() => {}); }
       });
     }
 
