@@ -608,6 +608,7 @@
                             <div class="sequence-auto-meta" id="sequenceAutoMeta" data-i18n="sequence.autoHint" data-i18n-html="sequence.autoHint">
                                 비디오 길이 × FPS로 프레임 수를 계산합니다.
                             </div>
+                            <div class="sequence-auto-meta" id="sequenceTotalFrames"></div>
                         </div>
 
                         <div class="sequence-control-group">
@@ -620,9 +621,9 @@
                         </div>
 
                         <div class="sequence-control-group" id="sequenceOverlapControl">
-                            <label for="sequenceOverlapPercent" data-i18n="sequence.overlapLabel">오버랩 구간 (%)</label>
-                            <input type="number" id="sequenceOverlapPercent" value="30" min="10" max="50" step="5">
-                            <div class="sequence-overlap-note" data-i18n="sequence.overlapHint" data-i18n-html="sequence.overlapHint">
+                            <label for="sequenceOverlapFrames" data-i18n="sequence.overlapLabel">오버랩 프레임</label>
+                            <input type="number" id="sequenceOverlapFrames" value="16" min="1" max="256" step="1">
+                            <div class="sequence-overlap-note" id="sequenceOverlapNote" data-i18n="sequence.overlapHint" data-i18n-html="sequence.overlapHint">
                                 앞 구간을 잘라 끝과 크로스페이드해<br>
                                 시작/끝 프레임을 자연스럽게 연결합니다.
                             </div>
@@ -752,7 +753,7 @@
 
     <div id="share-toast" class="share-toast" role="status" aria-live="polite"></div>
 
-    <script src="i18n.js?v=20260211-2"></script>
+    <script src="i18n.js?v=20260219-1"></script>
     <script src="main.js?v=20260212-2"></script>
     <script src="foot-analysis.js?v=20260211-13"></script>
     <script src="stopwatch.js?v=20260208-3"></script>

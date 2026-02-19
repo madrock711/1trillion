@@ -21,9 +21,12 @@
     const trimMeta = root.querySelector('#sequenceTrimMeta');
     const loopModeSelect = root.querySelector('#sequenceLoopMode');
     const overlapControl = root.querySelector('#sequenceOverlapControl');
+    const overlapFramesInput = root.querySelector('#sequenceOverlapFrames');
+    const overlapNote = root.querySelector('#sequenceOverlapNote');
     const fpsInput = root.querySelector('#sequenceFps');
     const autoGridBtn = root.querySelector('#sequenceAutoGrid');
     const autoMeta = root.querySelector('#sequenceAutoMeta');
+    const totalFramesMeta = root.querySelector('#sequenceTotalFrames');
     const maskToggle = root.querySelector('#sequenceMaskToggle');
     const maskInvert = root.querySelector('#sequenceMaskInvert');
     const maskInput = root.querySelector('#sequenceMaskInput');
@@ -72,6 +75,7 @@
     function setGrid(cols, rows) {
       root.querySelector('#sequenceGridCols').value = cols;
       root.querySelector('#sequenceGridRows').value = rows;
+      updateOverlapNoteUI();
     }
 
     function showError(message) {
@@ -91,6 +95,63 @@
       }
       const extra = clamped ? ' (최대 256프레임으로 제한됨)' : '';
       autoMeta.textContent = `총 ${frames}프레임 · ${cols}×${rows}${extra}`;
+    }
+
+    function applyTemplate(template, data) {
+      if (!template) { return ''; }
+      return template.replace(/\{(\w+)\}/g, (match, key) => {
+        const value = data[key];
+        return value == null ? match : value;
+      });
+    }
+
+    function getTotalFramesEstimate() {
+      if (!currentVideo || !isFinite(currentVideo.duration) || currentVideo.duration <= 0) {
+        return null;
+      }
+      const fps = Math.max(1, parseInt(fpsInput.value || '24', 10));
+      const trim = getTrimRange();
+      const duration = trim.duration || currentVideo.duration;
+      if (!duration || duration <= 0) { return null; }
+      return Math.max(1, Math.round(duration * fps));
+    }
+
+    function updateTotalFramesUI() {
+      if (!totalFramesMeta || !window.appI18n) { return; }
+      const frames = getTotalFramesEstimate();
+      if (!frames) {
+        totalFramesMeta.textContent = '';
+        return;
+      }
+      const template = window.appI18n.t('sequence.totalFramesLabel');
+      totalFramesMeta.textContent = applyTemplate(template, { frames });
+    }
+
+    function getTotalGridFrames() {
+      const cols = parseInt(root.querySelector('#sequenceGridCols').value, 10) || 1;
+      const rows = parseInt(root.querySelector('#sequenceGridRows').value, 10) || 1;
+      return Math.max(1, cols * rows);
+    }
+
+    function clampOverlapFrames(totalFrames) {
+      if (!overlapFramesInput) { return 1; }
+      const maxFrames = Math.max(1, totalFrames - 1);
+      overlapFramesInput.max = String(maxFrames);
+      const raw = parseInt(overlapFramesInput.value || '1', 10);
+      const clamped = Math.min(Math.max(raw, 1), maxFrames);
+      overlapFramesInput.value = String(clamped);
+      return clamped;
+    }
+
+    function updateOverlapNoteUI() {
+      if (!overlapNote || !window.appI18n) { return; }
+      const totalFrames = getTotalGridFrames();
+      const overlapFrames = clampOverlapFrames(totalFrames);
+      const template = window.appI18n.t('sequence.overlapHint');
+      overlapNote.textContent = applyTemplate(template, {
+        overlap: overlapFrames,
+        total: totalFrames
+      });
     }
 
     function formatSeconds(value) {
@@ -142,6 +203,7 @@
       trimStart = normalized.start;
       trimEnd = normalized.end;
       updateTrimUI(duration);
+      updateTotalFramesUI();
     }
 
     function getTrimRange() {
@@ -178,6 +240,7 @@
       previewSection.classList.remove('is-active');
       trimReady = false;
       setTrimEnabled(false);
+      updateTotalFramesUI();
 
       const url = URL.createObjectURL(file);
       const testVideo = document.createElement('video');
@@ -215,6 +278,7 @@
         trimStart = 0;
         trimEnd = testVideo.duration;
         updateTrimUI(testVideo.duration);
+        updateTotalFramesUI();
         updateAutoMeta();
       };
 
@@ -525,7 +589,7 @@
       }
     }
 
-    async function generateOverlapSpriteSheet(video, cols, rows, frameWidth, frameHeight, overlapPercent, trimStartTime, trimEndTime) {
+    async function generateOverlapSpriteSheet(video, cols, rows, frameWidth, frameHeight, overlapFrames, trimStartTime, trimEndTime) {
       const totalFrames = cols * rows;
       const canvas = outputCanvas;
       const ctx = canvas.getContext('2d');
@@ -549,15 +613,16 @@
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const overlapRatio = overlapPercent / 100;
-      const overlapFrames = Math.ceil(totalFrames * overlapRatio);
-      const uniqueFrames = totalFrames - overlapFrames;
+      const maxOverlapFrames = Math.max(1, totalFrames - 1);
+      const safeOverlapFrames = Math.min(Math.max(overlapFrames, 1), maxOverlapFrames);
+      const overlapRatio = safeOverlapFrames / totalFrames;
+      const uniqueFrames = totalFrames - safeOverlapFrames;
       const overlapDuration = duration * overlapRatio;
       const cutTime = trimStartTime + overlapDuration;
 
       const samplingDuration = duration - overlapDuration;
       const interval = samplingDuration / uniqueFrames;
-      const overlapSteps = Math.max(1, overlapFrames - 1);
+      const overlapSteps = Math.max(1, safeOverlapFrames - 1);
 
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = frameWidth;
@@ -586,10 +651,11 @@
           }
         } else {
           const overlapIndex = i - uniqueFrames;
-          const overlapT = overlapFrames === 1
+          if (overlapIndex >= safeOverlapFrames) { continue; }
+          const overlapT = safeOverlapFrames === 1
             ? 0
             : (overlapIndex / overlapSteps) * overlapDuration;
-          const alpha = overlapFrames === 1 ? 1 : (overlapIndex / overlapSteps);
+          const alpha = safeOverlapFrames === 1 ? 1 : (overlapIndex / overlapSteps);
 
           const startTime = trimStartTime + overlapT;
           const endTime = (trimEndTime - overlapDuration) + overlapT;
@@ -1043,7 +1109,7 @@
         frameHeight: root.querySelector('#sequenceFrameHeight').value,
         fps: root.querySelector('#sequenceFps').value,
         loopMode: loopModeSelect.value,
-        overlapPercent: root.querySelector('#sequenceOverlapPercent').value
+        overlapFrames: overlapFramesInput ? overlapFramesInput.value : ''
       };
     }
 
@@ -1061,10 +1127,11 @@
       if (heightInput && settings.frameHeight != null) { heightInput.value = settings.frameHeight; }
       fpsInput.value = fpsValue;
       loopModeSelect.value = loopModeValue;
-      const overlapInput = root.querySelector('#sequenceOverlapPercent');
-      if (overlapInput && settings.overlapPercent != null) { overlapInput.value = settings.overlapPercent; }
+      if (overlapFramesInput && settings.overlapFrames != null) { overlapFramesInput.value = settings.overlapFrames; }
       updateLoopModeUI();
       updateAutoMeta();
+      updateOverlapNoteUI();
+      updateTotalFramesUI();
     }
 
     const builtinPresets = [
@@ -1177,18 +1244,44 @@
         const value = btn.getAttribute('data-sequence-grid');
         const [cols, rows] = value.split('x').map(Number);
         setGrid(cols, rows);
+        updateOverlapNoteUI();
       });
     });
 
+    const gridColsInput = root.querySelector('#sequenceGridCols');
+    const gridRowsInput = root.querySelector('#sequenceGridRows');
+    if (gridColsInput) {
+      gridColsInput.addEventListener('input', updateOverlapNoteUI);
+      gridColsInput.addEventListener('change', updateOverlapNoteUI);
+    }
+    if (gridRowsInput) {
+      gridRowsInput.addEventListener('input', updateOverlapNoteUI);
+      gridRowsInput.addEventListener('change', updateOverlapNoteUI);
+    }
+
     loopModeSelect.addEventListener('change', updateLoopModeUI);
     updateLoopModeUI();
+    updateOverlapNoteUI();
+    updateTotalFramesUI();
 
     document.addEventListener('app:lang', () => {
       if (autoMeta) {
         defaultAutoMeta = autoMeta.innerHTML;
         updateAutoMeta();
       }
+      updateTotalFramesUI();
+      updateOverlapNoteUI();
     });
+
+    if (fpsInput) {
+      fpsInput.addEventListener('input', updateTotalFramesUI);
+      fpsInput.addEventListener('change', updateTotalFramesUI);
+    }
+
+    if (overlapFramesInput) {
+      overlapFramesInput.addEventListener('input', updateOverlapNoteUI);
+      overlapFramesInput.addEventListener('change', updateOverlapNoteUI);
+    }
 
     autoGridBtn.addEventListener('click', () => {
       if (!currentVideo || !isFinite(currentVideo.duration) || currentVideo.duration <= 0) {
@@ -1234,7 +1327,7 @@
       const frameWidth = parseInt(root.querySelector('#sequenceFrameWidth').value, 10);
       const frameHeight = parseInt(root.querySelector('#sequenceFrameHeight').value, 10);
       const loopMode = loopModeSelect.value;
-      const overlapPercent = parseInt(root.querySelector('#sequenceOverlapPercent').value, 10);
+      const overlapFrames = clampOverlapFrames(cols * rows);
       const trim = getTrimRange();
       if (!trim.duration || trim.duration < MIN_TRIM_GAP) {
         showError('잘린 구간이 너무 짧습니다.');
@@ -1249,7 +1342,7 @@
         if (loopMode === 'pingpong') {
           await generatePingPongSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, trim.start, trim.end);
         } else if (loopMode === 'overlap') {
-          await generateOverlapSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, overlapPercent, trim.start, trim.end);
+          await generateOverlapSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, overlapFrames, trim.start, trim.end);
         } else {
           await generateDirectSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, trim.start, trim.end);
         }
@@ -1272,8 +1365,8 @@
 
       let filename = `sprite-${cols}x${rows}`;
       if (loopMode === 'overlap') {
-        const overlapPercent = root.querySelector('#sequenceOverlapPercent').value;
-        filename += `-overlap${overlapPercent}`;
+        const overlapFrames = clampOverlapFrames(parseInt(cols, 10) * parseInt(rows, 10));
+        filename += `-overlap${overlapFrames}f`;
       } else if (loopMode === 'pingpong') {
         filename += `-pingpong`;
       }
