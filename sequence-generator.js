@@ -621,8 +621,7 @@
           frameData = baseFrames[i];
         } else {
           const overlapIndex = i - uniqueFrames;
-          const t = overlapFrames > 1 ? (overlapIndex / (overlapFrames - 1)) : 1;
-          const alpha = Math.min(1, Math.max(0, t));
+          const alpha = (overlapIndex + 1) / (overlapFrames + 1);
           const startIndex = (overlapIndex + 1) % overlapFrames;
           const startFrameData = baseFrames[startIndex];
           const endFrameData = baseFrames[uniqueFrames + overlapIndex];
