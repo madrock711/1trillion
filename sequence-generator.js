@@ -611,7 +611,7 @@
       stabilizeLoopEdges(ctx, cols, rows, frameWidth, frameHeight, getStabilizeFrameCount(totalFrames));
     }
 
-    async function generateOverlapSpriteSheet(video, cols, rows, frameWidth, frameHeight, overlapPercent) {
+    async function generateOverlapSpriteSheet(video, cols, rows, frameWidth, frameHeight, overlapFramesInput) {
       const totalFrames = cols * rows;
       const trim = getTrimRange();
       const segmentDuration = trim.duration;
@@ -632,16 +632,14 @@
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      if (!isFinite(overlapPercent)) {
-        throw new Error('오버랩 값이 올바르지 않습니다.');
+      if (!isFinite(overlapFramesInput)) {
+        throw new Error('오버랩 프레임 값이 올바르지 않습니다.');
       }
-      const overlapRatio = Math.min(0.9, Math.max(0, overlapPercent / 100));
-      const overlapFrames = Math.min(totalFrames - 1, Math.max(1, Math.ceil(totalFrames * overlapRatio)));
+      const overlapFrames = Math.min(totalFrames - 1, Math.max(1, Math.round(overlapFramesInput)));
       const uniqueFrames = totalFrames - overlapFrames;
       console.log('[overlap]', {
         totalFrames,
-        overlapPercent,
-        overlapRatio,
+        overlapFramesInput,
         overlapFrames,
         uniqueFrames,
         overlapStartIndex: uniqueFrames + 1,
@@ -1394,18 +1392,20 @@
       const frameWidth = parseInt(root.querySelector('#sequenceFrameWidth').value, 10);
       const frameHeight = parseInt(root.querySelector('#sequenceFrameHeight').value, 10);
       const loopMode = loopModeSelect.value;
-      let overlapPercent = parseInt(root.querySelector('#sequenceOverlapPercent').value, 10);
+      let overlapFramesInput = parseInt(root.querySelector('#sequenceOverlapFrames').value, 10);
       const trim = getTrimRange();
       if (!trim.duration || trim.duration < 0.05) {
         alert('트림 구간이 너무 짧습니다. 시작/끝 값을 확인해 주세요.');
         return;
       }
       if (loopMode === 'overlap') {
-        if (!isFinite(overlapPercent)) {
-          alert('오버랩 값을 확인해 주세요.');
+        if (!isFinite(overlapFramesInput)) {
+          alert('오버랩 프레임 값을 확인해 주세요.');
           return;
         }
-        overlapPercent = Math.max(1, Math.min(90, overlapPercent));
+        const totalFrames = cols * rows;
+        overlapFramesInput = Math.max(1, Math.min(totalFrames - 1, overlapFramesInput));
+        root.querySelector('#sequenceOverlapFrames').value = String(overlapFramesInput);
       }
 
       generateBtn.disabled = true;
@@ -1416,7 +1416,7 @@
         if (loopMode === 'pingpong') {
           await generatePingPongSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight);
         } else if (loopMode === 'overlap') {
-          await generateOverlapSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, overlapPercent);
+          await generateOverlapSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, overlapFramesInput);
         } else {
           await generateDirectSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight);
         }
@@ -1439,8 +1439,8 @@
 
       let filename = `sprite-${cols}x${rows}`;
       if (loopMode === 'overlap') {
-        const overlapPercent = root.querySelector('#sequenceOverlapPercent').value;
-        filename += `-overlap${overlapPercent}`;
+        const overlapFrames = root.querySelector('#sequenceOverlapFrames').value;
+        filename += `-overlap${overlapFrames}f`;
       } else if (loopMode === 'pingpong') {
         filename += `-pingpong`;
       }
