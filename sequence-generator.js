@@ -685,6 +685,13 @@
           const startIndex = Math.min(overlapIndex + 1, overlapFrames - 1);
           const startFrameData = baseFrames[startIndex];
           const endFrameData = baseFrames[uniqueFrames + overlapIndex];
+          console.log('[overlap-frame]', {
+            tileIndex: i + 1,
+            overlapIndex: overlapIndex + 1,
+            aIndex: startIndex + 1,
+            cIndex: uniqueFrames + overlapIndex + 1,
+            alpha: Number(alpha.toFixed(4))
+          });
           const blendedData = tempCtx.createImageData(frameWidth, frameHeight);
           for (let p = 0; p < startFrameData.data.length; p += 4) {
             blendedData.data[p] = endFrameData.data[p] * (1 - alpha) + startFrameData.data[p] * alpha;
