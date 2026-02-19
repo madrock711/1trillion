@@ -433,10 +433,6 @@
                             <strong id="sequenceTrimEndValue">0.00s</strong>
                             <span data-i18n="sequence.trimDuration">길이</span>
                             <strong id="sequenceTrimDurationValue">0.00s</strong>
-                            <span data-i18n="sequence.trimTotalFrames">전체 프레임</span>
-                            <strong id="sequenceTrimTotalFrames">0</strong>
-                            <span data-i18n="sequence.trimSegmentFrames">트림 프레임</span>
-                            <strong id="sequenceTrimSegmentFrames">0</strong>
                         </div>
                     </div>
 
@@ -471,13 +467,12 @@
                         </div>
 
                         <div class="sequence-control-group sequence-auto-group">
-                            <label for="sequenceTotalFrames" data-i18n="sequence.totalFramesLabel">전체 프레임 수</label>
+                            <label for="sequenceAutoGrid" data-i18n="sequence.autoGridLabel">자동 그리드</label>
                             <div class="sequence-auto-row">
-                                <input type="number" id="sequenceTotalFrames" value="64" min="1" max="256" step="1">
                                 <button class="sequence-auto-btn" type="button" id="sequenceAutoGrid" data-i18n="sequence.autoGridBtn">자동 계산</button>
                             </div>
                             <div class="sequence-auto-meta" id="sequenceAutoMeta" data-i18n="sequence.autoHint" data-i18n-html="sequence.autoHint">
-                                전체 프레임 수 기준으로 그리드를 계산합니다.
+                                선택한 영상 길이에 맞춰 그리드를 계산합니다.
                             </div>
                         </div>
 
