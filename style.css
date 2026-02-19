@@ -474,16 +474,39 @@ main {
 .sequence-trim-range {
   position: relative;
   height: 32px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.12) var(--trim-start, 0%), rgba(255,255,255,0.85) var(--trim-start, 0%), rgba(255,255,255,0.85) var(--trim-end, 100%), rgba(255,255,255,0.12) var(--trim-end, 100%), rgba(255,255,255,0.12) 100%);
 }
 
 .sequence-trim-range input[type="range"] {
   position: absolute;
   left: 0;
-  top: 6px;
+  top: 0;
   width: 100%;
   margin: 0;
   pointer-events: auto;
   touch-action: none;
+  height: 32px;
+  background: transparent;
+}
+
+.sequence-trim-range input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: #111;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.4);
+}
+
+.sequence-trim-range input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: #111;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.4);
 }
 
 #sequenceTrimStart {

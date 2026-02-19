@@ -81,6 +81,14 @@
       if (trimStartValue) { trimStartValue.textContent = formatTime(trimStart); }
       if (trimEndValue) { trimEndValue.textContent = formatTime(trimEnd); }
       if (trimDurationValue) { trimDurationValue.textContent = formatTime(Math.max(0, trimEnd - trimStart)); }
+      const range = root.querySelector('.sequence-trim-range');
+      if (range && currentVideo && isFinite(currentVideo.duration) && currentVideo.duration > 0) {
+        const duration = currentVideo.duration;
+        const startPct = Math.max(0, Math.min(100, (trimStart / duration) * 100));
+        const endPct = Math.max(0, Math.min(100, (trimEnd / duration) * 100));
+        range.style.setProperty('--trim-start', startPct.toFixed(3) + '%');
+        range.style.setProperty('--trim-end', endPct.toFixed(3) + '%');
+      }
     }
 
     function applyTrimDefaults(duration) {
@@ -113,7 +121,7 @@
         const ratio = (value - min) / (max - min || 1);
         const thumbX = rect.left + (ratio * rect.width);
         const distance = Math.abs(event.clientX - thumbX);
-        return distance <= 16;
+        return distance <= 24;
       };
 
       input.addEventListener('pointerdown', (event) => {
