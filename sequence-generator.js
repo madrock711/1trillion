@@ -922,7 +922,12 @@
         intensity: maskIntensity.value,
         contrast: maskContrast.value,
         gamma: maskGamma.value,
-        tiling: maskTiling.value
+        tiling: maskTiling.value,
+        gridCols: root.querySelector('#sequenceGridCols')?.value ?? '',
+        gridRows: root.querySelector('#sequenceGridRows')?.value ?? '',
+        frameWidth: root.querySelector('#sequenceFrameWidth')?.value ?? '',
+        frameHeight: root.querySelector('#sequenceFrameHeight')?.value ?? '',
+        fps: root.querySelector('#sequenceFps')?.value ?? ''
       };
     }
 
@@ -941,6 +946,26 @@
       maskContrast.value = settings.contrast ?? maskContrast.value;
       maskGamma.value = settings.gamma ?? maskGamma.value;
       maskTiling.value = settings.tiling ?? maskTiling.value;
+      if (settings.gridCols != null) {
+        const input = root.querySelector('#sequenceGridCols');
+        if (input) { input.value = settings.gridCols; }
+      }
+      if (settings.gridRows != null) {
+        const input = root.querySelector('#sequenceGridRows');
+        if (input) { input.value = settings.gridRows; }
+      }
+      if (settings.frameWidth != null) {
+        const input = root.querySelector('#sequenceFrameWidth');
+        if (input) { input.value = settings.frameWidth; }
+      }
+      if (settings.frameHeight != null) {
+        const input = root.querySelector('#sequenceFrameHeight');
+        if (input) { input.value = settings.frameHeight; }
+      }
+      if (settings.fps != null) {
+        const input = root.querySelector('#sequenceFps');
+        if (input) { input.value = settings.fps; }
+      }
       generateMaskTexture();
       updateMaskValues();
     }
