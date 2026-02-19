@@ -1035,6 +1035,38 @@
       updateMaskValues();
     }
 
+    function collectSequenceSettings() {
+      return {
+        cols: root.querySelector('#sequenceGridCols').value,
+        rows: root.querySelector('#sequenceGridRows').value,
+        frameWidth: root.querySelector('#sequenceFrameWidth').value,
+        frameHeight: root.querySelector('#sequenceFrameHeight').value,
+        fps: root.querySelector('#sequenceFps').value,
+        loopMode: loopModeSelect.value,
+        overlapPercent: root.querySelector('#sequenceOverlapPercent').value
+      };
+    }
+
+    function applySequenceSettings(settings) {
+      if (!settings) { return; }
+      const colsInput = root.querySelector('#sequenceGridCols');
+      const rowsInput = root.querySelector('#sequenceGridRows');
+      const widthInput = root.querySelector('#sequenceFrameWidth');
+      const heightInput = root.querySelector('#sequenceFrameHeight');
+      const fpsValue = settings.fps ?? fpsInput.value;
+      const loopModeValue = settings.loopMode ?? loopModeSelect.value;
+      if (colsInput && settings.cols != null) { colsInput.value = settings.cols; }
+      if (rowsInput && settings.rows != null) { rowsInput.value = settings.rows; }
+      if (widthInput && settings.frameWidth != null) { widthInput.value = settings.frameWidth; }
+      if (heightInput && settings.frameHeight != null) { heightInput.value = settings.frameHeight; }
+      fpsInput.value = fpsValue;
+      loopModeSelect.value = loopModeValue;
+      const overlapInput = root.querySelector('#sequenceOverlapPercent');
+      if (overlapInput && settings.overlapPercent != null) { overlapInput.value = settings.overlapPercent; }
+      updateLoopModeUI();
+      updateAutoMeta();
+    }
+
     const builtinPresets = [
       { id: 'soft', name: 'Soft Edge', values: { noiseType: 'perlin', shape: 'radial', edge: 0.35, polar: 0.05, warp: 0.18, swirl: 0.1, pixelate: 0, threshold: 0, scale: 1, intensity: 1, contrast: 1, gamma: 1, tiling: 1 } },
       { id: 'hard', name: 'Hard Edge', values: { noiseType: 'perlin', shape: 'square', edge: 0.12, polar: 0, warp: 0.08, swirl: 0, pixelate: 0, threshold: 0.12, scale: 1, intensity: 1, contrast: 1.2, gamma: 1, tiling: 1 } },
@@ -1057,6 +1089,12 @@
       } catch (e) {
         console.warn('Unable to save presets map', e);
       }
+    }
+
+    function normalizePresetPayload(payload) {
+      if (!payload) { return null; }
+      if (payload.mask || payload.sequence) { return payload; }
+      return { mask: payload };
     }
 
     function refreshPresetSelect() {
@@ -1088,7 +1126,10 @@
       maskSaveBtn.addEventListener('click', () => {
         const name = prompt('저장할 이름을 입력하세요');
         if (!name) { return; }
-        const data = collectMaskSettings();
+        const data = {
+          mask: collectMaskSettings(),
+          sequence: collectSequenceSettings()
+        };
         try {
           const map = loadSavedPresets();
           map[name] = data;
@@ -1121,8 +1162,10 @@
         } else if (value.startsWith('saved:')) {
           const name = value.replace('saved:', '');
           const saved = loadSavedPresets();
-          if (saved[name]) {
-            applyMaskSettings(saved[name]);
+          const payload = normalizePresetPayload(saved[name]);
+          if (payload) {
+            if (payload.mask) { applyMaskSettings(payload.mask); }
+            if (payload.sequence) { applySequenceSettings(payload.sequence); }
             if (maskStatus) { maskStatus.textContent = '불러옴: ' + name; }
           }
         }
