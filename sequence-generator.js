@@ -15,8 +15,6 @@
     const videoInfoContent = root.querySelector('#sequenceVideoInfoContent');
     const loopModeSelect = root.querySelector('#sequenceLoopMode');
     const overlapControl = root.querySelector('#sequenceOverlapControl');
-    const overlapTrimControl = root.querySelector('#sequenceOverlapTrimControl');
-    const overlapTrimInput = root.querySelector('#sequenceOverlapTrim');
     const fadeControl = root.querySelector('#sequenceFadeControl');
     const fadeCurveSelect = root.querySelector('#sequenceFadeCurve');
     const fpsInput = root.querySelector('#sequenceFps');
@@ -70,9 +68,6 @@
     function updateLoopModeUI() {
       const loopMode = loopModeSelect.value;
       overlapControl.style.display = loopMode === 'overlap' ? 'block' : 'none';
-      if (overlapTrimControl) {
-        overlapTrimControl.style.display = loopMode === 'overlap' ? 'block' : 'none';
-      }
       if (fadeControl) {
         fadeControl.style.display = loopMode === 'overlap' ? 'block' : 'none';
       }
@@ -616,7 +611,7 @@
       stabilizeLoopEdges(ctx, cols, rows, frameWidth, frameHeight, getStabilizeFrameCount(totalFrames));
     }
 
-    async function generateOverlapSpriteSheet(video, cols, rows, frameWidth, frameHeight, overlapFramesInput, overlapTrimInputValue) {
+    async function generateOverlapSpriteSheet(video, cols, rows, frameWidth, frameHeight, overlapFramesInput) {
       const totalFrames = cols * rows;
       const trim = getTrimRange();
       const segmentDuration = trim.duration;
@@ -641,14 +636,11 @@
         throw new Error('오버랩 프레임 값이 올바르지 않습니다.');
       }
       const overlapFrames = Math.min(totalFrames - 1, Math.max(1, Math.round(overlapFramesInput)));
-      const overlapTrim = Math.min(overlapFrames - 1, Math.max(0, Math.round(overlapTrimInputValue || 0)));
       const uniqueFrames = totalFrames - overlapFrames;
       console.log('[overlap]', {
         totalFrames,
         overlapFramesInput,
         overlapFrames,
-        overlapTrim,
-        sampleFrames: totalFrames + overlapTrim,
         uniqueFrames,
         overlapStartIndex: uniqueFrames + 1,
         overlapEndIndex: totalFrames
@@ -661,9 +653,8 @@
         buildMaskCanvases(frameWidth, frameHeight);
       }
 
-      const sampleFrames = totalFrames + overlapTrim;
-      const baseFrames = new Array(sampleFrames);
-      const totalSteps = sampleFrames + totalFrames;
+      const baseFrames = new Array(totalFrames);
+      const totalSteps = totalFrames * 2;
       let completedSteps = 0;
       const updateProgress = () => {
         const percent = Math.round((completedSteps / totalSteps) * 100);
@@ -672,7 +663,7 @@
       };
 
       const fps = getFpsValue();
-      for (let i = 0; i < sampleFrames; i++) {
+      for (let i = 0; i < totalFrames; i++) {
         const time = clampTrimTime(trim.start + (i / fps), trim);
         await seekToTime(video, time);
         tempCtx.clearRect(0, 0, frameWidth, frameHeight);
@@ -683,9 +674,8 @@
         await new Promise(resolve => setTimeout(resolve, 10));
       }
 
-      const baseOffset = overlapTrim;
-      const aFrames = baseFrames.slice(baseOffset, baseOffset + overlapFrames);
-      const cFrames = baseFrames.slice(baseOffset + uniqueFrames, baseOffset + totalFrames);
+      const aFrames = baseFrames.slice(0, overlapFrames);
+      const cFrames = baseFrames.slice(uniqueFrames);
 
       for (let i = 0; i < totalFrames; i++) {
         const row = Math.floor(i / cols);
@@ -696,7 +686,7 @@
 
         if (i < uniqueFrames) {
           // Keep base frames as-is for the non-overlap region.
-          frameData = baseFrames[baseOffset + i];
+          frameData = baseFrames[i];
         } else {
           const overlapIndex = i - uniqueFrames;
           const t = (overlapIndex + 1) / (overlapFrames + 1);
@@ -1405,7 +1395,6 @@
       const frameHeight = parseInt(root.querySelector('#sequenceFrameHeight').value, 10);
       const loopMode = loopModeSelect.value;
       let overlapFramesInput = parseInt(root.querySelector('#sequenceOverlapFrames').value, 10);
-      let overlapTrimInputValue = parseInt(overlapTrimInput?.value || '0', 10);
       const trim = getTrimRange();
       if (!trim.duration || trim.duration < 0.05) {
         alert('트림 구간이 너무 짧습니다. 시작/끝 값을 확인해 주세요.');
@@ -1419,13 +1408,6 @@
         const totalFrames = cols * rows;
         overlapFramesInput = Math.max(1, Math.min(totalFrames - 1, overlapFramesInput));
         root.querySelector('#sequenceOverlapFrames').value = String(overlapFramesInput);
-        if (!isFinite(overlapTrimInputValue)) {
-          overlapTrimInputValue = 0;
-        }
-        overlapTrimInputValue = Math.max(0, Math.min(overlapFramesInput - 1, overlapTrimInputValue));
-        if (overlapTrimInput) {
-          overlapTrimInput.value = String(overlapTrimInputValue);
-        }
       }
 
       generateBtn.disabled = true;
@@ -1436,7 +1418,7 @@
         if (loopMode === 'pingpong') {
           await generatePingPongSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight);
         } else if (loopMode === 'overlap') {
-          await generateOverlapSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, overlapFramesInput, overlapTrimInputValue);
+          await generateOverlapSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, overlapFramesInput);
         } else {
           await generateDirectSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight);
         }
