@@ -623,7 +623,10 @@
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const overlapRatio = overlapPercent / 100;
+      if (!isFinite(overlapPercent)) {
+        throw new Error('오버랩 값이 올바르지 않습니다.');
+      }
+      const overlapRatio = Math.min(0.9, Math.max(0, overlapPercent / 100));
       const overlapFrames = Math.min(totalFrames - 1, Math.max(1, Math.ceil(totalFrames * overlapRatio)));
       const uniqueFrames = totalFrames - overlapFrames;
       const tempCanvas = document.createElement('canvas');
@@ -1364,11 +1367,18 @@
       const frameWidth = parseInt(root.querySelector('#sequenceFrameWidth').value, 10);
       const frameHeight = parseInt(root.querySelector('#sequenceFrameHeight').value, 10);
       const loopMode = loopModeSelect.value;
-      const overlapPercent = parseInt(root.querySelector('#sequenceOverlapPercent').value, 10);
+      let overlapPercent = parseInt(root.querySelector('#sequenceOverlapPercent').value, 10);
       const trim = getTrimRange();
       if (!trim.duration || trim.duration < 0.05) {
         alert('트림 구간이 너무 짧습니다. 시작/끝 값을 확인해 주세요.');
         return;
+      }
+      if (loopMode === 'overlap') {
+        if (!isFinite(overlapPercent)) {
+          alert('오버랩 값을 확인해 주세요.');
+          return;
+        }
+        overlapPercent = Math.max(1, Math.min(90, overlapPercent));
       }
 
       generateBtn.disabled = true;
