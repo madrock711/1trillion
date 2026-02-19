@@ -489,8 +489,9 @@
         } else {
           const overlapIndex = i - uniqueFrames;
           const t = overlapFrames > 1 ? (overlapIndex / (overlapFrames - 1)) : 1;
-          const alpha = Math.pow(Math.min(1, Math.max(0, t)), 3);
-          const startFrameData = baseFrames[overlapIndex];
+          const alpha = Math.min(1, Math.max(0, t));
+          const shiftedIndex = Math.min(overlapIndex + 1, overlapFrames - 1);
+          const startFrameData = baseFrames[shiftedIndex];
           const endFrameData = baseFrames[totalFrames - overlapFrames + overlapIndex];
           const blendedData = tempCtx.createImageData(frameWidth, frameHeight);
           for (let p = 0; p < startFrameData.data.length; p += 4) {
