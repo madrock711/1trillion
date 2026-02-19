@@ -438,6 +438,69 @@
                         <div class="sequence-trim-note" data-i18n="sequence.trimHint">위 플레이어에서 잘린 구간을 실시간으로 확인할 수 있습니다.</div>
                     </div>
 
+                    <button class="sequence-generate-btn" id="sequenceGenerateBtn" disabled data-i18n="sequence.generateBtn">스프라이트 시트 생성</button>
+
+                    <div class="sequence-controls">
+                        <div class="sequence-control-group">
+                            <label for="sequenceGridCols" data-i18n="sequence.colsLabel">가로 (Columns)</label>
+                            <input type="number" id="sequenceGridCols" value="4" min="1" max="16">
+                            <div class="sequence-preset-buttons">
+                                <button class="sequence-preset-btn" type="button" data-sequence-grid="4x4">4×4</button>
+                                <button class="sequence-preset-btn" type="button" data-sequence-grid="8x8">8×8</button>
+                                <button class="sequence-preset-btn" type="button" data-sequence-grid="6x6">6×6</button>
+                            </div>
+                        </div>
+
+                        <div class="sequence-control-group">
+                            <label for="sequenceGridRows" data-i18n="sequence.rowsLabel">세로 (Rows)</label>
+                            <input type="number" id="sequenceGridRows" value="4" min="1" max="16">
+                            <div class="sequence-preset-buttons">
+                                <button class="sequence-preset-btn" type="button" data-sequence-grid="4x8">4×8</button>
+                                <button class="sequence-preset-btn" type="button" data-sequence-grid="10x10">10×10</button>
+                            </div>
+                        </div>
+
+                        <div class="sequence-control-group">
+                            <label for="sequenceFrameWidth" data-i18n="sequence.frameWidthLabel">프레임 너비 (px)</label>
+                            <input type="number" id="sequenceFrameWidth" value="128" min="32" max="512" step="16">
+                        </div>
+
+                        <div class="sequence-control-group">
+                            <label for="sequenceFrameHeight" data-i18n="sequence.frameHeightLabel">프레임 높이 (px)</label>
+                            <input type="number" id="sequenceFrameHeight" value="128" min="32" max="512" step="16">
+                        </div>
+
+                        <div class="sequence-control-group sequence-auto-group">
+                            <label for="sequenceFps" data-i18n="sequence.fpsLabel">프레임 속도 (FPS)</label>
+                            <div class="sequence-auto-row">
+                                <input type="number" id="sequenceFps" value="24" min="6" max="60" step="1">
+                                <button class="sequence-auto-btn" type="button" id="sequenceAutoGrid" data-i18n="sequence.autoGridBtn">자동 계산</button>
+                            </div>
+                            <div class="sequence-auto-meta" id="sequenceAutoMeta" data-i18n="sequence.autoHint" data-i18n-html="sequence.autoHint">
+                                비디오 길이 × FPS로 프레임 수를 계산합니다.
+                            </div>
+                            <div class="sequence-auto-meta" id="sequenceTotalFrames"></div>
+                        </div>
+
+                        <div class="sequence-control-group">
+                            <label for="sequenceLoopMode" data-i18n="sequence.loopModeLabel">루프 모드</label>
+                            <select id="sequenceLoopMode">
+                                <option value="overlap" data-i18n="sequence.loopOverlap">오버랩 크로스페이드 (권장)</option>
+                                <option value="pingpong" data-i18n="sequence.loopPingpong">핑퐁 (정방향+역방향)</option>
+                                <option value="direct" data-i18n="sequence.loopDirect">직접 연결 (페이드 없음)</option>
+                            </select>
+                        </div>
+
+                        <div class="sequence-control-group" id="sequenceOverlapControl">
+                            <label for="sequenceOverlapFrames" data-i18n="sequence.overlapLabel">오버랩 프레임</label>
+                            <input type="number" id="sequenceOverlapFrames" value="16" min="1" max="256" step="1">
+                            <div class="sequence-overlap-note" id="sequenceOverlapNote" data-i18n="sequence.overlapHint" data-i18n-html="sequence.overlapHint">
+                                앞 구간을 잘라 끝과 크로스페이드해<br>
+                                시작/끝 프레임을 자연스럽게 연결합니다.
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="sequence-mask">
                         <div class="sequence-mask-header">
                             <label class="sequence-mask-toggle">
@@ -565,69 +628,6 @@
                                     <span class="sequence-mask-value" data-mask-value="sequenceMaskTiling">1</span>
                                     <input type="range" id="sequenceMaskTiling" min="1" max="6" step="1" value="1">
                                 </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button class="sequence-generate-btn" id="sequenceGenerateBtn" disabled data-i18n="sequence.generateBtn">스프라이트 시트 생성</button>
-
-                    <div class="sequence-controls">
-                        <div class="sequence-control-group">
-                            <label for="sequenceGridCols" data-i18n="sequence.colsLabel">가로 (Columns)</label>
-                            <input type="number" id="sequenceGridCols" value="4" min="1" max="16">
-                            <div class="sequence-preset-buttons">
-                                <button class="sequence-preset-btn" type="button" data-sequence-grid="4x4">4×4</button>
-                                <button class="sequence-preset-btn" type="button" data-sequence-grid="8x8">8×8</button>
-                                <button class="sequence-preset-btn" type="button" data-sequence-grid="6x6">6×6</button>
-                            </div>
-                        </div>
-
-                        <div class="sequence-control-group">
-                            <label for="sequenceGridRows" data-i18n="sequence.rowsLabel">세로 (Rows)</label>
-                            <input type="number" id="sequenceGridRows" value="4" min="1" max="16">
-                            <div class="sequence-preset-buttons">
-                                <button class="sequence-preset-btn" type="button" data-sequence-grid="4x8">4×8</button>
-                                <button class="sequence-preset-btn" type="button" data-sequence-grid="10x10">10×10</button>
-                            </div>
-                        </div>
-
-                        <div class="sequence-control-group">
-                            <label for="sequenceFrameWidth" data-i18n="sequence.frameWidthLabel">프레임 너비 (px)</label>
-                            <input type="number" id="sequenceFrameWidth" value="128" min="32" max="512" step="16">
-                        </div>
-
-                        <div class="sequence-control-group">
-                            <label for="sequenceFrameHeight" data-i18n="sequence.frameHeightLabel">프레임 높이 (px)</label>
-                            <input type="number" id="sequenceFrameHeight" value="128" min="32" max="512" step="16">
-                        </div>
-
-                        <div class="sequence-control-group sequence-auto-group">
-                            <label for="sequenceFps" data-i18n="sequence.fpsLabel">프레임 속도 (FPS)</label>
-                            <div class="sequence-auto-row">
-                                <input type="number" id="sequenceFps" value="24" min="6" max="60" step="1">
-                                <button class="sequence-auto-btn" type="button" id="sequenceAutoGrid" data-i18n="sequence.autoGridBtn">자동 계산</button>
-                            </div>
-                            <div class="sequence-auto-meta" id="sequenceAutoMeta" data-i18n="sequence.autoHint" data-i18n-html="sequence.autoHint">
-                                비디오 길이 × FPS로 프레임 수를 계산합니다.
-                            </div>
-                            <div class="sequence-auto-meta" id="sequenceTotalFrames"></div>
-                        </div>
-
-                        <div class="sequence-control-group">
-                            <label for="sequenceLoopMode" data-i18n="sequence.loopModeLabel">루프 모드</label>
-                            <select id="sequenceLoopMode">
-                                <option value="overlap" data-i18n="sequence.loopOverlap">오버랩 크로스페이드 (권장)</option>
-                                <option value="pingpong" data-i18n="sequence.loopPingpong">핑퐁 (정방향+역방향)</option>
-                                <option value="direct" data-i18n="sequence.loopDirect">직접 연결 (페이드 없음)</option>
-                            </select>
-                        </div>
-
-                        <div class="sequence-control-group" id="sequenceOverlapControl">
-                            <label for="sequenceOverlapFrames" data-i18n="sequence.overlapLabel">오버랩 프레임</label>
-                            <input type="number" id="sequenceOverlapFrames" value="16" min="1" max="256" step="1">
-                            <div class="sequence-overlap-note" id="sequenceOverlapNote" data-i18n="sequence.overlapHint" data-i18n-html="sequence.overlapHint">
-                                앞 구간을 잘라 끝과 크로스페이드해<br>
-                                시작/끝 프레임을 자연스럽게 연결합니다.
                             </div>
                         </div>
                     </div>
