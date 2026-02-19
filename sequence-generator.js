@@ -62,6 +62,7 @@
     let maskCacheWidth = 0;
     let maskCacheHeight = 0;
     let generatedMask = null;
+    let currentVideoUrl = '';
     let trimStart = 0;
     let trimEnd = 0;
     let trimReady = false;
@@ -265,6 +266,7 @@
         videoPreview.style.display = 'block';
         videoPreview.loop = true;
         currentVideo = videoPreview;
+        currentVideoUrl = url;
         generateBtn.disabled = false;
 
         videoInfo.style.display = 'block';
@@ -469,6 +471,22 @@
           reject(e);
         }
       });
+    }
+
+    async function createSamplingVideo(startTime) {
+      if (!currentVideoUrl) {
+        throw new Error('비디오 소스를 찾을 수 없습니다.');
+      }
+      const sampleVideo = document.createElement('video');
+      sampleVideo.preload = 'auto';
+      sampleVideo.muted = true;
+      sampleVideo.playsInline = true;
+      sampleVideo.src = currentVideoUrl;
+      sampleVideo.load();
+      await new Promise(resolve => sampleVideo.addEventListener('loadedmetadata', resolve, { once: true }));
+      await new Promise(resolve => sampleVideo.addEventListener('canplay', resolve, { once: true }));
+      await seekToTime(sampleVideo, startTime);
+      return sampleVideo;
     }
 
     async function generateDirectSpriteSheet(video, cols, rows, frameWidth, frameHeight, trimStartTime, trimEndTime) {
@@ -1335,15 +1353,16 @@
       const wasPlaying = !currentVideo.paused && !currentVideo.ended;
       currentVideo.loop = false;
       currentVideo.pause();
+      let samplingVideo = null;
 
       try {
-        await seekToTime(currentVideo, trim.start);
+        samplingVideo = await createSamplingVideo(trim.start);
         if (loopMode === 'pingpong') {
-          await generatePingPongSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, trim.start, trim.end);
+          await generatePingPongSpriteSheet(samplingVideo, cols, rows, frameWidth, frameHeight, trim.start, trim.end);
         } else if (loopMode === 'overlap') {
-          await generateOverlapSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, overlapFrames, trim.start, trim.end);
+          await generateOverlapSpriteSheet(samplingVideo, cols, rows, frameWidth, frameHeight, overlapFrames, trim.start, trim.end);
         } else {
-          await generateDirectSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight, trim.start, trim.end);
+          await generateDirectSpriteSheet(samplingVideo, cols, rows, frameWidth, frameHeight, trim.start, trim.end);
         }
         previewSection.classList.add('is-active');
         previewSection.scrollIntoView({ behavior: 'smooth' });
@@ -1351,6 +1370,12 @@
         alert('오류 발생: ' + error.message);
         console.error(error);
       } finally {
+        if (samplingVideo) {
+          samplingVideo.pause();
+          samplingVideo.removeAttribute('src');
+          samplingVideo.load();
+          samplingVideo = null;
+        }
         currentVideo.loop = wasLooping;
         if (wasPlaying) { currentVideo.play().catch(() => {}); }
         generateBtn.disabled = false;
