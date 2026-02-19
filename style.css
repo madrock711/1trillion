@@ -748,6 +748,21 @@ main {
   min-width: 0;
 }
 
+.sequence-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #fff;
+  font-weight: 700;
+}
+
+.sequence-toggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent-color);
+}
+
 .sequence-control-group label {
   display: block;
   margin-bottom: 8px;
