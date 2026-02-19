@@ -457,6 +457,49 @@ main {
   line-height: 1.4;
 }
 
+.sequence-trim {
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #444;
+  background: #1b1b1b;
+}
+
+.sequence-trim-header {
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.sequence-trim-range {
+  position: relative;
+  height: 32px;
+}
+
+.sequence-trim-range input[type="range"] {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 100%;
+  margin: 0;
+  pointer-events: auto;
+}
+
+.sequence-trim-values {
+  display: grid;
+  grid-template-columns: repeat(6, auto);
+  gap: 8px 10px;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.sequence-trim-values strong {
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
 .sequence-mask {
   background: #222;
   border: 1px solid #444;

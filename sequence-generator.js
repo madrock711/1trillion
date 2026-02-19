@@ -18,6 +18,11 @@
     const fpsInput = root.querySelector('#sequenceFps');
     const autoGridBtn = root.querySelector('#sequenceAutoGrid');
     const autoMeta = root.querySelector('#sequenceAutoMeta');
+    const trimStartInput = root.querySelector('#sequenceTrimStart');
+    const trimEndInput = root.querySelector('#sequenceTrimEnd');
+    const trimStartValue = root.querySelector('#sequenceTrimStartValue');
+    const trimEndValue = root.querySelector('#sequenceTrimEndValue');
+    const trimDurationValue = root.querySelector('#sequenceTrimDurationValue');
     const maskToggle = root.querySelector('#sequenceMaskToggle');
     const maskInvert = root.querySelector('#sequenceMaskInvert');
     const maskInput = root.querySelector('#sequenceMaskInput');
@@ -47,6 +52,9 @@
     let defaultAutoMeta = autoMeta ? autoMeta.innerHTML : '';
 
     let currentVideo = null;
+    let trimStart = 0;
+    let trimEnd = 0;
+    let trimLoopActive = false;
     let maskImage = null;
     let maskUrl = '';
     let maskCache = null;
@@ -57,6 +65,61 @@
     function updateLoopModeUI() {
       const loopMode = loopModeSelect.value;
       overlapControl.style.display = loopMode === 'overlap' ? 'block' : 'none';
+    }
+
+    function clampTrimTime(time, trim) {
+      const endLimit = Math.max(0, trim.end - 0.001);
+      return Math.min(Math.max(trim.start, time), endLimit);
+    }
+
+    function formatTime(value) {
+      if (!isFinite(value)) { return '--'; }
+      return value.toFixed(2) + 's';
+    }
+
+    function updateTrimLabels() {
+      if (trimStartValue) { trimStartValue.textContent = formatTime(trimStart); }
+      if (trimEndValue) { trimEndValue.textContent = formatTime(trimEnd); }
+      if (trimDurationValue) { trimDurationValue.textContent = formatTime(Math.max(0, trimEnd - trimStart)); }
+    }
+
+    function applyTrimDefaults(duration) {
+      trimStart = 0;
+      trimEnd = duration || 0;
+      trimLoopActive = true;
+      if (trimStartInput) {
+        trimStartInput.min = '0';
+        trimStartInput.max = String(duration);
+        trimStartInput.step = '0.01';
+        trimStartInput.value = String(trimStart);
+      }
+      if (trimEndInput) {
+        trimEndInput.min = '0';
+        trimEndInput.max = String(duration);
+        trimEndInput.step = '0.01';
+        trimEndInput.value = String(trimEnd);
+      }
+      updateTrimLabels();
+    }
+
+    function getTrimRange() {
+      const duration = currentVideo && isFinite(currentVideo.duration) ? currentVideo.duration : 0;
+      let start = trimStartInput ? parseFloat(trimStartInput.value || '0') : trimStart;
+      let end = trimEndInput ? parseFloat(trimEndInput.value || String(duration)) : trimEnd;
+      if (!isFinite(start)) { start = 0; }
+      if (!isFinite(end)) { end = duration; }
+      start = Math.max(0, Math.min(start, duration));
+      end = Math.max(0, Math.min(end, duration));
+      const minGap = 0.05;
+      if (end - start < minGap) {
+        end = Math.min(duration, start + minGap);
+      }
+      trimStart = start;
+      trimEnd = end;
+      if (trimStartInput) { trimStartInput.value = String(start); }
+      if (trimEndInput) { trimEndInput.value = String(end); }
+      updateTrimLabels();
+      return { start, end, duration: Math.max(0, end - start) };
     }
 
     function setGrid(cols, rows) {
@@ -127,6 +190,7 @@
           형식: ${file.type || '알 수 없음'}<br>
           파일크기: ${(file.size / 1024 / 1024).toFixed(2)}MB
         `;
+        applyTrimDefaults(testVideo.duration);
         updateAutoMeta();
       };
 
@@ -312,6 +376,8 @@
 
     async function generateDirectSpriteSheet(video, cols, rows, frameWidth, frameHeight) {
       const totalFrames = cols * rows;
+      const trim = getTrimRange();
+      const segmentDuration = trim.duration;
       const canvas = outputCanvas;
       const ctx = canvas.getContext('2d');
       const useMask = !!(maskToggle.checked && getMaskSource());
@@ -327,8 +393,7 @@
         await new Promise(resolve => video.addEventListener('loadedmetadata', resolve, { once: true }));
       }
 
-      const duration = video.duration;
-      if (!duration || !isFinite(duration) || duration <= 0) {
+      if (!segmentDuration || !isFinite(segmentDuration) || segmentDuration <= 0) {
         throw new Error('비디오 duration을 읽을 수 없습니다.');
       }
 
@@ -337,12 +402,12 @@
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const interval = duration / totalFrames;
+      const interval = totalFrames > 1 ? (segmentDuration / (totalFrames - 1)) : 0;
 
       for (let i = 0; i < totalFrames; i++) {
         const row = Math.floor(i / cols);
         const col = i % cols;
-        const time = (i * interval) % duration;
+        const time = clampTrimTime(trim.start + (i * interval), trim);
 
         await seekToTime(video, time);
         if (useMask) {
@@ -366,6 +431,8 @@
     async function generatePingPongSpriteSheet(video, cols, rows, frameWidth, frameHeight) {
       const totalFrames = cols * rows;
       const halfFrames = Math.ceil(totalFrames / 2);
+      const trim = getTrimRange();
+      const segmentDuration = trim.duration;
       const canvas = outputCanvas;
       const ctx = canvas.getContext('2d');
       const useMask = !!(maskToggle.checked && getMaskSource());
@@ -381,8 +448,7 @@
         await new Promise(resolve => video.addEventListener('loadedmetadata', resolve, { once: true }));
       }
 
-      const duration = video.duration;
-      if (!duration || !isFinite(duration) || duration <= 0) {
+      if (!segmentDuration || !isFinite(segmentDuration) || segmentDuration <= 0) {
         throw new Error('비디오 duration을 읽을 수 없습니다.');
       }
 
@@ -391,7 +457,7 @@
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const interval = duration / halfFrames;
+      const interval = halfFrames > 1 ? (segmentDuration / (halfFrames - 1)) : 0;
       const timeIndices = [];
       for (let i = 0; i < halfFrames; i++) {
         timeIndices.push(i);
@@ -404,7 +470,7 @@
         const row = Math.floor(i / cols);
         const col = i % cols;
         const timeIndex = timeIndices[i];
-        const time = (timeIndex * interval) % duration;
+        const time = clampTrimTime(trim.start + (timeIndex * interval), trim);
 
         await seekToTime(video, time);
         if (useMask) {
@@ -427,6 +493,8 @@
 
     async function generateOverlapSpriteSheet(video, cols, rows, frameWidth, frameHeight, overlapPercent) {
       const totalFrames = cols * rows;
+      const trim = getTrimRange();
+      const segmentDuration = trim.duration;
       const canvas = outputCanvas;
       const ctx = canvas.getContext('2d');
       const useMask = !!(maskToggle.checked && getMaskSource());
@@ -435,8 +503,7 @@
         await new Promise(resolve => video.addEventListener('loadedmetadata', resolve, { once: true }));
       }
 
-      const duration = video.duration;
-      if (!duration || !isFinite(duration) || duration <= 0) {
+      if (!segmentDuration || !isFinite(segmentDuration) || segmentDuration <= 0) {
         throw new Error('비디오 duration을 읽을 수 없습니다.');
       }
 
@@ -467,7 +534,7 @@
 
       for (let i = 0; i < totalFrames; i++) {
         const t = totalFrames > 1 ? (i / (totalFrames - 1)) : 0;
-        const time = Math.min(duration - 0.001, t * duration);
+        const time = clampTrimTime(trim.start + (t * segmentDuration), trim);
         await seekToTime(video, time);
         tempCtx.clearRect(0, 0, frameWidth, frameHeight);
         tempCtx.drawImage(video, 0, 0, frameWidth, frameHeight);
@@ -597,6 +664,58 @@
       const file = e.target.files[0];
       handleVideoFile(file);
     });
+
+    function handleTrimInput(source) {
+      if (!currentVideo || !isFinite(currentVideo.duration) || currentVideo.duration <= 0) { return; }
+      currentVideo.pause();
+      const duration = currentVideo.duration;
+      let start = trimStartInput ? parseFloat(trimStartInput.value || '0') : trimStart;
+      let end = trimEndInput ? parseFloat(trimEndInput.value || String(duration)) : trimEnd;
+      if (!isFinite(start)) { start = 0; }
+      if (!isFinite(end)) { end = duration; }
+      const minGap = 0.05;
+      if (source === 'start' && start > end - minGap) {
+        end = Math.min(duration, start + minGap);
+        if (trimEndInput) { trimEndInput.value = String(end); }
+      }
+      if (source === 'end' && end < start + minGap) {
+        start = Math.max(0, end - minGap);
+        if (trimStartInput) { trimStartInput.value = String(start); }
+      }
+      trimStart = Math.max(0, Math.min(start, duration));
+      trimEnd = Math.max(0, Math.min(end, duration));
+      updateTrimLabels();
+
+      const seekTime = source === 'start' ? trimStart : Math.max(0, trimEnd - 0.001);
+      currentVideo.currentTime = Math.min(duration - 0.001, Math.max(0, seekTime));
+    }
+
+    if (trimStartInput) {
+      trimStartInput.addEventListener('input', () => handleTrimInput('start'));
+    }
+    if (trimEndInput) {
+      trimEndInput.addEventListener('input', () => handleTrimInput('end'));
+    }
+
+    if (videoPreview) {
+      videoPreview.addEventListener('play', () => {
+        if (!trimLoopActive) { return; }
+        const trim = getTrimRange();
+        if (videoPreview.currentTime < trim.start || videoPreview.currentTime >= trim.end) {
+          videoPreview.currentTime = clampTrimTime(trim.start, trim);
+        }
+      });
+      videoPreview.addEventListener('timeupdate', () => {
+        if (!trimLoopActive || videoPreview.paused) { return; }
+        const trim = getTrimRange();
+        if (videoPreview.currentTime >= trim.end - 0.01) {
+          videoPreview.currentTime = clampTrimTime(trim.start + 0.001, trim);
+          videoPreview.play();
+        } else if (videoPreview.currentTime < trim.start) {
+          videoPreview.currentTime = clampTrimTime(trim.start, trim);
+        }
+      });
+    }
 
     maskInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
@@ -1087,8 +1206,9 @@
         showError('먼저 비디오를 업로드해 주세요.');
         return;
       }
+      const trim = getTrimRange();
       const fps = Math.max(1, parseInt(fpsInput.value || '24', 10));
-      const duration = currentVideo.duration;
+      const duration = trim.duration || currentVideo.duration;
       let frames = Math.max(1, Math.round(duration * fps));
       const maxFrames = 256;
       let clamped = false;
@@ -1122,6 +1242,11 @@
       const frameHeight = parseInt(root.querySelector('#sequenceFrameHeight').value, 10);
       const loopMode = loopModeSelect.value;
       const overlapPercent = parseInt(root.querySelector('#sequenceOverlapPercent').value, 10);
+      const trim = getTrimRange();
+      if (!trim.duration || trim.duration < 0.05) {
+        alert('트림 구간이 너무 짧습니다. 시작/끝 값을 확인해 주세요.');
+        return;
+      }
 
       generateBtn.disabled = true;
       progress.classList.add('is-active');

@@ -420,6 +420,22 @@
                         <div id="sequenceVideoInfoContent"></div>
                     </div>
 
+                    <div class="sequence-trim">
+                        <div class="sequence-trim-header" data-i18n="sequence.trimTitle">트림 구간</div>
+                        <div class="sequence-trim-range">
+                            <input type="range" id="sequenceTrimStart" min="0" max="0" step="0.01" value="0" aria-label="Trim start">
+                            <input type="range" id="sequenceTrimEnd" min="0" max="0" step="0.01" value="0" aria-label="Trim end">
+                        </div>
+                        <div class="sequence-trim-values">
+                            <span data-i18n="sequence.trimStart">시작</span>
+                            <strong id="sequenceTrimStartValue">0.00s</strong>
+                            <span data-i18n="sequence.trimEnd">끝</span>
+                            <strong id="sequenceTrimEndValue">0.00s</strong>
+                            <span data-i18n="sequence.trimDuration">길이</span>
+                            <strong id="sequenceTrimDurationValue">0.00s</strong>
+                        </div>
+                    </div>
+
                     <div class="sequence-controls">
                         <div class="sequence-control-group">
                             <label for="sequenceGridCols" data-i18n="sequence.colsLabel">가로 (Columns)</label>
