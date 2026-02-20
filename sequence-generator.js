@@ -689,7 +689,7 @@
           frameData = baseFrames[i];
         } else {
           const overlapIndex = i - uniqueFrames;
-          const t = (overlapIndex + 1) / (overlapFrames + 1);
+          const t = (overlapIndex + 1) / overlapFrames;
           const curve = fadeCurveSelect ? fadeCurveSelect.value : 'linear';
           const alpha = applyFadeCurve(t, curve);
           const startFrameData = aFrames[overlapIndex];
@@ -727,8 +727,6 @@
         updateProgress();
         await new Promise(resolve => setTimeout(resolve, 10));
       }
-
-      // Overlap mode already blends the tail; avoid double blending.
     }
 
     function getStabilizeFrameCount(totalFrames) {
@@ -763,7 +761,6 @@
         const endRect = getFrameRect(endIndex, cols, frameWidth, frameHeight);
         const startData = ctx.getImageData(startRect.x, startRect.y, frameWidth, frameHeight);
         const endData = ctx.getImageData(endRect.x, endRect.y, frameWidth, frameHeight);
-        const blendedStart = ctx.createImageData(frameWidth, frameHeight);
         const blendedEnd = ctx.createImageData(frameWidth, frameHeight);
 
         for (let p = 0; p < startData.data.length; p += 4) {
@@ -776,18 +773,13 @@
           const e2 = endData.data[p + 2];
           const e3 = endData.data[p + 3];
 
-          blendedStart.data[p] = s0 * (1 - weight) + e0 * weight;
-          blendedStart.data[p + 1] = s1 * (1 - weight) + e1 * weight;
-          blendedStart.data[p + 2] = s2 * (1 - weight) + e2 * weight;
-          blendedStart.data[p + 3] = s3 * (1 - weight) + e3 * weight;
-
+          // Keep early frames pristine and only pull tail frames toward the loop start.
           blendedEnd.data[p] = e0 * (1 - weight) + s0 * weight;
           blendedEnd.data[p + 1] = e1 * (1 - weight) + s1 * weight;
           blendedEnd.data[p + 2] = e2 * (1 - weight) + s2 * weight;
           blendedEnd.data[p + 3] = e3 * (1 - weight) + s3 * weight;
         }
 
-        ctx.putImageData(blendedStart, startRect.x, startRect.y);
         ctx.putImageData(blendedEnd, endRect.x, endRect.y);
       }
     }
@@ -891,10 +883,10 @@
       maskDrop.addEventListener('drop', (e) => {
         e.preventDefault();
         maskDrop.classList.remove('is-drag');
-      const file = e.dataTransfer.files[0];
-      handleMaskFile(file);
-    });
-  }
+        const file = e.dataTransfer.files[0];
+        handleMaskFile(file);
+      });
+    }
 
     maskSourceInputs.forEach(input => {
       input.addEventListener('change', () => {
@@ -905,7 +897,7 @@
     });
 
     function mulberry32(seed) {
-      return function() {
+      return function () {
         let t = seed += 0x6D2B79F5;
         t = Math.imul(t ^ t >>> 15, t | 1);
         t ^= t + Math.imul(t ^ t >>> 7, t | 61);
@@ -1169,8 +1161,8 @@
     realtimeInputs.forEach((input) => {
       if (!input) { return; }
       input.addEventListener('input', () => {
-    generateMaskTexture();
-    updateMaskValues();
+        generateMaskTexture();
+        updateMaskValues();
         updateMaskValues();
       });
       input.addEventListener('change', () => {
