@@ -637,11 +637,13 @@
       }
       const overlapFrames = Math.min(totalFrames - 1, Math.max(1, Math.round(overlapFramesInput)));
       const uniqueFrames = totalFrames - overlapFrames;
+      const sampleFrames = totalFrames + overlapFrames;
       console.log('[overlap]', {
         totalFrames,
         overlapFramesInput,
         overlapFrames,
         uniqueFrames,
+        sampleFrames,
         overlapStartIndex: uniqueFrames + 1,
         overlapEndIndex: totalFrames
       });
@@ -653,8 +655,8 @@
         buildMaskCanvases(frameWidth, frameHeight);
       }
 
-      const baseFrames = new Array(totalFrames);
-      const totalSteps = totalFrames * 2;
+      const sampledFrames = new Array(sampleFrames);
+      const totalSteps = sampleFrames + totalFrames;
       let completedSteps = 0;
       const updateProgress = () => {
         const percent = Math.round((completedSteps / totalSteps) * 100);
@@ -663,19 +665,24 @@
       };
 
       const fps = getFpsValue();
-      for (let i = 0; i < totalFrames; i++) {
+      for (let i = 0; i < sampleFrames; i++) {
         const time = clampTrimTime(trim.start + (i / fps), trim);
         await seekToTime(video, time);
         tempCtx.clearRect(0, 0, frameWidth, frameHeight);
         tempCtx.drawImage(video, 0, 0, frameWidth, frameHeight);
-        baseFrames[i] = tempCtx.getImageData(0, 0, frameWidth, frameHeight);
+        sampledFrames[i] = tempCtx.getImageData(0, 0, frameWidth, frameHeight);
         completedSteps += 1;
         updateProgress();
         await new Promise(resolve => setTimeout(resolve, 10));
       }
 
-      const aFrames = baseFrames.slice(0, overlapFrames);
-      const cFrames = baseFrames.slice(uniqueFrames);
+      // Build A/B/C from sampled timeline:
+      // A: first overlap frames (to be trimmed from final output)
+      // B+C: next totalFrames frames (final output timeline)
+      // C: tail overlap region inside B+C that will blend toward A
+      const aFrames = sampledFrames.slice(0, overlapFrames);
+      const outputFrames = sampledFrames.slice(overlapFrames, overlapFrames + totalFrames);
+      const cFrames = outputFrames.slice(uniqueFrames);
 
       for (let i = 0; i < totalFrames; i++) {
         const row = Math.floor(i / cols);
@@ -683,10 +690,11 @@
         const x = col * frameWidth;
         const y = row * frameHeight;
         let frameData = null;
+        let secondaryIndex = null;
 
         if (i < uniqueFrames) {
-          // Keep base frames as-is for the non-overlap region.
-          frameData = baseFrames[i];
+          // Keep B region frames as-is.
+          frameData = outputFrames[i];
         } else {
           const overlapIndex = i - uniqueFrames;
           const t = (overlapIndex + 1) / overlapFrames;
@@ -698,7 +706,7 @@
             tileIndex: i + 1,
             overlapIndex: overlapIndex + 1,
             aIndex: overlapIndex + 1,
-            cIndex: uniqueFrames + overlapIndex + 1,
+            cIndex: overlapFrames + uniqueFrames + overlapIndex + 1,
             alpha: Number(alpha.toFixed(4))
           });
           const blendedData = tempCtx.createImageData(frameWidth, frameHeight);
@@ -709,6 +717,7 @@
             blendedData.data[p + 3] = endFrameData.data[p + 3] * (1 - alpha) + startFrameData.data[p + 3] * alpha;
           }
           frameData = blendedData;
+          secondaryIndex = `A${overlapIndex + 1}/C${overlapFrames + uniqueFrames + overlapIndex + 1}`;
         }
 
         tempCtx.clearRect(0, 0, frameWidth, frameHeight);
@@ -717,10 +726,6 @@
           applyMask(tempCtx, frameWidth, frameHeight, maskInvert && maskInvert.checked);
         }
         ctx.drawImage(tempCanvas, x, y);
-        const overlapIndex = i - uniqueFrames;
-        const secondaryIndex = (i >= uniqueFrames && overlapIndex >= 0 && overlapIndex < overlapFrames)
-          ? (overlapIndex + 1)
-          : null;
         drawFrameIndex(ctx, x, y, i + 1, secondaryIndex);
 
         completedSteps += 1;
