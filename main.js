@@ -55,6 +55,9 @@
         var inhaleGainNode = null;
         var exhaleGainNode = null;
         var mediaGraphReady = false;
+        var mediaGraphFailed = false;
+        var fallbackOscillator = null;
+        var fallbackOscillatorGain = null;
         var AUDIO_FADE_IN_MS = 2000;
 
         function updateVolume() {
@@ -77,36 +80,55 @@
         if (inhaleAudio && exhaleAudio && volumeSlider) {
           volumeSlider.addEventListener('input', updateVolume);
           volumeSlider.addEventListener('change', updateVolume);
-          updateVolume(); // Set initial volume
+          updateVolume();
         }
 
-        function ensureAudioGraph(){
-          if(mediaGraphReady) return;
+        function ensureAudioContext(){
           var AC = window.AudioContext || window.webkitAudioContext;
-          if(!AC || !inhaleAudio || !exhaleAudio) return;
+          if(!AC) return false;
           try{
             audioCtx = audioCtx || new AC();
             masterGainNode = masterGainNode || audioCtx.createGain();
+            if(!masterGainNode._connected){
+              masterGainNode.connect(audioCtx.destination);
+              masterGainNode._connected = true;
+            }
+            if(volumeSlider){
+              var v = Number(volumeSlider.value);
+              if(!isNaN(v)) masterGainNode.gain.value = v;
+            }
+            return true;
+          }catch(e){
+            return false;
+          }
+        }
+
+        function ensureAudioGraph(){
+          if(mediaGraphReady || mediaGraphFailed) return mediaGraphReady;
+          if(!ensureAudioContext() || !inhaleAudio || !exhaleAudio) return false;
+          try{
             inhaleGainNode = inhaleGainNode || audioCtx.createGain();
             exhaleGainNode = exhaleGainNode || audioCtx.createGain();
-            inhaleGainNode.connect(masterGainNode);
-            exhaleGainNode.connect(masterGainNode);
-            masterGainNode.connect(audioCtx.destination);
+            if(!inhaleGainNode._connected){
+              inhaleGainNode.connect(masterGainNode);
+              inhaleGainNode._connected = true;
+            }
+            if(!exhaleGainNode._connected){
+              exhaleGainNode.connect(masterGainNode);
+              exhaleGainNode._connected = true;
+            }
             var inhaleSrc = audioCtx.createMediaElementSource(inhaleAudio);
             var exhaleSrc = audioCtx.createMediaElementSource(exhaleAudio);
             inhaleSrc.connect(inhaleGainNode);
             exhaleSrc.connect(exhaleGainNode);
             mediaGraphReady = true;
-            if(volumeSlider){
-              var v = Number(volumeSlider.value);
-              if(!isNaN(v)) masterGainNode.gain.value = v;
-            }
             inhaleGainNode.gain.value = 0;
             exhaleGainNode.gain.value = 0;
             updateVolume();
           }catch(e){
-            // If graph setup fails, keep native volume behavior.
+            mediaGraphFailed = true;
           }
+          return mediaGraphReady;
         }
 
         function stopAudio(audio){
@@ -116,6 +138,18 @@
             audio.pause();
             audio.currentTime = 0;
           }catch(e){ /* ignore */ }
+        }
+
+        function stopFallbackTone(){
+          if(fallbackOscillator){
+            try{ fallbackOscillator.stop(); }catch(e){ /* ignore */ }
+            try{ fallbackOscillator.disconnect(); }catch(e){ /* ignore */ }
+            fallbackOscillator = null;
+          }
+          if(fallbackOscillatorGain){
+            try{ fallbackOscillatorGain.disconnect(); }catch(e){ /* ignore */ }
+            fallbackOscillatorGain = null;
+          }
         }
 
         function stopBreathAudio(){
@@ -128,6 +162,7 @@
               exhaleGainNode.gain.setValueAtTime(0, now);
             }catch(e){ /* ignore */ }
           }
+          stopFallbackTone();
           stopAudio(inhaleAudio);
           stopAudio(exhaleAudio);
         }
@@ -149,25 +184,53 @@
           }catch(e){ /* ignore */ }
         }
 
+        function startFallbackTone(isInhale){
+          if(!ensureAudioContext() || !audioCtx || !masterGainNode) return;
+          try{
+            if(audioCtx.state === 'suspended' && typeof audioCtx.resume === 'function'){
+              audioCtx.resume();
+            }
+          }catch(e){ /* ignore */ }
+
+          stopFallbackTone();
+          fallbackOscillator = audioCtx.createOscillator();
+          fallbackOscillatorGain = audioCtx.createGain();
+          fallbackOscillator.type = isInhale ? 'sine' : 'triangle';
+          fallbackOscillator.frequency.setValueAtTime(isInhale ? 220 : 180, audioCtx.currentTime);
+          fallbackOscillator.frequency.linearRampToValueAtTime(isInhale ? 320 : 120, audioCtx.currentTime + 1.4);
+          fallbackOscillatorGain.gain.setValueAtTime(0, audioCtx.currentTime);
+          fallbackOscillatorGain.gain.linearRampToValueAtTime(0.24, audioCtx.currentTime + 0.18);
+          fallbackOscillator.connect(fallbackOscillatorGain);
+          fallbackOscillatorGain.connect(masterGainNode);
+          fallbackOscillator.start();
+        }
+
         function playPhaseAudio(){
           var isInhale = (phase === 'INHALE');
           var current = getPhaseAudio(isInhale);
           var other = getPhaseAudio(!isInhale);
           var currentGain = getPhaseGain(isInhale);
           var otherGain = getPhaseGain(!isInhale);
-          if(!current) return;
-          if(typeof current.canPlayType === 'function' && !current.canPlayType('audio/mpeg')) return;
+          if(!current){
+            startFallbackTone(isInhale);
+            return;
+          }
+          if(typeof current.canPlayType === 'function' && !current.canPlayType('audio/mpeg')){
+            startFallbackTone(isInhale);
+            return;
+          }
 
           if(mediaGraphReady && audioCtx && currentGain && otherGain){
             stopAudio(other);
             stopAudio(current);
+            stopFallbackTone();
             try{
               if(audioCtx.state === 'suspended' && typeof audioCtx.resume === 'function'){
                 audioCtx.resume();
               }
             }catch(e){ /* ignore */ }
             current.loop = true;
-            current.play().catch(function(){ /* ignore */ });
+            current.play().catch(function(){ startFallbackTone(isInhale); });
             try{
               var now = audioCtx.currentTime;
               var dur = AUDIO_FADE_IN_MS / 1000;
@@ -182,12 +245,14 @@
 
           stopAudio(other);
           stopAudio(current);
+          startFallbackTone(isInhale);
           current.loop = true;
-          current.play().catch(function(){ /* ignore */ });
+          current.play().catch(function(){ startFallbackTone(isInhale); });
         }
 
         function unlockAudioElements(){
           if(audioUnlocked) return;
+          ensureAudioContext();
           ensureAudioGraph();
           if(audioCtx && typeof audioCtx.resume === 'function'){
             try{ audioCtx.resume(); }catch(e){ /* ignore */ }

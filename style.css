@@ -55,6 +55,31 @@ header .container {
     position: relative;
 }
 
+.home-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+    flex-shrink: 0;
+}
+
+.home-link:hover {
+    color: inherit;
+    border-color: rgba(29, 185, 84, 0.55);
+    transform: translateY(-1px);
+}
+
+.home-link-icon {
+    width: 24px;
+    height: 24px;
+    display: block;
+}
+
 .header-title {
     font-size: 1.5rem;
     font-weight: 700;
@@ -79,10 +104,12 @@ header nav {
         justify-content: center;
         flex-wrap: wrap;
     }
+
     .header-title {
         position: static;
         transform: none;
     }
+
     header nav {
         margin-left: 0;
         justify-content: center;
