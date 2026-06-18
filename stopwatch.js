@@ -330,6 +330,7 @@
           btnStart.textContent = t('sw.start');
           if(btnLap) btnLap.disabled = true;
           stopAuto();
+          if(window.appWakeLock) window.appWakeLock.release('co2-timer');
           elTime.textContent = '00:00:00.000';
           // 정지 시 하이라이트 제거
           clearActive();
@@ -344,6 +345,7 @@
         currentSet = 1;
         startTs = performance.now();
         running = true;
+        if(window.appWakeLock) window.appWakeLock.request('co2-timer');
         btnStart.textContent = t('sw.stop');
         if(btnLap) btnLap.disabled = true;
         // 어떤 칸이 채워질지 미리 강조
@@ -362,6 +364,7 @@
             elTime.textContent = '00:00:00.000';
             clearActive();
             stopAuto();
+            if(window.appWakeLock) window.appWakeLock.release('co2-timer');
             return;
           }
           startTs = performance.now();
@@ -388,6 +391,7 @@
       btnReset.addEventListener('click', function(){
         running = false; cancelAnimationFrame(tickRaf);
         clearAutoTimer(); stopAuto();
+        if(window.appWakeLock) window.appWakeLock.release('co2-timer');
         clearAll(); elTime.textContent = '00:00:00.000';
         btnStart.textContent = t('sw.start');
         if(btnLap) btnLap.disabled = true;

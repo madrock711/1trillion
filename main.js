@@ -3,6 +3,70 @@
         window.requestAnimationFrame = function(cb){ return setTimeout(function(){ cb(Date.now()); }, 16); };
       }
 
+      if(!window.appWakeLock){
+        var wakeLockSentinel = null;
+        var wakeLockPending = null;
+        var wakeLockUsers = {};
+
+        function hasWakeLockUsers(){
+          for(var key in wakeLockUsers){
+            if(Object.prototype.hasOwnProperty.call(wakeLockUsers, key)) return true;
+          }
+          return false;
+        }
+
+        function canUseWakeLock(){
+          return !!(navigator.wakeLock && typeof navigator.wakeLock.request === 'function' && window.isSecureContext !== false);
+        }
+
+        function releaseSentinel(){
+          if(!wakeLockSentinel) return;
+          var sentinel = wakeLockSentinel;
+          wakeLockSentinel = null;
+          try{
+            var released = sentinel.release();
+            if(released && typeof released.catch === 'function') released.catch(function(){});
+          }catch(e){ /* ignore */ }
+        }
+
+        function ensureWakeLock(){
+          if(!hasWakeLockUsers() || document.visibilityState === 'hidden' || !canUseWakeLock()) return;
+          if(wakeLockSentinel || wakeLockPending) return;
+          try{
+            wakeLockPending = navigator.wakeLock.request('screen')
+              .then(function(sentinel){
+                wakeLockSentinel = sentinel;
+                wakeLockSentinel.addEventListener('release', function(){
+                  wakeLockSentinel = null;
+                  if(hasWakeLockUsers() && document.visibilityState !== 'hidden') ensureWakeLock();
+                });
+                if(!hasWakeLockUsers() || document.visibilityState === 'hidden') releaseSentinel();
+              })
+              .catch(function(){})
+              .finally(function(){ wakeLockPending = null; });
+          }catch(e){
+            wakeLockPending = null;
+          }
+        }
+
+        window.appWakeLock = {
+          request: function(key){
+            wakeLockUsers[key || 'default'] = true;
+            ensureWakeLock();
+          },
+          release: function(key){
+            delete wakeLockUsers[key || 'default'];
+            if(!hasWakeLockUsers()) releaseSentinel();
+          },
+          isSupported: canUseWakeLock
+        };
+
+        document.addEventListener('visibilitychange', function(){
+          if(document.visibilityState === 'hidden') releaseSentinel();
+          else ensureWakeLock();
+        }, false);
+      }
+
       function boot(){
         try{
           var nodes = document.querySelectorAll('.br-embed');
@@ -345,9 +409,9 @@
           if(phase==='INHALE') setPhase('EXHALE'); else setPhase('INHALE');
         }
 
-        function start(){ if(running) return; unlockAudioElements(); running=true; var b=q('#br-start'); if(b) b.textContent = t('breath.pause'); lastTickTs=Date.now(); playPhaseAudio(); requestAnimationFrame(tick); }
-        function pause(){ if(!running) return; running=false; var b=q('#br-start'); if(b) b.textContent = t('breath.start'); stopBreathAudio(); }
-        function reset(){ running=false; var b=q('#br-start'); if(b) b.textContent = t('breath.start'); phaseElapsedMs=0; totalElapsedMs=0; round=1; if(roundEl) roundEl.textContent='1'; stopBreathAudio(); setPhase('INHALE'); if(totalLbl) totalLbl.textContent='00:00'; }
+        function start(){ if(running) return; unlockAudioElements(); running=true; if(window.appWakeLock) window.appWakeLock.request('breath-timer'); var b=q('#br-start'); if(b) b.textContent = t('breath.pause'); lastTickTs=Date.now(); playPhaseAudio(); requestAnimationFrame(tick); }
+        function pause(){ if(!running) return; running=false; if(window.appWakeLock) window.appWakeLock.release('breath-timer'); var b=q('#br-start'); if(b) b.textContent = t('breath.start'); stopBreathAudio(); }
+        function reset(){ running=false; if(window.appWakeLock) window.appWakeLock.release('breath-timer'); var b=q('#br-start'); if(b) b.textContent = t('breath.start'); phaseElapsedMs=0; totalElapsedMs=0; round=1; if(roundEl) roundEl.textContent='1'; stopBreathAudio(); setPhase('INHALE'); if(totalLbl) totalLbl.textContent='00:00'; }
 
         function tick(ts){
           if(!running) return;
