@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260403-1">
+    <link rel="stylesheet" href="style.css?v=20260619-1">
 </head>
 <body>
     <header>
@@ -145,7 +145,7 @@
                 <div class="clockbox-wrapper">
                     <div class="clockbox" id="sw-root" aria-label="Stopwatch" data-i18n="sw.wrapper" data-i18n-attr="aria-label">
                         <div class="tab-head">
-                            <div class="clockbox-title" data-i18n="sw.title">⏱ 스톱워치 (Start / Lap / Stop / Reset — Lap과 Rest를 교대로 기록)</div>
+                            <div class="clockbox-title" data-i18n="sw.title">⏱ CO2 테이블 스톱워치</div>
                             <button class="share-btn" type="button" data-share-tab="co2" aria-label="Copy share link for CO2 Table Timer" data-i18n="share.aria.co2" data-i18n-attr="aria-label">
                                 <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" alt="" aria-hidden="true">
                             </button>
@@ -155,9 +155,27 @@
 
                         <div class="sw-controls">
                             <button id="sw-start" class="sw-btn primary" type="button" data-i18n="sw.start">Start</button>
-                            <button id="sw-lap" class="sw-btn" type="button" disabled data-i18n="sw.lap">Lap</button>
                             <button id="sw-reset" class="sw-btn danger" type="button" data-i18n="sw.reset">Reset</button>
-                            <button id="sw-auto" class="sw-btn" type="button" data-i18n="sw.auto" data-i18n-attr="aria-label" aria-label="Auto CO2 routine"><span data-i18n="sw.auto">Auto</span></button>
+                        </div>
+
+                        <div class="sw-routine-settings" aria-label="CO2 table settings" data-i18n="sw.settingsAria" data-i18n-attr="aria-label">
+                            <label class="sw-setting">
+                                <span data-i18n="sw.holdTime">Breath hold</span>
+                                <div class="sw-stepper">
+                                    <button class="sw-step-btn" type="button" data-sw-adjust="hold" data-delta="-5" aria-label="Decrease breath hold by 5 seconds" data-i18n="sw.holdDec" data-i18n-attr="aria-label">-5s</button>
+                                    <input id="sw-hold-sec" class="sw-setting-input" type="number" inputmode="numeric" min="5" step="5" value="120">
+                                    <button class="sw-step-btn" type="button" data-sw-adjust="hold" data-delta="5" aria-label="Increase breath hold by 5 seconds" data-i18n="sw.holdInc" data-i18n-attr="aria-label">+5s</button>
+                                </div>
+                            </label>
+                            <label class="sw-setting">
+                                <span data-i18n="sw.restTime">Rest</span>
+                                <div class="sw-stepper">
+                                    <button class="sw-step-btn" type="button" data-sw-adjust="rest" data-delta="-5" aria-label="Decrease rest by 5 seconds" data-i18n="sw.restDec" data-i18n-attr="aria-label">-5s</button>
+                                    <input id="sw-rest-sec" class="sw-setting-input" type="number" inputmode="numeric" min="15" step="5" value="120">
+                                    <button class="sw-step-btn" type="button" data-sw-adjust="rest" data-delta="5" aria-label="Increase rest by 5 seconds" data-i18n="sw.restInc" data-i18n-attr="aria-label">+5s</button>
+                                </div>
+                            </label>
+                            <div class="sw-routine-note" data-i18n="sw.routineNote">Start runs the CO2 table automatically. Rest drops by 15 seconds each round and stops decreasing at 15 seconds.</div>
                         </div>
 
                         <div class="sw-grid">
@@ -167,23 +185,23 @@
                                     <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th data-i18n="sw.lapSec">Lap (s)</th>
+                                        <th data-i18n="sw.lapSec">Hold (s)</th>
                                         <th data-i18n="sw.restSec">Rest (s)</th>
                                     </tr>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
-                                <div class="sw-note" data-i18n="sw.note">측정 중에는 다음에 기록될 칸이 색으로 표시됩니다. (Lap=빨강, Rest=파랑)</div>
+                                <div class="sw-note" data-i18n="sw.note">측정 중에는 다음에 기록될 칸이 색으로 표시됩니다. (숨참기=빨강, 휴식=파랑)</div>
                             </div>
 
                             <div class="sw-panel">
-                                <h3 data-i18n="sw.chartTitle">Lap/Rest Chart (s)</h3>
+                                <h3 data-i18n="sw.chartTitle">Hold/Rest Chart (s)</h3>
                                 <div class="sw-legend">
-                                    <span class="sw-dot lap"></span> <span data-i18n="sw.legendLap">Lap</span>
+                                    <span class="sw-dot lap"></span> <span data-i18n="sw.legendLap">Hold</span>
                                     &nbsp;&nbsp;
                                     <span class="sw-dot rest"></span> <span data-i18n="sw.legendRest">Rest</span>
                                 </div>
-                                <canvas id="sw-chart" width="640" height="300" aria-label="Lap/Rest chart" data-i18n="sw.chartAria" data-i18n-attr="aria-label"></canvas>
+                                <canvas id="sw-chart" width="640" height="300" aria-label="Hold/Rest chart" data-i18n="sw.chartAria" data-i18n-attr="aria-label"></canvas>
                                 <div class="sw-footer">
                                 <button id="sw-export-csv" class="sw-btn" type="button" data-i18n="sw.exportCsv">Export CSV</button>
                                 <button id="sw-export-json" class="sw-btn" type="button" data-i18n="sw.exportJson">Export JSON</button>
@@ -725,8 +743,8 @@
                 </svg>
                 <figcaption data-i18n="blog.post2.chartCaption">Flat red line = fixed breath-hold. Blue line steps down = shorter rest each round.</figcaption>
             </figure>
-            <p data-i18n="blog.post2.p3">How to use the timer: press Start to begin, Lap to log the current segment and switch between breath-hold and rest, Stop to end and save the session, and Reset to clear. Records are listed as Lap → Rest pairs for easy review.</p>
-            <p data-i18n="blog.post2.p4">Analyze your progress at a glance with the chart (Lap=red, Rest=blue). Export CSV or JSON for spreadsheets, or save a PNG chart for your training log. Train 2–3 times per week, start on dry land, and never train alone.</p>
+            <p data-i18n="blog.post2.p3">How to use the timer: set the breath-hold and starting rest times, then press Start. The timer runs the CO2 table automatically, keeping the hold fixed while rest gets 15 seconds shorter each round.</p>
+            <p data-i18n="blog.post2.p4">Analyze your progress at a glance with the chart (Hold=red, Rest=blue). Export CSV or JSON for spreadsheets, or save a PNG chart for your training log. Train 2-3 times per week, start on dry land, and never train alone.</p>
             <details class="guide-details">
                 <summary data-i18n="blog.post2.readMoreTitle">Read more</summary>
                 <div class="guide-details-body" data-i18n="blog.post2.readMoreHtml" data-i18n-html="blog.post2.readMoreHtml"></div>
@@ -775,10 +793,10 @@
 
     <div id="share-toast" class="share-toast" role="status" aria-live="polite"></div>
 
-    <script src="i18n.js?v=20260211-2"></script>
+    <script src="i18n.js?v=20260619-1"></script>
     <script src="main.js?v=20260403-1"></script>
     <script src="foot-analysis.js?v=20260211-13"></script>
-    <script src="stopwatch.js?v=20260208-3"></script>
+    <script src="stopwatch.js?v=20260619-1"></script>
     <script src="sequence-generator.js?v=20260219-1"></script>
     <audio id="inhale-sound" src="assets/sounds/inhale.mp3" preload="auto"></audio>
     <audio id="exhale-sound" src="assets/sounds/exhale.mp3" preload="auto"></audio>

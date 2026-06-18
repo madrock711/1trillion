@@ -12,7 +12,9 @@
       const btnStart = root.querySelector('#sw-start');
       const btnLap   = root.querySelector('#sw-lap');
       const btnReset = root.querySelector('#sw-reset');
-      const btnAuto  = root.querySelector('#sw-auto');
+      const holdInput = root.querySelector('#sw-hold-sec');
+      const restInput = root.querySelector('#sw-rest-sec');
+      const adjustButtons = Array.from(root.querySelectorAll('[data-sw-adjust]'));
       const tableEl  = root.querySelector('#sw-table');
       let tblBody = null;
       if (tableEl) {
@@ -52,7 +54,7 @@
       const btnPNG  = root.querySelector('#sw-export-png');
       const btnCopy = root.querySelector('#sw-copy');
 
-      // 색상 상수: Lap=빨간색, Rest=파란색
+      // 색상 상수: Hold=빨간색, Rest=파란색
       const COLOR_LAP  = '#ef4444'; // red-500
       const COLOR_REST = '#3b82f6'; // blue-500
 
@@ -78,14 +80,45 @@
       let autoMode  = false;
       let autoTimer = null;
       let autoIdx   = 0;
-      const autoSegments = [
-        120000, 105000,
-        120000,  90000,
-        120000,  75000,
-        120000,  60000,
-        120000,  45000,
-        120000,  30000
-      ];
+      let autoSegments = [];
+      const DEFAULT_HOLD_SEC = 120;
+      const DEFAULT_REST_SEC = 120;
+      const HOLD_MIN_SEC = 5;
+      const REST_MIN_SEC = 15;
+      const INPUT_STEP_SEC = 5;
+      const REST_DROP_PER_ROUND_SEC = 15;
+
+      function normalizeSeconds(value, min, fallback){
+        const parsed = (typeof value === 'string' && value.trim() === '') ? NaN : Number(value);
+        const base = Number.isFinite(parsed) ? parsed : fallback;
+        return Math.max(min, Math.round(base / INPUT_STEP_SEC) * INPUT_STEP_SEC);
+      }
+      function setInputSeconds(input, value, min, fallback){
+        if(!input) return normalizeSeconds(value, min, fallback);
+        const next = normalizeSeconds(value, min, fallback);
+        input.value = String(next);
+        return next;
+      }
+      function syncRoutineInputs(){
+        const holdSec = setInputSeconds(holdInput, holdInput ? holdInput.value : DEFAULT_HOLD_SEC, HOLD_MIN_SEC, DEFAULT_HOLD_SEC);
+        const restSec = setInputSeconds(restInput, restInput ? restInput.value : DEFAULT_REST_SEC, REST_MIN_SEC, DEFAULT_REST_SEC);
+        return { holdSec, restSec };
+      }
+      function setRoutineControlsDisabled(disabled){
+        [holdInput, restInput, ...adjustButtons].forEach(el=>{ if(el) el.disabled = disabled; });
+      }
+      function buildAutoSegments(){
+        const cfg = syncRoutineInputs();
+        const segments = [];
+        let restSec = cfg.restSec;
+        while(true){
+          segments.push(cfg.holdSec * 1000);
+          segments.push(restSec * 1000);
+          if(restSec <= REST_MIN_SEC) break;
+          restSec = Math.max(REST_MIN_SEC, restSec - REST_DROP_PER_ROUND_SEC);
+        }
+        return segments;
+      }
 
       // --- 하이라이트 유틸 ---
       function clearActive(){
@@ -111,8 +144,9 @@
       function stopAuto(){
         autoMode = false;
         autoIdx = 0;
+        autoSegments = [];
         clearAutoTimer();
-        if(btnAuto) btnAuto.disabled = false;
+        setRoutineControlsDisabled(false);
       }
 
       // --- Chart ---
@@ -263,7 +297,24 @@
 
       // --- Controls ---
       const stopBubble = (e)=>{ e.stopPropagation(); };
-      [btnStart, btnLap, btnReset, btnAuto].forEach(el=>{ if(el){ el.addEventListener('click', stopBubble); el.addEventListener('touchstart', stopBubble, {passive:false}); }});
+      [btnStart, btnLap, btnReset, ...adjustButtons].forEach(el=>{ if(el){ el.addEventListener('click', stopBubble); el.addEventListener('touchstart', stopBubble, {passive:false}); }});
+
+      adjustButtons.forEach(function(btn){
+        btn.addEventListener('click', function(){
+          if(running) return;
+          const target = btn.getAttribute('data-sw-adjust');
+          const delta = Number(btn.getAttribute('data-delta')) || 0;
+          if(target === 'hold') setInputSeconds(holdInput, Number(holdInput ? holdInput.value : DEFAULT_HOLD_SEC) + delta, HOLD_MIN_SEC, DEFAULT_HOLD_SEC);
+          if(target === 'rest') setInputSeconds(restInput, Number(restInput ? restInput.value : DEFAULT_REST_SEC) + delta, REST_MIN_SEC, DEFAULT_REST_SEC);
+        });
+      });
+      [holdInput, restInput].forEach(function(input){
+        if(!input) return;
+        input.addEventListener('change', function(){
+          if(input === holdInput) setInputSeconds(input, input.value, HOLD_MIN_SEC, DEFAULT_HOLD_SEC);
+          if(input === restInput) setInputSeconds(input, input.value, REST_MIN_SEC, DEFAULT_REST_SEC);
+        });
+      });
 
       btnStart.addEventListener('click', function(){
         if(running){
@@ -274,24 +325,53 @@
           const seg = performance.now() - startTs;
           recordCurrent(seg);
           btnStart.textContent = t('sw.start');
-          btnLap.disabled = true;
+          if(btnLap) btnLap.disabled = true;
           stopAuto();
           elTime.textContent = '00:00:00.000';
           // 정지 시 하이라이트 제거
           clearActive();
           return;
         }
-        // Start: 현재 기대 타입(nextType) 구간 측정 시작
+        clearAll();
+        autoSegments = buildAutoSegments();
+        autoMode = true;
+        autoIdx = 0;
+        setRoutineControlsDisabled(true);
+        nextType = 'LAP';
+        currentSet = 1;
         startTs = performance.now();
         running = true;
         btnStart.textContent = t('sw.stop');
-        btnLap.disabled = false;
+        if(btnLap) btnLap.disabled = true;
         // 어떤 칸이 채워질지 미리 강조
         setActiveHighlight();
         tickRaf = requestAnimationFrame(tick);
+        function advance(){
+          if(!running || !autoMode) return;
+          const seg = performance.now() - startTs;
+          recordCurrent(seg);
+          autoIdx += 1;
+          if(autoIdx >= autoSegments.length){
+            running = false;
+            cancelAnimationFrame(tickRaf);
+            btnStart.textContent = t('sw.start');
+            if(btnLap) btnLap.disabled = true;
+            elTime.textContent = '00:00:00.000';
+            clearActive();
+            stopAuto();
+            return;
+          }
+          startTs = performance.now();
+          elTime.textContent = '00:00:00.000';
+          setActiveHighlight();
+          clearAutoTimer();
+          autoTimer = setTimeout(advance, autoSegments[autoIdx]);
+        }
+        clearAutoTimer();
+        autoTimer = setTimeout(advance, autoSegments[autoIdx]);
       });
 
-      btnLap.addEventListener('click', function(){
+      btnLap && btnLap.addEventListener('click', function(){
         if(!running || autoMode) return;
         const seg = performance.now() - startTs; // 현재 구간 기록
         recordCurrent(seg);
@@ -307,55 +387,13 @@
         clearAutoTimer(); stopAuto();
         clearAll(); elTime.textContent = '00:00:00.000';
         btnStart.textContent = t('sw.start');
-        btnLap.disabled = true;
+        if(btnLap) btnLap.disabled = true;
         clearActive();
       });
 
-      if(btnAuto){
-        btnAuto.addEventListener('click', function(){
-          if(running || autoMode) return;
-          // start auto routine from scratch
-          clearAll();
-          autoMode = true;
-          autoIdx = 0;
-          if(btnAuto) btnAuto.disabled = true;
-          btnLap.disabled = true;
-          nextType = 'LAP';
-          currentSet = 1;
-          startTs = performance.now();
-          running = true;
-          btnStart.textContent = t('sw.stop');
-          setActiveHighlight();
-          tickRaf = requestAnimationFrame(tick);
-          function advance(){
-            if(!running || !autoMode) return;
-            const seg = performance.now() - startTs;
-            recordCurrent(seg);
-            autoIdx += 1;
-            if(autoIdx >= autoSegments.length){
-              running = false;
-              cancelAnimationFrame(tickRaf);
-              btnStart.textContent = t('sw.start');
-              btnLap.disabled = true;
-              elTime.textContent = '00:00:00.000';
-              clearActive();
-              stopAuto();
-              return;
-            }
-            startTs = performance.now();
-            elTime.textContent = '00:00:00.000';
-            setActiveHighlight();
-            clearAutoTimer();
-            autoTimer = setTimeout(advance, autoSegments[autoIdx]);
-          }
-          clearAutoTimer();
-          autoTimer = setTimeout(advance, autoSegments[autoIdx]);
-        });
-      }
-
       // --- Export ---
       function toCSV(){
-        const header = ['no','lap_s','lap_ms','rest_s','rest_ms'];
+        const header = ['no','hold_s','hold_ms','rest_s','rest_ms'];
         const rows = sets.map(s=>[
           s.n,
           (typeof s.lapMs==='number') ? (s.lapMs/1000).toFixed(2) : '',
@@ -385,6 +423,7 @@
 
       document.addEventListener('app:lang', function(){ applyLanguageState(); }, false);
       applyLanguageState();
+      syncRoutineInputs();
 
       // --- 런타임 에러 표시 ---
       window.addEventListener('error', function(ev){
