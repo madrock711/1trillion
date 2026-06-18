@@ -155,7 +155,10 @@
         ctx.clearRect(0,0,W,H);
         ctx.fillStyle = '#0f1115'; ctx.fillRect(0,0,W,H);
         const nowTs = performance.now();
-        const pad = {l:40, r:12, t:12, b:28};
+        const pulseMaxRadius = 46;
+        const pulseMaxLineW = 10;
+        const pulsePad = Math.ceil(pulseMaxRadius + pulseMaxLineW / 2 + 2);
+        const pad = {l:40 + pulsePad, r:12 + pulsePad, t:12 + pulsePad, b:28 + pulsePad};
         ctx.strokeStyle = '#2a2f38'; ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(pad.l, H - pad.b); ctx.lineTo(W - pad.r, H - pad.b);
@@ -231,7 +234,7 @@
               const lineW = 10 * fade;
               ctx.save();
               ctx.beginPath();
-              ctx.rect(pad.l, pad.t, W - pad.l - pad.r, H - pad.t - pad.b);
+              ctx.rect(0, 0, W, H);
               ctx.clip();
               ctx.beginPath();
               ctx.strokeStyle = pointFill;
