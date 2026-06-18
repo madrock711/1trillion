@@ -121,9 +121,23 @@
       }
 
       // --- 하이라이트 유틸 ---
+      function clamp01(value){
+        return Math.max(0, Math.min(1, value));
+      }
+      function setCellGauge(cell, ratio){
+        if(!cell) return;
+        cell.style.setProperty('--sw-fill', (clamp01(ratio) * 100).toFixed(2) + '%');
+      }
+      function clearCellGauge(cell){
+        if(!cell) return;
+        cell.style.removeProperty('--sw-fill');
+      }
       function clearActive(){
         if(!tblBody) return;
-        tblBody.querySelectorAll('td.lap.active, td.rest.active').forEach(td=> td.classList.remove('active'));
+        tblBody.querySelectorAll('td.lap.active, td.rest.active').forEach(td=>{
+          td.classList.remove('active');
+          clearCellGauge(td);
+        });
       }
       function setActiveHighlight(){
         clearActive();
@@ -131,7 +145,10 @@
         const tr = ensureRowForSet(currentSet);
         if(!tr) return;
         const cell = tr.querySelector(nextType==='LAP' ? 'td.lap' : 'td.rest');
-        if(cell) cell.classList.add('active');
+        if(cell){
+          cell.classList.add('active');
+          setCellGauge(cell, 1);
+        }
       }
       function flashSaved(cell){
         if(!cell) return;
@@ -265,8 +282,10 @@
           if(tr){
             const cell = tr.querySelector(nextType==='LAP' ? 'td.lap' : 'td.rest');
             if(cell){
-              const remaining = Math.max(0, autoSegments[autoIdx] - elapsed);
+              const segmentMs = autoSegments[autoIdx] || 1;
+              const remaining = Math.max(0, segmentMs - elapsed);
               cell.innerHTML = formatSecHTML(remaining/1000);
+              setCellGauge(cell, remaining / segmentMs);
             }
           }
         }
