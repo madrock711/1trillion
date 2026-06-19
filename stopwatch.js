@@ -80,7 +80,7 @@
       let autoMode  = false;
       let autoTimer = null;
       let autoIdx   = 0;
-      let autoSegments = [];
+      let autoCfg = null;
       const DEFAULT_HOLD_SEC = 120;
       const DEFAULT_REST_SEC = 120;
       const HOLD_MIN_SEC = 5;
@@ -107,17 +107,17 @@
       function setRoutineControlsDisabled(disabled){
         [holdInput, restInput, ...adjustButtons].forEach(el=>{ if(el) el.disabled = disabled; });
       }
-      function buildAutoSegments(){
-        const cfg = syncRoutineInputs();
-        const segments = [];
-        let restSec = cfg.restSec;
-        while(true){
-          segments.push(cfg.holdSec * 1000);
-          segments.push(restSec * 1000);
-          if(restSec <= REST_MIN_SEC) break;
-          restSec = Math.max(REST_MIN_SEC, restSec - REST_DROP_PER_ROUND_SEC);
-        }
-        return segments;
+      function startAutoRoutine(){
+        autoCfg = syncRoutineInputs();
+        autoMode = true;
+        autoIdx = 0;
+      }
+      function currentAutoSegmentMs(){
+        if(!autoCfg) return DEFAULT_HOLD_SEC * 1000;
+        const roundIndex = Math.floor(autoIdx / 2);
+        if(autoIdx % 2 === 0) return autoCfg.holdSec * 1000;
+        const restSec = Math.max(REST_MIN_SEC, autoCfg.restSec - REST_DROP_PER_ROUND_SEC * roundIndex);
+        return restSec * 1000;
       }
 
       // --- 하이라이트 유틸 ---
@@ -161,7 +161,7 @@
       function stopAuto(){
         autoMode = false;
         autoIdx = 0;
-        autoSegments = [];
+        autoCfg = null;
         clearAutoTimer();
         setRoutineControlsDisabled(false);
       }
@@ -292,12 +292,12 @@
         const elapsed = now - startTs; // 현재 구간만 표기
         elTime.textContent = fmt(elapsed);
         drawChart({ms: elapsed, type: nextType, setIndex: currentSet});
-        if(autoMode && autoIdx < autoSegments.length){
+        if(autoMode){
           const tr = ensureRowForSet(currentSet);
           if(tr){
             const cell = tr.querySelector(nextType==='LAP' ? 'td.lap' : 'td.rest');
             if(cell){
-              const segmentMs = autoSegments[autoIdx] || 1;
+              const segmentMs = currentAutoSegmentMs() || 1;
               const remaining = Math.max(0, segmentMs - elapsed);
               cell.innerHTML = formatSecHTML(remaining/1000);
               setCellGauge(cell, remaining / segmentMs);
@@ -370,9 +370,7 @@
           return;
         }
         clearAll();
-        autoSegments = buildAutoSegments();
-        autoMode = true;
-        autoIdx = 0;
+        startAutoRoutine();
         setRoutineControlsDisabled(true);
         nextType = 'LAP';
         currentSet = 1;
@@ -388,24 +386,14 @@
           const seg = performance.now() - startTs;
           recordCurrent(seg);
           autoIdx += 1;
-          if(autoIdx >= autoSegments.length){
-            setRunningState(false);
-            cancelTick();
-            btnStart.textContent = t('sw.start');
-            if(btnLap) btnLap.disabled = true;
-            elTime.textContent = '00:00:00.000';
-            clearActive();
-            stopAuto();
-            return;
-          }
           startTs = performance.now();
           elTime.textContent = '00:00:00.000';
           setActiveHighlight();
           clearAutoTimer();
-          autoTimer = setTimeout(advance, autoSegments[autoIdx]);
+          autoTimer = setTimeout(advance, currentAutoSegmentMs());
         }
         clearAutoTimer();
-        autoTimer = setTimeout(advance, autoSegments[autoIdx]);
+        autoTimer = setTimeout(advance, currentAutoSegmentMs());
       });
 
       btnLap && btnLap.addEventListener('click', function(){
