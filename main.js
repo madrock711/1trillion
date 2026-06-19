@@ -6,6 +6,7 @@
       if(!window.appWakeLock){
         var wakeLockSentinel = null;
         var wakeLockPending = null;
+        var wakeLockReleaseCheck = null;
         var wakeLockUsers = {};
 
         function hasWakeLockUsers(){
@@ -17,6 +18,21 @@
 
         function canUseWakeLock(){
           return !!(navigator.wakeLock && typeof navigator.wakeLock.request === 'function' && window.isSecureContext !== false);
+        }
+
+        function clearReleaseCheck(){
+          if(wakeLockReleaseCheck){
+            clearTimeout(wakeLockReleaseCheck);
+            wakeLockReleaseCheck = null;
+          }
+        }
+
+        function scheduleReleaseCheck(){
+          clearReleaseCheck();
+          wakeLockReleaseCheck = setTimeout(function(){
+            wakeLockReleaseCheck = null;
+            if(!hasWakeLockUsers()) releaseSentinel();
+          }, 250);
         }
 
         function releaseSentinel(){
@@ -31,6 +47,7 @@
 
         function ensureWakeLock(){
           if(!hasWakeLockUsers() || document.visibilityState === 'hidden' || !canUseWakeLock()) return;
+          clearReleaseCheck();
           if(wakeLockSentinel || wakeLockPending) return;
           try{
             wakeLockPending = navigator.wakeLock.request('screen')
@@ -40,7 +57,10 @@
                   wakeLockSentinel = null;
                   if(hasWakeLockUsers() && document.visibilityState !== 'hidden') ensureWakeLock();
                 });
-                if(!hasWakeLockUsers() || document.visibilityState === 'hidden') releaseSentinel();
+                if(!hasWakeLockUsers() || document.visibilityState === 'hidden'){
+                  releaseSentinel();
+                  if(!hasWakeLockUsers()) scheduleReleaseCheck();
+                }
               })
               .catch(function(){})
               .finally(function(){ wakeLockPending = null; });
@@ -56,7 +76,10 @@
           },
           release: function(key){
             delete wakeLockUsers[key || 'default'];
-            if(!hasWakeLockUsers()) releaseSentinel();
+            if(!hasWakeLockUsers()){
+              releaseSentinel();
+              scheduleReleaseCheck();
+            }
           },
           isSupported: canUseWakeLock
         };

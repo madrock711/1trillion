@@ -165,6 +165,21 @@
         clearAutoTimer();
         setRoutineControlsDisabled(false);
       }
+      function syncWakeLock(){
+        if(!window.appWakeLock) return;
+        if(running) window.appWakeLock.request('co2-timer');
+        else window.appWakeLock.release('co2-timer');
+      }
+      function setRunningState(nextRunning){
+        running = !!nextRunning;
+        syncWakeLock();
+      }
+      function cancelTick(){
+        if(tickRaf){
+          cancelAnimationFrame(tickRaf);
+          tickRaf = null;
+        }
+      }
 
       // --- Chart ---
       function drawChart(live){
@@ -341,15 +356,14 @@
       btnStart.addEventListener('click', function(){
         if(running){
           // Stop: 현재 구간 기록 후 정지
-          running = false;
-          cancelAnimationFrame(tickRaf);
+          setRunningState(false);
+          cancelTick();
           clearAutoTimer();
           const seg = performance.now() - startTs;
           recordCurrent(seg);
           btnStart.textContent = t('sw.start');
           if(btnLap) btnLap.disabled = true;
           stopAuto();
-          if(window.appWakeLock) window.appWakeLock.release('co2-timer');
           elTime.textContent = '00:00:00.000';
           // 정지 시 하이라이트 제거
           clearActive();
@@ -363,8 +377,7 @@
         nextType = 'LAP';
         currentSet = 1;
         startTs = performance.now();
-        running = true;
-        if(window.appWakeLock) window.appWakeLock.request('co2-timer');
+        setRunningState(true);
         btnStart.textContent = t('sw.stop');
         if(btnLap) btnLap.disabled = true;
         // 어떤 칸이 채워질지 미리 강조
@@ -376,14 +389,13 @@
           recordCurrent(seg);
           autoIdx += 1;
           if(autoIdx >= autoSegments.length){
-            running = false;
-            cancelAnimationFrame(tickRaf);
+            setRunningState(false);
+            cancelTick();
             btnStart.textContent = t('sw.start');
             if(btnLap) btnLap.disabled = true;
             elTime.textContent = '00:00:00.000';
             clearActive();
             stopAuto();
-            if(window.appWakeLock) window.appWakeLock.release('co2-timer');
             return;
           }
           startTs = performance.now();
@@ -408,9 +420,8 @@
       });
 
       btnReset.addEventListener('click', function(){
-        running = false; cancelAnimationFrame(tickRaf);
+        setRunningState(false); cancelTick();
         clearAutoTimer(); stopAuto();
-        if(window.appWakeLock) window.appWakeLock.release('co2-timer');
         clearAll(); elTime.textContent = '00:00:00.000';
         btnStart.textContent = t('sw.start');
         if(btnLap) btnLap.disabled = true;
