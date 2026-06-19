@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260619-6">
+    <link rel="stylesheet" href="style.css?v=20260619-7">
 </head>
 <body>
     <header>
@@ -163,7 +163,8 @@
                                 <span class="sr-only" data-i18n="sw.holdTime">Breath hold</span>
                                 <div class="sw-stepper">
                                     <button class="sw-step-btn" type="button" data-sw-adjust="hold" data-delta="-5" aria-label="Decrease breath hold by 5 seconds" data-i18n="sw.holdDec" data-i18n-attr="aria-label">-5s</button>
-                                    <span class="sw-setting-value" data-label="hold">
+                                    <span class="sw-setting-value is-hold">
+                                        <span class="sw-setting-value-label" aria-hidden="true">hold</span>
                                         <input id="sw-hold-sec" class="sw-setting-input" type="number" inputmode="numeric" min="5" step="5" value="120">
                                     </span>
                                     <button class="sw-step-btn" type="button" data-sw-adjust="hold" data-delta="5" aria-label="Increase breath hold by 5 seconds" data-i18n="sw.holdInc" data-i18n-attr="aria-label">+5s</button>
@@ -173,7 +174,8 @@
                                 <span class="sr-only" data-i18n="sw.restTime">Rest</span>
                                 <div class="sw-stepper">
                                     <button class="sw-step-btn" type="button" data-sw-adjust="rest" data-delta="-5" aria-label="Decrease rest by 5 seconds" data-i18n="sw.restDec" data-i18n-attr="aria-label">-5s</button>
-                                    <span class="sw-setting-value" data-label="rest">
+                                    <span class="sw-setting-value is-rest">
+                                        <span class="sw-setting-value-label" aria-hidden="true">rest</span>
                                         <input id="sw-rest-sec" class="sw-setting-input" type="number" inputmode="numeric" min="15" step="5" value="120">
                                     </span>
                                     <button class="sw-step-btn" type="button" data-sw-adjust="rest" data-delta="5" aria-label="Increase rest by 5 seconds" data-i18n="sw.restInc" data-i18n-attr="aria-label">+5s</button>
