@@ -132,39 +132,38 @@
         var lastTickTs = 0;
         var totalElapsedMs = 0; // 총 시간
 
-        // Audio elements
-        var inhaleAudio = document.getElementById('inhale-sound');
-        var exhaleAudio = document.getElementById('exhale-sound');
+        // Synth audio
         var volumeSlider = root.querySelector('#br-volume');
         var audioUnlocked = false;
         var audioCtx = null;
         var masterGainNode = null;
-        var inhaleGainNode = null;
-        var exhaleGainNode = null;
-        var mediaGraphReady = false;
-        var mediaGraphFailed = false;
         var fallbackOscillator = null;
         var fallbackOscillatorGain = null;
-        var AUDIO_FADE_IN_MS = 2000;
+
+        function getBreathVolume(){
+          var v = volumeSlider ? Number(volumeSlider.value) : 0.5;
+          if(isNaN(v)) v = 0.5;
+          return Math.max(0, Math.min(1, v));
+        }
+
+        function setGainValue(gainParam, value){
+          if(!gainParam) return;
+          try{
+            if(audioCtx && typeof gainParam.setValueAtTime === 'function'){
+              gainParam.setValueAtTime(value, audioCtx.currentTime);
+            }else{
+              gainParam.value = value;
+            }
+          }catch(e){ /* ignore */ }
+        }
 
         function updateVolume() {
-          if(!volumeSlider) return;
-          var v = Number(volumeSlider.value);
-          if(isNaN(v)) v = 0.5;
-          if(inhaleAudio) inhaleAudio.volume = mediaGraphReady ? 1 : v;
-          if(exhaleAudio) exhaleAudio.volume = mediaGraphReady ? 1 : v;
           if(masterGainNode){
-            try{
-              if(audioCtx && masterGainNode.gain && typeof masterGainNode.gain.setValueAtTime === 'function'){
-                masterGainNode.gain.setValueAtTime(v, audioCtx.currentTime);
-              } else {
-                masterGainNode.gain.value = v;
-              }
-            }catch(e){ /* ignore */ }
+            setGainValue(masterGainNode.gain, getBreathVolume());
           }
         }
 
-        if (inhaleAudio && exhaleAudio && volumeSlider) {
+        if (volumeSlider) {
           volumeSlider.addEventListener('input', updateVolume);
           volumeSlider.addEventListener('change', updateVolume);
           updateVolume();
@@ -180,51 +179,11 @@
               masterGainNode.connect(audioCtx.destination);
               masterGainNode._connected = true;
             }
-            if(volumeSlider){
-              var v = Number(volumeSlider.value);
-              if(!isNaN(v)) masterGainNode.gain.value = v;
-            }
+            updateVolume();
             return true;
           }catch(e){
             return false;
           }
-        }
-
-        function ensureAudioGraph(){
-          if(mediaGraphReady || mediaGraphFailed) return mediaGraphReady;
-          if(!ensureAudioContext() || !inhaleAudio || !exhaleAudio) return false;
-          try{
-            inhaleGainNode = inhaleGainNode || audioCtx.createGain();
-            exhaleGainNode = exhaleGainNode || audioCtx.createGain();
-            if(!inhaleGainNode._connected){
-              inhaleGainNode.connect(masterGainNode);
-              inhaleGainNode._connected = true;
-            }
-            if(!exhaleGainNode._connected){
-              exhaleGainNode.connect(masterGainNode);
-              exhaleGainNode._connected = true;
-            }
-            var inhaleSrc = audioCtx.createMediaElementSource(inhaleAudio);
-            var exhaleSrc = audioCtx.createMediaElementSource(exhaleAudio);
-            inhaleSrc.connect(inhaleGainNode);
-            exhaleSrc.connect(exhaleGainNode);
-            mediaGraphReady = true;
-            inhaleGainNode.gain.value = 0;
-            exhaleGainNode.gain.value = 0;
-            updateVolume();
-          }catch(e){
-            mediaGraphFailed = true;
-          }
-          return mediaGraphReady;
-        }
-
-        function stopAudio(audio){
-          if(!audio) return;
-          try{
-            audio.loop = false;
-            audio.pause();
-            audio.currentTime = 0;
-          }catch(e){ /* ignore */ }
         }
 
         function stopFallbackTone(){
@@ -240,35 +199,7 @@
         }
 
         function stopBreathAudio(){
-          if(mediaGraphReady && audioCtx && inhaleGainNode && exhaleGainNode){
-            try{
-              var now = audioCtx.currentTime;
-              inhaleGainNode.gain.cancelScheduledValues(now);
-              exhaleGainNode.gain.cancelScheduledValues(now);
-              inhaleGainNode.gain.setValueAtTime(0, now);
-              exhaleGainNode.gain.setValueAtTime(0, now);
-            }catch(e){ /* ignore */ }
-          }
           stopFallbackTone();
-          stopAudio(inhaleAudio);
-          stopAudio(exhaleAudio);
-        }
-
-        function getPhaseAudio(isInhale){
-          return isInhale ? inhaleAudio : exhaleAudio;
-        }
-
-        function getPhaseGain(isInhale){
-          return isInhale ? inhaleGainNode : exhaleGainNode;
-        }
-
-        function rampGain(node, target, now, durationSec){
-          if(!node || !node.gain) return;
-          try{
-            node.gain.cancelScheduledValues(now);
-            node.gain.setValueAtTime(node.gain.value, now);
-            node.gain.linearRampToValueAtTime(target, now + durationSec);
-          }catch(e){ /* ignore */ }
         }
 
         function startFallbackTone(isInhale){
@@ -282,94 +213,35 @@
           stopFallbackTone();
           fallbackOscillator = audioCtx.createOscillator();
           fallbackOscillatorGain = audioCtx.createGain();
+          var now = audioCtx.currentTime;
           fallbackOscillator.type = isInhale ? 'sine' : 'triangle';
-          fallbackOscillator.frequency.setValueAtTime(isInhale ? 220 : 180, audioCtx.currentTime);
-          fallbackOscillator.frequency.linearRampToValueAtTime(isInhale ? 320 : 120, audioCtx.currentTime + 1.4);
-          fallbackOscillatorGain.gain.setValueAtTime(0, audioCtx.currentTime);
-          fallbackOscillatorGain.gain.linearRampToValueAtTime(0.24, audioCtx.currentTime + 0.18);
+          try{
+            fallbackOscillator.frequency.setValueAtTime(isInhale ? 220 : 180, now);
+            fallbackOscillator.frequency.linearRampToValueAtTime(isInhale ? 320 : 120, now + 1.4);
+          }catch(e){
+            try{ fallbackOscillator.frequency.value = isInhale ? 220 : 180; }catch(ignore){ /* ignore */ }
+          }
+          try{
+            fallbackOscillatorGain.gain.setValueAtTime(0, now);
+            fallbackOscillatorGain.gain.linearRampToValueAtTime(0.24, now + 0.18);
+          }catch(e){
+            try{ fallbackOscillatorGain.gain.value = 0.24; }catch(ignore){ /* ignore */ }
+          }
           fallbackOscillator.connect(fallbackOscillatorGain);
           fallbackOscillatorGain.connect(masterGainNode);
           fallbackOscillator.start();
         }
 
         function playPhaseAudio(){
-          var isInhale = (phase === 'INHALE');
-          var current = getPhaseAudio(isInhale);
-          var other = getPhaseAudio(!isInhale);
-          var currentGain = getPhaseGain(isInhale);
-          var otherGain = getPhaseGain(!isInhale);
-          if(!current){
-            startFallbackTone(isInhale);
-            return;
-          }
-          if(typeof current.canPlayType === 'function' && !current.canPlayType('audio/mpeg')){
-            startFallbackTone(isInhale);
-            return;
-          }
-
-          if(mediaGraphReady && audioCtx && currentGain && otherGain){
-            stopAudio(other);
-            stopAudio(current);
-            stopFallbackTone();
-            try{
-              if(audioCtx.state === 'suspended' && typeof audioCtx.resume === 'function'){
-                audioCtx.resume();
-              }
-            }catch(e){ /* ignore */ }
-            current.loop = true;
-            current.play().catch(function(){ startFallbackTone(isInhale); });
-            try{
-              var now = audioCtx.currentTime;
-              var dur = AUDIO_FADE_IN_MS / 1000;
-              otherGain.gain.cancelScheduledValues(now);
-              otherGain.gain.setValueAtTime(0, now);
-              currentGain.gain.cancelScheduledValues(now);
-              currentGain.gain.setValueAtTime(0, now);
-              rampGain(currentGain, 1, now, dur);
-            }catch(e){ /* ignore */ }
-            return;
-          }
-
-          stopAudio(other);
-          stopAudio(current);
-          startFallbackTone(isInhale);
-          current.loop = true;
-          current.play().catch(function(){ startFallbackTone(isInhale); });
+          startFallbackTone(phase === 'INHALE');
         }
 
         function unlockAudioElements(){
           if(audioUnlocked) return;
           ensureAudioContext();
-          ensureAudioGraph();
           if(audioCtx && typeof audioCtx.resume === 'function'){
             try{ audioCtx.resume(); }catch(e){ /* ignore */ }
           }
-          function prime(a){
-            if(!a) return;
-            try{
-              a.muted = true;
-              a.loop = false;
-              a.currentTime = 0;
-              var p = a.play();
-              if(p && typeof p.then === 'function'){
-                p.then(function(){
-                  try{
-                    a.pause();
-                    a.currentTime = 0;
-                    a.muted = false;
-                  }catch(e){ /* ignore */ }
-                }).catch(function(){
-                  try{ a.muted = false; }catch(e){ /* ignore */ }
-                });
-              } else {
-                a.pause();
-                a.currentTime = 0;
-                a.muted = false;
-              }
-            }catch(e){ /* ignore */ }
-          }
-          prime(inhaleAudio);
-          prime(exhaleAudio);
           updateVolume();
           audioUnlocked = true;
         }
