@@ -139,6 +139,10 @@
         var totalElapsedMs = 0; // 총 시간
 
         // Synth audio
+        var TONE_GAIN = 0.22;
+        var TONE_ATTACK_SEC = 0.16;
+        var TONE_RELEASE_SEC = 0.09;
+        var TONE_DISCONNECT_PAD_SEC = 0.08;
         var volumeSlider = root.querySelector('#br-volume');
         var audioUnlocked = false;
         var audioCtx = null;
@@ -155,7 +159,12 @@
         function setGainValue(gainParam, value){
           if(!gainParam) return;
           try{
-            if(audioCtx && typeof gainParam.setValueAtTime === 'function'){
+            if(audioCtx && typeof gainParam.setTargetAtTime === 'function'){
+              var now = audioCtx.currentTime;
+              if(typeof gainParam.cancelAndHoldAtTime === 'function') gainParam.cancelAndHoldAtTime(now);
+              else if(typeof gainParam.cancelScheduledValues === 'function') gainParam.cancelScheduledValues(now);
+              gainParam.setTargetAtTime(value, now, 0.03);
+            }else if(audioCtx && typeof gainParam.setValueAtTime === 'function'){
               gainParam.setValueAtTime(value, audioCtx.currentTime);
             }else{
               gainParam.value = value;
@@ -182,6 +191,7 @@
             audioCtx = audioCtx || new AC();
             masterGainNode = masterGainNode || audioCtx.createGain();
             if(!masterGainNode._connected){
+              try{ masterGainNode.gain.value = getBreathVolume(); }catch(ignore){ /* ignore */ }
               masterGainNode.connect(audioCtx.destination);
               masterGainNode._connected = true;
             }
@@ -192,16 +202,41 @@
           }
         }
 
-        function stopFallbackTone(){
-          if(fallbackOscillator){
-            try{ fallbackOscillator.stop(); }catch(e){ /* ignore */ }
-            try{ fallbackOscillator.disconnect(); }catch(e){ /* ignore */ }
-            fallbackOscillator = null;
+        function releaseTone(oscillator, gainNode, immediate){
+          if(!oscillator && !gainNode) return;
+          if(immediate || !audioCtx || !gainNode || !gainNode.gain){
+            try{ if(oscillator) oscillator.stop(); }catch(e){ /* ignore */ }
+            try{ if(oscillator) oscillator.disconnect(); }catch(e){ /* ignore */ }
+            try{ if(gainNode) gainNode.disconnect(); }catch(e){ /* ignore */ }
+            return;
           }
-          if(fallbackOscillatorGain){
-            try{ fallbackOscillatorGain.disconnect(); }catch(e){ /* ignore */ }
-            fallbackOscillatorGain = null;
-          }
+
+          var now = audioCtx.currentTime;
+          try{
+            var gain = gainNode.gain;
+            if(typeof gain.cancelAndHoldAtTime === 'function') gain.cancelAndHoldAtTime(now);
+            else if(typeof gain.cancelScheduledValues === 'function') gain.cancelScheduledValues(now);
+            if(typeof gain.setTargetAtTime === 'function'){
+              gain.setTargetAtTime(0.0001, now, TONE_RELEASE_SEC / 3);
+            }else{
+              gain.setValueAtTime(Math.max(0.0001, gain.value || 0.0001), now);
+              gain.linearRampToValueAtTime(0.0001, now + TONE_RELEASE_SEC);
+            }
+          }catch(e){ /* ignore */ }
+
+          try{ if(oscillator) oscillator.stop(now + TONE_RELEASE_SEC + TONE_DISCONNECT_PAD_SEC); }catch(e){ /* ignore */ }
+          setTimeout(function(){
+            try{ if(oscillator) oscillator.disconnect(); }catch(e){ /* ignore */ }
+            try{ if(gainNode) gainNode.disconnect(); }catch(e){ /* ignore */ }
+          }, Math.ceil((TONE_RELEASE_SEC + TONE_DISCONNECT_PAD_SEC + 0.04) * 1000));
+        }
+
+        function stopFallbackTone(immediate){
+          var oscillator = fallbackOscillator;
+          var gainNode = fallbackOscillatorGain;
+          fallbackOscillator = null;
+          fallbackOscillatorGain = null;
+          releaseTone(oscillator, gainNode, !!immediate);
         }
 
         function stopBreathAudio(){
@@ -217,25 +252,32 @@
           }catch(e){ /* ignore */ }
 
           stopFallbackTone();
-          fallbackOscillator = audioCtx.createOscillator();
-          fallbackOscillatorGain = audioCtx.createGain();
+          var oscillator = audioCtx.createOscillator();
+          var gainNode = audioCtx.createGain();
           var now = audioCtx.currentTime;
-          fallbackOscillator.type = isInhale ? 'sine' : 'triangle';
+          fallbackOscillator = oscillator;
+          fallbackOscillatorGain = gainNode;
+          oscillator.type = 'sine';
           try{
-            fallbackOscillator.frequency.setValueAtTime(isInhale ? 220 : 180, now);
-            fallbackOscillator.frequency.linearRampToValueAtTime(isInhale ? 320 : 120, now + 1.4);
+            oscillator.frequency.setValueAtTime(isInhale ? 220 : 320, now);
+            oscillator.frequency.linearRampToValueAtTime(isInhale ? 320 : 180, now + 1.4);
           }catch(e){
-            try{ fallbackOscillator.frequency.value = isInhale ? 220 : 180; }catch(ignore){ /* ignore */ }
+            try{ oscillator.frequency.value = isInhale ? 220 : 320; }catch(ignore){ /* ignore */ }
           }
           try{
-            fallbackOscillatorGain.gain.setValueAtTime(0, now);
-            fallbackOscillatorGain.gain.linearRampToValueAtTime(0.24, now + 0.18);
+            gainNode.gain.setValueAtTime(0.0001, now);
+            gainNode.gain.exponentialRampToValueAtTime(TONE_GAIN, now + TONE_ATTACK_SEC);
           }catch(e){
-            try{ fallbackOscillatorGain.gain.value = 0.24; }catch(ignore){ /* ignore */ }
+            try{
+              gainNode.gain.setValueAtTime(0, now);
+              gainNode.gain.linearRampToValueAtTime(TONE_GAIN, now + TONE_ATTACK_SEC);
+            }catch(ignore){
+              try{ gainNode.gain.value = TONE_GAIN; }catch(ignore2){ /* ignore */ }
+            }
           }
-          fallbackOscillator.connect(fallbackOscillatorGain);
-          fallbackOscillatorGain.connect(masterGainNode);
-          fallbackOscillator.start();
+          oscillator.connect(gainNode);
+          gainNode.connect(masterGainNode);
+          oscillator.start();
         }
 
         function playPhaseAudio(){
