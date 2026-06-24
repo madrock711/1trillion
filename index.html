@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260619-8">
+    <link rel="stylesheet" href="style.css?v=20260624-2">
 </head>
 <body>
     <header>
@@ -80,7 +80,11 @@
 
                             <div class="br-controls">
                                 <button class="br-btn primary" id="br-start" type="button" data-i18n="breath.start">Start</button>
-                                <button class="br-btn toggle" id="br-auto" type="button" aria-pressed="false" title="Increase inhale and exhale by 0.1s each round" data-i18n="breath.autoGrow">Auto +0.1s</button>
+                                <div class="br-auto-control" aria-label="Auto growth amount" data-i18n="breath.autoGrowControl" data-i18n-attr="aria-label">
+                                    <button class="br-auto-step" id="br-auto-dec" type="button" aria-label="Decrease auto growth amount" data-i18n="breath.autoGrowDec" data-i18n-attr="aria-label">‹</button>
+                                    <button class="br-btn toggle" id="br-auto" type="button" aria-pressed="false" title="Increase inhale and exhale each round">Auto +0.1s</button>
+                                    <button class="br-auto-step" id="br-auto-inc" type="button" aria-label="Increase auto growth amount" data-i18n="breath.autoGrowInc" data-i18n-attr="aria-label">›</button>
+                                </div>
                                 <button class="br-btn danger" id="br-reset" type="button" data-i18n="breath.reset">Reset</button>
                             </div>
                         </div>
@@ -800,8 +804,8 @@
 
     <div id="share-toast" class="share-toast" role="status" aria-live="polite"></div>
 
-    <script src="i18n.js?v=20260624-1"></script>
-    <script src="main.js?v=20260624-1"></script>
+    <script src="i18n.js?v=20260624-2"></script>
+    <script src="main.js?v=20260624-2"></script>
     <script src="foot-analysis.js?v=20260211-13"></script>
     <script src="stopwatch.js?v=20260619-6"></script>
     <script src="sequence-generator.js?v=20260219-1"></script>

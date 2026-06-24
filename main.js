@@ -122,11 +122,13 @@
         var BLUE = '#3b82f6';
         var R = 52, CIRC = 2*Math.PI*R;
         var NUDGE_STEP_SEC = 0.5;
-        var AUTO_GROW_STEP_SEC = 0.1;
+        var AUTO_GROW_MIN_SEC = 0.1;
+        var AUTO_GROW_STEP_DELTA_SEC = 0.1;
         if(ringProg){ ringProg.style.strokeDasharray=String(CIRC); ringProg.style.strokeDashoffset=String(CIRC); }
 
         var syncOn = true;
         var autoGrowOn = false;
+        var autoGrowStepSec = AUTO_GROW_MIN_SEC;
         var phase = 'INHALE';
         var running = false;
         var round = 1;
@@ -266,6 +268,20 @@
           if(el) el.value = formatSecInput(value);
         }
 
+        function clampAutoGrowStep(v){
+          v = Number(v);
+          if(!isFinite(v)) v = AUTO_GROW_MIN_SEC;
+          return Math.max(AUTO_GROW_MIN_SEC, Math.round(v * 10) / 10);
+        }
+
+        function formatAutoGrowStep(v){
+          return clampAutoGrowStep(v).toFixed(1).replace(/\.0$/, '');
+        }
+
+        function autoGrowText(key){
+          return t(key).replace('{step}', formatAutoGrowStep(autoGrowStepSec));
+        }
+
         function fmtDec(ms){ var sec = Math.max(0, ms)/1000; return sec.toFixed(2); }
         function fmtTotal(ms){
           var t = Math.max(0, Math.floor(ms/1000));
@@ -287,22 +303,41 @@
 
         function applyAutoGrowUI(){
           var btn=q('#br-auto');
-          if(!btn) return;
-          btn.setAttribute('aria-pressed', autoGrowOn ? 'true' : 'false');
-          btn.textContent = t('breath.autoGrow');
-          btn.title = t('breath.autoGrowTitle');
+          var dec=q('#br-auto-dec');
+          var inc=q('#br-auto-inc');
+          var atMin = autoGrowStepSec <= AUTO_GROW_MIN_SEC + 0.0001;
+          if(btn){
+            btn.setAttribute('aria-pressed', autoGrowOn ? 'true' : 'false');
+            btn.textContent = autoGrowText('breath.autoGrow');
+            btn.title = autoGrowText('breath.autoGrowTitle');
+          }
+          if(dec){
+            dec.disabled = atMin;
+            dec.setAttribute('aria-disabled', atMin ? 'true' : 'false');
+            dec.title = t('breath.autoGrowDec');
+          }
+          if(inc){
+            inc.disabled = false;
+            inc.setAttribute('aria-disabled', 'false');
+            inc.title = t('breath.autoGrowInc');
+          }
         }
 
         function growRoundDurations(){
           var inn = getInEl();
           var ex = getExEl();
-          var nextInhale = getInhale() + AUTO_GROW_STEP_SEC;
+          var nextInhale = getInhale() + autoGrowStepSec;
           setSecInput(inn, nextInhale);
           if(syncOn){
             setSecInput(ex, nextInhale);
           }else{
-            setSecInput(ex, getExhale() + AUTO_GROW_STEP_SEC);
+            setSecInput(ex, getExhale() + autoGrowStepSec);
           }
+        }
+
+        function adjustAutoGrowStep(delta){
+          autoGrowStepSec = clampAutoGrowStep(autoGrowStepSec + (delta * AUTO_GROW_STEP_DELTA_SEC));
+          applyAutoGrowUI();
         }
 
         function updateBubbles(ratio){
@@ -375,6 +410,8 @@
             if(t.id==='br-start'){ running? pause(): start(); }
             else if(t.id==='br-reset'){ reset(); }
             else if(t.id==='br-auto'){ autoGrowOn = !autoGrowOn; applyAutoGrowUI(); }
+            else if(t.id==='br-auto-dec'){ adjustAutoGrowStep(-1); }
+            else if(t.id==='br-auto-inc'){ adjustAutoGrowStep(+1); }
             else if(t.id==='br-sync'){ syncOn = !syncOn; applySyncUI(); }
             else if(t.id==='br-in-dec'){ var inn=getInEl(); adjustValue(inn, -1); if(syncOn){ var ex=getExEl(); if(ex) ex.value=inn.value; } if(phase==='INHALE'){ phaseTargetMs = secToMs(getInhale()); }
               if(timeLbl){ var remainNow = Math.max(0, phaseTargetMs - phaseElapsedMs); timeLbl.textContent = fmtDec(remainNow); } }
