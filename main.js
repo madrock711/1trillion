@@ -112,6 +112,7 @@
         var ringProg = q('.br-progress');
         var phaseLbl = q('#br-phase-label');
         var timeLbl  = q('#br-time');
+        var targetLbl = q('#br-target-time');
         var totalLbl = q('#br-total');
         var roundEl  = q('#br-round');
         var stepEl   = q('#br-step');
@@ -283,6 +284,19 @@
         }
 
         function fmtDec(ms){ var sec = Math.max(0, ms)/1000; return sec.toFixed(2); }
+        function targetTimeText(){
+          return t('breath.targetTime').replace('{seconds}', formatSecInput(phaseTargetMs / 1000));
+        }
+        function updateTargetTime(){
+          if(targetLbl) targetLbl.textContent = targetTimeText();
+        }
+        function updatePhaseTimeLabels(){
+          if(timeLbl){
+            var remainNow = Math.max(0, phaseTargetMs - phaseElapsedMs);
+            timeLbl.textContent = fmtDec(remainNow);
+          }
+          updateTargetTime();
+        }
         function fmtTotal(ms){
           var t = Math.max(0, Math.floor(ms/1000));
           var h = Math.floor(t/3600), m = Math.floor((t%3600)/60), s = t%60;
@@ -361,6 +375,7 @@
           phaseElapsedMs = 0; lastTickTs = Date.now();
           if(circle){ circle.className = circle.className.replace(/\bpulse\b/, ''); setTimeout(function(){ circle.className += ' pulse'; }, 0); }
           if(timeLbl) timeLbl.textContent = fmtDec(phaseTargetMs);
+          updateTargetTime();
           if(ringProg) ringProg.style.strokeDashoffset = String(CIRC);
           updateBubbles(0);
           if(running) playPhaseAudio();
@@ -412,15 +427,17 @@
             else if(t.id==='br-auto'){ autoGrowOn = !autoGrowOn; applyAutoGrowUI(); }
             else if(t.id==='br-auto-dec'){ adjustAutoGrowStep(-1); }
             else if(t.id==='br-auto-inc'){ adjustAutoGrowStep(+1); }
-            else if(t.id==='br-sync'){ syncOn = !syncOn; applySyncUI(); }
+            else if(t.id==='br-sync'){ syncOn = !syncOn; applySyncUI(); if(phase==='EXHALE'){ phaseTargetMs = secToMs(getExhale()); } updatePhaseTimeLabels(); }
             else if(t.id==='br-in-dec'){ var inn=getInEl(); adjustValue(inn, -1); if(syncOn){ var ex=getExEl(); if(ex) ex.value=inn.value; } if(phase==='INHALE'){ phaseTargetMs = secToMs(getInhale()); }
-              if(timeLbl){ var remainNow = Math.max(0, phaseTargetMs - phaseElapsedMs); timeLbl.textContent = fmtDec(remainNow); } }
+              if(syncOn && phase==='EXHALE'){ phaseTargetMs = secToMs(getExhale()); }
+              updatePhaseTimeLabels(); }
             else if(t.id==='br-in-inc'){ var inn2=getInEl(); adjustValue(inn2, +1); if(syncOn){ var ex2=getExEl(); if(ex2) ex2.value=inn2.value; } if(phase==='INHALE'){ phaseTargetMs = secToMs(getInhale()); }
-              if(timeLbl){ var remainNow2 = Math.max(0, phaseTargetMs - phaseElapsedMs); timeLbl.textContent = fmtDec(remainNow2); } }
+              if(syncOn && phase==='EXHALE'){ phaseTargetMs = secToMs(getExhale()); }
+              updatePhaseTimeLabels(); }
             else if(t.id==='br-ex-dec'){ var exn=getExEl(); adjustValue(exn, -1); if(!syncOn && phase==='EXHALE'){ phaseTargetMs = secToMs(getExhale()); }
-              if(timeLbl){ var remainNow3 = Math.max(0, phaseTargetMs - phaseElapsedMs); timeLbl.textContent = fmtDec(remainNow3); } }
+              updatePhaseTimeLabels(); }
             else if(t.id==='br-ex-inc'){ var exn2=getExEl(); adjustValue(exn2, +1); if(!syncOn && phase==='EXHALE'){ phaseTargetMs = secToMs(getExhale()); }
-              if(timeLbl){ var remainNow4 = Math.max(0, phaseTargetMs - phaseElapsedMs); timeLbl.textContent = fmtDec(remainNow4); } }
+              updatePhaseTimeLabels(); }
           }catch(err){ /* swallow */ }
         }, false);
 
@@ -431,8 +448,9 @@
               t.value = clampSec(t.value);
               if(syncOn && t.id==='br-in-sec'){ var ex=getExEl(); if(ex) ex.value = t.value; }
               if(phase==='INHALE' && t.id==='br-in-sec') phaseTargetMs = secToMs(getInhale());
+              if(syncOn && phase==='EXHALE' && t.id==='br-in-sec') phaseTargetMs = secToMs(getExhale());
               if(phase==='EXHALE' && t.id==='br-ex-sec') phaseTargetMs = secToMs(getExhale());
-              if(timeLbl){ var remainNow = Math.max(0, phaseTargetMs - phaseElapsedMs); timeLbl.textContent = fmtDec(remainNow); }
+              updatePhaseTimeLabels();
             }
           }catch(err){ /* swallow */ }
         }, false);
@@ -443,6 +461,7 @@
           applyAutoGrowUI();
           if(phaseLbl) phaseLbl.textContent = (phase==='INHALE'? t('breath.inhale') : t('breath.exhale'));
           if(stepEl) stepEl.textContent = (phase==='INHALE'? t('breath.inhale') : t('breath.exhale'));
+          updateTargetTime();
         }
 
         document.addEventListener('app:lang', function(){ applyLanguageState(); }, false);
