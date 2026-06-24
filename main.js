@@ -121,9 +121,12 @@
         var RED  = '#ef4444';
         var BLUE = '#3b82f6';
         var R = 52, CIRC = 2*Math.PI*R;
+        var NUDGE_STEP_SEC = 0.5;
+        var AUTO_GROW_STEP_SEC = 0.1;
         if(ringProg){ ringProg.style.strokeDasharray=String(CIRC); ringProg.style.strokeDashoffset=String(CIRC); }
 
         var syncOn = true;
+        var autoGrowOn = false;
         var phase = 'INHALE';
         var running = false;
         var round = 1;
@@ -254,6 +257,15 @@
         function getInhale(){ var el=getInEl(); return el? clampSec(el.value) : 4; }
         function getExhale(){ var el=getExEl(); return el? clampSec(el.value) : 4; }
 
+        function formatSecInput(v){
+          var rounded = Math.round(clampSec(v) * 10) / 10;
+          return rounded.toFixed(1).replace(/\.0$/, '');
+        }
+
+        function setSecInput(el, value){
+          if(el) el.value = formatSecInput(value);
+        }
+
         function fmtDec(ms){ var sec = Math.max(0, ms)/1000; return sec.toFixed(2); }
         function fmtTotal(ms){
           var t = Math.max(0, Math.floor(ms/1000));
@@ -270,7 +282,27 @@
           btn.setAttribute('aria-pressed', syncOn?'true':'false');
           btn.textContent = syncOn ? '=' : '≠' ;
           ex.disabled = !!syncOn;
-          if(syncOn){ ex.value = inn.value; }
+          if(syncOn){ setSecInput(ex, inn.value); }
+        }
+
+        function applyAutoGrowUI(){
+          var btn=q('#br-auto');
+          if(!btn) return;
+          btn.setAttribute('aria-pressed', autoGrowOn ? 'true' : 'false');
+          btn.textContent = t('breath.autoGrow');
+          btn.title = t('breath.autoGrowTitle');
+        }
+
+        function growRoundDurations(){
+          var inn = getInEl();
+          var ex = getExEl();
+          var nextInhale = getInhale() + AUTO_GROW_STEP_SEC;
+          setSecInput(inn, nextInhale);
+          if(syncOn){
+            setSecInput(ex, nextInhale);
+          }else{
+            setSecInput(ex, getExhale() + AUTO_GROW_STEP_SEC);
+          }
         }
 
         function updateBubbles(ratio){
@@ -301,7 +333,14 @@
         }
 
         function nextPhase(){
-          if(phase==='INHALE') setPhase('EXHALE'); else setPhase('INHALE');
+          if(phase==='INHALE'){
+            setPhase('EXHALE');
+          }else{
+            round += 1;
+            if(roundEl) roundEl.textContent = String(round);
+            if(autoGrowOn) growRoundDurations();
+            setPhase('INHALE');
+          }
         }
 
         function start(){ if(running) return; unlockAudioElements(); running=true; if(window.appWakeLock) window.appWakeLock.request('breath-timer'); var b=q('#br-start'); if(b) b.textContent = t('breath.pause'); lastTickTs=Date.now(); playPhaseAudio(); requestAnimationFrame(tick); }
@@ -325,9 +364,8 @@
         // 공통 증감 로직
         function adjustValue(el, delta){
           if(!el) return;
-          var step = Number(el.step)||0.5;
-          var next = clampSec((Number(el.value)||0) + (delta*step));
-          el.value = next;
+          var next = clampSec((Number(el.value)||0) + (delta*NUDGE_STEP_SEC));
+          setSecInput(el, next);
         }
 
         // 이벤트 위임
@@ -336,6 +374,7 @@
           try{
             if(t.id==='br-start'){ running? pause(): start(); }
             else if(t.id==='br-reset'){ reset(); }
+            else if(t.id==='br-auto'){ autoGrowOn = !autoGrowOn; applyAutoGrowUI(); }
             else if(t.id==='br-sync'){ syncOn = !syncOn; applySyncUI(); }
             else if(t.id==='br-in-dec'){ var inn=getInEl(); adjustValue(inn, -1); if(syncOn){ var ex=getExEl(); if(ex) ex.value=inn.value; } if(phase==='INHALE'){ phaseTargetMs = secToMs(getInhale()); }
               if(timeLbl){ var remainNow = Math.max(0, phaseTargetMs - phaseElapsedMs); timeLbl.textContent = fmtDec(remainNow); } }
@@ -364,13 +403,14 @@
         function applyLanguageState(){
           var b=q('#br-start');
           if(b) b.textContent = running ? t('breath.pause') : t('breath.start');
+          applyAutoGrowUI();
           if(phaseLbl) phaseLbl.textContent = (phase==='INHALE'? t('breath.inhale') : t('breath.exhale'));
           if(stepEl) stepEl.textContent = (phase==='INHALE'? t('breath.inhale') : t('breath.exhale'));
         }
 
         document.addEventListener('app:lang', function(){ applyLanguageState(); }, false);
 
-        applySyncUI(); setPhase('INHALE'); if(totalLbl) totalLbl.textContent = '00:00';
+        applySyncUI(); applyAutoGrowUI(); setPhase('INHALE'); if(totalLbl) totalLbl.textContent = '00:00';
         applyLanguageState();
       }
 

@@ -80,6 +80,7 @@
 
                             <div class="br-controls">
                                 <button class="br-btn primary" id="br-start" type="button" data-i18n="breath.start">Start</button>
+                                <button class="br-btn toggle" id="br-auto" type="button" aria-pressed="false" title="Increase inhale and exhale by 0.1s each round" data-i18n="breath.autoGrow">Auto +0.1s</button>
                                 <button class="br-btn danger" id="br-reset" type="button" data-i18n="breath.reset">Reset</button>
                             </div>
                         </div>
@@ -90,7 +91,7 @@
                                 <!-- 들숨 입력 -->
                                 <div class="br-row br-row-unit">
                                     <label for="br-in-sec" data-i18n="breath.inhale">들숨</label>
-                                    <input id="br-in-sec" class="br-input" type="number" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" min="1" step="0.5" value="4">
+                                    <input id="br-in-sec" class="br-input" type="number" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" min="1" step="0.1" value="4">
                                     <span class="br-unit" data-i18n="unit.seconds">(초)</span>
                                 </div>
                                 <div class="br-nudge-row" aria-label="Inhale adjust buttons" data-i18n="breath.nudgeInhale" data-i18n-attr="aria-label">
@@ -102,7 +103,7 @@
                                 <!-- 날숨 입력 -->
                                 <div class="br-row br-row-unit">
                                     <label for="br-ex-sec" data-i18n="breath.exhale">날숨</label>
-                                    <input id="br-ex-sec" class="br-input" type="number" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" min="1" step="0.5" value="4">
+                                    <input id="br-ex-sec" class="br-input" type="number" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" min="1" step="0.1" value="4">
                                     <span class="br-unit" data-i18n="unit.seconds">(초)</span>
                                 </div>
                                 <div class="br-nudge-row" aria-label="Exhale adjust buttons" data-i18n="breath.nudgeExhale" data-i18n-attr="aria-label">
@@ -799,8 +800,8 @@
 
     <div id="share-toast" class="share-toast" role="status" aria-live="polite"></div>
 
-    <script src="i18n.js?v=20260619-2"></script>
-    <script src="main.js?v=20260622-1"></script>
+    <script src="i18n.js?v=20260624-1"></script>
+    <script src="main.js?v=20260624-1"></script>
     <script src="foot-analysis.js?v=20260211-13"></script>
     <script src="stopwatch.js?v=20260619-6"></script>
     <script src="sequence-generator.js?v=20260219-1"></script>
