@@ -143,6 +143,9 @@
         var TONE_ATTACK_SEC = 0.16;
         var TONE_RELEASE_SEC = 0.09;
         var TONE_DISCONNECT_PAD_SEC = 0.08;
+        var TONE_PITCH_SWEEP_SEC = 1.4;
+        var INHALE_PITCH_START_RATIO = 0.6875;
+        var EXHALE_PITCH_START_RATIO = 1.7778;
         var volumeSlider = root.querySelector('#br-volume');
         var chakraFrequencyLabel = q('#br-chakra-frequency');
         var chakraButtons = root.querySelectorAll('.br-chakra-node');
@@ -203,6 +206,15 @@
         function getBreathFrequency(isInhale){
           var baseHz = getChakraFrequency();
           return isInhale ? baseHz * 2 : baseHz;
+        }
+
+        function getPitchSweepDuration(){
+          var phaseSec = Math.max(0.2, phaseTargetMs / 1000);
+          return Math.min(TONE_PITCH_SWEEP_SEC, Math.max(0.2, phaseSec * 0.45));
+        }
+
+        function getPitchStartFrequency(isInhale, targetFrequency){
+          return isInhale ? targetFrequency * INHALE_PITCH_START_RATIO : targetFrequency * EXHALE_PITCH_START_RATIO;
         }
 
         function chakraButtonLabel(btn){
@@ -342,7 +354,10 @@
           fallbackOscillatorGain = gainNode;
           oscillator.type = 'sine';
           try{
-            oscillator.frequency.setValueAtTime(getBreathFrequency(isInhale), now);
+            var targetFrequency = getBreathFrequency(isInhale);
+            var startFrequency = getPitchStartFrequency(isInhale, targetFrequency);
+            oscillator.frequency.setValueAtTime(startFrequency, now);
+            oscillator.frequency.linearRampToValueAtTime(targetFrequency, now + getPitchSweepDuration());
           }catch(e){
             try{ oscillator.frequency.value = getBreathFrequency(isInhale); }catch(ignore){ /* ignore */ }
           }
