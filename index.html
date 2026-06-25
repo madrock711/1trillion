@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260625-1">
+    <link rel="stylesheet" href="style.css?v=20260626-1">
 </head>
 <body>
     <header>
@@ -94,26 +94,20 @@
                         <div class="br-settings" aria-label="Breath settings">
                             <div class="br-setting-stack">
                                 <!-- 들숨 입력 -->
-                                <div class="br-row br-row-unit">
+                                <div class="br-step-row" aria-label="Inhale adjust buttons" data-i18n="breath.nudgeInhale" data-i18n-attr="aria-label">
                                     <label for="br-in-sec" data-i18n="breath.inhale">들숨</label>
+                                    <button class="br-nudge" id="br-in-dec" type="button" aria-label="들숨 감소" data-i18n="breath.inhaleDec" data-i18n-attr="aria-label">◀</button>
                                     <input id="br-in-sec" class="br-input" type="number" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" min="1" step="0.1" value="4">
                                     <span class="br-unit" data-i18n="unit.seconds">(초)</span>
-                                </div>
-                                <div class="br-nudge-row" aria-label="Inhale adjust buttons" data-i18n="breath.nudgeInhale" data-i18n-attr="aria-label">
-                                    <button class="br-nudge" id="br-in-dec" type="button" aria-label="들숨 감소" data-i18n="breath.inhaleDec" data-i18n-attr="aria-label">◀</button>
-                                    <div class="br-nudge-label">-0.5 / +0.5</div>
                                     <button class="br-nudge" id="br-in-inc" type="button" aria-label="들숨 증가" data-i18n="breath.inhaleInc" data-i18n-attr="aria-label">▶</button>
                                 </div>
 
                                 <!-- 날숨 입력 -->
-                                <div class="br-row br-row-unit">
+                                <div class="br-step-row" aria-label="Exhale adjust buttons" data-i18n="breath.nudgeExhale" data-i18n-attr="aria-label">
                                     <label for="br-ex-sec" data-i18n="breath.exhale">날숨</label>
+                                    <button class="br-nudge" id="br-ex-dec" type="button" aria-label="날숨 감소" data-i18n="breath.exhaleDec" data-i18n-attr="aria-label">◀</button>
                                     <input id="br-ex-sec" class="br-input" type="number" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" min="1" step="0.1" value="4">
                                     <span class="br-unit" data-i18n="unit.seconds">(초)</span>
-                                </div>
-                                <div class="br-nudge-row" aria-label="Exhale adjust buttons" data-i18n="breath.nudgeExhale" data-i18n-attr="aria-label">
-                                    <button class="br-nudge" id="br-ex-dec" type="button" aria-label="날숨 감소" data-i18n="breath.exhaleDec" data-i18n-attr="aria-label">◀</button>
-                                    <div class="br-nudge-label">-0.5 / +0.5</div>
                                     <button class="br-nudge" id="br-ex-inc" type="button" aria-label="날숨 증가" data-i18n="breath.exhaleInc" data-i18n-attr="aria-label">▶</button>
                                 </div>
                             </div>
