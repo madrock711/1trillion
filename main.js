@@ -144,6 +144,9 @@
         var TONE_RELEASE_SEC = 0.09;
         var TONE_DISCONNECT_PAD_SEC = 0.08;
         var volumeSlider = root.querySelector('#br-volume');
+        var chakraFrequencyLabel = q('#br-chakra-frequency');
+        var chakraButtons = root.querySelectorAll('.br-chakra-node');
+        var selectedChakra = 'root';
         var audioUnlocked = false;
         var audioCtx = null;
         var masterGainNode = null;
@@ -182,6 +185,86 @@
           volumeSlider.addEventListener('input', updateVolume);
           volumeSlider.addEventListener('change', updateVolume);
           updateVolume();
+        }
+
+        function getSelectedChakraButton(){
+          return root.querySelector('.br-chakra-node[data-chakra="' + selectedChakra + '"]') ||
+            root.querySelector('.br-chakra-node[aria-pressed="true"]') ||
+            root.querySelector('.br-chakra-node');
+        }
+
+        function getChakraFrequency(){
+          var btn = getSelectedChakraButton();
+          var hz = btn ? Number(btn.getAttribute('data-frequency')) : 396;
+          if(!isFinite(hz) || hz <= 0) hz = 396;
+          return hz;
+        }
+
+        function getBreathFrequency(isInhale){
+          var baseHz = getChakraFrequency();
+          return isInhale ? baseHz * 2 : baseHz;
+        }
+
+        function chakraButtonLabel(btn){
+          if(!btn) return '';
+          var key = btn.getAttribute('data-chakra-key');
+          return key ? t(key) : btn.getAttribute('data-chakra') || '';
+        }
+
+        function formatChakraSelection(){
+          var btn = getSelectedChakraButton();
+          var baseHz = getChakraFrequency();
+          return t('breath.chakraSelected')
+            .replace('{chakra}', chakraButtonLabel(btn))
+            .replace('{hz}', String(baseHz))
+            .replace('{harmonic}', String(baseHz * 2));
+        }
+
+        function updateChakraUI(){
+          var activeBtn = getSelectedChakraButton();
+          for(var i=0;i<chakraButtons.length;i++){
+            var btn = chakraButtons[i];
+            var active = btn === activeBtn;
+            var hz = Number(btn.getAttribute('data-frequency')) || 0;
+            var label = chakraButtonLabel(btn);
+            btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+            btn.setAttribute('aria-label', label + ' ' + hz + 'Hz');
+            btn.title = label + ' ' + hz + 'Hz';
+          }
+          if(chakraFrequencyLabel) chakraFrequencyLabel.textContent = formatChakraSelection();
+        }
+
+        function setOscillatorFrequency(frequency){
+          if(!fallbackOscillator || !fallbackOscillator.frequency || !audioCtx) return;
+          try{
+            var now = audioCtx.currentTime;
+            var param = fallbackOscillator.frequency;
+            if(typeof param.cancelAndHoldAtTime === 'function') param.cancelAndHoldAtTime(now);
+            else if(typeof param.cancelScheduledValues === 'function') param.cancelScheduledValues(now);
+            if(typeof param.setTargetAtTime === 'function'){
+              param.setTargetAtTime(frequency, now, 0.035);
+            }else if(typeof param.linearRampToValueAtTime === 'function'){
+              param.setValueAtTime(param.value || frequency, now);
+              param.linearRampToValueAtTime(frequency, now + 0.08);
+            }else{
+              param.value = frequency;
+            }
+          }catch(e){
+            try{ fallbackOscillator.frequency.value = frequency; }catch(ignore){ /* ignore */ }
+          }
+        }
+
+        function updateActiveToneFrequency(){
+          if(running && fallbackOscillator){
+            setOscillatorFrequency(getBreathFrequency(phase === 'INHALE'));
+          }
+        }
+
+        function selectChakra(btn){
+          if(!btn) return;
+          selectedChakra = btn.getAttribute('data-chakra') || selectedChakra;
+          updateChakraUI();
+          updateActiveToneFrequency();
         }
 
         function ensureAudioContext(){
@@ -259,10 +342,9 @@
           fallbackOscillatorGain = gainNode;
           oscillator.type = 'sine';
           try{
-            oscillator.frequency.setValueAtTime(isInhale ? 220 : 320, now);
-            oscillator.frequency.linearRampToValueAtTime(isInhale ? 320 : 180, now + 1.4);
+            oscillator.frequency.setValueAtTime(getBreathFrequency(isInhale), now);
           }catch(e){
-            try{ oscillator.frequency.value = isInhale ? 220 : 320; }catch(ignore){ /* ignore */ }
+            try{ oscillator.frequency.value = getBreathFrequency(isInhale); }catch(ignore){ /* ignore */ }
           }
           try{
             gainNode.gain.setValueAtTime(0.0001, now);
@@ -464,7 +546,9 @@
         document.addEventListener('click', function(e){
           var t = e.target; if(!t) return; if(!root.contains(t)) return;
           try{
-            if(t.id==='br-start'){ running? pause(): start(); }
+            var chakraBtn = t.closest ? t.closest('.br-chakra-node') : null;
+            if(chakraBtn && root.contains(chakraBtn)){ selectChakra(chakraBtn); }
+            else if(t.id==='br-start'){ running? pause(): start(); }
             else if(t.id==='br-reset'){ reset(); }
             else if(t.id==='br-auto'){ autoGrowOn = !autoGrowOn; applyAutoGrowUI(); }
             else if(t.id==='br-auto-dec'){ adjustAutoGrowStep(-1); }
@@ -501,6 +585,7 @@
           var b=q('#br-start');
           if(b) b.textContent = running ? t('breath.pause') : t('breath.start');
           applyAutoGrowUI();
+          updateChakraUI();
           if(phaseLbl) phaseLbl.textContent = (phase==='INHALE'? t('breath.inhale') : t('breath.exhale'));
           if(stepEl) stepEl.textContent = (phase==='INHALE'? t('breath.inhale') : t('breath.exhale'));
           updateTargetTime();
@@ -508,7 +593,7 @@
 
         document.addEventListener('app:lang', function(){ applyLanguageState(); }, false);
 
-        applySyncUI(); applyAutoGrowUI(); setPhase('INHALE'); if(totalLbl) totalLbl.textContent = '00:00';
+        applySyncUI(); applyAutoGrowUI(); updateChakraUI(); setPhase('INHALE'); if(totalLbl) totalLbl.textContent = '00:00';
         applyLanguageState();
       }
 
