@@ -205,7 +205,7 @@
 
         function getBreathFrequency(isInhale){
           var baseHz = getChakraFrequency();
-          return isInhale ? baseHz * 2 : baseHz;
+          return baseHz;
         }
 
         function getPitchSweepDuration(){
@@ -229,7 +229,7 @@
           return t('breath.chakraSelected')
             .replace('{chakra}', chakraButtonLabel(btn))
             .replace('{hz}', String(baseHz))
-            .replace('{harmonic}', String(baseHz * 2));
+            .replace('{inhale}', String(baseHz));
         }
 
         function updateChakraUI(){
