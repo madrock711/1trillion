@@ -15,6 +15,8 @@
     generated: [],
     seed: 0,
     stats: null,
+    isDrawing: false,
+    drawNumbers: [],
     statusKey: 'lottery.status.loading',
     statusParams: {},
     statusKind: ''
@@ -41,6 +43,12 @@
     state.statusParams = params || {};
     state.statusKind = kind || '';
     renderStatus();
+  }
+
+  function setControlsBusy(isBusy){
+    [el.generate, el.refresh, el.copy].forEach(function(button){
+      if (button) button.disabled = !!isBusy;
+    });
   }
 
   function renderStatus(){
@@ -420,6 +428,47 @@
     renderAll();
   }
 
+  function makeRollingNumbers(){
+    var pool = [];
+    for (var n = 1; n <= 45; n++) pool.push(n);
+    var nums = [];
+    while (nums.length < 6) {
+      var index = Math.floor(Math.random() * pool.length);
+      nums.push(pool[index]);
+      pool.splice(index, 1);
+    }
+    return nums;
+  }
+
+  function startDraw(){
+    if (!state.history.length) {
+      setStatus('lottery.status.loading', {}, '');
+      return;
+    }
+    if (state.isDrawing) return;
+
+    state.isDrawing = true;
+    state.generated = [];
+    state.seed = 0;
+    state.drawNumbers = makeRollingNumbers();
+    setStatus('lottery.status.drawing', {}, '');
+    setControlsBusy(true);
+    renderAll();
+
+    var elapsed = 0;
+    var interval = window.setInterval(function(){
+      elapsed += 90;
+      state.drawNumbers = makeRollingNumbers();
+      renderResults();
+      if (elapsed >= 1350) {
+        window.clearInterval(interval);
+        state.isDrawing = false;
+        setControlsBusy(false);
+        generateSets();
+      }
+    }, 90);
+  }
+
   function band(n){
     return String(Math.min(5, Math.floor((n - 1) / 10) + 1));
   }
@@ -443,6 +492,33 @@
   function renderResults(){
     if (!el.results) return;
     el.results.textContent = '';
+    if (state.isDrawing) {
+      var drawing = document.createElement('div');
+      drawing.className = 'lottery-draw-machine';
+
+      var balls = document.createElement('div');
+      balls.className = 'lottery-draw-balls';
+      (state.drawNumbers.length ? state.drawNumbers : makeRollingNumbers()).forEach(function(n){
+        balls.appendChild(createBall(n, 'lottery-draw-ball'));
+      });
+
+      var label = document.createElement('div');
+      label.textContent = t('lottery.status.drawing');
+
+      drawing.appendChild(balls);
+      drawing.appendChild(label);
+      el.results.appendChild(drawing);
+      if (el.seedLabel) el.seedLabel.textContent = '-';
+      return;
+    }
+    if (!state.generated.length) {
+      var empty = document.createElement('div');
+      empty.className = 'lottery-empty';
+      empty.textContent = t('lottery.empty');
+      el.results.appendChild(empty);
+      if (el.seedLabel) el.seedLabel.textContent = '-';
+      return;
+    }
     state.generated.forEach(function(item, index){
       var row = document.createElement('div');
       row.className = 'lottery-set';
@@ -611,7 +687,7 @@
     if (!get('lottery')) return;
     initElements();
 
-    if (el.generate) el.generate.addEventListener('click', generateSets);
+    if (el.generate) el.generate.addEventListener('click', startDraw);
     if (el.refresh) el.refresh.addEventListener('click', refreshHistory);
     if (el.copy) el.copy.addEventListener('click', copyResults);
 
@@ -621,7 +697,6 @@
     if (cache && cache.history.length) {
       applyHistory(cache.history, 'sourceCache', cache.updatedAt || new Date().toISOString());
       setStatus('lottery.status.ready', { source: sourceLabel('sourceCache') }, 'ok');
-      generateSets();
     }
 
     loadBundled().then(function(list){
@@ -630,7 +705,6 @@
         var source = state.history.length ? state.source : 'sourceBundled';
         applyHistory(list, source, state.updatedAt || new Date().toISOString());
         setStatus('lottery.status.ready', { source: sourceLabel(source) }, 'ok');
-        if (!state.generated.length) generateSets();
       }
     }).catch(function(){
       if (!state.history.length) setStatus('lottery.status.refreshFailed', {}, 'error');

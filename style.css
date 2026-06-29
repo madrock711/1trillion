@@ -1030,7 +1030,6 @@ main {
   line-height: 1.2;
 }
 
-.lottery-subtitle,
 .lottery-disclaimer {
   margin: 0;
   color: var(--text-secondary);
@@ -1139,7 +1138,55 @@ main {
 .lottery-result-list {
   display: grid;
   gap: 10px;
+  min-height: 238px;
 }
+
+.lottery-empty,
+.lottery-draw-machine {
+  min-height: 214px;
+  display: grid;
+  place-items: center;
+  gap: 14px;
+  padding: 20px;
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  background: #141414;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.lottery-draw-machine {
+  border-style: solid;
+  border-color: rgba(29, 185, 84, 0.4);
+}
+
+.lottery-draw-balls {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lottery-draw-ball {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #2a2a2a;
+  border: 1px solid rgba(255,255,255,0.14);
+  color: #fff;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  animation: lotteryBallHop 0.62s ease-in-out infinite;
+}
+
+.lottery-draw-ball:nth-child(2) { animation-delay: 0.08s; }
+.lottery-draw-ball:nth-child(3) { animation-delay: 0.16s; }
+.lottery-draw-ball:nth-child(4) { animation-delay: 0.24s; }
+.lottery-draw-ball:nth-child(5) { animation-delay: 0.32s; }
+.lottery-draw-ball:nth-child(6) { animation-delay: 0.4s; }
 
 .lottery-set {
   display: grid;
@@ -1305,6 +1352,17 @@ main {
     width: 31px;
     height: 31px;
     font-size: 0.8rem;
+  }
+}
+
+@keyframes lotteryBallHop {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    background: #2a2a2a;
+  }
+  45% {
+    transform: translateY(-8px) scale(1.06);
+    background: #1db954;
   }
 }
 
