@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260626-2">
+    <link rel="stylesheet" href="style.css?v=20260629-1">
 </head>
 <body>
     <header>
@@ -47,6 +47,7 @@
             <div class="tab-link" data-tab="co2" data-i18n="tabs.co2">CO2 Table Timer</div>
             <div class="tab-link" data-tab="foot" data-i18n="tabs.foot">Foot Analysis</div>
             <div class="tab-link" data-tab="sequence" data-i18n="tabs.sequence">Sequence Generator</div>
+            <div class="tab-link" data-tab="lottery" data-i18n="tabs.lottery">Lotto Generator</div>
         </div>
 
         <div id="breathing" class="tab-content active">
@@ -703,6 +704,89 @@
                 </div>
             </section>
         </div>
+
+        <div id="lottery" class="tab-content">
+            <section class="lottery-app" role="region" aria-label="Lotto number generator" data-i18n="lottery.appAria" data-i18n-attr="aria-label">
+                <div class="tab-head lottery-head">
+                    <div>
+                        <p class="lottery-kicker" data-i18n="lottery.kicker">Korea Lotto 6/45 Lab</p>
+                        <h2 class="lottery-title" data-i18n="lottery.title">로또번호 생성기</h2>
+                    </div>
+                    <button class="share-btn" type="button" data-share-tab="lottery" aria-label="Copy share link for Lotto Generator" data-i18n="share.aria.lottery" data-i18n-attr="aria-label">
+                        <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" alt="" aria-hidden="true">
+                    </button>
+                </div>
+
+                <p class="lottery-subtitle" data-i18n="lottery.subtitle">역대 1등 당첨번호를 저장하고, 최신 회차를 갱신한 뒤 통계와 난수 알고리즘을 섞어 5세트를 생성합니다.</p>
+
+                <div class="lottery-actions">
+                    <button class="lottery-btn primary" type="button" id="lotteryGenerate" data-i18n="lottery.generate">번호 5세트 생성</button>
+                    <button class="lottery-btn" type="button" id="lotteryRefresh" data-i18n="lottery.refresh">최신 당첨번호 갱신</button>
+                    <button class="lottery-btn ghost" type="button" id="lotteryCopy" data-i18n="lottery.copy">결과 복사</button>
+                </div>
+
+                <div class="lottery-status" id="lotteryStatus" role="status" aria-live="polite" data-i18n="lottery.status.loading">당첨번호 데이터를 준비하고 있습니다.</div>
+
+                <div class="lottery-grid">
+                    <section class="lottery-panel lottery-results-panel">
+                        <div class="lottery-panel-head">
+                            <h3 data-i18n="lottery.resultTitle">추천 번호 세트</h3>
+                            <span id="lotterySeedLabel" class="lottery-seed-label">-</span>
+                        </div>
+                        <div class="lottery-result-list" id="lotteryResults"></div>
+                    </section>
+
+                    <section class="lottery-panel lottery-data-panel">
+                        <div class="lottery-panel-head">
+                            <h3 data-i18n="lottery.dataTitle">데이터 집계</h3>
+                            <span id="lotteryDataSource" class="lottery-data-source">-</span>
+                        </div>
+                        <dl class="lottery-metrics">
+                            <div>
+                                <dt data-i18n="lottery.metricDraws">저장 회차</dt>
+                                <dd id="lotteryMetricDraws">-</dd>
+                            </div>
+                            <div>
+                                <dt data-i18n="lottery.metricLatest">최신 회차</dt>
+                                <dd id="lotteryMetricLatest">-</dd>
+                            </div>
+                            <div>
+                                <dt data-i18n="lottery.metricUpdated">갱신 시각</dt>
+                                <dd id="lotteryMetricUpdated">-</dd>
+                            </div>
+                        </dl>
+                        <div class="lottery-latest" id="lotteryLatestDraw"></div>
+                    </section>
+                </div>
+
+                <section class="lottery-panel lottery-analysis-panel">
+                    <div class="lottery-panel-head">
+                        <h3 data-i18n="lottery.analysisTitle">알고리즘 조합</h3>
+                        <span data-i18n="lottery.analysisBadge">통계 + 다양성</span>
+                    </div>
+                    <div class="lottery-analysis-grid">
+                        <div>
+                            <h4 data-i18n="lottery.hotTitle">빈도 가중</h4>
+                            <div class="lottery-chip-list" id="lotteryHotNumbers"></div>
+                        </div>
+                        <div>
+                            <h4 data-i18n="lottery.recentTitle">최근 흐름</h4>
+                            <div class="lottery-chip-list" id="lotteryRecentNumbers"></div>
+                        </div>
+                        <div>
+                            <h4 data-i18n="lottery.balanceTitle">균형 조건</h4>
+                            <ul class="lottery-balance-list">
+                                <li data-i18n="lottery.balanceOddEven">홀짝 2:4~4:2 범위</li>
+                                <li data-i18n="lottery.balanceLowHigh">저/고번호 2:4~4:2 범위</li>
+                                <li data-i18n="lottery.balanceSum">과거 1등 합계 분포 기반 필터</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <p class="lottery-disclaimer" data-i18n="lottery.disclaimer">로또 추첨은 독립 난수 사건입니다. 이 앱은 과거 데이터 기반 추천 도구이며 당첨을 보장하지 않습니다.</p>
+            </section>
+        </div>
     </main>
 
     <section id="blog-posts" class="container">
@@ -800,6 +884,16 @@
             </details>
             <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
         </article>
+        <article class="blog-post" data-tab="lottery">
+            <h3 data-i18n="blog.post6.title">Lotto 6/45 Number Generator Guide</h3>
+            <p data-i18n="blog.post6.p1">This generator stores historical first-prize numbers and refreshes the latest draw before making five balanced sets.</p>
+            <p data-i18n="blog.post6.p2">Use the output as a structured random pick, not as a prediction guarantee.</p>
+            <details class="guide-details">
+                <summary data-i18n="blog.post6.readMoreTitle">Read more</summary>
+                <div class="guide-details-body" data-i18n="blog.post6.readMoreHtml" data-i18n-html="blog.post6.readMoreHtml"></div>
+            </details>
+            <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
+        </article>
     </section>
 
     <section id="subscribe" class="container">
@@ -822,11 +916,12 @@
 
     <div id="share-toast" class="share-toast" role="status" aria-live="polite"></div>
 
-    <script src="i18n.js?v=20260626-4"></script>
+    <script src="i18n.js?v=20260629-1"></script>
     <script src="main.js?v=20260626-3"></script>
     <script src="foot-analysis.js?v=20260211-13"></script>
     <script src="stopwatch.js?v=20260619-6"></script>
     <script src="sequence-generator.js?v=20260219-1"></script>
+    <script src="lottery-generator.js?v=20260629-1"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const tabs = document.querySelectorAll('.tab-link');
