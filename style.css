@@ -293,7 +293,7 @@ main {
 .br-embed .br-layout{display:grid;grid-template-columns:1fr;gap:18px}
 @media(min-width:880px){.br-embed .br-layout{grid-template-columns: 1.1fr .9fr}}
 .br-embed .br-timer{display:flex;flex-direction:column;align-items:center;gap:12px}
-.br-embed .br-timer-main{display:grid;grid-template-columns:minmax(74px,96px) 260px;gap:14px;align-items:center;justify-content:center;width:100%}
+.br-embed .br-timer-main{display:grid;grid-template-columns:minmax(74px,96px) 260px minmax(74px,96px);gap:14px;align-items:center;justify-content:center;width:100%}
 .br-embed .br-circle{width:260px;height:260px;border-radius:50%;position:relative;display:grid;place-items:center;transition:background .25s ease;overflow:hidden}
 .br-embed .br-circle[data-phase="INHALE"]{background: radial-gradient(ellipse at center, rgba(239,68,68,.14), rgba(239,68,68,0));}
 .br-embed .br-circle[data-phase="EXHALE"]{background: radial-gradient(ellipse at center, rgba(59,130,246,.14), rgba(59,130,246,0));}
@@ -342,9 +342,9 @@ main {
 .br-embed .br-sync-mini{width:72px;height:40px;border:1px solid #444;border-radius:12px;background:#333;font-weight:900;cursor:pointer;color:#fff}
 .br-embed .br-sync-mini[aria-pressed="true"]{background:var(--accent-color);color:#111;border-color:var(--accent-color)}
 .br-embed .br-note{font-size:12.5px;color:#888;margin-top:10px}
-.br-embed .br-volume-row{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin-top:12px}
-.br-embed .br-volume-row label{font-weight:800;color:#d7e3ee}
-.br-embed .br-volume-row input[type="range"]{width:min(100%,240px);padding:10px 0}
+.br-embed .br-volume-column{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-width:0;align-self:center}
+.br-embed .br-volume-column label{font-size:12px;font-weight:800;color:#d7e3ee;text-align:center}
+.br-embed .br-volume-vertical{width:34px;height:210px;min-height:160px;padding:0;border:0;background:transparent;accent-color:var(--accent-color);writing-mode:vertical-lr;direction:rtl}
 .br-embed .br-chakra-selector{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
 .br-embed .br-chakra-frequency{min-height:34px;width:100%;font-size:12px;font-weight:800;line-height:1.25;color:#d7e3ee;text-align:center;overflow-wrap:anywhere}
 .br-embed .br-chakra-map{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:54px;min-height:248px;padding:12px 10px;border:1px solid #3a3a3a;border-radius:999px;background:#1b1b1b}
@@ -359,8 +359,8 @@ main {
 .br-embed .br-total-time{font-variant-numeric:tabular-nums;font-weight:900;font-size:1.6rem;color:#fff}
 .br-embed .pulse{animation: brPulse .6s ease-out}
 @keyframes brPulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
-@media(max-width:520px){.br-embed .br-timer-main{grid-template-columns:minmax(62px,78px) minmax(0,230px);gap:10px}.br-embed .br-circle{width:230px;height:230px}.br-embed .br-chakra-map{width:48px;min-height:224px;padding:10px 8px}.br-embed .br-chakra-node{width:27px;height:27px;font-size:10px}.br-embed .br-chakra-frequency{font-size:11px}}
-@media(max-width:380px){.br-embed .br-timer-main{grid-template-columns:minmax(52px,60px) 210px;gap:8px}.br-embed .br-circle{width:210px;height:210px}.br-embed .br-chakra-map{width:44px;min-height:204px;padding:8px 7px;gap:5px}.br-embed .br-chakra-node{width:24px;height:24px;font-size:9px}.br-embed .br-chakra-frequency{font-size:10.5px;min-height:30px}}
+@media(max-width:520px){.br-embed .br-timer-main{grid-template-columns:42px 186px 42px;gap:6px}.br-embed .br-circle{width:186px;height:186px}.br-embed .br-chakra-map{width:38px;min-height:182px;padding:6px 5px;gap:3px}.br-embed .br-chakra-node{width:22px;height:22px;font-size:8.5px}.br-embed .br-chakra-frequency{font-size:9.5px;min-height:30px}.br-embed .br-volume-vertical{height:166px;width:28px}.br-embed .br-volume-column label{font-size:9.5px}}
+@media(max-width:380px){.br-embed .br-timer-main{grid-template-columns:38px 176px 38px;gap:5px}.br-embed .br-circle{width:176px;height:176px}.br-embed .br-chakra-map{width:35px;min-height:172px;padding:5px 4px;gap:3px}.br-embed .br-chakra-node{width:21px;height:21px;font-size:8px}.br-embed .br-volume-vertical{height:156px;width:26px}}
 
 /* Stopwatch (CO2 Table) Styles */
 .sw-embed .clockbox-wrapper { display:flex; justify-content:center; margin:30px auto; }
