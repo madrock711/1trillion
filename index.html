@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260629-2">
+    <link rel="stylesheet" href="style.css?v=20260702-1">
 </head>
 <body>
     <header>
@@ -62,21 +62,36 @@
                     </div>
 
                     <div class="br-layout">
-                        <!-- Left: Circular timer -->
+                        <!-- Left: Chakra selector + circular timer -->
                         <div class="br-timer">
-                            <div class="br-circle" data-phase="INHALE" aria-live="polite" aria-atomic="true">
-                                <svg class="br-ring" viewBox="0 0 120 120" aria-hidden="true">
-                                    <circle class="br-track" cx="60" cy="60" r="52"></circle>
-                                    <circle class="br-progress" cx="60" cy="60" r="52"></circle>
-                                </svg>
-                                <!-- breathing bubbles -->
-                                <div class="br-bubble br-bubble-in"></div>
-                                <div class="br-bubble br-bubble-ex"></div>
+                            <div class="br-timer-main">
+                                <div class="br-chakra-selector" aria-label="Chakra frequency selector" data-i18n="breath.chakraSelector" data-i18n-attr="aria-label">
+                                    <div class="br-chakra-frequency" id="br-chakra-frequency" aria-live="polite">물라다라 · 396Hz</div>
+                                    <div class="br-chakra-map" role="group" aria-label="Chakra frequencies" data-i18n="breath.chakraMap" data-i18n-attr="aria-label">
+                                        <button class="br-chakra-node" type="button" data-chakra="root" data-chakra-key="breath.chakraRoot" data-frequency="396" aria-pressed="true" aria-label="물라다라 396Hz" style="--chakra-color:#ef4444"><span aria-hidden="true">1</span></button>
+                                        <button class="br-chakra-node" type="button" data-chakra="sacral" data-chakra-key="breath.chakraSacral" data-frequency="417" aria-pressed="false" aria-label="스와디스타나 417Hz" style="--chakra-color:#f97316"><span aria-hidden="true">2</span></button>
+                                        <button class="br-chakra-node" type="button" data-chakra="solar" data-chakra-key="breath.chakraSolar" data-frequency="528" aria-pressed="false" aria-label="마니푸라 528Hz" style="--chakra-color:#facc15"><span aria-hidden="true">3</span></button>
+                                        <button class="br-chakra-node" type="button" data-chakra="heart" data-chakra-key="breath.chakraHeart" data-frequency="639" aria-pressed="false" aria-label="아나하타 639Hz" style="--chakra-color:#22c55e"><span aria-hidden="true">4</span></button>
+                                        <button class="br-chakra-node" type="button" data-chakra="throat" data-chakra-key="breath.chakraThroat" data-frequency="741" aria-pressed="false" aria-label="비슈다 741Hz" style="--chakra-color:#3b82f6"><span aria-hidden="true">5</span></button>
+                                        <button class="br-chakra-node" type="button" data-chakra="third-eye" data-chakra-key="breath.chakraThirdEye" data-frequency="852" aria-pressed="false" aria-label="아즈냐 852Hz" style="--chakra-color:#4f46e5"><span aria-hidden="true">6</span></button>
+                                        <button class="br-chakra-node" type="button" data-chakra="crown" data-chakra-key="breath.chakraCrown" data-frequency="963" aria-pressed="false" aria-label="사하스라라 963Hz" style="--chakra-color:#a855f7"><span aria-hidden="true">7</span></button>
+                                    </div>
+                                </div>
 
-                                <div class="br-center">
-                                    <div class="br-phase" id="br-phase-label" data-i18n="breath.inhale">들숨</div>
-                                    <div class="br-target-time" id="br-target-time">목표 4초</div>
-                                    <div class="br-time" id="br-time">4.00</div>
+                                <div class="br-circle" data-phase="INHALE" aria-live="polite" aria-atomic="true">
+                                    <svg class="br-ring" viewBox="0 0 120 120" aria-hidden="true">
+                                        <circle class="br-track" cx="60" cy="60" r="52"></circle>
+                                        <circle class="br-progress" cx="60" cy="60" r="52"></circle>
+                                    </svg>
+                                    <!-- breathing bubbles -->
+                                    <div class="br-bubble br-bubble-in"></div>
+                                    <div class="br-bubble br-bubble-ex"></div>
+
+                                    <div class="br-center">
+                                        <div class="br-phase" id="br-phase-label" data-i18n="breath.inhale">들숨</div>
+                                        <div class="br-target-time" id="br-target-time">목표 4초</div>
+                                        <div class="br-time" id="br-time">4.00</div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -119,22 +134,9 @@
                                 <button id="br-sync" class="br-sync-mini" type="button" aria-pressed="true" title="Sync inhale & exhale" data-i18n="breath.syncTitle" data-i18n-attr="title">=</button>
                             </div>
                             
-                            <div class="br-row">
-                                <label for="br-volume" data-i18n="breath.volume">주파수</label>
+                            <div class="br-row br-volume-row">
+                                <label for="br-volume" data-i18n="breath.volume">볼륨</label>
                                 <input id="br-volume" class="br-input" type="range" min="0" max="1" step="0.1" value="0.5">
-                            </div>
-
-                            <div class="br-chakra-selector" aria-label="Chakra frequency selector" data-i18n="breath.chakraSelector" data-i18n-attr="aria-label">
-                                <div class="br-chakra-frequency" id="br-chakra-frequency" aria-live="polite">물라다라 · 396Hz</div>
-                                <div class="br-chakra-map" role="group" aria-label="Chakra frequencies" data-i18n="breath.chakraMap" data-i18n-attr="aria-label">
-                                    <button class="br-chakra-node" type="button" data-chakra="root" data-chakra-key="breath.chakraRoot" data-frequency="396" aria-pressed="true" aria-label="물라다라 396Hz" style="--chakra-color:#ef4444"><span aria-hidden="true">1</span></button>
-                                    <button class="br-chakra-node" type="button" data-chakra="sacral" data-chakra-key="breath.chakraSacral" data-frequency="417" aria-pressed="false" aria-label="스와디스타나 417Hz" style="--chakra-color:#f97316"><span aria-hidden="true">2</span></button>
-                                    <button class="br-chakra-node" type="button" data-chakra="solar" data-chakra-key="breath.chakraSolar" data-frequency="528" aria-pressed="false" aria-label="마니푸라 528Hz" style="--chakra-color:#facc15"><span aria-hidden="true">3</span></button>
-                                    <button class="br-chakra-node" type="button" data-chakra="heart" data-chakra-key="breath.chakraHeart" data-frequency="639" aria-pressed="false" aria-label="아나하타 639Hz" style="--chakra-color:#22c55e"><span aria-hidden="true">4</span></button>
-                                    <button class="br-chakra-node" type="button" data-chakra="throat" data-chakra-key="breath.chakraThroat" data-frequency="741" aria-pressed="false" aria-label="비슈다 741Hz" style="--chakra-color:#3b82f6"><span aria-hidden="true">5</span></button>
-                                    <button class="br-chakra-node" type="button" data-chakra="third-eye" data-chakra-key="breath.chakraThirdEye" data-frequency="852" aria-pressed="false" aria-label="아즈냐 852Hz" style="--chakra-color:#4f46e5"><span aria-hidden="true">6</span></button>
-                                    <button class="br-chakra-node" type="button" data-chakra="crown" data-chakra-key="breath.chakraCrown" data-frequency="963" aria-pressed="false" aria-label="사하스라라 963Hz" style="--chakra-color:#a855f7"><span aria-hidden="true">7</span></button>
-                                </div>
                             </div>
 
                             <div class="br-status">
@@ -914,7 +916,7 @@
 
     <div id="share-toast" class="share-toast" role="status" aria-live="polite"></div>
 
-    <script src="i18n.js?v=20260629-2"></script>
+    <script src="i18n.js?v=20260702-1"></script>
     <script src="main.js?v=20260626-3"></script>
     <script src="foot-analysis.js?v=20260211-13"></script>
     <script src="stopwatch.js?v=20260619-6"></script>
