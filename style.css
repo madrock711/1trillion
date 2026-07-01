@@ -344,7 +344,7 @@ main {
 .br-embed .br-note{font-size:12.5px;color:#888;margin-top:10px}
 .br-embed .br-volume-column{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-width:0;align-self:center}
 .br-embed .br-volume-column label{font-size:12px;font-weight:800;color:#d7e3ee;text-align:center}
-.br-embed .br-volume-vertical{width:34px;height:210px;min-height:160px;padding:0;border:0;background:transparent;accent-color:var(--accent-color);writing-mode:vertical-lr;direction:rtl}
+.br-embed .br-volume-vertical{width:34px;height:210px;min-height:160px;padding:0;border:0;background:transparent;accent-color:#3b82f6;writing-mode:vertical-lr;direction:rtl}
 .br-embed .br-chakra-selector{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
 .br-embed .br-chakra-frequency{min-height:34px;width:100%;font-size:12px;font-weight:800;line-height:1.25;color:#d7e3ee;text-align:center;overflow-wrap:anywhere}
 .br-embed .br-chakra-map{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:54px;min-height:248px;padding:12px 10px;border:1px solid #3a3a3a;border-radius:999px;background:#1b1b1b}
