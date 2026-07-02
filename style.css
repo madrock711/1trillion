@@ -1372,6 +1372,451 @@ main {
   }
 }
 
+/* --- Abrahang Timer --- */
+.abrahang-app {
+  --ab-load: #f59e0b;
+  --ab-rest: #38bdf8;
+  --ab-done: #22c55e;
+  --ab-panel: #1b1b1b;
+  --ab-panel-soft: #171717;
+  --ab-line: rgba(255, 255, 255, 0.1);
+  --ab-muted: #b3b3b3;
+  background: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.abrahang-head {
+  align-items: center;
+}
+
+.abrahang-kicker {
+  margin: 0 0 4px;
+  color: var(--ab-rest);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.abrahang-title {
+  margin: 0;
+  font-size: 1.65rem;
+  line-height: 1.2;
+}
+
+.abrahang-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.abrahang-summary div {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--ab-line);
+  border-radius: 8px;
+  background: var(--ab-panel-soft);
+}
+
+.abrahang-summary span {
+  display: block;
+  color: var(--ab-muted);
+  font-size: 0.78rem;
+}
+
+.abrahang-summary strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.abrahang-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 14px;
+}
+
+.abrahang-timer-panel,
+.abrahang-settings-panel,
+.abrahang-schedule-panel {
+  border: 1px solid var(--ab-line);
+  border-radius: 8px;
+  background: var(--ab-panel-soft);
+}
+
+.abrahang-timer-panel {
+  padding: 18px;
+}
+
+.abrahang-settings-panel {
+  padding: 16px;
+}
+
+.abrahang-mode-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.abrahang-mode,
+.abrahang-btn {
+  min-height: 40px;
+  border: 1px solid var(--ab-line);
+  border-radius: 8px;
+  background: #242424;
+  color: var(--text-primary);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.abrahang-mode.is-active {
+  border-color: rgba(56, 189, 248, 0.7);
+  background: rgba(56, 189, 248, 0.14);
+  color: #e0f2fe;
+}
+
+.abrahang-dial {
+  --ab-ring-deg: 0deg;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(330px, 74vw);
+  aspect-ratio: 1;
+  margin: 8px auto 16px;
+  border-radius: 50%;
+  background: #121212;
+}
+
+.abrahang-ring,
+.abrahang-ring-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.abrahang-ring {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.abrahang-ring-fill {
+  background: conic-gradient(var(--ab-load) var(--ab-ring-deg), rgba(255, 255, 255, 0.08) 0deg);
+  -webkit-mask: radial-gradient(circle, transparent 0 62%, #000 63%);
+  mask: radial-gradient(circle, transparent 0 62%, #000 63%);
+}
+
+.abrahang-dial[data-ab-phase="rest"] .abrahang-ring-fill {
+  background: conic-gradient(var(--ab-rest) var(--ab-ring-deg), rgba(255, 255, 255, 0.08) 0deg);
+}
+
+.abrahang-dial[data-ab-phase="done"] .abrahang-ring-fill {
+  background: conic-gradient(var(--ab-done) var(--ab-ring-deg), rgba(255, 255, 255, 0.08) 0deg);
+}
+
+.abrahang-phase,
+.abrahang-time,
+.abrahang-step-count {
+  position: relative;
+  z-index: 1;
+}
+
+.abrahang-phase {
+  align-self: end;
+  color: var(--ab-muted);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.abrahang-time {
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(3.5rem, 12vw, 5.8rem);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.abrahang-step-count {
+  align-self: start;
+  color: var(--ab-muted);
+  font-weight: 800;
+}
+
+.abrahang-current {
+  min-height: 112px;
+  padding: 14px;
+  border: 1px solid var(--ab-line);
+  border-radius: 8px;
+  background: #151515;
+}
+
+.abrahang-current h3 {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+  line-height: 1.25;
+}
+
+.abrahang-current p {
+  margin: 0;
+  color: var(--ab-muted);
+  line-height: 1.55;
+}
+
+.abrahang-controls {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.abrahang-btn.primary {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #101010;
+}
+
+.abrahang-btn.ghost {
+  background: transparent;
+}
+
+.abrahang-progress {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.abrahang-progress-bar {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--ab-load), var(--ab-rest), var(--ab-done));
+  transition: width 0.15s linear;
+}
+
+.abrahang-total-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  color: var(--ab-muted);
+}
+
+.abrahang-total-row strong {
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.abrahang-setting + .abrahang-setting,
+.abrahang-next,
+.abrahang-safety {
+  margin-top: 14px;
+}
+
+.abrahang-setting label,
+.abrahang-next span {
+  display: block;
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+.abrahang-range-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 54px;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.abrahang-range-row input {
+  width: 100%;
+  accent-color: var(--ab-rest);
+}
+
+.abrahang-range-row strong {
+  text-align: right;
+  color: var(--ab-rest);
+}
+
+.abrahang-setting p {
+  margin: 8px 0 0;
+  color: var(--ab-muted);
+  font-size: 0.9rem;
+}
+
+.abrahang-checkbox {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: var(--text-secondary) !important;
+  font-weight: 700 !important;
+}
+
+.abrahang-checkbox input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-color);
+}
+
+.abrahang-next {
+  padding: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.abrahang-next strong {
+  display: block;
+  margin-top: 4px;
+  color: #e0f2fe;
+}
+
+.abrahang-next strong.is-ready {
+  color: #bbf7d0;
+}
+
+.abrahang-safety {
+  padding: 12px;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.abrahang-safety h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.abrahang-safety ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--ab-muted);
+}
+
+.abrahang-safety li + li {
+  margin-top: 6px;
+}
+
+.abrahang-schedule-panel {
+  margin-top: 14px;
+  padding: 16px;
+}
+
+.abrahang-schedule-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.abrahang-schedule-head h3 {
+  margin: 0;
+}
+
+.abrahang-schedule-head span {
+  color: var(--ab-muted);
+  font-size: 0.92rem;
+}
+
+.abrahang-steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.abrahang-step {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 10px;
+  min-height: 76px;
+  padding: 10px;
+  border: 1px solid var(--ab-line);
+  border-radius: 8px;
+  background: #151515;
+}
+
+.abrahang-step.is-current {
+  border-color: rgba(245, 158, 11, 0.8);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.abrahang-step.is-done {
+  border-color: rgba(34, 197, 94, 0.28);
+}
+
+.abrahang-step-num {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: #242424;
+  color: var(--text-primary);
+  font-weight: 900;
+}
+
+.abrahang-step.is-current .abrahang-step-num {
+  background: var(--ab-load);
+  color: #111;
+}
+
+.abrahang-step.is-done .abrahang-step-num {
+  background: var(--ab-done);
+  color: #111;
+}
+
+.abrahang-step strong,
+.abrahang-step span {
+  display: block;
+}
+
+.abrahang-step strong {
+  color: var(--text-primary);
+  line-height: 1.25;
+}
+
+.abrahang-step span:not(.abrahang-step-num) {
+  margin-top: 4px;
+  color: var(--ab-muted);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 900px) {
+  .abrahang-summary,
+  .abrahang-grid,
+  .abrahang-steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .abrahang-app {
+    padding: 16px;
+  }
+
+  .abrahang-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .abrahang-dial {
+    width: min(280px, 78vw);
+  }
+
+  .abrahang-current {
+    min-height: 138px;
+  }
+}
+
 @keyframes swSaved {
   0%   { box-shadow: inset 0 0 0 0 rgba(0,0,0,0); }
   40%  { box-shadow: inset 0 0 0 2px rgba(16,185,129,.35); }

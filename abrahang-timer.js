@@ -1,0 +1,554 @@
+(function(){
+  var STORAGE_KEY = 'abrahang:lastCompletedAt';
+  var RECOVERY_MS = 6 * 60 * 60 * 1000;
+
+  var TEXT = {
+    en: {
+      hang: 'Load',
+      rest: 'Rest',
+      ready: 'Ready',
+      done: 'Complete',
+      start: 'Start',
+      pause: 'Pause',
+      resume: 'Resume',
+      copied: 'Routine copied.',
+      copyFailed: 'Copy failed.',
+      nextEmpty: 'No completed session yet',
+      nextReady: 'Ready now',
+      nextAt: 'After {time}',
+      remaining: 'remaining',
+      paperNote: 'Paper mode: 18-22 mm edge, 10 s load / 20 s rest, 20 reps',
+      videoNote: 'Video mode: 10 s load / 50 s rest, 10 reps',
+      paperCopyTitle: 'Abrahang paper protocol',
+      videoCopyTitle: 'Abrahang video protocol',
+      baseTitle: '4-finger base hang',
+      baseCue: 'Use an 18-22 mm edge. Keep both feet grounded and feel only light forearm strain.',
+      front3Title: 'Front 3 open grip',
+      front3Cue: 'Index, middle, and ring fingers. Open grip, low load, no pulling to failure.',
+      front2OpenTitle: 'Front 2 open grip',
+      front2OpenCue: 'Index and middle fingers. Keep shoulders quiet and unload with the feet.',
+      middle2OpenTitle: 'Middle 2 open grip',
+      middle2OpenCue: 'Middle and ring fingers. Keep the wrist neutral and the strain small.',
+      front2CrimpTitle: 'Front 2 half crimp',
+      front2CrimpCue: 'Index and middle fingers in a controlled half crimp. Stop on sharp pain.',
+      middle2CrimpTitle: 'Middle 2 half crimp',
+      middle2CrimpCue: 'Middle and ring fingers in a controlled half crimp. Keep the load conservative.',
+      videoHalfTitle: 'Half crimp',
+      videoHalfCue: 'Use a 15-20 mm edge and stand tall enough that the fingers are loaded, not punished.',
+      videoFront3Cue: 'Use a 30-40 mm edge with the first pads set in an open grip.',
+      restCue: 'Shake out, breathe normally, and keep the next load deliberately easy.',
+      crimpRestCue: 'Shake out. During the last crimp rests, lightly loosen the little finger and forearm.',
+      readyTitle: 'Place your feet on the floor and your fingers on the edge.',
+      readyCue: 'Begin only when the load feels easy and controlled.',
+      doneTitle: 'Session complete.',
+      doneCue: 'Keep at least six hours before the next finger-loading session or hard climbing.'
+    },
+    ko: {
+      hang: '로딩',
+      rest: '휴식',
+      ready: '준비',
+      done: '완료',
+      start: '시작',
+      pause: '일시정지',
+      resume: '재개',
+      copied: '루틴을 복사했습니다.',
+      copyFailed: '복사에 실패했습니다.',
+      nextEmpty: '아직 완료 기록 없음',
+      nextReady: '지금 가능',
+      nextAt: '{time} 이후',
+      remaining: '남음',
+      paperNote: '논문 모드: 18-22mm 엣지, 10초 로딩/20초 휴식, 총 20회',
+      videoNote: '영상 모드: 10초 로딩/50초 휴식, 총 10회',
+      paperCopyTitle: '아브라행 논문 프로토콜',
+      videoCopyTitle: '아브라행 영상 프로토콜',
+      baseTitle: '4손가락 기본 행',
+      baseCue: '18-22mm 엣지를 사용합니다. 발은 바닥에 두고 전완에 약한 긴장만 느끼세요.',
+      front3Title: '앞 3손가락 오픈 그립',
+      front3Cue: '검지, 중지, 약지를 오픈 그립으로 겁니다. 실패 지점까지 당기지 않습니다.',
+      front2OpenTitle: '앞 2손가락 오픈 그립',
+      front2OpenCue: '검지와 중지를 사용합니다. 어깨를 조용히 두고 발로 하중을 덜어냅니다.',
+      middle2OpenTitle: '중간 2손가락 오픈 그립',
+      middle2OpenCue: '중지와 약지를 사용합니다. 손목을 중립에 두고 긴장은 작게 유지합니다.',
+      front2CrimpTitle: '앞 2손가락 하프 크림프',
+      front2CrimpCue: '검지와 중지를 하프 크림프로 겁니다. 날카로운 통증이 있으면 즉시 멈춥니다.',
+      middle2CrimpTitle: '중간 2손가락 하프 크림프',
+      middle2CrimpCue: '중지와 약지를 하프 크림프로 겁니다. 하중은 보수적으로 유지합니다.',
+      videoHalfTitle: '하프 크림프',
+      videoHalfCue: '15-20mm 엣지를 사용합니다. 손가락을 벌주는 느낌이 아니라 가볍게 싣는 느낌으로 서세요.',
+      videoFront3Cue: '30-40mm 엣지에 첫 마디만 걸리는 오픈 그립으로 진행합니다.',
+      restCue: '손을 털고 편하게 호흡합니다. 다음 로딩도 의도적으로 쉽게 유지하세요.',
+      crimpRestCue: '손을 털어 주세요. 마지막 크림프 휴식 중에는 새끼손가락과 전완을 가볍게 풀어 줍니다.',
+      readyTitle: '발을 바닥에 두고 엣지에 손을 올리세요.',
+      readyCue: '하중이 쉽고 통제 가능할 때만 시작합니다.',
+      doneTitle: '세션 완료.',
+      doneCue: '다음 손가락 로딩 세션 또는 강한 클라이밍까지 최소 6시간을 둡니다.'
+    }
+  };
+
+  function lang(){
+    return (document.documentElement.getAttribute('lang') || 'ko').indexOf('en') === 0 ? 'en' : 'ko';
+  }
+
+  function tt(key){
+    var table = TEXT[lang()] || TEXT.ko;
+    return table[key] || TEXT.en[key] || key;
+  }
+
+  function siteT(key, fallback){
+    if(window.appI18n && typeof window.appI18n.t === 'function'){
+      var value = window.appI18n.t(key);
+      if(value && value !== key) return value;
+    }
+    return fallback || key;
+  }
+
+  function makeRepeated(count, titleKey, cueKey, options){
+    var out = [];
+    for(var i = 0; i < count; i++){
+      out.push({
+        titleKey: titleKey,
+        cueKey: cueKey,
+        restCueKey: options && options.restCueKey ? options.restCueKey : 'restCue',
+        edge: options && options.edge ? options.edge : ''
+      });
+    }
+    return out;
+  }
+
+  function buildProtocol(mode){
+    if(mode === 'video'){
+      return {
+        mode: 'video',
+        hangMs: 10000,
+        restMs: 50000,
+        noteKey: 'videoNote',
+        copyTitleKey: 'videoCopyTitle',
+        steps: []
+          .concat(makeRepeated(3, 'videoHalfTitle', 'videoHalfCue', { edge: '15-20 mm' }))
+          .concat(makeRepeated(3, 'front3Title', 'videoFront3Cue', { edge: '30-40 mm' }))
+          .concat(makeRepeated(1, 'front2OpenTitle', 'front2OpenCue', { edge: '30-40 mm' }))
+          .concat(makeRepeated(1, 'middle2OpenTitle', 'middle2OpenCue', { edge: '30-40 mm' }))
+          .concat(makeRepeated(1, 'middle2CrimpTitle', 'middle2CrimpCue', { edge: '15-20 mm', restCueKey: 'crimpRestCue' }))
+          .concat(makeRepeated(1, 'front2CrimpTitle', 'front2CrimpCue', { edge: '15-20 mm', restCueKey: 'crimpRestCue' }))
+      };
+    }
+    return {
+      mode: 'paper',
+      hangMs: 10000,
+      restMs: 20000,
+      noteKey: 'paperNote',
+      copyTitleKey: 'paperCopyTitle',
+      steps: []
+        .concat(makeRepeated(6, 'baseTitle', 'baseCue', { edge: '18-22 mm' }))
+        .concat(makeRepeated(6, 'front3Title', 'front3Cue', { edge: '18-22 mm' }))
+        .concat(makeRepeated(2, 'front2OpenTitle', 'front2OpenCue', { edge: '18-22 mm' }))
+        .concat(makeRepeated(2, 'middle2OpenTitle', 'middle2OpenCue', { edge: '18-22 mm' }))
+        .concat(makeRepeated(2, 'front2CrimpTitle', 'front2CrimpCue', { edge: '18-22 mm', restCueKey: 'crimpRestCue' }))
+        .concat(makeRepeated(2, 'middle2CrimpTitle', 'middle2CrimpCue', { edge: '18-22 mm', restCueKey: 'crimpRestCue' }))
+    };
+  }
+
+  function boot(){
+    var roots = document.querySelectorAll('.abrahang-app');
+    for(var i = 0; i < roots.length; i++){
+      if(roots[i].getAttribute('data-ab-initialized') === '1') continue;
+      init(roots[i]);
+    }
+  }
+
+  function init(root){
+    root.setAttribute('data-ab-initialized', '1');
+    function q(sel){ return root.querySelector(sel); }
+    var modeButtons = root.querySelectorAll('[data-ab-mode]');
+    var startBtn = q('#abStart');
+    var resetBtn = q('#abReset');
+    var copyBtn = q('#abCopy');
+    var intensity = q('#abIntensity');
+    var intensityValue = q('#abIntensityValue');
+    var sound = q('#abSound');
+    var autoLog = q('#abAutoLog');
+    var phaseEl = q('#abPhase');
+    var timeEl = q('#abTime');
+    var countEl = q('#abStepCount');
+    var moveTitle = q('#abMoveTitle');
+    var moveCue = q('#abMoveCue');
+    var totalBar = q('#abTotalBar');
+    var totalRemaining = q('#abTotalRemaining');
+    var ringFill = q('#abRingFill');
+    var dial = q('.abrahang-dial');
+    var stepsEl = q('#abSteps');
+    var noteEl = q('#abProtocolNote');
+    var nextEl = q('#abNextSession');
+    var metricLoad = q('#abMetricLoad');
+    var metricRest = q('#abMetricRest');
+    var metricReps = q('#abMetricReps');
+
+    var audioCtx = null;
+    var rafId = 0;
+    var lastTick = 0;
+    var lastCountdownSecond = -1;
+    var temporaryCueTimer = 0;
+
+    var state = {
+      mode: 'paper',
+      protocol: buildProtocol('paper'),
+      running: false,
+      phase: 'ready',
+      stepIndex: 0,
+      remainingMs: 10000,
+      elapsedMs: 0,
+      completedLogged: false
+    };
+
+    function protocolTotalMs(protocol){
+      return protocol.steps.length * (protocol.hangMs + protocol.restMs);
+    }
+
+    function phaseDuration(){
+      if(state.phase === 'hang') return state.protocol.hangMs;
+      if(state.phase === 'rest') return state.protocol.restMs;
+      return state.protocol.hangMs;
+    }
+
+    function formatSeconds(ms){
+      var sec = Math.max(0, Math.ceil(ms / 1000));
+      if(sec < 60) return String(sec);
+      var m = Math.floor(sec / 60);
+      var s = sec % 60;
+      return String(m) + ':' + (s < 10 ? '0' : '') + String(s);
+    }
+
+    function formatMinuteSecond(ms){
+      var sec = Math.max(0, Math.ceil(ms / 1000));
+      var m = Math.floor(sec / 60);
+      var s = sec % 60;
+      return String(m) + ':' + (s < 10 ? '0' : '') + String(s);
+    }
+
+    function formatShort(sec){
+      return lang() === 'en' ? sec + 's' : sec + '초';
+    }
+
+    function stepText(step){
+      return tt(step.titleKey);
+    }
+
+    function stepCue(step){
+      return tt(step.cueKey);
+    }
+
+    function getCurrentStep(){
+      return state.protocol.steps[state.stepIndex] || null;
+    }
+
+    function remainingTotalMs(){
+      if(state.phase === 'done') return 0;
+      if(state.phase === 'ready') return protocolTotalMs(state.protocol);
+      var remaining = state.remainingMs;
+      if(state.phase === 'hang') remaining += state.protocol.restMs;
+      var remainingSteps = Math.max(0, state.protocol.steps.length - state.stepIndex - 1);
+      return remaining + remainingSteps * (state.protocol.hangMs + state.protocol.restMs);
+    }
+
+    function setMode(mode){
+      state.mode = mode === 'video' ? 'video' : 'paper';
+      state.protocol = buildProtocol(state.mode);
+      resetState(false);
+      render();
+    }
+
+    function resetState(shouldRender){
+      stopLoop();
+      state.running = false;
+      state.phase = 'ready';
+      state.stepIndex = 0;
+      state.remainingMs = state.protocol.hangMs;
+      state.elapsedMs = 0;
+      state.completedLogged = false;
+      lastCountdownSecond = -1;
+      if(window.appWakeLock) window.appWakeLock.release('abrahang');
+      if(shouldRender !== false) render();
+    }
+
+    function ensureAudio(){
+      if(audioCtx) return;
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if(!Ctx) return;
+      try{
+        audioCtx = new Ctx();
+      }catch(e){
+        audioCtx = null;
+      }
+    }
+
+    function beep(kind){
+      if(!sound || !sound.checked) return;
+      ensureAudio();
+      if(!audioCtx) return;
+      try{
+        if(audioCtx.state === 'suspended' && audioCtx.resume) audioCtx.resume();
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        var now = audioCtx.currentTime;
+        var freq = kind === 'done' ? 880 : (kind === 'countdown' ? 560 : 740);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(kind === 'countdown' ? 0.12 : 0.18, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + (kind === 'countdown' ? 0.12 : 0.24));
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + (kind === 'countdown' ? 0.14 : 0.26));
+      }catch(e){ /* ignore audio errors */ }
+    }
+
+    function start(){
+      if(state.phase === 'done') resetState(false);
+      if(state.phase === 'ready'){
+        state.phase = 'hang';
+        state.stepIndex = 0;
+        state.remainingMs = state.protocol.hangMs;
+        lastCountdownSecond = -1;
+        beep('phase');
+      }
+      state.running = true;
+      lastTick = performance.now();
+      if(window.appWakeLock) window.appWakeLock.request('abrahang');
+      tick(lastTick);
+      render();
+    }
+
+    function pause(){
+      state.running = false;
+      stopLoop();
+      if(window.appWakeLock) window.appWakeLock.release('abrahang');
+      render();
+    }
+
+    function stopLoop(){
+      if(rafId){
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+    }
+
+    function finish(){
+      state.phase = 'done';
+      state.running = false;
+      state.remainingMs = 0;
+      stopLoop();
+      if(window.appWakeLock) window.appWakeLock.release('abrahang');
+      beep('done');
+      if(autoLog && autoLog.checked && !state.completedLogged){
+        state.completedLogged = true;
+        try { localStorage.setItem(STORAGE_KEY, String(Date.now())); } catch(e){ /* ignore */ }
+      }
+      render();
+    }
+
+    function advancePhase(){
+      lastCountdownSecond = -1;
+      if(state.phase === 'hang'){
+        state.phase = 'rest';
+        state.remainingMs = state.protocol.restMs;
+        beep('phase');
+        return;
+      }
+      if(state.phase === 'rest'){
+        state.stepIndex += 1;
+        if(state.stepIndex >= state.protocol.steps.length){
+          finish();
+          return;
+        }
+        state.phase = 'hang';
+        state.remainingMs = state.protocol.hangMs;
+        beep('phase');
+      }
+    }
+
+    function tick(ts){
+      if(!state.running) return;
+      var delta = Math.max(0, ts - lastTick);
+      lastTick = ts;
+      state.remainingMs -= delta;
+      state.elapsedMs += delta;
+      while(state.running && state.remainingMs <= 0){
+        var overshoot = state.remainingMs;
+        advancePhase();
+        if(state.running) state.remainingMs += overshoot;
+      }
+      if(state.running){
+        var sec = Math.ceil(state.remainingMs / 1000);
+        if(sec > 0 && sec <= 3 && sec !== lastCountdownSecond){
+          lastCountdownSecond = sec;
+          beep('countdown');
+        }
+        renderLive();
+        rafId = requestAnimationFrame(tick);
+      }
+    }
+
+    function renderSteps(){
+      stepsEl.innerHTML = '';
+      for(var i = 0; i < state.protocol.steps.length; i++){
+        var step = state.protocol.steps[i];
+        var li = document.createElement('li');
+        li.className = 'abrahang-step';
+        if(state.phase !== 'ready' && state.phase !== 'done' && i === state.stepIndex) li.className += ' is-current';
+        if(state.phase === 'done' || i < state.stepIndex) li.className += ' is-done';
+        var num = document.createElement('span');
+        num.className = 'abrahang-step-num';
+        num.textContent = String(i + 1);
+        var body = document.createElement('div');
+        var title = document.createElement('strong');
+        title.textContent = stepText(step);
+        var cue = document.createElement('span');
+        cue.textContent = step.edge ? step.edge + ' - ' + stepCue(step) : stepCue(step);
+        body.appendChild(title);
+        body.appendChild(cue);
+        li.appendChild(num);
+        li.appendChild(body);
+        stepsEl.appendChild(li);
+      }
+    }
+
+    function renderLive(){
+      var total = protocolTotalMs(state.protocol);
+      var remaining = remainingTotalMs();
+      var elapsed = Math.max(0, total - remaining);
+      var progress = total > 0 ? Math.max(0, Math.min(1, elapsed / total)) : 0;
+      var phaseProgress = state.phase === 'ready' || state.phase === 'done' ? (state.phase === 'done' ? 1 : 0) :
+        Math.max(0, Math.min(1, 1 - (state.remainingMs / phaseDuration())));
+      var current = getCurrentStep();
+
+      if(dial) dial.setAttribute('data-ab-phase', state.phase);
+      if(ringFill) ringFill.style.setProperty('--ab-ring-deg', Math.round(phaseProgress * 360) + 'deg');
+      if(totalBar) totalBar.style.width = Math.round(progress * 1000) / 10 + '%';
+      if(totalRemaining) totalRemaining.textContent = formatMinuteSecond(remaining);
+
+      if(state.phase === 'done'){
+        phaseEl.textContent = tt('done');
+        timeEl.textContent = '0';
+        countEl.textContent = state.protocol.steps.length + ' / ' + state.protocol.steps.length;
+        moveTitle.textContent = tt('doneTitle');
+        moveCue.textContent = tt('doneCue');
+      }else if(state.phase === 'ready'){
+        phaseEl.textContent = tt('ready');
+        timeEl.textContent = formatSeconds(state.protocol.hangMs);
+        countEl.textContent = '0 / ' + state.protocol.steps.length;
+        moveTitle.textContent = tt('readyTitle');
+        moveCue.textContent = tt('readyCue');
+      }else{
+        phaseEl.textContent = state.phase === 'hang' ? tt('hang') : tt('rest');
+        timeEl.textContent = formatSeconds(state.remainingMs);
+        countEl.textContent = (state.stepIndex + 1) + ' / ' + state.protocol.steps.length;
+        if(current){
+          moveTitle.textContent = state.phase === 'hang' ? stepText(current) : tt('rest');
+          moveCue.textContent = state.phase === 'hang' ? stepCue(current) : tt(current.restCueKey || 'restCue');
+        }
+      }
+    }
+
+    function renderNextSession(){
+      var last = 0;
+      try { last = Number(localStorage.getItem(STORAGE_KEY) || 0); } catch(e){ last = 0; }
+      if(!last){
+        nextEl.textContent = tt('nextEmpty');
+        return;
+      }
+      var next = last + RECOVERY_MS;
+      if(Date.now() >= next){
+        nextEl.textContent = tt('nextReady');
+        nextEl.classList.add('is-ready');
+        return;
+      }
+      nextEl.classList.remove('is-ready');
+      var formatter = new Intl.DateTimeFormat(lang() === 'en' ? 'en-US' : 'ko-KR', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      nextEl.textContent = tt('nextAt').replace('{time}', formatter.format(new Date(next)));
+    }
+
+    function render(){
+      for(var i = 0; i < modeButtons.length; i++){
+        var active = modeButtons[i].getAttribute('data-ab-mode') === state.mode;
+        modeButtons[i].classList.toggle('is-active', active);
+        modeButtons[i].setAttribute('aria-pressed', active ? 'true' : 'false');
+      }
+      if(metricLoad) metricLoad.textContent = formatShort(state.protocol.hangMs / 1000);
+      if(metricRest) metricRest.textContent = formatShort(state.protocol.restMs / 1000);
+      if(metricReps) metricReps.textContent = lang() === 'en' ? state.protocol.steps.length + ' reps' : state.protocol.steps.length + '회';
+      if(noteEl) noteEl.textContent = tt(state.protocol.noteKey);
+      if(intensityValue && intensity) intensityValue.textContent = intensity.value + '%';
+      if(startBtn){
+        if(state.running) startBtn.textContent = siteT('abrahang.pause', tt('pause'));
+        else if(state.phase === 'hang' || state.phase === 'rest') startBtn.textContent = siteT('abrahang.resume', tt('resume'));
+        else startBtn.textContent = siteT('abrahang.start', tt('start'));
+      }
+      renderLive();
+      renderSteps();
+      renderNextSession();
+    }
+
+    function copyRoutine(){
+      var lines = [tt(state.protocol.copyTitleKey), tt(state.protocol.noteKey), ''];
+      for(var i = 0; i < state.protocol.steps.length; i++){
+        lines.push((i + 1) + '. ' + stepText(state.protocol.steps[i]) + ' - ' + formatShort(state.protocol.hangMs / 1000) + ' / ' + formatShort(state.protocol.restMs / 1000));
+      }
+      lines.push('');
+      lines.push(lang() === 'en' ? 'Keep feet on the floor. Wait at least 6 hours before the next finger-loading session.' : '발은 바닥에 둡니다. 다음 손가락 로딩 세션까지 최소 6시간을 둡니다.');
+      var text = lines.join('\n');
+      var done = function(){ temporaryCue(tt('copied')); };
+      var fail = function(){ temporaryCue(tt('copyFailed')); };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done).catch(fail);
+      }else{
+        fail();
+      }
+    }
+
+    function temporaryCue(text){
+      clearTimeout(temporaryCueTimer);
+      var current = getCurrentStep();
+      var original = state.phase === 'hang' && current ? stepCue(current) : moveCue.textContent;
+      moveCue.textContent = text;
+      temporaryCueTimer = setTimeout(function(){
+        moveCue.textContent = original;
+        renderLive();
+      }, 1600);
+    }
+
+    for(var i = 0; i < modeButtons.length; i++){
+      modeButtons[i].addEventListener('click', function(){
+        setMode(this.getAttribute('data-ab-mode'));
+      });
+    }
+
+    if(startBtn){
+      startBtn.addEventListener('click', function(){
+        ensureAudio();
+        if(state.running) pause();
+        else start();
+      });
+    }
+    if(resetBtn) resetBtn.addEventListener('click', function(){ resetState(true); });
+    if(copyBtn) copyBtn.addEventListener('click', copyRoutine);
+    if(intensity) intensity.addEventListener('input', render);
+
+    document.addEventListener('app:lang', function(){ render(); });
+    document.addEventListener('visibilitychange', function(){
+      if(document.visibilityState === 'visible') renderNextSession();
+    });
+
+    render();
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', boot);
+  }else{
+    boot();
+  }
+})();

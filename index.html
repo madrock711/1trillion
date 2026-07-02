@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260702-5">
+    <link rel="stylesheet" href="style.css?v=20260702-6">
 </head>
 <body>
     <header>
@@ -48,6 +48,7 @@
             <div class="tab-link" data-tab="foot" data-i18n="tabs.foot">Foot Analysis</div>
             <div class="tab-link" data-tab="sequence" data-i18n="tabs.sequence">Sequence Generator</div>
             <div class="tab-link" data-tab="lottery" data-i18n="tabs.lottery">Lotto Generator</div>
+            <div class="tab-link" data-tab="abrahang" data-i18n="tabs.abrahang">Abrahang Timer</div>
         </div>
 
         <div id="breathing" class="tab-content active">
@@ -787,6 +788,121 @@
                 <p class="lottery-disclaimer" data-i18n="lottery.disclaimer">로또 추첨은 독립 난수 사건입니다. 이 앱은 과거 데이터 기반 추천 도구이며 당첨을 보장하지 않습니다.</p>
             </section>
         </div>
+
+        <div id="abrahang" class="tab-content">
+            <section class="abrahang-app" role="region" aria-label="Abrahang hangboard timer" data-i18n="abrahang.appAria" data-i18n-attr="aria-label">
+                <div class="tab-head abrahang-head">
+                    <div>
+                        <p class="abrahang-kicker" data-i18n="abrahang.kicker">Finger tendon loading lab</p>
+                        <h2 class="abrahang-title" data-i18n="abrahang.title">아브라행 행보드 타이머</h2>
+                    </div>
+                    <button class="share-btn" type="button" data-share-tab="abrahang" aria-label="Copy share link for Abrahang Timer" data-i18n="share.aria.abrahang" data-i18n-attr="aria-label">
+                        <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" alt="" aria-hidden="true">
+                    </button>
+                </div>
+
+                <div class="abrahang-summary">
+                    <div>
+                        <span data-i18n="abrahang.metricLoad">로딩</span>
+                        <strong id="abMetricLoad">10초</strong>
+                    </div>
+                    <div>
+                        <span data-i18n="abrahang.metricRest">휴식</span>
+                        <strong id="abMetricRest">20초</strong>
+                    </div>
+                    <div>
+                        <span data-i18n="abrahang.metricReps">반복</span>
+                        <strong id="abMetricReps">20회</strong>
+                    </div>
+                    <div>
+                        <span data-i18n="abrahang.metricGap">다음 세션</span>
+                        <strong data-i18n="abrahang.metricGapValue">6시간 뒤</strong>
+                    </div>
+                </div>
+
+                <div class="abrahang-grid">
+                    <section class="abrahang-timer-panel" aria-live="polite">
+                        <div class="abrahang-mode-switch" role="group" aria-label="Protocol mode" data-i18n="abrahang.modeAria" data-i18n-attr="aria-label">
+                            <button class="abrahang-mode is-active" type="button" data-ab-mode="paper" data-i18n="abrahang.modePaper">논문 10분</button>
+                            <button class="abrahang-mode" type="button" data-ab-mode="video" data-i18n="abrahang.modeVideo">영상 10분</button>
+                        </div>
+
+                        <div class="abrahang-dial" data-ab-phase="ready">
+                            <div class="abrahang-ring" aria-hidden="true">
+                                <div class="abrahang-ring-fill" id="abRingFill"></div>
+                            </div>
+                            <div class="abrahang-phase" id="abPhase" data-i18n="abrahang.phaseReady">준비</div>
+                            <div class="abrahang-time" id="abTime">10</div>
+                            <div class="abrahang-step-count" id="abStepCount">0 / 20</div>
+                        </div>
+
+                        <div class="abrahang-current">
+                            <h3 id="abMoveTitle" data-i18n="abrahang.readyTitle">발을 바닥에 두고 엣지에 손을 올리세요</h3>
+                            <p id="abMoveCue" data-i18n="abrahang.readyCue">전완에 약한 긴장만 느껴지는 강도로 시작합니다. 통증이 있으면 시작하지 마세요.</p>
+                        </div>
+
+                        <div class="abrahang-controls">
+                            <button class="abrahang-btn primary" type="button" id="abStart" data-i18n="abrahang.start">시작</button>
+                            <button class="abrahang-btn" type="button" id="abReset" data-i18n="abrahang.reset">초기화</button>
+                            <button class="abrahang-btn ghost" type="button" id="abCopy" data-i18n="abrahang.copy">루틴 복사</button>
+                        </div>
+
+                        <div class="abrahang-progress">
+                            <div class="abrahang-progress-bar" id="abTotalBar"></div>
+                        </div>
+                        <div class="abrahang-total-row">
+                            <span data-i18n="abrahang.totalRemaining">남은 시간</span>
+                            <strong id="abTotalRemaining">10:00</strong>
+                        </div>
+                    </section>
+
+                    <section class="abrahang-settings-panel">
+                        <div class="abrahang-setting">
+                            <label for="abIntensity" data-i18n="abrahang.intensityLabel">강도 목표</label>
+                            <div class="abrahang-range-row">
+                                <input id="abIntensity" type="range" min="30" max="50" step="5" value="40">
+                                <strong id="abIntensityValue">40%</strong>
+                            </div>
+                            <p data-i18n="abrahang.intensityHint">최대 힘 기준이 아니라, 통제 가능한 약한 전완 긴장 기준입니다.</p>
+                        </div>
+
+                        <div class="abrahang-setting">
+                            <label class="abrahang-checkbox">
+                                <input id="abSound" type="checkbox" checked>
+                                <span data-i18n="abrahang.soundLabel">전환음 사용</span>
+                            </label>
+                            <label class="abrahang-checkbox">
+                                <input id="abAutoLog" type="checkbox" checked>
+                                <span data-i18n="abrahang.autoLogLabel">완료 시 6시간 회복 타이머 기록</span>
+                            </label>
+                        </div>
+
+                        <div class="abrahang-next">
+                            <span data-i18n="abrahang.nextLabel">다음 권장 시작</span>
+                            <strong id="abNextSession" data-i18n="abrahang.nextEmpty">아직 완료 기록 없음</strong>
+                        </div>
+
+                        <div class="abrahang-safety">
+                            <h3 data-i18n="abrahang.safetyTitle">안전 기준</h3>
+                            <ul>
+                                <li data-i18n="abrahang.safetyFeet">발은 항상 바닥에 둡니다.</li>
+                                <li data-i18n="abrahang.safetyPain">손가락, 손목, 팔꿈치 통증이 있으면 중단합니다.</li>
+                                <li data-i18n="abrahang.safetyGap">클라이밍 또는 다음 세션과 최소 6시간 간격을 둡니다.</li>
+                                <li data-i18n="abrahang.safetyWarmup">차가운 손으로 시작하지 말고 가볍게 워밍업합니다.</li>
+                            </ul>
+                        </div>
+                    </section>
+                </div>
+
+                <section class="abrahang-schedule-panel">
+                    <div class="abrahang-schedule-head">
+                        <h3 data-i18n="abrahang.scheduleTitle">오늘의 순서</h3>
+                        <span id="abProtocolNote" data-i18n="abrahang.protocolPaper">논문 모드: 18-22mm 엣지, 10초 로딩/20초 휴식, 총 20회</span>
+                    </div>
+                    <ol class="abrahang-steps" id="abSteps"></ol>
+                </section>
+            </section>
+        </div>
     </main>
 
     <section id="blog-posts" class="container">
@@ -894,6 +1010,16 @@
             </details>
             <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
         </article>
+        <article class="blog-post" data-tab="abrahang">
+            <h3 data-i18n="blog.post7.title">Abrahang hangboard timer guide</h3>
+            <p data-i18n="blog.post7.p1">Abrahangs are low-intensity hangboard loading sessions designed around short connective-tissue stimulus and long recovery windows.</p>
+            <p data-i18n="blog.post7.p2">Use the timer as a form guide: feet stay on the floor, intensity stays low, and the next hard finger-loading session waits at least six hours.</p>
+            <details class="guide-details">
+                <summary data-i18n="blog.post7.readMoreTitle">Read more</summary>
+                <div class="guide-details-body" data-i18n="blog.post7.readMoreHtml" data-i18n-html="blog.post7.readMoreHtml"></div>
+            </details>
+            <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
+        </article>
     </section>
 
     <section id="subscribe" class="container">
@@ -916,12 +1042,13 @@
 
     <div id="share-toast" class="share-toast" role="status" aria-live="polite"></div>
 
-    <script src="i18n.js?v=20260702-1"></script>
+    <script src="i18n.js?v=20260702-2"></script>
     <script src="main.js?v=20260626-3"></script>
     <script src="foot-analysis.js?v=20260211-13"></script>
     <script src="stopwatch.js?v=20260619-6"></script>
     <script src="sequence-generator.js?v=20260219-1"></script>
     <script src="lottery-generator.js?v=20260629-2"></script>
+    <script src="abrahang-timer.js?v=20260702-2"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const tabs = document.querySelectorAll('.tab-link');
