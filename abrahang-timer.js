@@ -43,6 +43,9 @@
       videoFront3Cue: 'Use a 30-40 mm edge with the first pads set in an open grip.',
       restCue: 'Shake out, breathe normally, and keep the next load deliberately easy.',
       crimpRestCue: 'Shake out. During the last crimp rests, lightly loosen the little finger and forearm.',
+      nextPreviewTitle: 'Next set preview',
+      finalRestTitle: 'Final rest',
+      finalRestCue: 'This is the last rest. The session will complete when the timer reaches zero.',
       readyTitle: 'Place your feet on the floor and your fingers on the edge.',
       readyCue: 'Begin only when the load feels easy and controlled.',
       doneTitle: 'Session complete.',
@@ -83,6 +86,9 @@
       videoFront3Cue: '30-40mm 엣지에 첫 마디만 걸리는 오픈 그립으로 진행합니다.',
       restCue: '손을 털고 편하게 호흡합니다. 다음 로딩도 의도적으로 쉽게 유지하세요.',
       crimpRestCue: '손을 털어 주세요. 마지막 크림프 휴식 중에는 새끼손가락과 전완을 가볍게 풀어 줍니다.',
+      nextPreviewTitle: '다음 세트 미리보기',
+      finalRestTitle: '마지막 휴식',
+      finalRestCue: '마지막 휴식입니다. 타이머가 끝나면 세션이 완료됩니다.',
       readyTitle: '발을 바닥에 두고 엣지에 손을 올리세요.',
       readyCue: '하중이 쉽고 통제 가능할 때만 시작합니다.',
       doneTitle: '세션 완료.',
@@ -284,6 +290,23 @@
       return state.protocol.steps[state.stepIndex] || null;
     }
 
+    function getNextStep(){
+      return state.protocol.steps[state.stepIndex + 1] || null;
+    }
+
+    function getHighlightedStepIndex(){
+      if(state.phase === 'hang') return state.stepIndex;
+      if(state.phase === 'rest') return getNextStep() ? state.stepIndex + 1 : -1;
+      return -1;
+    }
+
+    function formatStepPreview(index, step){
+      if(!step) return '';
+      var prefix = String(index + 1) + ' / ' + state.protocol.steps.length;
+      var edge = step.edge ? ' · ' + step.edge : '';
+      return prefix + ' · ' + stepText(step) + edge + ' - ' + stepCue(step);
+    }
+
     function remainingTotalMs(){
       if(state.phase === 'done') return 0;
       if(state.phase === 'ready') return protocolTotalMs(state.protocol);
@@ -396,6 +419,7 @@
         state.phase = 'rest';
         state.remainingMs = state.protocol.restMs;
         beep('phase');
+        renderSteps();
         return;
       }
       if(state.phase === 'rest'){
@@ -407,6 +431,7 @@
         state.phase = 'hang';
         state.remainingMs = state.protocol.hangMs;
         beep('phase');
+        renderSteps();
       }
     }
 
@@ -434,12 +459,18 @@
 
     function renderSteps(){
       stepsEl.innerHTML = '';
+      var highlightedIndex = getHighlightedStepIndex();
       for(var i = 0; i < state.protocol.steps.length; i++){
         var step = state.protocol.steps[i];
         var li = document.createElement('li');
         li.className = 'abrahang-step';
-        if(state.phase !== 'ready' && state.phase !== 'done' && i === state.stepIndex) li.className += ' is-current';
-        if(state.phase === 'done' || i < state.stepIndex) li.className += ' is-done';
+        if(i === highlightedIndex){
+          li.className += ' is-current';
+          if(state.phase === 'hang' && state.running) li.className += ' is-loading';
+          if(state.phase === 'rest') li.className += ' is-preview';
+          li.setAttribute('aria-current', 'step');
+        }
+        if(state.phase === 'done' || i < state.stepIndex || (state.phase === 'rest' && i === state.stepIndex)) li.className += ' is-done';
         var num = document.createElement('span');
         num.className = 'abrahang-step-num';
         num.textContent = String(i + 1);
@@ -464,6 +495,7 @@
       var phaseProgress = state.phase === 'ready' || state.phase === 'done' ? (state.phase === 'done' ? 1 : 0) :
         Math.max(0, Math.min(1, 1 - (state.remainingMs / phaseDuration())));
       var current = getCurrentStep();
+      var next = getNextStep();
 
       if(dial) dial.setAttribute('data-ab-phase', state.phase);
       if(ringFill) ringFill.style.setProperty('--ab-ring-deg', Math.round(phaseProgress * 360) + 'deg');
@@ -487,8 +519,16 @@
         timeEl.textContent = formatSeconds(state.remainingMs);
         countEl.textContent = (state.stepIndex + 1) + ' / ' + state.protocol.steps.length;
         if(current){
-          moveTitle.textContent = state.phase === 'hang' ? stepText(current) : tt('rest');
-          moveCue.textContent = state.phase === 'hang' ? stepCue(current) : tt(current.restCueKey || 'restCue');
+          if(state.phase === 'hang'){
+            moveTitle.textContent = stepText(current);
+            moveCue.textContent = stepCue(current);
+          }else if(next){
+            moveTitle.textContent = tt('nextPreviewTitle');
+            moveCue.textContent = formatStepPreview(state.stepIndex + 1, next);
+          }else{
+            moveTitle.textContent = tt('finalRestTitle');
+            moveCue.textContent = tt('finalRestCue');
+          }
         }
       }
     }
