@@ -177,6 +177,7 @@
     var scaleConnect = q('#abScaleConnect');
     var scaleConnectWhc06 = q('#abScaleConnectWhc06');
     var scaleStatus = q('#abScaleStatus');
+    var scaleSupport = q('#abScaleSupport');
     var scaleReading = q('#abScaleReading');
     var scaleFingerLoad = q('#abScaleFingerLoad');
     var scaleTargetReading = q('#abScaleTargetReading');
@@ -283,6 +284,46 @@
 
     function hasBluetoothScaleSupport(){
       return !!(navigator.bluetooth && typeof navigator.bluetooth.requestDevice === 'function');
+    }
+
+    function getWhc06Support(){
+      if(typeof window.isSecureContext !== 'undefined' && !window.isSecureContext){
+        return {
+          ok: false,
+          key: 'abrahang.scaleSupportNoSecure',
+          fallback: lang() === 'en' ? 'Bluetooth requires HTTPS or localhost.' : 'Bluetooth는 HTTPS 또는 localhost에서만 동작합니다.'
+        };
+      }
+      if(!hasBluetoothScaleSupport()){
+        return {
+          ok: false,
+          key: 'abrahang.scaleSupportNoBluetooth',
+          fallback: lang() === 'en' ? 'This browser cannot use Web Bluetooth.' : '이 브라우저는 Web Bluetooth를 사용할 수 없습니다.'
+        };
+      }
+      if(!window.BluetoothDevice || !window.BluetoothDevice.prototype || typeof window.BluetoothDevice.prototype.watchAdvertisements !== 'function'){
+        return {
+          ok: false,
+          key: 'abrahang.scaleSupportNoAdvertisements',
+          fallback: lang() === 'en'
+            ? 'WH-C06 live receiver: unavailable. Use Chrome with Experimental Web Platform features enabled, then restart Chrome.'
+            : 'WH-C06 실시간 수신 불가: Chrome에서 Experimental Web Platform features를 켠 뒤 Chrome을 완전히 재시작해야 합니다.'
+        };
+      }
+      return {
+        ok: true,
+        key: 'abrahang.scaleSupportReady',
+        fallback: lang() === 'en' ? 'WH-C06 live receiver: available' : 'WH-C06 실시간 수신 가능'
+      };
+    }
+
+    function renderWhc06Support(){
+      if(!scaleSupport) return getWhc06Support();
+      var support = getWhc06Support();
+      scaleSupport.textContent = siteT(support.key, support.fallback);
+      scaleSupport.classList.toggle('is-error', !support.ok);
+      scaleSupport.classList.toggle('is-ok', support.ok);
+      return support;
     }
 
     function setScaleStatus(key, fallback, tone){
@@ -430,6 +471,7 @@
           scaleConnectWhc06.textContent = siteT('abrahang.scaleConnectWhc06', lang() === 'en' ? 'WH-C06 / IF_B7 (beta)' : 'WH-C06 / IF_B7 연결(beta)');
         }
       }
+      renderWhc06Support();
       if(scaleReading) scaleReading.textContent = hasReading ? formatKg(scaleState.readingKg) : emptyScaleText();
       if(scaleFingerLoad){
         if(hasReading && hasBodyWeight) scaleFingerLoad.textContent = formatKg(Math.max(0, bodyKg - scaleState.readingKg));
@@ -513,6 +555,11 @@
       if(!scaleConnectWhc06) return;
       if(!hasBluetoothScaleSupport()){
         setScaleStatus('abrahang.scaleStatusUnsupported', lang() === 'en' ? 'Web Bluetooth is not supported in this browser.' : '이 브라우저는 Web Bluetooth를 지원하지 않습니다.', 'error');
+        return;
+      }
+      var whc06Support = renderWhc06Support();
+      if(!whc06Support.ok){
+        setScaleStatus('abrahang.scaleStatusWhc06Unsupported', lang() === 'en' ? 'WH-C06 advertisement scanning is unavailable.' : 'WH-C06 광고 수신 미지원', 'error');
         return;
       }
       scaleState.connecting = true;

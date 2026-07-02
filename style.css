@@ -1736,6 +1736,25 @@ main {
   color: #fde68a;
 }
 
+.abrahang-scale-support {
+  display: block;
+  margin-top: 6px;
+  color: var(--ab-muted);
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 750;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.abrahang-scale-support.is-error {
+  color: #fecaca;
+}
+
+.abrahang-scale-support.is-ok {
+  color: #bbf7d0;
+}
+
 .abrahang-scale-actions {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
