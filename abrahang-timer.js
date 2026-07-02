@@ -16,6 +16,7 @@
   var WHC06_WEIGHT_OFFSET = 10;
   var WHC06_HANG_SILENCE_MS = 4000;
   var WHC06_FIRST_PACKET_MS = 12000;
+  var WHC06_FOREGROUND_PACKET_MS = 15000;
   var WHC06_RECOVERY_COOLDOWN_MS = 7000;
   var WHC06_STALE_MS = 90000;
   var PRECOUNT_MS = 3000;
@@ -245,9 +246,15 @@
       advertisementHandler: null,
       advertisementTimeout: 0,
       firstPacketTimeout: 0,
+      firstPacketExpectedSince: 0,
+      firstPacketStatusKey: '',
+      firstPacketStatusFallback: '',
       advertisementRestarting: false,
       lastAdvertisementAt: 0,
       recoveryAttemptAt: 0,
+      foregroundPausedAt: 0,
+      foregroundCheckAt: 0,
+      foregroundNeedsFreshPacket: false,
       watchStale: false,
       connecting: false,
       connectingType: null,
@@ -411,6 +418,9 @@
         clearTimeout(scaleState.firstPacketTimeout);
         scaleState.firstPacketTimeout = 0;
       }
+      scaleState.firstPacketExpectedSince = 0;
+      scaleState.firstPacketStatusKey = '';
+      scaleState.firstPacketStatusFallback = '';
     }
 
     function resetWhc06PacketTimeout(){
@@ -438,22 +448,32 @@
     }
 
     function markWhc06NoFirstPacket(){
-      if(scaleState.connectionType !== 'whc06' || scaleState.readingKg != null) return;
+      if(scaleState.connectionType !== 'whc06') return;
+      if(scaleState.firstPacketExpectedSince && scaleState.lastAdvertisementAt >= scaleState.firstPacketExpectedSince) return;
+      if(!scaleState.firstPacketExpectedSince && scaleState.readingKg != null) return;
+      var statusKey = scaleState.firstPacketStatusKey || 'abrahang.scaleStatusWhc06NoFirstPacket';
+      var statusFallback = scaleState.firstPacketStatusFallback || (lang() === 'en' ? 'No WH-C06 packets from the paired device. Use WH-C06 rescan.' : '페어링된 WH-C06에서 값이 들어오지 않습니다. WH-C06 새로 스캔을 누르세요.');
       clearWhc06PacketTimers();
       scaleState.watchStale = true;
       setScaleStatus(
-        'abrahang.scaleStatusWhc06NoFirstPacket',
-        lang() === 'en' ? 'No WH-C06 packets from the paired device. Use WH-C06 rescan.' : '페어링된 WH-C06에서 값이 들어오지 않습니다. WH-C06 새로 스캔을 누르세요.',
+        statusKey,
+        statusFallback,
         'error'
       );
     }
 
-    function setWhc06FirstPacketTimeout(durationMs){
+    function setWhc06FirstPacketTimeout(durationMs, statusKey, fallback){
       if(scaleState.firstPacketTimeout){
         clearTimeout(scaleState.firstPacketTimeout);
         scaleState.firstPacketTimeout = 0;
       }
+      scaleState.firstPacketExpectedSince = 0;
+      scaleState.firstPacketStatusKey = '';
+      scaleState.firstPacketStatusFallback = '';
       if(!durationMs) return;
+      scaleState.firstPacketExpectedSince = Date.now();
+      scaleState.firstPacketStatusKey = statusKey || '';
+      scaleState.firstPacketStatusFallback = fallback || '';
       scaleState.firstPacketTimeout = setTimeout(markWhc06NoFirstPacket, durationMs);
     }
 
@@ -479,6 +499,9 @@
         clearTimeout(scaleState.firstPacketTimeout);
         scaleState.firstPacketTimeout = 0;
       }
+      scaleState.firstPacketExpectedSince = 0;
+      scaleState.firstPacketStatusKey = '';
+      scaleState.firstPacketStatusFallback = '';
       resetWhc06PacketTimeout();
       var kg = parseWhc06Advertisement(event);
       if(kg == null){
@@ -543,7 +566,7 @@
         throw new Error('watchAdvertisements unsupported for WH-C06');
       }
       options = options || {};
-      await cleanupScaleDevice();
+      await cleanupScaleDevice({ skipWhc06Unwatch: !!options.skipWhc06Unwatch });
       if(options.clearReading !== false) scaleState.readingKg = null;
       scaleState.device = device;
       scaleState.connectionType = 'whc06';
@@ -583,7 +606,8 @@
             statusKey: 'abrahang.scaleStatusWhc06PairedWatch',
             statusFallback: lang() === 'en' ? 'Trying paired WH-C06 recovery. If no value appears, use WH-C06 rescan.' : '페어링된 WH-C06 자동 복구를 시도 중입니다. 값이 안 뜨면 WH-C06 새로 스캔을 누르세요.',
             statusTone: 'waiting',
-            firstPacketTimeout: WHC06_FIRST_PACKET_MS
+            firstPacketTimeout: WHC06_FIRST_PACKET_MS,
+            skipWhc06Unwatch: true
           });
         }else{
           scaleState.advertisementRestarting = false;
@@ -596,10 +620,11 @@
       }
     }
 
-    async function restartWhc06AdvertisementWatch(showStatus){
+    async function restartWhc06AdvertisementWatch(showStatus, options){
       if(scaleState.connectionType !== 'whc06' || !scaleState.device) return;
       if(typeof scaleState.device.watchAdvertisements !== 'function') return;
       if(scaleState.advertisementRestarting) return;
+      options = options || {};
       scaleState.advertisementRestarting = true;
       try{
         attachWhc06AdvertisementHandler(scaleState.device);
@@ -610,12 +635,26 @@
             'waiting'
           );
         }
-        await stopWhc06AdvertisementWatch(scaleState.device);
+        if(options.stopFirst) await stopWhc06AdvertisementWatch(scaleState.device);
         await scaleState.device.watchAdvertisements();
         resetWhc06PacketTimeout();
+        if(options.firstPacketTimeout){
+          setWhc06FirstPacketTimeout(
+            options.firstPacketTimeout,
+            options.firstPacketStatusKey,
+            options.firstPacketStatusFallback
+          );
+        }
       }catch(e){
         if(isAlreadyWatchingError(e)){
           resetWhc06PacketTimeout();
+          if(options.firstPacketTimeout){
+            setWhc06FirstPacketTimeout(
+              options.firstPacketTimeout,
+              options.firstPacketStatusKey,
+              options.firstPacketStatusFallback
+            );
+          }
         }else{
           setScaleStatus(
             'abrahang.scaleStatusWhc06WatchError',
@@ -632,9 +671,47 @@
       if(!state.running || state.phase !== 'hang') return;
       if(scaleState.connectionType !== 'whc06' || !scaleState.device || scaleState.watchStale) return;
       if(!scaleState.lastAdvertisementAt) return;
+      if(scaleState.foregroundNeedsFreshPacket){
+        scaleState.foregroundNeedsFreshPacket = false;
+        setScaleStatus(
+          'abrahang.scaleStatusWhc06ForegroundCheck',
+          lang() === 'en' ? 'Chrome returned to the foreground. Waiting for a fresh WH-C06 packet.' : 'Chrome 복귀 후 WH-C06 새 패킷을 확인 중입니다.',
+          'waiting'
+        );
+        restartWhc06AdvertisementWatch(false, {
+          firstPacketTimeout: WHC06_FOREGROUND_PACKET_MS,
+          firstPacketStatusKey: 'abrahang.scaleStatusWhc06ForegroundNoPacket',
+          firstPacketStatusFallback: lang() === 'en'
+            ? 'WH-C06 did not resume after Chrome returned. Use WH-C06 rescan; if it still fails, turn the scale off and on.'
+            : 'Chrome 복귀 후 WH-C06 수신이 재개되지 않았습니다. WH-C06 새로 스캔을 누르고, 그래도 안 되면 저울 전원을 껐다 켜세요.'
+        });
+        return;
+      }
       if(Date.now() - scaleState.lastAdvertisementAt >= WHC06_HANG_SILENCE_MS){
         recoverWhc06FromPermittedDevice();
       }
+    }
+
+    function noteWhc06ForegroundPause(){
+      if(scaleState.connectionType === 'whc06' && scaleState.device && !scaleState.watchStale){
+        scaleState.foregroundPausedAt = Date.now();
+      }
+    }
+
+    function checkWhc06AfterForeground(){
+      if(scaleState.connectionType !== 'whc06' || !scaleState.device || scaleState.watchStale) return;
+      if(!scaleState.foregroundPausedAt) return;
+      var now = Date.now();
+      if(scaleState.foregroundCheckAt && now - scaleState.foregroundCheckAt < 5000) return;
+      scaleState.foregroundCheckAt = now;
+      scaleState.foregroundPausedAt = 0;
+      scaleState.foregroundNeedsFreshPacket = true;
+      setScaleStatus(
+        'abrahang.scaleStatusWhc06ForegroundCheck',
+        lang() === 'en' ? 'Chrome returned to the foreground. Waiting for a fresh WH-C06 packet.' : 'Chrome 복귀 후 WH-C06 새 패킷을 확인 중입니다.',
+        'waiting'
+      );
+      restartWhc06AdvertisementWatch(false);
     }
 
     function handleScaleDisconnected(){
@@ -643,7 +720,8 @@
       setScaleStatus('abrahang.scaleStatusDisconnected', lang() === 'en' ? 'Disconnected' : '연결 해제됨', 'waiting');
     }
 
-    function cleanupScaleDevice(){
+    function cleanupScaleDevice(options){
+      options = options || {};
       clearWhc06PacketTimers();
       var unwatchPromise = Promise.resolve();
       if(scaleState.characteristic){
@@ -656,7 +734,7 @@
           scaleState.device.removeEventListener('advertisementreceived', scaleState.advertisementHandler);
         }catch(e){ /* ignore */ }
       }
-      if(scaleState.device && scaleState.connectionType === 'whc06' && typeof scaleState.device.unwatchAdvertisements === 'function'){
+      if(!options.skipWhc06Unwatch && scaleState.device && scaleState.connectionType === 'whc06' && typeof scaleState.device.unwatchAdvertisements === 'function'){
         unwatchPromise = stopWhc06AdvertisementWatch(scaleState.device);
       }
       if(scaleState.device && scaleState.disconnectHandler){
@@ -669,13 +747,15 @@
       scaleState.advertisementHandler = null;
       scaleState.advertisementRestarting = false;
       scaleState.lastAdvertisementAt = 0;
+      scaleState.foregroundPausedAt = 0;
+      scaleState.foregroundNeedsFreshPacket = false;
       scaleState.watchStale = false;
       return unwatchPromise;
     }
 
-    function disconnectCurrentScale(){
+    function disconnectCurrentScale(options){
       var device = scaleState.device;
-      cleanupScaleDevice();
+      cleanupScaleDevice(options);
       if(device && device.gatt && device.gatt.connected){
         try { device.gatt.disconnect(); } catch(e){ /* ignore */ }
       }
@@ -683,9 +763,9 @@
       scaleState.connectionType = null;
     }
 
-    async function disconnectCurrentScaleAsync(){
+    async function disconnectCurrentScaleAsync(options){
       var device = scaleState.device;
-      await cleanupScaleDevice();
+      await cleanupScaleDevice(options);
       if(device && device.gatt && device.gatt.connected){
         try { device.gatt.disconnect(); } catch(e){ /* ignore */ }
       }
@@ -873,7 +953,7 @@
       scaleState.connectingType = 'whc06';
       setScaleStatus('abrahang.scaleStatusWhc06Searching', lang() === 'en' ? 'Searching for WH-C06 / IF_B7...' : 'WH-C06 / IF_B7 검색 중...', 'waiting');
       try{
-        await disconnectCurrentScaleAsync();
+        await disconnectCurrentScaleAsync({ skipWhc06Unwatch: true });
         scaleState.watchStale = false;
         var device = await requestWhc06Device();
         await startWhc06DeviceWatch(device, {
@@ -883,7 +963,7 @@
           statusTone: 'waiting'
         });
       }catch(e){
-        await cleanupScaleDevice();
+        await cleanupScaleDevice({ skipWhc06Unwatch: true });
         scaleState.device = null;
         scaleState.connectionType = null;
         if(e && e.message && e.message.indexOf('watchAdvertisements') !== -1){
@@ -1314,8 +1394,15 @@
     document.addEventListener('visibilitychange', function(){
       if(document.visibilityState === 'visible'){
         renderNextSession();
-        if(scaleState.connectionType === 'whc06' && scaleState.device && !scaleState.watchStale) restartWhc06AdvertisementWatch(false);
+        checkWhc06AfterForeground();
+      }else{
+        noteWhc06ForegroundPause();
       }
+    });
+    window.addEventListener('blur', noteWhc06ForegroundPause);
+    window.addEventListener('focus', function(){
+      renderNextSession();
+      checkWhc06AfterForeground();
     });
 
     render();
