@@ -19,6 +19,7 @@
   var WHC06_RECOVERY_COOLDOWN_MS = 7000;
   var WHC06_STALE_MS = 90000;
   var PRECOUNT_MS = 3000;
+  var BEEP_GAIN = 1;
 
   var TEXT = {
     en: {
@@ -1015,7 +1016,7 @@
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, now);
         gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(kind === 'countdown' ? 0.12 : 0.18, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(BEEP_GAIN, now + 0.02);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + (kind === 'countdown' ? 0.12 : 0.24));
         osc.connect(gain).connect(audioCtx.destination);
         osc.start(now);
