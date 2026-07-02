@@ -1,5 +1,6 @@
 (function(){
   var STORAGE_KEY = 'abrahang:lastCompletedAt';
+  var BODY_WEIGHT_KEY = 'abrahang:bodyWeightKg';
   var RECOVERY_MS = 6 * 60 * 60 * 1000;
 
   var TEXT = {
@@ -165,6 +166,8 @@
     var copyBtn = q('#abCopy');
     var intensity = q('#abIntensity');
     var intensityValue = q('#abIntensityValue');
+    var bodyWeight = q('#abBodyWeight');
+    var loadTarget = q('#abLoadTarget');
     var sound = q('#abSound');
     var autoLog = q('#abAutoLog');
     var phaseEl = q('#abPhase');
@@ -227,6 +230,36 @@
 
     function formatShort(sec){
       return lang() === 'en' ? sec + 's' : sec + '초';
+    }
+
+    function parseBodyWeight(){
+      if(!bodyWeight) return 0;
+      var normalized = String(bodyWeight.value || '').replace(',', '.');
+      var kg = Number(normalized);
+      if(!isFinite(kg) || kg <= 0) return 0;
+      return kg;
+    }
+
+    function formatKg(value){
+      var rounded = Math.round(value * 10) / 10;
+      return rounded.toFixed(rounded % 1 === 0 ? 0 : 1) + 'kg';
+    }
+
+    function saveBodyWeight(){
+      if(!bodyWeight) return;
+      var kg = parseBodyWeight();
+      try{
+        if(kg > 0) localStorage.setItem(BODY_WEIGHT_KEY, String(kg));
+        else localStorage.removeItem(BODY_WEIGHT_KEY);
+      }catch(e){ /* ignore */ }
+    }
+
+    function loadBodyWeight(){
+      if(!bodyWeight) return;
+      try{
+        var stored = Number(localStorage.getItem(BODY_WEIGHT_KEY) || 0);
+        if(isFinite(stored) && stored > 0) bodyWeight.value = String(stored);
+      }catch(e){ /* ignore */ }
     }
 
     function stepText(step){
@@ -483,6 +516,15 @@
       if(metricReps) metricReps.textContent = lang() === 'en' ? state.protocol.steps.length + ' reps' : state.protocol.steps.length + '회';
       if(noteEl) noteEl.textContent = tt(state.protocol.noteKey);
       if(intensityValue && intensity) intensityValue.textContent = intensity.value + '%';
+      if(loadTarget && intensity){
+        var kg = parseBodyWeight();
+        if(kg > 0){
+          var target = kg * (Number(intensity.value) || 0) / 100;
+          loadTarget.textContent = formatKg(target);
+        }else{
+          loadTarget.textContent = siteT('abrahang.loadTargetEmpty', lang() === 'en' ? 'Enter body weight' : '체중 입력 필요');
+        }
+      }
       if(startBtn){
         if(state.running) startBtn.textContent = siteT('abrahang.pause', tt('pause'));
         else if(state.phase === 'hang' || state.phase === 'rest') startBtn.textContent = siteT('abrahang.resume', tt('resume'));
@@ -497,6 +539,12 @@
       var lines = [tt(state.protocol.copyTitleKey), tt(state.protocol.noteKey), ''];
       for(var i = 0; i < state.protocol.steps.length; i++){
         lines.push((i + 1) + '. ' + stepText(state.protocol.steps[i]) + ' - ' + formatShort(state.protocol.hangMs / 1000) + ' / ' + formatShort(state.protocol.restMs / 1000));
+      }
+      if(intensity){
+        var kg = parseBodyWeight();
+        var targetText = kg > 0 ? formatKg(kg * (Number(intensity.value) || 0) / 100) : (lang() === 'en' ? 'not set' : '미입력');
+        lines.push('');
+        lines.push((lang() === 'en' ? 'Intensity target: ' : '강도 목표: ') + intensity.value + '% / ' + targetText);
       }
       lines.push('');
       lines.push(lang() === 'en' ? 'Keep feet on the floor. Wait at least 6 hours before the next finger-loading session.' : '발은 바닥에 둡니다. 다음 손가락 로딩 세션까지 최소 6시간을 둡니다.');
@@ -537,6 +585,17 @@
     if(resetBtn) resetBtn.addEventListener('click', function(){ resetState(true); });
     if(copyBtn) copyBtn.addEventListener('click', copyRoutine);
     if(intensity) intensity.addEventListener('input', render);
+    if(bodyWeight){
+      bodyWeight.addEventListener('input', function(){
+        saveBodyWeight();
+        render();
+      });
+      bodyWeight.addEventListener('change', function(){
+        saveBodyWeight();
+        render();
+      });
+      loadBodyWeight();
+    }
 
     document.addEventListener('app:lang', function(){ render(); });
     document.addEventListener('visibilitychange', function(){

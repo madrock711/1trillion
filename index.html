@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260702-6">
+    <link rel="stylesheet" href="style.css?v=20260702-7">
 </head>
 <body>
     <header>
@@ -863,6 +863,17 @@
                                 <input id="abIntensity" type="range" min="30" max="50" step="5" value="40">
                                 <strong id="abIntensityValue">40%</strong>
                             </div>
+                            <div class="abrahang-bodyweight-row">
+                                <label for="abBodyWeight" data-i18n="abrahang.bodyWeightLabel">체중</label>
+                                <div class="abrahang-weight-input">
+                                    <input id="abBodyWeight" type="number" inputmode="decimal" min="20" max="180" step="0.1" placeholder="70" data-i18n="abrahang.bodyWeightPlaceholder" data-i18n-attr="placeholder">
+                                    <span data-i18n="abrahang.bodyWeightUnit">kg</span>
+                                </div>
+                            </div>
+                            <div class="abrahang-load-target">
+                                <span data-i18n="abrahang.loadTargetLabel">목표 하중</span>
+                                <strong id="abLoadTarget" data-i18n="abrahang.loadTargetEmpty">체중 입력 필요</strong>
+                            </div>
                             <p data-i18n="abrahang.intensityHint">최대 힘 기준이 아니라, 통제 가능한 약한 전완 긴장 기준입니다.</p>
                         </div>
 
@@ -1042,13 +1053,13 @@
 
     <div id="share-toast" class="share-toast" role="status" aria-live="polite"></div>
 
-    <script src="i18n.js?v=20260702-2"></script>
+    <script src="i18n.js?v=20260702-3"></script>
     <script src="main.js?v=20260626-3"></script>
     <script src="foot-analysis.js?v=20260211-13"></script>
     <script src="stopwatch.js?v=20260619-6"></script>
     <script src="sequence-generator.js?v=20260219-1"></script>
     <script src="lottery-generator.js?v=20260629-2"></script>
-    <script src="abrahang-timer.js?v=20260702-2"></script>
+    <script src="abrahang-timer.js?v=20260702-3"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const tabs = document.querySelectorAll('.tab-link');

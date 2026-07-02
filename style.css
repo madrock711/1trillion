@@ -1641,6 +1641,61 @@ main {
   color: var(--ab-rest);
 }
 
+.abrahang-bodyweight-row {
+  display: grid;
+  grid-template-columns: minmax(88px, 0.45fr) minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.abrahang-weight-input {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 8px;
+}
+
+.abrahang-weight-input input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--ab-line);
+  border-radius: 8px;
+  background: #101010;
+  color: var(--text-primary);
+  padding: 10px 11px;
+  font: inherit;
+  font-weight: 800;
+}
+
+.abrahang-weight-input span {
+  color: var(--ab-muted);
+  font-weight: 800;
+}
+
+.abrahang-load-target {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.07);
+}
+
+.abrahang-load-target span {
+  color: var(--ab-muted);
+  font-weight: 800;
+}
+
+.abrahang-load-target strong {
+  color: #e0f2fe;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 .abrahang-setting p {
   margin: 8px 0 0;
   color: var(--ab-muted);
