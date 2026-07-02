@@ -16,16 +16,12 @@
       start: 'Start',
       pause: 'Pause',
       resume: 'Resume',
-      copied: 'Routine copied.',
-      copyFailed: 'Copy failed.',
       nextEmpty: 'No completed session yet',
       nextReady: 'Ready now',
       nextAt: 'After {time}',
       remaining: 'remaining',
       paperNote: 'Paper mode: 18-22 mm edge, 10 s load / 20 s rest, 20 reps',
       videoNote: 'Emil mode: 10 s load / 50 s rest, 10 reps',
-      paperCopyTitle: 'Abrahang paper protocol',
-      videoCopyTitle: 'Emil Abrahang protocol',
       baseTitle: '4-finger base hang',
       baseCue: 'Use an 18-22 mm edge. Keep both feet grounded and feel only light forearm strain.',
       front3Title: 'Front 3 open grip',
@@ -59,16 +55,12 @@
       start: '시작',
       pause: '일시정지',
       resume: '재개',
-      copied: '루틴을 복사했습니다.',
-      copyFailed: '복사에 실패했습니다.',
       nextEmpty: '아직 완료 기록 없음',
       nextReady: '지금 가능',
       nextAt: '{time} 이후',
       remaining: '남음',
       paperNote: '논문 모드: 18-22mm 엣지, 10초 로딩/20초 휴식, 총 20회',
       videoNote: 'Emil 모드: 10초 로딩/50초 휴식, 총 10회',
-      paperCopyTitle: '아브라행 논문 프로토콜',
-      videoCopyTitle: 'Emil 아브라행 프로토콜',
       baseTitle: '4손가락 기본 행',
       baseCue: '18-22mm 엣지를 사용합니다. 발은 바닥에 두고 전완에 약한 긴장만 느끼세요.',
       front3Title: '앞 3손가락 오픈 그립',
@@ -90,7 +82,7 @@
       finalRestTitle: '마지막 휴식',
       finalRestCue: '마지막 휴식입니다. 타이머가 끝나면 세션이 완료됩니다.',
       readyTitle: '발을 바닥에 두고 엣지에 손을 올리세요.',
-      readyCue: '하중이 쉽고 통제 가능할 때만 시작합니다.',
+      readyCue: '하중을 쉽게 통제 가능할 때만 시작합니다.',
       doneTitle: '세션 완료.',
       doneCue: '다음 손가락 로딩 세션 또는 강한 클라이밍까지 최소 6시간을 둡니다.'
     }
@@ -133,7 +125,6 @@
         hangMs: 10000,
         restMs: 50000,
         noteKey: 'videoNote',
-        copyTitleKey: 'videoCopyTitle',
         steps: []
           .concat(makeRepeated(3, 'videoHalfTitle', 'videoHalfCue', { edge: '15-20 mm' }))
           .concat(makeRepeated(3, 'front3Title', 'videoFront3Cue', { edge: '30-40 mm' }))
@@ -148,7 +139,6 @@
       hangMs: 10000,
       restMs: 20000,
       noteKey: 'paperNote',
-      copyTitleKey: 'paperCopyTitle',
       steps: []
         .concat(makeRepeated(6, 'baseTitle', 'baseCue', { edge: '18-22 mm' }))
         .concat(makeRepeated(6, 'front3Title', 'front3Cue', { edge: '18-22 mm' }))
@@ -173,7 +163,6 @@
     var modeButtons = root.querySelectorAll('[data-ab-mode]');
     var startBtn = q('#abStart');
     var resetBtn = q('#abReset');
-    var copyBtn = q('#abCopy');
     var intensity = q('#abIntensity');
     var intensityValue = q('#abIntensityValue');
     var bodyWeight = q('#abBodyWeight');
@@ -586,29 +575,6 @@
       renderNextSession();
     }
 
-    function copyRoutine(){
-      var lines = [tt(state.protocol.copyTitleKey), tt(state.protocol.noteKey), ''];
-      for(var i = 0; i < state.protocol.steps.length; i++){
-        lines.push((i + 1) + '. ' + stepText(state.protocol.steps[i]) + ' - ' + formatShort(state.protocol.hangMs / 1000) + ' / ' + formatShort(state.protocol.restMs / 1000));
-      }
-      if(intensity){
-        var kg = parseBodyWeight();
-        var targetText = kg > 0 ? formatKg(kg * (Number(intensity.value) || 0) / 100) : (lang() === 'en' ? 'not set' : '미입력');
-        lines.push('');
-        lines.push((lang() === 'en' ? 'Intensity target: ' : '강도 목표: ') + intensity.value + '% / ' + targetText);
-      }
-      lines.push('');
-      lines.push(lang() === 'en' ? 'Keep feet on the floor. Wait at least 6 hours before the next finger-loading session.' : '발은 바닥에 둡니다. 다음 손가락 로딩 세션까지 최소 6시간을 둡니다.');
-      var text = lines.join('\n');
-      var done = function(){ temporaryCue(tt('copied')); };
-      var fail = function(){ temporaryCue(tt('copyFailed')); };
-      if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(text).then(done).catch(fail);
-      }else{
-        fail();
-      }
-    }
-
     function temporaryCue(text){
       clearTimeout(temporaryCueTimer);
       var current = getCurrentStep();
@@ -634,7 +600,6 @@
       });
     }
     if(resetBtn) resetBtn.addEventListener('click', function(){ resetState(true); });
-    if(copyBtn) copyBtn.addEventListener('click', copyRoutine);
     if(intensity) intensity.addEventListener('input', render);
     if(bodyWeight){
       bodyWeight.addEventListener('input', function(){
