@@ -2,6 +2,10 @@
   var STORAGE_KEY = 'abrahang:lastCompletedAt';
   var BODY_WEIGHT_KEY = 'abrahang:bodyWeightKg';
   var RECOVERY_MS = 6 * 60 * 60 * 1000;
+  var DEFAULT_INTENSITY = {
+    paper: 50,
+    video: 70
+  };
 
   var TEXT = {
     en: {
@@ -19,9 +23,9 @@
       nextAt: 'After {time}',
       remaining: 'remaining',
       paperNote: 'Paper mode: 18-22 mm edge, 10 s load / 20 s rest, 20 reps',
-      videoNote: 'Video mode: 10 s load / 50 s rest, 10 reps',
+      videoNote: 'Emil mode: 10 s load / 50 s rest, 10 reps',
       paperCopyTitle: 'Abrahang paper protocol',
-      videoCopyTitle: 'Abrahang video protocol',
+      videoCopyTitle: 'Emil Abrahang protocol',
       baseTitle: '4-finger base hang',
       baseCue: 'Use an 18-22 mm edge. Keep both feet grounded and feel only light forearm strain.',
       front3Title: 'Front 3 open grip',
@@ -59,9 +63,9 @@
       nextAt: '{time} 이후',
       remaining: '남음',
       paperNote: '논문 모드: 18-22mm 엣지, 10초 로딩/20초 휴식, 총 20회',
-      videoNote: '영상 모드: 10초 로딩/50초 휴식, 총 10회',
+      videoNote: 'Emil 모드: 10초 로딩/50초 휴식, 총 10회',
       paperCopyTitle: '아브라행 논문 프로토콜',
-      videoCopyTitle: '아브라행 영상 프로토콜',
+      videoCopyTitle: 'Emil 아브라행 프로토콜',
       baseTitle: '4손가락 기본 행',
       baseCue: '18-22mm 엣지를 사용합니다. 발은 바닥에 두고 전완에 약한 긴장만 느끼세요.',
       front3Title: '앞 3손가락 오픈 그립',
@@ -232,6 +236,12 @@
       return lang() === 'en' ? sec + 's' : sec + '초';
     }
 
+    function setDefaultIntensityForMode(mode){
+      if(!intensity) return;
+      var next = DEFAULT_INTENSITY[mode] || DEFAULT_INTENSITY.paper;
+      intensity.value = String(next);
+    }
+
     function parseBodyWeight(){
       if(!bodyWeight) return 0;
       var normalized = String(bodyWeight.value || '').replace(',', '.');
@@ -286,6 +296,7 @@
     function setMode(mode){
       state.mode = mode === 'video' ? 'video' : 'paper';
       state.protocol = buildProtocol(state.mode);
+      setDefaultIntensityForMode(state.mode);
       resetState(false);
       render();
     }
@@ -597,6 +608,7 @@
       loadBodyWeight();
     }
 
+    setDefaultIntensityForMode(state.mode);
     document.addEventListener('app:lang', function(){ render(); });
     document.addEventListener('visibilitychange', function(){
       if(document.visibilityState === 'visible') renderNextSession();
