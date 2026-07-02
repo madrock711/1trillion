@@ -544,8 +544,8 @@
           setScaleStatus(
             'abrahang.scaleStatusWhc06Unsupported',
             lang() === 'en'
-              ? 'WH-C06 requires Web Bluetooth advertisement scanning. In Chrome, enable chrome://flags/#enable-experimental-web-platform-features and restart.'
-              : 'WH-C06는 Web Bluetooth 광고 수신이 필요합니다. Chrome에서 chrome://flags/#enable-experimental-web-platform-features를 켠 뒤 재시작하세요.',
+              ? 'WH-C06 advertisement scanning is unavailable.'
+              : 'WH-C06 광고 수신 미지원',
             'error'
           );
         }else{

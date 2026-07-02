@@ -1706,9 +1706,9 @@ main {
 
 .abrahang-scale-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: center;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  align-items: start;
 }
 
 .abrahang-scale-head span,
@@ -1724,6 +1724,8 @@ main {
   margin-top: 2px;
   color: #bbf7d0;
   line-height: 1.35;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .abrahang-scale-head strong.is-error {
@@ -1736,13 +1738,23 @@ main {
 
 .abrahang-scale-actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(128px, auto));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 8px;
+  width: 100%;
 }
 
 .abrahang-scale-actions .abrahang-btn {
-  min-width: 132px;
-  padding: 0 12px;
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  height: auto;
+  padding: 8px 10px;
+  line-height: 1.25;
+  white-space: normal;
+}
+
+.abrahang-scale-panel p {
+  overflow-wrap: anywhere;
 }
 
 .abrahang-scale-metrics {
