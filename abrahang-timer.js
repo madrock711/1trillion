@@ -14,13 +14,14 @@
   var WHC06_MANUFACTURER_ID = 0x0100;
   var WHC06_NAME_PREFIX = 'IF_B7';
   var WHC06_WEIGHT_OFFSET = 10;
-  var WHC06_REWATCH_MS = 15000;
   var WHC06_NO_PACKET_MS = 60000;
+  var PRECOUNT_MS = 3000;
 
   var TEXT = {
     en: {
       hang: 'Load',
       rest: 'Rest',
+      prestart: 'Starting',
       ready: 'Ready',
       done: 'Complete',
       start: 'Start',
@@ -52,6 +53,8 @@
       nextPreviewTitle: 'Next set preview',
       finalRestTitle: 'Final rest',
       finalRestCue: 'This is the last rest. The session will complete when the timer reaches zero.',
+      prestartTitle: 'First set starts after the count.',
+      prestartCue: 'Set your fingers and keep the load easy. Start loading after the beep.',
       readyTitle: 'Place your feet on the floor and your fingers on the edge.',
       readyCue: 'Begin only when the load feels easy and controlled.',
       doneTitle: 'Session complete.',
@@ -60,6 +63,7 @@
     ko: {
       hang: '로딩',
       rest: '휴식',
+      prestart: '카운트다운',
       ready: '준비',
       done: '완료',
       start: '시작',
@@ -91,6 +95,8 @@
       nextPreviewTitle: '다음 세트 미리보기',
       finalRestTitle: '마지막 휴식',
       finalRestCue: '마지막 휴식입니다. 타이머가 끝나면 세션이 완료됩니다.',
+      prestartTitle: '카운트 후 첫 세트를 시작합니다.',
+      prestartCue: '손을 올리고 하중은 쉽게 유지하세요. 신호음 후 로딩을 시작합니다.',
       readyTitle: '발을 바닥에 두고 엣지에 손을 올리세요.',
       readyCue: '하중을 쉽게 통제 가능할 때만 시작합니다.',
       doneTitle: '세션 완료.',
@@ -234,7 +240,6 @@
       disconnectHandler: null,
       advertisementHandler: null,
       advertisementTimeout: 0,
-      advertisementRetryTimeout: 0,
       advertisementRestarting: false,
       lastAdvertisementAt: 0,
       connecting: false,
@@ -250,6 +255,7 @@
     }
 
     function phaseDuration(){
+      if(state.phase === 'prestart') return PRECOUNT_MS;
       if(state.phase === 'hang') return state.protocol.hangMs;
       if(state.phase === 'rest') return state.protocol.restMs;
       return state.protocol.hangMs;
@@ -390,36 +396,22 @@
     }
 
     function clearWhc06PacketTimers(){
-      if(scaleState.advertisementRetryTimeout){
-        clearTimeout(scaleState.advertisementRetryTimeout);
-        scaleState.advertisementRetryTimeout = 0;
-      }
       if(scaleState.advertisementTimeout){
         clearTimeout(scaleState.advertisementTimeout);
         scaleState.advertisementTimeout = 0;
       }
     }
 
-    function scheduleWhc06Retry(){
-      if(scaleState.advertisementRetryTimeout) clearTimeout(scaleState.advertisementRetryTimeout);
-      if(scaleState.connectionType !== 'whc06') return;
-      scaleState.advertisementRetryTimeout = setTimeout(function(){
-        restartWhc06AdvertisementWatch();
-      }, WHC06_REWATCH_MS);
-    }
-
     function resetWhc06PacketTimeout(){
       clearWhc06PacketTimers();
       if(scaleState.connectionType !== 'whc06') return;
-      scheduleWhc06Retry();
       scaleState.advertisementTimeout = setTimeout(function(){
         if(scaleState.connectionType === 'whc06'){
           setScaleStatus(
             'abrahang.scaleStatusWhc06NoPacket',
-            lang() === 'en' ? 'No new WH-C06 packet for 1 minute. Retrying advertisement watch.' : '1분 동안 새 WH-C06 패킷이 없습니다. 광고 감시를 다시 시도합니다.',
+            lang() === 'en' ? 'No new WH-C06 packet for 1 minute. Watch stays active.' : '1분 동안 새 WH-C06 패킷이 없습니다. 감시는 유지 중입니다.',
             'waiting'
           );
-          restartWhc06AdvertisementWatch();
         }
       }, WHC06_NO_PACKET_MS);
     }
@@ -457,34 +449,43 @@
       renderScale();
     }
 
-    async function restartWhc06AdvertisementWatch(){
+    function attachWhc06AdvertisementHandler(device){
+      if(!device) return;
+      scaleState.advertisementHandler = handleWhc06Advertisement;
+      device.addEventListener('advertisementreceived', scaleState.advertisementHandler);
+    }
+
+    function isAlreadyWatchingError(error){
+      var text = String(error ? ((error.name || '') + ' ' + (error.message || '')) : '');
+      return text.indexOf('InvalidStateError') !== -1 || text.toLowerCase().indexOf('already') !== -1;
+    }
+
+    async function restartWhc06AdvertisementWatch(showStatus){
       if(scaleState.connectionType !== 'whc06' || !scaleState.device) return;
       if(typeof scaleState.device.watchAdvertisements !== 'function') return;
       if(scaleState.advertisementRestarting) return;
       scaleState.advertisementRestarting = true;
       try{
-        var sinceLastPacket = scaleState.lastAdvertisementAt ? Date.now() - scaleState.lastAdvertisementAt : WHC06_NO_PACKET_MS;
-        setScaleStatus(
-          sinceLastPacket >= WHC06_NO_PACKET_MS ? 'abrahang.scaleStatusWhc06NoPacket' : 'abrahang.scaleStatusWhc06Stale',
-          sinceLastPacket >= WHC06_NO_PACKET_MS
-            ? (lang() === 'en' ? 'No new WH-C06 packet for 1 minute. Retrying advertisement watch.' : '1분 동안 새 WH-C06 패킷이 없습니다. 광고 감시를 다시 시도합니다.')
-            : (lang() === 'en' ? 'WH-C06 updates paused. Restarting advertisement watch.' : 'WH-C06 수신이 멈춘 듯해 광고 감시를 다시 시작합니다.'),
-          'waiting'
-        );
-        if(typeof scaleState.device.unwatchAdvertisements === 'function'){
-          try{
-            var stopWatch = scaleState.device.unwatchAdvertisements();
-            if(stopWatch && typeof stopWatch.then === 'function') await stopWatch;
-          }catch(e){ /* keep trying to restart the watch below */ }
+        attachWhc06AdvertisementHandler(scaleState.device);
+        if(showStatus !== false){
+          setScaleStatus(
+            'abrahang.scaleStatusWhc06Stale',
+            lang() === 'en' ? 'Checking WH-C06 advertisement watch. Keep the scale awake.' : 'WH-C06 광고 감시를 확인 중입니다. 저울 전원을 유지하세요.',
+            'waiting'
+          );
         }
         await scaleState.device.watchAdvertisements();
-        scheduleWhc06Retry();
+        resetWhc06PacketTimeout();
       }catch(e){
-        setScaleStatus(
-          'abrahang.scaleStatusWhc06WatchError',
-          lang() === 'en' ? 'WH-C06 advertisement watch stopped. Reconnect the scale.' : 'WH-C06 광고 감시가 중단되었습니다. 저울을 다시 연결하세요.',
-          'error'
-        );
+        if(isAlreadyWatchingError(e)){
+          resetWhc06PacketTimeout();
+        }else{
+          setScaleStatus(
+            'abrahang.scaleStatusWhc06WatchError',
+            lang() === 'en' ? 'WH-C06 advertisement watch could not start. Turn the scale off and on, then reconnect.' : 'WH-C06 광고 감시를 시작하지 못했습니다. 저울 전원을 껐다 켠 뒤 다시 연결하세요.',
+            'error'
+          );
+        }
       }finally{
         scaleState.advertisementRestarting = false;
       }
@@ -709,6 +710,10 @@
         return;
       }
       setScaleDisplayMode('crane');
+      if(scaleState.connectionType === 'whc06' && scaleState.device){
+        await restartWhc06AdvertisementWatch(true);
+        return;
+      }
       scaleState.connecting = true;
       scaleState.connectingType = 'whc06';
       setScaleStatus('abrahang.scaleStatusWhc06Searching', lang() === 'en' ? 'Searching for WH-C06 / IF_B7...' : 'WH-C06 / IF_B7 검색 중...', 'waiting');
@@ -721,8 +726,7 @@
         if(typeof device.watchAdvertisements !== 'function'){
           throw new Error('watchAdvertisements unsupported for WH-C06');
         }
-        scaleState.advertisementHandler = handleWhc06Advertisement;
-        device.addEventListener('advertisementreceived', scaleState.advertisementHandler);
+        attachWhc06AdvertisementHandler(device);
         await device.watchAdvertisements();
         scaleState.lastAdvertisementAt = Date.now();
         resetWhc06PacketTimeout();
@@ -797,6 +801,7 @@
     }
 
     function getHighlightedStepIndex(){
+      if(state.phase === 'prestart') return 0;
       if(state.phase === 'hang') return state.stepIndex;
       if(state.phase === 'rest') return getNextStep() ? state.stepIndex + 1 : -1;
       return -1;
@@ -812,6 +817,7 @@
     function remainingTotalMs(){
       if(state.phase === 'done') return 0;
       if(state.phase === 'ready') return protocolTotalMs(state.protocol);
+      if(state.phase === 'prestart') return state.remainingMs + protocolTotalMs(state.protocol);
       var remaining = state.remainingMs;
       if(state.phase === 'hang') remaining += state.protocol.restMs;
       var remainingSteps = Math.max(0, state.protocol.steps.length - state.stepIndex - 1);
@@ -874,11 +880,10 @@
     function start(){
       if(state.phase === 'done') resetState(false);
       if(state.phase === 'ready'){
-        state.phase = 'hang';
+        state.phase = 'prestart';
         state.stepIndex = 0;
-        state.remainingMs = state.protocol.hangMs;
+        state.remainingMs = PRECOUNT_MS;
         lastCountdownSecond = -1;
-        beep('phase');
       }
       state.running = true;
       lastTick = performance.now();
@@ -917,6 +922,13 @@
 
     function advancePhase(){
       lastCountdownSecond = -1;
+      if(state.phase === 'prestart'){
+        state.phase = 'hang';
+        state.remainingMs = state.protocol.hangMs;
+        beep('phase');
+        renderSteps();
+        return;
+      }
       if(state.phase === 'hang'){
         state.phase = 'rest';
         state.remainingMs = state.protocol.restMs;
@@ -969,7 +981,7 @@
         if(i === highlightedIndex){
           li.className += ' is-current';
           if(state.phase === 'hang' && state.running) li.className += ' is-loading';
-          if(state.phase === 'rest') li.className += ' is-preview';
+          if(state.phase === 'rest' || state.phase === 'prestart') li.className += ' is-preview';
           li.setAttribute('aria-current', 'step');
         }
         if(state.phase === 'done' || i < state.stepIndex || (state.phase === 'rest' && i === state.stepIndex)) li.className += ' is-done';
@@ -990,7 +1002,7 @@
     }
 
     function renderLive(){
-      var total = protocolTotalMs(state.protocol);
+      var total = protocolTotalMs(state.protocol) + (state.phase === 'prestart' ? PRECOUNT_MS : 0);
       var remaining = remainingTotalMs();
       var elapsed = Math.max(0, total - remaining);
       var progress = total > 0 ? Math.max(0, Math.min(1, elapsed / total)) : 0;
@@ -1016,6 +1028,12 @@
         countEl.textContent = '0 / ' + state.protocol.steps.length;
         moveTitle.textContent = tt('readyTitle');
         moveCue.textContent = tt('readyCue');
+      }else if(state.phase === 'prestart'){
+        phaseEl.textContent = tt('prestart');
+        timeEl.textContent = formatSeconds(state.remainingMs);
+        countEl.textContent = '0 / ' + state.protocol.steps.length;
+        moveTitle.textContent = tt('prestartTitle');
+        moveCue.textContent = tt('prestartCue');
       }else{
         phaseEl.textContent = state.phase === 'hang' ? tt('hang') : tt('rest');
         timeEl.textContent = formatSeconds(state.remainingMs);
@@ -1080,7 +1098,7 @@
       renderScale();
       if(startBtn){
         if(state.running) startBtn.textContent = siteT('abrahang.pause', tt('pause'));
-        else if(state.phase === 'hang' || state.phase === 'rest') startBtn.textContent = siteT('abrahang.resume', tt('resume'));
+        else if(state.phase === 'prestart' || state.phase === 'hang' || state.phase === 'rest') startBtn.textContent = siteT('abrahang.resume', tt('resume'));
         else startBtn.textContent = siteT('abrahang.start', tt('start'));
       }
       renderLive();
@@ -1146,7 +1164,7 @@
     document.addEventListener('visibilitychange', function(){
       if(document.visibilityState === 'visible'){
         renderNextSession();
-        if(scaleState.connectionType === 'whc06' && scaleState.device) restartWhc06AdvertisementWatch();
+        if(scaleState.connectionType === 'whc06' && scaleState.device) restartWhc06AdvertisementWatch(false);
       }
     });
 
