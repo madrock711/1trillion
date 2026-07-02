@@ -1734,7 +1734,13 @@ main {
   color: #fde68a;
 }
 
-.abrahang-scale-head .abrahang-btn {
+.abrahang-scale-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(128px, auto));
+  gap: 8px;
+}
+
+.abrahang-scale-actions .abrahang-btn {
   min-width: 132px;
   padding: 0 12px;
 }
@@ -1945,6 +1951,10 @@ main {
 
   .abrahang-scale-head,
   .abrahang-scale-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .abrahang-scale-actions {
     grid-template-columns: 1fr;
   }
 

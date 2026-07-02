@@ -9,6 +9,10 @@
   var WEIGHT_SCALE_SERVICE = 0x181d;
   var WEIGHT_MEASUREMENT_CHARACTERISTIC = 0x2a9d;
   var POUND_TO_KG = 0.45359237;
+  var WHC06_MANUFACTURER_ID = 0x0100;
+  var WHC06_NAME_PREFIX = 'IF_B7';
+  var WHC06_WEIGHT_OFFSET = 10;
+  var WHC06_NO_PACKET_MS = 10000;
 
   var TEXT = {
     en: {
@@ -171,6 +175,7 @@
     var bodyWeight = q('#abBodyWeight');
     var loadTarget = q('#abLoadTarget');
     var scaleConnect = q('#abScaleConnect');
+    var scaleConnectWhc06 = q('#abScaleConnectWhc06');
     var scaleStatus = q('#abScaleStatus');
     var scaleReading = q('#abScaleReading');
     var scaleFingerLoad = q('#abScaleFingerLoad');
@@ -211,9 +216,13 @@
     };
     var scaleState = {
       device: null,
+      connectionType: null,
       characteristic: null,
       disconnectHandler: null,
+      advertisementHandler: null,
+      advertisementTimeout: 0,
       connecting: false,
+      connectingType: null,
       readingKg: null,
       statusKey: 'abrahang.scaleStatusIdle',
       statusFallback: 'Not connected',
@@ -294,6 +303,29 @@
       return kg;
     }
 
+    function parseWhc06Advertisement(event){
+      if(!event || !event.manufacturerData || typeof event.manufacturerData.get !== 'function') return null;
+      var data = event.manufacturerData.get(WHC06_MANUFACTURER_ID);
+      if(!data || data.byteLength <= WHC06_WEIGHT_OFFSET + 1) return null;
+      var raw = (data.getUint8(WHC06_WEIGHT_OFFSET) << 8) | data.getUint8(WHC06_WEIGHT_OFFSET + 1);
+      var kg = raw / 100;
+      if(!isFinite(kg) || kg < 0) return null;
+      return kg;
+    }
+
+    function resetWhc06PacketTimeout(){
+      if(scaleState.advertisementTimeout) clearTimeout(scaleState.advertisementTimeout);
+      scaleState.advertisementTimeout = setTimeout(function(){
+        if(scaleState.connectionType === 'whc06'){
+          setScaleStatus(
+            'abrahang.scaleStatusWhc06NoPacket',
+            lang() === 'en' ? 'No WH-C06 advertisement packet received for 10 seconds.' : '10초 동안 WH-C06 광고 패킷을 받지 못했습니다.',
+            'waiting'
+          );
+        }
+      }, WHC06_NO_PACKET_MS);
+    }
+
     function handleScaleValue(value){
       var kg = parseWeightMeasurement(value);
       if(kg == null){
@@ -309,15 +341,40 @@
       if(event && event.target) handleScaleValue(event.target.value);
     }
 
+    function handleWhc06Advertisement(event){
+      var kg = parseWhc06Advertisement(event);
+      if(kg == null) return;
+      resetWhc06PacketTimeout();
+      scaleState.readingKg = kg;
+      setScaleStatus('abrahang.scaleStatusLive', lang() === 'en' ? 'Live weight is streaming.' : '실시간 저울값 표시 중', 'ok');
+      renderScale();
+    }
+
     function handleScaleDisconnected(){
       scaleState.characteristic = null;
+      scaleState.connectionType = null;
       setScaleStatus('abrahang.scaleStatusDisconnected', lang() === 'en' ? 'Disconnected' : '연결 해제됨', 'waiting');
     }
 
     function cleanupScaleDevice(){
+      if(scaleState.advertisementTimeout){
+        clearTimeout(scaleState.advertisementTimeout);
+        scaleState.advertisementTimeout = 0;
+      }
       if(scaleState.characteristic){
         try{
           scaleState.characteristic.removeEventListener('characteristicvaluechanged', handleScaleMeasurement);
+        }catch(e){ /* ignore */ }
+      }
+      if(scaleState.device && scaleState.advertisementHandler){
+        try{
+          scaleState.device.removeEventListener('advertisementreceived', scaleState.advertisementHandler);
+        }catch(e){ /* ignore */ }
+      }
+      if(scaleState.device && scaleState.connectionType === 'whc06' && typeof scaleState.device.unwatchAdvertisements === 'function'){
+        try{
+          var unwatch = scaleState.device.unwatchAdvertisements();
+          if(unwatch && typeof unwatch.catch === 'function') unwatch.catch(function(){});
         }catch(e){ /* ignore */ }
       }
       if(scaleState.device && scaleState.disconnectHandler){
@@ -327,6 +384,17 @@
       }
       scaleState.characteristic = null;
       scaleState.disconnectHandler = null;
+      scaleState.advertisementHandler = null;
+    }
+
+    function disconnectCurrentScale(){
+      var device = scaleState.device;
+      cleanupScaleDevice();
+      if(device && device.gatt && device.gatt.connected){
+        try { device.gatt.disconnect(); } catch(e){ /* ignore */ }
+      }
+      scaleState.device = null;
+      scaleState.connectionType = null;
     }
 
     function renderScale(){
@@ -334,6 +402,8 @@
       var intensityValueNumber = intensity ? Number(intensity.value) || 0 : 0;
       var hasReading = scaleState.readingKg != null;
       var hasBodyWeight = bodyKg > 0;
+      var standardConnected = scaleState.connectionType === 'standard' && scaleState.device && scaleState.device.gatt && scaleState.device.gatt.connected;
+      var whc06Connected = scaleState.connectionType === 'whc06' && !!scaleState.device;
 
       if(scaleStatus){
         scaleStatus.textContent = siteT(scaleState.statusKey, scaleState.statusFallback);
@@ -342,12 +412,22 @@
       }
       if(scaleConnect){
         scaleConnect.disabled = scaleState.connecting;
-        if(scaleState.connecting){
+        if(scaleState.connecting && scaleState.connectingType === 'standard'){
           scaleConnect.textContent = siteT('abrahang.scaleStatusSearching', lang() === 'en' ? 'Searching for a scale...' : '저울 검색 중...');
-        }else if(scaleState.device && scaleState.device.gatt && scaleState.device.gatt.connected){
-          scaleConnect.textContent = siteT('abrahang.scaleReconnect', lang() === 'en' ? 'Reconnect scale (beta)' : '저울 다시 연결(beta)');
+        }else if(standardConnected){
+          scaleConnect.textContent = siteT('abrahang.scaleReconnectStandard', lang() === 'en' ? 'Reconnect standard scale' : '표준 저울 다시 연결');
         }else{
-          scaleConnect.textContent = siteT('abrahang.scaleConnect', lang() === 'en' ? 'Connect scale (beta)' : '저울 연결(beta)');
+          scaleConnect.textContent = siteT('abrahang.scaleConnectStandard', lang() === 'en' ? 'Standard scale (beta)' : '표준 저울 연결(beta)');
+        }
+      }
+      if(scaleConnectWhc06){
+        scaleConnectWhc06.disabled = scaleState.connecting;
+        if(scaleState.connecting && scaleState.connectingType === 'whc06'){
+          scaleConnectWhc06.textContent = siteT('abrahang.scaleStatusWhc06Searching', lang() === 'en' ? 'Searching for WH-C06 / IF_B7...' : 'WH-C06 / IF_B7 검색 중...');
+        }else if(whc06Connected){
+          scaleConnectWhc06.textContent = siteT('abrahang.scaleReconnectWhc06', lang() === 'en' ? 'Reconnect WH-C06' : 'WH-C06 다시 연결');
+        }else{
+          scaleConnectWhc06.textContent = siteT('abrahang.scaleConnectWhc06', lang() === 'en' ? 'WH-C06 / IF_B7 (beta)' : 'WH-C06 / IF_B7 연결(beta)');
         }
       }
       if(scaleReading) scaleReading.textContent = hasReading ? formatKg(scaleState.readingKg) : emptyScaleText();
@@ -371,16 +451,16 @@
         return;
       }
       scaleState.connecting = true;
+      scaleState.connectingType = 'standard';
       setScaleStatus('abrahang.scaleStatusSearching', lang() === 'en' ? 'Searching for a scale...' : '저울 검색 중...', 'waiting');
       try{
-        cleanupScaleDevice();
-        if(scaleState.device && scaleState.device.gatt && scaleState.device.gatt.connected){
-          try { scaleState.device.gatt.disconnect(); } catch(e){ /* ignore */ }
-        }
+        disconnectCurrentScale();
+        scaleState.readingKg = null;
         var device = await navigator.bluetooth.requestDevice({
           filters: [{ services: [WEIGHT_SCALE_SERVICE] }]
         });
         scaleState.device = device;
+        scaleState.connectionType = 'standard';
         scaleState.disconnectHandler = handleScaleDisconnected;
         device.addEventListener('gattserverdisconnected', scaleState.disconnectHandler);
         setScaleStatus('abrahang.scaleStatusConnecting', lang() === 'en' ? 'Connecting...' : '연결 중...', 'waiting');
@@ -398,9 +478,82 @@
         }
       }catch(e){
         cleanupScaleDevice();
+        scaleState.device = null;
+        scaleState.connectionType = null;
         setScaleStatus('abrahang.scaleStatusError', lang() === 'en' ? 'Scale connection failed.' : '저울 연결에 실패했습니다.', 'error');
       }finally{
         scaleState.connecting = false;
+        scaleState.connectingType = null;
+        renderScale();
+      }
+    }
+
+    async function requestWhc06Device(){
+      var options = {
+        filters: [
+          { manufacturerData: [{ companyIdentifier: WHC06_MANUFACTURER_ID }] },
+          { namePrefix: WHC06_NAME_PREFIX }
+        ],
+        optionalManufacturerData: [WHC06_MANUFACTURER_ID]
+      };
+      try{
+        return await navigator.bluetooth.requestDevice(options);
+      }catch(e){
+        if(e && e.name === 'TypeError'){
+          return await navigator.bluetooth.requestDevice({
+            filters: [{ namePrefix: WHC06_NAME_PREFIX }],
+            optionalManufacturerData: [WHC06_MANUFACTURER_ID]
+          });
+        }
+        throw e;
+      }
+    }
+
+    async function connectWhc06Scale(){
+      if(!scaleConnectWhc06) return;
+      if(!hasBluetoothScaleSupport()){
+        setScaleStatus('abrahang.scaleStatusUnsupported', lang() === 'en' ? 'Web Bluetooth is not supported in this browser.' : '이 브라우저는 Web Bluetooth를 지원하지 않습니다.', 'error');
+        return;
+      }
+      scaleState.connecting = true;
+      scaleState.connectingType = 'whc06';
+      setScaleStatus('abrahang.scaleStatusWhc06Searching', lang() === 'en' ? 'Searching for WH-C06 / IF_B7...' : 'WH-C06 / IF_B7 검색 중...', 'waiting');
+      try{
+        disconnectCurrentScale();
+        scaleState.readingKg = null;
+        var device = await requestWhc06Device();
+        scaleState.device = device;
+        scaleState.connectionType = 'whc06';
+        if(typeof device.watchAdvertisements !== 'function'){
+          throw new Error('watchAdvertisements unsupported for WH-C06');
+        }
+        scaleState.advertisementHandler = handleWhc06Advertisement;
+        device.addEventListener('advertisementreceived', scaleState.advertisementHandler);
+        await device.watchAdvertisements();
+        resetWhc06PacketTimeout();
+        setScaleStatus(
+          'abrahang.scaleStatusWhc06Connected',
+          lang() === 'en' ? 'WH-C06 selected. Waiting for advertisement data.' : 'WH-C06 선택됨. 광고 데이터 수신 대기 중',
+          'waiting'
+        );
+      }catch(e){
+        cleanupScaleDevice();
+        scaleState.device = null;
+        scaleState.connectionType = null;
+        if(e && e.message && e.message.indexOf('watchAdvertisements') !== -1){
+          setScaleStatus(
+            'abrahang.scaleStatusWhc06Unsupported',
+            lang() === 'en'
+              ? 'WH-C06 requires Web Bluetooth advertisement scanning. In Chrome, enable chrome://flags/#enable-experimental-web-platform-features and restart.'
+              : 'WH-C06는 Web Bluetooth 광고 수신이 필요합니다. Chrome에서 chrome://flags/#enable-experimental-web-platform-features를 켠 뒤 재시작하세요.',
+            'error'
+          );
+        }else{
+          setScaleStatus('abrahang.scaleStatusError', lang() === 'en' ? 'Scale connection failed.' : '저울 연결에 실패했습니다.', 'error');
+        }
+      }finally{
+        scaleState.connecting = false;
+        scaleState.connectingType = null;
         renderScale();
       }
     }
@@ -757,6 +910,7 @@
     }
     if(resetBtn) resetBtn.addEventListener('click', function(){ resetState(true); });
     if(scaleConnect) scaleConnect.addEventListener('click', connectScale);
+    if(scaleConnectWhc06) scaleConnectWhc06.addEventListener('click', connectWhc06Scale);
     if(intensity) intensity.addEventListener('input', render);
     if(bodyWeight){
       bodyWeight.addEventListener('input', function(){
