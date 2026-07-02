@@ -14,7 +14,7 @@
   var WHC06_MANUFACTURER_ID = 0x0100;
   var WHC06_NAME_PREFIX = 'IF_B7';
   var WHC06_WEIGHT_OFFSET = 10;
-  var WHC06_STALE_MS = 12000;
+  var WHC06_STALE_MS = 90000;
   var PRECOUNT_MS = 3000;
 
   var TEXT = {
@@ -410,6 +410,11 @@
       scaleState.advertisementTimeout = setTimeout(function(){
         if(scaleState.connectionType === 'whc06') markWhc06Stale();
       }, WHC06_STALE_MS);
+    }
+
+    function nudgeWhc06WatchForLoad(){
+      if(scaleState.connectionType !== 'whc06' || !scaleState.device || scaleState.watchStale) return;
+      restartWhc06AdvertisementWatch(false);
     }
 
     function markWhc06Stale(){
@@ -938,6 +943,7 @@
       if(state.phase === 'prestart'){
         state.phase = 'hang';
         state.remainingMs = state.protocol.hangMs;
+        nudgeWhc06WatchForLoad();
         beep('phase');
         renderSteps();
         return;
@@ -957,6 +963,7 @@
         }
         state.phase = 'hang';
         state.remainingMs = state.protocol.hangMs;
+        nudgeWhc06WatchForLoad();
         beep('phase');
         renderSteps();
       }
