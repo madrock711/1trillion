@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260702-8">
+    <link rel="stylesheet" href="style.css?v=20260702-9">
 </head>
 <body>
     <header>
@@ -873,6 +873,30 @@
                                 <span data-i18n="abrahang.loadTargetLabel">목표 하중</span>
                                 <strong id="abLoadTarget" data-i18n="abrahang.loadTargetEmpty">체중 입력 필요</strong>
                             </div>
+                            <div class="abrahang-scale-panel">
+                                <div class="abrahang-scale-head">
+                                    <div>
+                                        <span data-i18n="abrahang.scaleTitle">블루투스 저울</span>
+                                        <strong id="abScaleStatus" data-i18n="abrahang.scaleStatusIdle">연결 안 됨</strong>
+                                    </div>
+                                    <button class="abrahang-btn ghost" type="button" id="abScaleConnect" data-i18n="abrahang.scaleConnect">저울 연결(beta)</button>
+                                </div>
+                                <div class="abrahang-scale-metrics">
+                                    <div>
+                                        <span data-i18n="abrahang.scaleReadingLabel">저울값</span>
+                                        <strong id="abScaleReading">--</strong>
+                                    </div>
+                                    <div>
+                                        <span data-i18n="abrahang.scaleFingerLoadLabel">실제 하중</span>
+                                        <strong id="abScaleFingerLoad">--</strong>
+                                    </div>
+                                    <div>
+                                        <span data-i18n="abrahang.scaleTargetLabel">목표 저울값</span>
+                                        <strong id="abScaleTargetReading">--</strong>
+                                    </div>
+                                </div>
+                                <p data-i18n="abrahang.scaleHint">표준 BLE Weight Scale Service 저울만 지원합니다. 발을 저울에 둔 상태에서 체중 - 저울값으로 손가락 하중을 추정합니다.</p>
+                            </div>
                             <p data-i18n="abrahang.intensityHint">최대 힘 기준이 아니라, 통제 가능한 약한 전완 긴장 기준입니다.</p>
                         </div>
 
@@ -1052,13 +1076,13 @@
 
     <div id="share-toast" class="share-toast" role="status" aria-live="polite"></div>
 
-    <script src="i18n.js?v=20260702-6"></script>
+    <script src="i18n.js?v=20260702-7"></script>
     <script src="main.js?v=20260626-3"></script>
     <script src="foot-analysis.js?v=20260211-13"></script>
     <script src="stopwatch.js?v=20260619-6"></script>
     <script src="sequence-generator.js?v=20260219-1"></script>
     <script src="lottery-generator.js?v=20260629-2"></script>
-    <script src="abrahang-timer.js?v=20260702-6"></script>
+    <script src="abrahang-timer.js?v=20260702-7"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const tabs = document.querySelectorAll('.tab-link');

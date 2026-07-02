@@ -6,6 +6,9 @@
     paper: 50,
     video: 70
   };
+  var WEIGHT_SCALE_SERVICE = 0x181d;
+  var WEIGHT_MEASUREMENT_CHARACTERISTIC = 0x2a9d;
+  var POUND_TO_KG = 0.45359237;
 
   var TEXT = {
     en: {
@@ -167,6 +170,11 @@
     var intensityValue = q('#abIntensityValue');
     var bodyWeight = q('#abBodyWeight');
     var loadTarget = q('#abLoadTarget');
+    var scaleConnect = q('#abScaleConnect');
+    var scaleStatus = q('#abScaleStatus');
+    var scaleReading = q('#abScaleReading');
+    var scaleFingerLoad = q('#abScaleFingerLoad');
+    var scaleTargetReading = q('#abScaleTargetReading');
     var sound = q('#abSound');
     var autoLog = q('#abAutoLog');
     var phaseEl = q('#abPhase');
@@ -200,6 +208,16 @@
       remainingMs: 10000,
       elapsedMs: 0,
       completedLogged: false
+    };
+    var scaleState = {
+      device: null,
+      characteristic: null,
+      disconnectHandler: null,
+      connecting: false,
+      readingKg: null,
+      statusKey: 'abrahang.scaleStatusIdle',
+      statusFallback: 'Not connected',
+      statusTone: 'idle'
     };
 
     function protocolTotalMs(protocol){
@@ -248,6 +266,143 @@
     function formatKg(value){
       var rounded = Math.round(value * 10) / 10;
       return rounded.toFixed(rounded % 1 === 0 ? 0 : 1) + 'kg';
+    }
+
+    function emptyScaleText(){
+      return siteT('abrahang.scaleEmpty', '--');
+    }
+
+    function hasBluetoothScaleSupport(){
+      return !!(navigator.bluetooth && typeof navigator.bluetooth.requestDevice === 'function');
+    }
+
+    function setScaleStatus(key, fallback, tone){
+      scaleState.statusKey = key;
+      scaleState.statusFallback = fallback;
+      scaleState.statusTone = tone || 'idle';
+      renderScale();
+    }
+
+    function parseWeightMeasurement(value){
+      if(!value || value.byteLength < 3) return null;
+      var flags = value.getUint8(0);
+      var raw = value.getUint16(1, true);
+      if(raw === 0xffff) return null;
+      var isImperial = (flags & 0x01) === 0x01;
+      var kg = isImperial ? raw * 0.01 * POUND_TO_KG : raw * 0.005;
+      if(!isFinite(kg) || kg < 0) return null;
+      return kg;
+    }
+
+    function handleScaleValue(value){
+      var kg = parseWeightMeasurement(value);
+      if(kg == null){
+        setScaleStatus('abrahang.scaleStatusBadReading', lang() === 'en' ? 'The scale sent an unreadable value.' : '저울값을 읽을 수 없습니다.', 'error');
+        return;
+      }
+      scaleState.readingKg = kg;
+      setScaleStatus('abrahang.scaleStatusLive', lang() === 'en' ? 'Live weight is streaming.' : '실시간 저울값 표시 중', 'ok');
+      renderScale();
+    }
+
+    function handleScaleMeasurement(event){
+      if(event && event.target) handleScaleValue(event.target.value);
+    }
+
+    function handleScaleDisconnected(){
+      scaleState.characteristic = null;
+      setScaleStatus('abrahang.scaleStatusDisconnected', lang() === 'en' ? 'Disconnected' : '연결 해제됨', 'waiting');
+    }
+
+    function cleanupScaleDevice(){
+      if(scaleState.characteristic){
+        try{
+          scaleState.characteristic.removeEventListener('characteristicvaluechanged', handleScaleMeasurement);
+        }catch(e){ /* ignore */ }
+      }
+      if(scaleState.device && scaleState.disconnectHandler){
+        try{
+          scaleState.device.removeEventListener('gattserverdisconnected', scaleState.disconnectHandler);
+        }catch(e){ /* ignore */ }
+      }
+      scaleState.characteristic = null;
+      scaleState.disconnectHandler = null;
+    }
+
+    function renderScale(){
+      var bodyKg = parseBodyWeight();
+      var intensityValueNumber = intensity ? Number(intensity.value) || 0 : 0;
+      var hasReading = scaleState.readingKg != null;
+      var hasBodyWeight = bodyKg > 0;
+
+      if(scaleStatus){
+        scaleStatus.textContent = siteT(scaleState.statusKey, scaleState.statusFallback);
+        scaleStatus.classList.toggle('is-error', scaleState.statusTone === 'error');
+        scaleStatus.classList.toggle('is-waiting', scaleState.statusTone === 'waiting' || scaleState.connecting);
+      }
+      if(scaleConnect){
+        scaleConnect.disabled = scaleState.connecting;
+        if(scaleState.connecting){
+          scaleConnect.textContent = siteT('abrahang.scaleStatusSearching', lang() === 'en' ? 'Searching for a scale...' : '저울 검색 중...');
+        }else if(scaleState.device && scaleState.device.gatt && scaleState.device.gatt.connected){
+          scaleConnect.textContent = siteT('abrahang.scaleReconnect', lang() === 'en' ? 'Reconnect scale (beta)' : '저울 다시 연결(beta)');
+        }else{
+          scaleConnect.textContent = siteT('abrahang.scaleConnect', lang() === 'en' ? 'Connect scale (beta)' : '저울 연결(beta)');
+        }
+      }
+      if(scaleReading) scaleReading.textContent = hasReading ? formatKg(scaleState.readingKg) : emptyScaleText();
+      if(scaleFingerLoad){
+        if(hasReading && hasBodyWeight) scaleFingerLoad.textContent = formatKg(Math.max(0, bodyKg - scaleState.readingKg));
+        else scaleFingerLoad.textContent = hasReading ? siteT('abrahang.scaleNeedBody', lang() === 'en' ? 'Enter body weight' : '체중 입력 필요') : emptyScaleText();
+      }
+      if(scaleTargetReading){
+        if(hasBodyWeight && intensityValueNumber > 0){
+          scaleTargetReading.textContent = formatKg(Math.max(0, bodyKg * (1 - intensityValueNumber / 100)));
+        }else{
+          scaleTargetReading.textContent = siteT('abrahang.scaleNeedBody', lang() === 'en' ? 'Enter body weight' : '체중 입력 필요');
+        }
+      }
+    }
+
+    async function connectScale(){
+      if(!scaleConnect) return;
+      if(!hasBluetoothScaleSupport()){
+        setScaleStatus('abrahang.scaleStatusUnsupported', lang() === 'en' ? 'Web Bluetooth is not supported in this browser.' : '이 브라우저는 Web Bluetooth를 지원하지 않습니다.', 'error');
+        return;
+      }
+      scaleState.connecting = true;
+      setScaleStatus('abrahang.scaleStatusSearching', lang() === 'en' ? 'Searching for a scale...' : '저울 검색 중...', 'waiting');
+      try{
+        cleanupScaleDevice();
+        if(scaleState.device && scaleState.device.gatt && scaleState.device.gatt.connected){
+          try { scaleState.device.gatt.disconnect(); } catch(e){ /* ignore */ }
+        }
+        var device = await navigator.bluetooth.requestDevice({
+          filters: [{ services: [WEIGHT_SCALE_SERVICE] }]
+        });
+        scaleState.device = device;
+        scaleState.disconnectHandler = handleScaleDisconnected;
+        device.addEventListener('gattserverdisconnected', scaleState.disconnectHandler);
+        setScaleStatus('abrahang.scaleStatusConnecting', lang() === 'en' ? 'Connecting...' : '연결 중...', 'waiting');
+        var server = await device.gatt.connect();
+        var service = await server.getPrimaryService(WEIGHT_SCALE_SERVICE);
+        var characteristic = await service.getCharacteristic(WEIGHT_MEASUREMENT_CHARACTERISTIC);
+        scaleState.characteristic = characteristic;
+        characteristic.addEventListener('characteristicvaluechanged', handleScaleMeasurement);
+        await characteristic.startNotifications();
+        setScaleStatus('abrahang.scaleStatusConnected', lang() === 'en' ? 'Connected. Waiting for weight.' : '연결됨. 저울값 대기 중', 'waiting');
+        if(characteristic.properties && characteristic.properties.read){
+          try{
+            handleScaleValue(await characteristic.readValue());
+          }catch(e){ /* Most standard scales only indicate readings. */ }
+        }
+      }catch(e){
+        cleanupScaleDevice();
+        setScaleStatus('abrahang.scaleStatusError', lang() === 'en' ? 'Scale connection failed.' : '저울 연결에 실패했습니다.', 'error');
+      }finally{
+        scaleState.connecting = false;
+        renderScale();
+      }
     }
 
     function saveBodyWeight(){
@@ -565,6 +720,7 @@
           loadTarget.textContent = siteT('abrahang.loadTargetEmpty', lang() === 'en' ? 'Enter body weight' : '체중 입력 필요');
         }
       }
+      renderScale();
       if(startBtn){
         if(state.running) startBtn.textContent = siteT('abrahang.pause', tt('pause'));
         else if(state.phase === 'hang' || state.phase === 'rest') startBtn.textContent = siteT('abrahang.resume', tt('resume'));
@@ -600,6 +756,7 @@
       });
     }
     if(resetBtn) resetBtn.addEventListener('click', function(){ resetState(true); });
+    if(scaleConnect) scaleConnect.addEventListener('click', connectScale);
     if(intensity) intensity.addEventListener('input', render);
     if(bodyWeight){
       bodyWeight.addEventListener('input', function(){
