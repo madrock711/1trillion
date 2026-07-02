@@ -2,6 +2,7 @@
   'use strict';
 
   var STORAGE_KEY = 'grind.lotto645.history.v1';
+  var VISION_STORAGE_KEY = 'grind.lotto645.vision.v1';
   var BUNDLED_URL = 'assets/data/lotto-645-history.json?v=20260629-1';
   var MIRROR_ALL_URL = 'https://smok95.github.io/lotto/results/all.json';
   var OFFICIAL_URL = 'https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=';
@@ -17,6 +18,7 @@
     stats: null,
     isDrawing: false,
     drawNumbers: [],
+    manualSelected: [],
     statusKey: 'lottery.status.loading',
     statusParams: {},
     statusKind: ''
@@ -489,6 +491,101 @@
     });
   }
 
+  function renderManualSelection(){
+    if (el.manualCount) el.manualCount.textContent = state.manualSelected.length + '/6';
+    if (el.secretSend) {
+      var ready = state.manualSelected.length === 6;
+      el.secretSend.hidden = !ready;
+      el.secretSend.disabled = !ready;
+    }
+    if (!el.manualGrid) return;
+    var selected = new Set(state.manualSelected);
+    el.manualGrid.querySelectorAll('.lottery-manual-number').forEach(function(button){
+      var n = Number(button.dataset.number);
+      var active = selected.has(n);
+      button.classList.toggle('is-selected', active);
+      button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+  }
+
+  function buildManualGrid(){
+    if (!el.manualGrid || el.manualGrid.children.length) return;
+    for (var n = 1; n <= 45; n++) {
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'lottery-manual-number';
+      button.dataset.number = String(n);
+      button.dataset.band = band(n);
+      button.setAttribute('aria-pressed', 'false');
+      button.textContent = String(n);
+      el.manualGrid.appendChild(button);
+    }
+  }
+
+  function setManualOpen(isOpen){
+    if (!el.manualPanel) return;
+    el.manualPanel.hidden = !isOpen;
+    if (el.manualToggle) el.manualToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    if (isOpen) {
+      buildManualGrid();
+      renderManualSelection();
+    }
+  }
+
+  function toggleManualNumber(n){
+    if (!Number.isFinite(n) || n < 1 || n > 45) return;
+    var index = state.manualSelected.indexOf(n);
+    if (index >= 0) {
+      state.manualSelected.splice(index, 1);
+    } else if (state.manualSelected.length < 6) {
+      state.manualSelected.push(n);
+    }
+    state.manualSelected.sort(function(a, b){ return a - b; });
+    renderManualSelection();
+  }
+
+  function clearManualSelection(){
+    state.manualSelected = [];
+    renderManualSelection();
+  }
+
+  function saveVisionNumbers(nums){
+    try {
+      localStorage.setItem(VISION_STORAGE_KEY, JSON.stringify({
+        version: 1,
+        numbers: nums,
+        updatedAt: new Date().toISOString()
+      }));
+    } catch (err) {
+      /* ignore storage failures */
+    }
+  }
+
+  function activateBreathingTab(){
+    var tab = document.querySelector('.tab-link[data-tab="breathing"]');
+    if (tab && typeof tab.click === 'function') {
+      tab.click();
+      return;
+    }
+    var breathing = document.getElementById('breathing');
+    if (breathing) {
+      document.querySelectorAll('.tab-content').forEach(function(node){ node.classList.remove('active'); });
+      breathing.classList.add('active');
+    }
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState(null, '', window.location.pathname + '?tab=breathing#breathing');
+    }
+  }
+
+  function sendManualVision(){
+    if (state.manualSelected.length !== 6) return;
+    var nums = state.manualSelected.slice().sort(function(a, b){ return a - b; });
+    saveVisionNumbers(nums);
+    document.dispatchEvent(new CustomEvent('lottery:vision', { detail: { numbers: nums } }));
+    setStatus('lottery.status.secretSent', {}, 'ok');
+    activateBreathingTab();
+  }
+
   function renderResults(){
     if (!el.results) return;
     el.results.textContent = '';
@@ -672,6 +769,12 @@
     el.generate = get('lotteryGenerate');
     el.refresh = get('lotteryRefresh');
     el.copy = get('lotteryCopy');
+    el.manualToggle = get('lotteryManualToggle');
+    el.manualPanel = get('lotteryManual');
+    el.manualGrid = get('lotteryManualGrid');
+    el.manualCount = get('lotteryManualCount');
+    el.manualClear = get('lotteryManualClear');
+    el.secretSend = get('lotterySecretSend');
     el.results = get('lotteryResults');
     el.seedLabel = get('lotterySeedLabel');
     el.dataSource = get('lotteryDataSource');
@@ -690,8 +793,28 @@
     if (el.generate) el.generate.addEventListener('click', startDraw);
     if (el.refresh) el.refresh.addEventListener('click', refreshHistory);
     if (el.copy) el.copy.addEventListener('click', copyResults);
+    if (el.manualToggle) {
+      el.manualToggle.addEventListener('click', function(){
+        setManualOpen(el.manualPanel ? el.manualPanel.hidden : false);
+      });
+    }
+    if (el.manualGrid) {
+      el.manualGrid.addEventListener('click', function(event){
+        var button = event.target && event.target.closest ? event.target.closest('.lottery-manual-number') : null;
+        if (!button || !el.manualGrid.contains(button)) return;
+        toggleManualNumber(Number(button.dataset.number));
+      });
+    }
+    if (el.manualClear) el.manualClear.addEventListener('click', clearManualSelection);
+    if (el.secretSend) el.secretSend.addEventListener('click', sendManualVision);
 
-    document.addEventListener('app:lang', renderAll);
+    buildManualGrid();
+    renderManualSelection();
+
+    document.addEventListener('app:lang', function(){
+      renderAll();
+      renderManualSelection();
+    });
 
     var cache = readCache();
     if (cache && cache.history.length) {

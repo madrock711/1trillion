@@ -118,6 +118,8 @@
         var stepEl   = q('#br-step');
         var bubbleIn = q('.br-bubble-in');
         var bubbleEx = q('.br-bubble-ex');
+        var lottoVision = q('#br-lotto-vision');
+        var lottoVisionBalls = q('#br-lotto-vision-balls');
 
         var RED  = '#ef4444';
         var BLUE = '#3b82f6';
@@ -125,6 +127,7 @@
         var NUDGE_STEP_SEC = 0.5;
         var AUTO_GROW_MIN_SEC = 0.1;
         var AUTO_GROW_STEP_DELTA_SEC = 0.1;
+        var LOTTO_VISION_STORAGE_KEY = 'grind.lotto645.vision.v1';
         if(ringProg){ ringProg.style.strokeDasharray=String(CIRC); ringProg.style.strokeDashoffset=String(CIRC); }
 
         var syncOn = true;
@@ -445,6 +448,51 @@
           return out;
         }
 
+        function lottoBand(n){
+          return String(Math.min(5, Math.floor((n - 1) / 10) + 1));
+        }
+
+        function normalizeVisionNumbers(value){
+          var raw = Array.isArray(value) ? value : (value && Array.isArray(value.numbers) ? value.numbers : []);
+          var seen = {};
+          var nums = [];
+          for(var i=0;i<raw.length;i++){
+            var n = Number(raw[i]);
+            if(!Number.isFinite(n) || Math.floor(n) !== n || n < 1 || n > 45 || seen[n]) continue;
+            seen[n] = true;
+            nums.push(n);
+          }
+          nums.sort(function(a,b){ return a-b; });
+          return nums.length === 6 ? nums : [];
+        }
+
+        function renderLottoVision(numbers){
+          if(!lottoVision || !lottoVisionBalls) return;
+          var nums = normalizeVisionNumbers(numbers);
+          lottoVisionBalls.textContent = '';
+          if(nums.length !== 6){
+            lottoVision.hidden = true;
+            return;
+          }
+          nums.forEach(function(n){
+            var ball = document.createElement('span');
+            ball.className = 'br-lotto-vision-ball';
+            ball.dataset.band = lottoBand(n);
+            ball.textContent = String(n);
+            lottoVisionBalls.appendChild(ball);
+          });
+          lottoVision.hidden = false;
+        }
+
+        function loadStoredLottoVision(){
+          try{
+            var saved = localStorage.getItem(LOTTO_VISION_STORAGE_KEY);
+            return saved ? JSON.parse(saved) : null;
+          }catch(e){
+            return null;
+          }
+        }
+
         function applySyncUI(){
           var btn=q('#br-sync'), ex=getExEl(), inn=getInEl();
           if(!btn||!ex||!inn) return;
@@ -607,8 +655,12 @@
         }
 
         document.addEventListener('app:lang', function(){ applyLanguageState(); }, false);
+        document.addEventListener('lottery:vision', function(e){
+          renderLottoVision(e && e.detail ? e.detail.numbers : null);
+        }, false);
 
         applySyncUI(); applyAutoGrowUI(); updateChakraUI(); setPhase('INHALE'); if(totalLbl) totalLbl.textContent = '00:00';
+        renderLottoVision(loadStoredLottoVision());
         applyLanguageState();
       }
 

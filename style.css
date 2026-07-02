@@ -294,6 +294,7 @@ main {
 @media(min-width:880px){.br-embed .br-layout{grid-template-columns: 1.1fr .9fr}}
 .br-embed .br-timer{display:flex;flex-direction:column;align-items:center;gap:12px}
 .br-embed .br-timer-main{display:grid;grid-template-columns:minmax(74px,96px) 260px minmax(74px,96px);gap:14px;align-items:center;justify-content:center;width:100%}
+.br-embed .br-focus-stack{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:0}
 .br-embed .br-circle{width:260px;height:260px;border-radius:50%;position:relative;display:grid;place-items:center;transition:background .25s ease;overflow:hidden}
 .br-embed .br-circle[data-phase="INHALE"]{background: radial-gradient(ellipse at center, rgba(239,68,68,.14), rgba(239,68,68,0));}
 .br-embed .br-circle[data-phase="EXHALE"]{background: radial-gradient(ellipse at center, rgba(59,130,246,.14), rgba(59,130,246,0));}
@@ -357,10 +358,20 @@ main {
 .br-embed .br-total{margin-top:16px;padding:14px 12px;background:#222;border:1px solid #444;border-radius:10px;display:flex;align-items:center;justify-content:space-between}
 .br-embed .br-total-label{font-size:14px;color:#ccc;font-weight:700}
 .br-embed .br-total-time{font-variant-numeric:tabular-nums;font-weight:900;font-size:1.6rem;color:#fff}
+.br-embed .br-lotto-vision{display:grid;gap:6px;justify-items:center;max-width:260px;padding:7px 8px;border:1px solid rgba(255,255,255,.09);border-radius:8px;background:rgba(17,17,17,.64)}
+.br-embed .br-lotto-vision[hidden]{display:none}
+.br-embed .br-lotto-vision-label{color:#9aa0a6;font-size:11px;font-weight:800;line-height:1}
+.br-embed .br-lotto-vision-balls{display:flex;justify-content:center;gap:5px;flex-wrap:wrap}
+.br-embed .br-lotto-vision-ball{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;border-radius:50%;border:1px solid rgba(255,255,255,.14);color:#fff;font-size:12px;font-weight:900;font-variant-numeric:tabular-nums;box-shadow:0 0 10px rgba(0,0,0,.18)}
+.br-embed .br-lotto-vision-ball[data-band="1"]{background:#b38600}
+.br-embed .br-lotto-vision-ball[data-band="2"]{background:#1667a7}
+.br-embed .br-lotto-vision-ball[data-band="3"]{background:#a43b38}
+.br-embed .br-lotto-vision-ball[data-band="4"]{background:#4f5966}
+.br-embed .br-lotto-vision-ball[data-band="5"]{background:#25824f}
 .br-embed .pulse{animation: brPulse .6s ease-out}
 @keyframes brPulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
-@media(max-width:520px){.br-embed .br-timer-main{grid-template-columns:42px 186px 42px;gap:6px}.br-embed .br-circle{width:186px;height:186px}.br-embed .br-chakra-map{width:38px;min-height:182px;padding:6px 5px;gap:3px}.br-embed .br-chakra-node{width:22px;height:22px;font-size:8.5px}.br-embed .br-chakra-frequency{font-size:9.5px;min-height:30px}.br-embed .br-volume-vertical{height:166px;width:28px}.br-embed .br-volume-column label{font-size:9.5px}}
-@media(max-width:380px){.br-embed .br-timer-main{grid-template-columns:38px 176px 38px;gap:5px}.br-embed .br-circle{width:176px;height:176px}.br-embed .br-chakra-map{width:35px;min-height:172px;padding:5px 4px;gap:3px}.br-embed .br-chakra-node{width:21px;height:21px;font-size:8px}.br-embed .br-volume-vertical{height:156px;width:26px}}
+@media(max-width:520px){.br-embed .br-timer-main{grid-template-columns:42px 186px 42px;gap:6px}.br-embed .br-circle{width:186px;height:186px}.br-embed .br-lotto-vision{max-width:186px;padding:6px 5px}.br-embed .br-lotto-vision-balls{gap:3px}.br-embed .br-lotto-vision-ball{width:23px;height:23px;font-size:10.5px}.br-embed .br-chakra-map{width:38px;min-height:182px;padding:6px 5px;gap:3px}.br-embed .br-chakra-node{width:22px;height:22px;font-size:8.5px}.br-embed .br-chakra-frequency{font-size:9.5px;min-height:30px}.br-embed .br-volume-vertical{height:166px;width:28px}.br-embed .br-volume-column label{font-size:9.5px}}
+@media(max-width:380px){.br-embed .br-timer-main{grid-template-columns:38px 176px 38px;gap:5px}.br-embed .br-circle{width:176px;height:176px}.br-embed .br-lotto-vision{max-width:176px}.br-embed .br-lotto-vision-ball{width:22px;height:22px;font-size:10px}.br-embed .br-chakra-map{width:35px;min-height:172px;padding:5px 4px;gap:3px}.br-embed .br-chakra-node{width:21px;height:21px;font-size:8px}.br-embed .br-volume-vertical{height:156px;width:26px}}
 
 /* Stopwatch (CO2 Table) Styles */
 .sw-embed .clockbox-wrapper { display:flex; justify-content:center; margin:30px auto; }
@@ -1070,8 +1081,117 @@ main {
   background: transparent;
 }
 
+.lottery-btn.quiet {
+  min-height: 34px;
+  align-self: center;
+  padding: 7px 10px;
+  border-color: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.015);
+  color: rgba(255,255,255,0.56);
+  font-size: 0.78rem;
+}
+
+.lottery-btn.quiet:hover,
+.lottery-btn.quiet[aria-expanded="true"] {
+  color: var(--text-primary);
+  border-color: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.05);
+}
+
 .lottery-btn:disabled {
   opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.lottery-manual {
+  max-width: 560px;
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  background: #151515;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.2);
+}
+
+.lottery-manual[hidden] {
+  display: none;
+}
+
+.lottery-manual-head,
+.lottery-manual-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.lottery-manual-head {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+#lotteryManualCount {
+  font-variant-numeric: tabular-nums;
+}
+
+.lottery-manual-grid {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.lottery-manual-number {
+  display: inline-grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50%;
+  background: #242424;
+  color: #d1d5db;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.lottery-manual-number:hover {
+  border-color: rgba(255,255,255,0.28);
+  background: #2c2c2c;
+}
+
+.lottery-manual-number.is-selected {
+  color: #fff;
+  border-color: rgba(255,255,255,0.32);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.08);
+}
+
+.lottery-manual-number[data-band="1"].is-selected { background: #b38600; }
+.lottery-manual-number[data-band="2"].is-selected { background: #1667a7; }
+.lottery-manual-number[data-band="3"].is-selected { background: #a43b38; }
+.lottery-manual-number[data-band="4"].is-selected { background: #4f5966; }
+.lottery-manual-number[data-band="5"].is-selected { background: #25824f; }
+
+.lottery-secret-btn {
+  min-height: 34px;
+  border: 1px solid rgba(29,185,84,0.42);
+  border-radius: 999px;
+  background: rgba(29,185,84,0.15);
+  color: #b7f7c9;
+  padding: 7px 13px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.lottery-secret-btn[hidden] {
+  display: none;
+}
+
+.lottery-secret-btn:disabled {
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
@@ -1342,6 +1462,15 @@ main {
 
   .lottery-btn {
     width: 100%;
+  }
+
+  .lottery-btn.quiet {
+    width: auto;
+    justify-self: end;
+  }
+
+  .lottery-manual-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
   .lottery-set {
