@@ -262,7 +262,7 @@
       advertisementRestarting: false,
       lastAdvertisementAt: 0,
       recoveryAttemptAt: 0,
-      foregroundPausedAt: 0,
+      foregroundLossAt: 0,
       foregroundCheckAt: 0,
       foregroundNeedsFreshPacket: false,
       watchStale: false,
@@ -464,7 +464,7 @@
       scaleState.watchStale = false;
       scaleState.advertisementTimeout = setTimeout(function(){
         if(scaleState.connectionType !== 'whc06') return;
-        if(scaleState.foregroundPausedAt || document.visibilityState === 'hidden'){
+        if(scaleState.foregroundLossAt || document.visibilityState === 'hidden'){
           scaleState.foregroundNeedsFreshPacket = true;
           scaleState.advertisementTimeout = 0;
           return;
@@ -718,15 +718,15 @@
         scaleState.foregroundNeedsFreshPacket = false;
         setScaleStatus(
           'abrahang.scaleStatusWhc06ForegroundCheck',
-          lang() === 'en' ? 'Chrome returned to the foreground. Waiting for a fresh WH-C06 packet.' : 'Chrome 복귀 후 WH-C06 새 패킷을 확인 중입니다.',
+          lang() === 'en' ? 'Chrome returned. Timer kept running; checking for a fresh WH-C06 packet.' : 'Chrome 복귀. 타이머는 계속 진행하며 WH-C06 새 패킷을 확인 중입니다.',
           'waiting'
         );
         restartWhc06AdvertisementWatch(false, {
           firstPacketTimeout: WHC06_FOREGROUND_PACKET_MS,
           firstPacketStatusKey: 'abrahang.scaleStatusWhc06ForegroundNoPacket',
           firstPacketStatusFallback: lang() === 'en'
-            ? 'WH-C06 did not resume after Chrome returned. Use WH-C06 rescan; if it still fails, turn the scale off and on.'
-            : 'Chrome 복귀 후 WH-C06 수신이 재개되지 않았습니다. WH-C06 새로 스캔을 누르고, 그래도 안 되면 저울 전원을 껐다 켜세요.'
+            ? 'Timer kept running, but WH-C06 data did not resume after Chrome returned. Use WH-C06 rescan.'
+            : '타이머는 계속 진행됐지만 Chrome 복귀 후 WH-C06 수신이 재개되지 않았습니다. WH-C06 새로 스캔을 누르세요.'
         });
         return;
       }
@@ -735,46 +735,33 @@
       }
     }
 
-    function noteWhc06ForegroundPause(){
+    function noteWhc06ForegroundLoss(){
       if(scaleState.connectionType === 'whc06' && scaleState.device && !scaleState.watchStale){
-        scaleState.foregroundPausedAt = Date.now();
+        scaleState.foregroundLossAt = Date.now();
+        scaleState.foregroundNeedsFreshPacket = true;
       }
     }
 
-    function handleWhc06ForegroundLoss(){
-      if(scaleState.connecting) return;
-      noteWhc06ForegroundPause();
-      if(scaleState.connectionType === 'whc06' && scaleState.device && state.running){
-        pause();
-        setScaleStatus(
-          'abrahang.scaleStatusWhc06FocusPaused',
-          lang() === 'en'
-            ? 'Chrome lost focus, so the timer was paused to protect WH-C06 data. Keep Chrome in front, then resume after the scale updates.'
-            : 'Chrome 포커스 이탈로 WH-C06 데이터 보호를 위해 타이머를 일시정지했습니다. Chrome을 전면에 두고 저울값 갱신 후 재개하세요.',
-          'error'
-        );
-      }
-    }
-
-    function checkWhc06AfterForeground(){
+    function checkWhc06AfterForeground(force){
       if(scaleState.connectionType !== 'whc06' || !scaleState.device) return;
-      if(!scaleState.foregroundPausedAt) return;
+      if(scaleState.connecting) return;
+      if(!force && !scaleState.foregroundLossAt && !scaleState.foregroundNeedsFreshPacket) return;
       var now = Date.now();
       if(scaleState.foregroundCheckAt && now - scaleState.foregroundCheckAt < 5000) return;
       scaleState.foregroundCheckAt = now;
-      scaleState.foregroundPausedAt = 0;
+      scaleState.foregroundLossAt = 0;
       scaleState.foregroundNeedsFreshPacket = false;
       setScaleStatus(
         'abrahang.scaleStatusWhc06ForegroundCheck',
-        lang() === 'en' ? 'Chrome returned to the foreground. Waiting for a fresh WH-C06 packet.' : 'Chrome 복귀 후 WH-C06 새 패킷을 확인 중입니다.',
+        lang() === 'en' ? 'Chrome returned. Timer kept running; checking for a fresh WH-C06 packet.' : 'Chrome 복귀. 타이머는 계속 진행하며 WH-C06 새 패킷을 확인 중입니다.',
         'waiting'
       );
       restartWhc06AdvertisementWatch(false, {
         firstPacketTimeout: WHC06_FOREGROUND_PACKET_MS,
         firstPacketStatusKey: 'abrahang.scaleStatusWhc06ForegroundNoPacket',
         firstPacketStatusFallback: lang() === 'en'
-          ? 'WH-C06 did not resume after Chrome returned. Use WH-C06 rescan; if it still fails, turn the scale off and on.'
-          : 'Chrome 복귀 후 WH-C06 수신이 재개되지 않았습니다. WH-C06 새로 스캔을 누르고, 그래도 안 되면 저울 전원을 껐다 켜세요.'
+          ? 'Timer kept running, but WH-C06 data did not resume after Chrome returned. Use WH-C06 rescan.'
+          : '타이머는 계속 진행됐지만 Chrome 복귀 후 WH-C06 수신이 재개되지 않았습니다. WH-C06 새로 스캔을 누르세요.'
       });
     }
 
@@ -811,7 +798,7 @@
       scaleState.advertisementHandler = null;
       scaleState.advertisementRestarting = false;
       scaleState.lastAdvertisementAt = 0;
-      scaleState.foregroundPausedAt = 0;
+      scaleState.foregroundLossAt = 0;
       scaleState.foregroundNeedsFreshPacket = false;
       scaleState.watchStale = false;
       return unwatchPromise;
@@ -1706,16 +1693,21 @@
     document.addEventListener('visibilitychange', function(){
       if(document.visibilityState === 'visible'){
         renderNextSession();
-        checkWhc06AfterForeground();
+        checkWhc06AfterForeground(true);
       }else{
-        handleWhc06ForegroundLoss();
+        noteWhc06ForegroundLoss();
       }
     });
-    window.addEventListener('blur', handleWhc06ForegroundLoss);
+    window.addEventListener('blur', noteWhc06ForegroundLoss);
     window.addEventListener('focus', function(){
       renderNextSession();
-      checkWhc06AfterForeground();
+      checkWhc06AfterForeground(true);
     });
+    window.addEventListener('pageshow', function(){
+      renderNextSession();
+      checkWhc06AfterForeground(true);
+    });
+    window.addEventListener('pagehide', noteWhc06ForegroundLoss);
 
     render();
     renderHistory();
