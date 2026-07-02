@@ -1,6 +1,8 @@
 (function(){
   var STORAGE_KEY = 'abrahang:lastCompletedAt';
   var BODY_WEIGHT_KEY = 'abrahang:bodyWeightKg';
+  var ONE_HAND_KEY = 'abrahang:oneHandMode';
+  var SCALE_MODE_KEY = 'abrahang:scaleMode';
   var RECOVERY_MS = 6 * 60 * 60 * 1000;
   var DEFAULT_INTENSITY = {
     paper: 50,
@@ -12,7 +14,7 @@
   var WHC06_MANUFACTURER_ID = 0x0100;
   var WHC06_NAME_PREFIX = 'IF_B7';
   var WHC06_WEIGHT_OFFSET = 10;
-  var WHC06_NO_PACKET_MS = 10000;
+  var WHC06_NO_PACKET_MS = 60000;
 
   var TEXT = {
     en: {
@@ -173,11 +175,19 @@
     var intensity = q('#abIntensity');
     var intensityValue = q('#abIntensityValue');
     var bodyWeight = q('#abBodyWeight');
+    var oneHand = q('#abOneHand');
     var loadTarget = q('#abLoadTarget');
     var scaleConnect = q('#abScaleConnect');
     var scaleConnectWhc06 = q('#abScaleConnectWhc06');
     var scaleStatus = q('#abScaleStatus');
     var scaleSupport = q('#abScaleSupport');
+    var scaleModeButtons = root.querySelectorAll('[data-ab-scale-mode]');
+    var scaleMetrics = q('.abrahang-scale-metrics');
+    var scaleReadingMetric = q('#abScaleReadingMetric');
+    var scaleFingerLoadMetric = q('#abScaleFingerLoadMetric');
+    var scaleReadingLabel = q('#abScaleReadingLabel');
+    var scaleFingerLoadLabel = q('#abScaleFingerLoadLabel');
+    var scaleTargetLabel = q('#abScaleTargetLabel');
     var scaleReading = q('#abScaleReading');
     var scaleFingerLoad = q('#abScaleFingerLoad');
     var scaleTargetReading = q('#abScaleTargetReading');
@@ -215,6 +225,7 @@
       elapsedMs: 0,
       completedLogged: false
     };
+    var scaleDisplayMode = 'foot';
     var scaleState = {
       device: null,
       connectionType: null,
@@ -276,6 +287,20 @@
     function formatKg(value){
       var rounded = Math.round(value * 10) / 10;
       return rounded.toFixed(rounded % 1 === 0 ? 0 : 1) + 'kg';
+    }
+
+    function isOneHandMode(){
+      return !!(oneHand && oneHand.checked);
+    }
+
+    function targetLoadKg(bodyKg){
+      var intensityValueNumber = intensity ? Number(intensity.value) || 0 : 0;
+      var handFactor = isOneHandMode() ? 0.5 : 1;
+      return bodyKg * intensityValueNumber / 100 * handFactor;
+    }
+
+    function targetScaleReadingKg(bodyKg){
+      return Math.max(0, bodyKg - targetLoadKg(bodyKg));
     }
 
     function emptyScaleText(){
@@ -360,7 +385,7 @@
         if(scaleState.connectionType === 'whc06'){
           setScaleStatus(
             'abrahang.scaleStatusWhc06NoPacket',
-            lang() === 'en' ? 'No WH-C06 advertisement packet received for 10 seconds.' : '10초 동안 WH-C06 광고 패킷을 받지 못했습니다.',
+            lang() === 'en' ? 'No WH-C06 advertisement packet received for 1 minute.' : '1분 동안 WH-C06 광고 패킷을 받지 못했습니다.',
             'waiting'
           );
         }
@@ -438,13 +463,60 @@
       scaleState.connectionType = null;
     }
 
+    function getScaleDisplayMode(){
+      return scaleDisplayMode === 'crane' ? 'crane' : 'foot';
+    }
+
+    function saveScaleDisplayMode(mode){
+      try { localStorage.setItem(SCALE_MODE_KEY, mode); } catch(e){ /* ignore */ }
+    }
+
+    function setScaleDisplayMode(mode, save){
+      scaleDisplayMode = mode === 'crane' ? 'crane' : 'foot';
+      if(save !== false) saveScaleDisplayMode(scaleDisplayMode);
+      renderScale();
+    }
+
+    function loadScaleDisplayMode(){
+      try{
+        var stored = localStorage.getItem(SCALE_MODE_KEY);
+        if(stored === 'crane' || stored === 'foot') scaleDisplayMode = stored;
+      }catch(e){ /* ignore */ }
+    }
+
     function renderScale(){
       var bodyKg = parseBodyWeight();
-      var intensityValueNumber = intensity ? Number(intensity.value) || 0 : 0;
+      var targetKg = bodyKg > 0 ? targetLoadKg(bodyKg) : 0;
       var hasReading = scaleState.readingKg != null;
       var hasBodyWeight = bodyKg > 0;
       var standardConnected = scaleState.connectionType === 'standard' && scaleState.device && scaleState.device.gatt && scaleState.device.gatt.connected;
       var whc06Connected = scaleState.connectionType === 'whc06' && !!scaleState.device;
+      var isCraneScale = getScaleDisplayMode() === 'crane';
+
+      for(var i = 0; i < scaleModeButtons.length; i++){
+        var activeMode = scaleModeButtons[i].getAttribute('data-ab-scale-mode') === getScaleDisplayMode();
+        scaleModeButtons[i].classList.toggle('is-active', activeMode);
+        scaleModeButtons[i].setAttribute('aria-pressed', activeMode ? 'true' : 'false');
+      }
+
+      if(scaleReadingLabel){
+        scaleReadingLabel.textContent = siteT(
+          isCraneScale ? 'abrahang.scaleCurrentLoadLabel' : 'abrahang.scaleReadingLabel',
+          isCraneScale ? (lang() === 'en' ? 'Current load' : '현재 하중') : (lang() === 'en' ? 'Scale reading' : '저울값')
+        );
+      }
+      if(scaleFingerLoadLabel){
+        scaleFingerLoadLabel.textContent = siteT('abrahang.scaleFingerLoadLabel', lang() === 'en' ? 'Finger load' : '실제 하중');
+      }
+      if(scaleTargetLabel){
+        scaleTargetLabel.textContent = siteT(
+          isCraneScale ? 'abrahang.scaleTargetLoadLabel' : 'abrahang.scaleTargetLabel',
+          isCraneScale ? (lang() === 'en' ? 'Target load' : '목표 하중') : (lang() === 'en' ? 'Target scale' : '목표 저울값')
+        );
+      }
+      if(scaleFingerLoadMetric) scaleFingerLoadMetric.hidden = isCraneScale;
+      if(scaleMetrics) scaleMetrics.classList.toggle('is-crane', isCraneScale);
+      if(scaleReadingMetric) scaleReadingMetric.classList.toggle('is-wide', isCraneScale);
 
       if(scaleStatus){
         scaleStatus.textContent = siteT(scaleState.statusKey, scaleState.statusFallback);
@@ -474,12 +546,13 @@
       renderWhc06Support();
       if(scaleReading) scaleReading.textContent = hasReading ? formatKg(scaleState.readingKg) : emptyScaleText();
       if(scaleFingerLoad){
-        if(hasReading && hasBodyWeight) scaleFingerLoad.textContent = formatKg(Math.max(0, bodyKg - scaleState.readingKg));
+        if(isCraneScale) scaleFingerLoad.textContent = hasReading ? formatKg(scaleState.readingKg) : emptyScaleText();
+        else if(hasReading && hasBodyWeight) scaleFingerLoad.textContent = formatKg(Math.max(0, bodyKg - scaleState.readingKg));
         else scaleFingerLoad.textContent = hasReading ? siteT('abrahang.scaleNeedBody', lang() === 'en' ? 'Enter body weight' : '체중 입력 필요') : emptyScaleText();
       }
       if(scaleTargetReading){
-        if(hasBodyWeight && intensityValueNumber > 0){
-          scaleTargetReading.textContent = formatKg(Math.max(0, bodyKg * (1 - intensityValueNumber / 100)));
+        if(hasBodyWeight){
+          scaleTargetReading.textContent = isCraneScale ? formatKg(targetKg) : formatKg(targetScaleReadingKg(bodyKg));
         }else{
           scaleTargetReading.textContent = siteT('abrahang.scaleNeedBody', lang() === 'en' ? 'Enter body weight' : '체중 입력 필요');
         }
@@ -562,6 +635,7 @@
         setScaleStatus('abrahang.scaleStatusWhc06Unsupported', lang() === 'en' ? 'WH-C06 advertisement scanning is unavailable.' : 'WH-C06 광고 수신 미지원', 'error');
         return;
       }
+      setScaleDisplayMode('crane');
       scaleState.connecting = true;
       scaleState.connectingType = 'whc06';
       setScaleStatus('abrahang.scaleStatusWhc06Searching', lang() === 'en' ? 'Searching for WH-C06 / IF_B7...' : 'WH-C06 / IF_B7 검색 중...', 'waiting');
@@ -620,6 +694,16 @@
         var stored = Number(localStorage.getItem(BODY_WEIGHT_KEY) || 0);
         if(isFinite(stored) && stored > 0) bodyWeight.value = String(stored);
       }catch(e){ /* ignore */ }
+    }
+
+    function saveOneHandMode(){
+      if(!oneHand) return;
+      try { localStorage.setItem(ONE_HAND_KEY, oneHand.checked ? '1' : '0'); } catch(e){ /* ignore */ }
+    }
+
+    function loadOneHandMode(){
+      if(!oneHand) return;
+      try { oneHand.checked = localStorage.getItem(ONE_HAND_KEY) === '1'; } catch(e){ /* ignore */ }
     }
 
     function stepText(step){
@@ -914,8 +998,7 @@
       if(loadTarget && intensity){
         var kg = parseBodyWeight();
         if(kg > 0){
-          var target = kg * (Number(intensity.value) || 0) / 100;
-          loadTarget.textContent = formatKg(target);
+          loadTarget.textContent = formatKg(targetLoadKg(kg));
         }else{
           loadTarget.textContent = siteT('abrahang.loadTargetEmpty', lang() === 'en' ? 'Enter body weight' : '체중 입력 필요');
         }
@@ -947,6 +1030,11 @@
         setMode(this.getAttribute('data-ab-mode'));
       });
     }
+    for(var j = 0; j < scaleModeButtons.length; j++){
+      scaleModeButtons[j].addEventListener('click', function(){
+        setScaleDisplayMode(this.getAttribute('data-ab-scale-mode'));
+      });
+    }
 
     if(startBtn){
       startBtn.addEventListener('click', function(){
@@ -959,6 +1047,13 @@
     if(scaleConnect) scaleConnect.addEventListener('click', connectScale);
     if(scaleConnectWhc06) scaleConnectWhc06.addEventListener('click', connectWhc06Scale);
     if(intensity) intensity.addEventListener('input', render);
+    if(oneHand){
+      oneHand.addEventListener('change', function(){
+        saveOneHandMode();
+        render();
+      });
+      loadOneHandMode();
+    }
     if(bodyWeight){
       bodyWeight.addEventListener('input', function(){
         saveBodyWeight();
@@ -971,6 +1066,7 @@
       loadBodyWeight();
     }
 
+    loadScaleDisplayMode();
     setDefaultIntensityForMode(state.mode);
     document.addEventListener('app:lang', function(){ render(); });
     document.addEventListener('visibilitychange', function(){
