@@ -14,7 +14,7 @@
   var WHC06_MANUFACTURER_ID = 0x0100;
   var WHC06_NAME_PREFIX = 'IF_B7';
   var WHC06_WEIGHT_OFFSET = 10;
-  var WHC06_NO_PACKET_MS = 60000;
+  var WHC06_STALE_MS = 12000;
   var PRECOUNT_MS = 3000;
 
   var TEXT = {
@@ -31,7 +31,7 @@
       nextReady: 'Ready now',
       nextAt: 'After {time}',
       remaining: 'remaining',
-      paperNote: 'Paper mode: 18-22 mm edge, 10 s load / 20 s rest, 20 reps',
+      paperNote: 'Abrahangs mode: 18-22 mm edge, 10 s load / 20 s rest, 20 reps',
       videoNote: 'Emil mode: 10 s load / 50 s rest, 10 reps',
       baseTitle: '4-finger base hang',
       baseCue: 'Use an 18-22 mm edge. Keep both feet grounded and feel only light forearm strain.',
@@ -73,7 +73,7 @@
       nextReady: '지금 가능',
       nextAt: '{time} 이후',
       remaining: '남음',
-      paperNote: '논문 모드: 18-22mm 엣지, 10초 로딩/20초 휴식, 총 20회',
+      paperNote: 'Abrahangs 모드: 18-22mm 엣지, 10초 로딩/20초 휴식, 총 20회',
       videoNote: 'Emil 모드: 10초 로딩/50초 휴식, 총 10회',
       baseTitle: '4손가락 기본 행',
       baseCue: '18-22mm 엣지를 사용합니다. 발은 바닥에 두고 전완에 약한 긴장만 느끼세요.',
@@ -242,6 +242,7 @@
       advertisementTimeout: 0,
       advertisementRestarting: false,
       lastAdvertisementAt: 0,
+      watchStale: false,
       connecting: false,
       connectingType: null,
       readingKg: null,
@@ -405,15 +406,20 @@
     function resetWhc06PacketTimeout(){
       clearWhc06PacketTimers();
       if(scaleState.connectionType !== 'whc06') return;
+      scaleState.watchStale = false;
       scaleState.advertisementTimeout = setTimeout(function(){
-        if(scaleState.connectionType === 'whc06'){
-          setScaleStatus(
-            'abrahang.scaleStatusWhc06NoPacket',
-            lang() === 'en' ? 'No new WH-C06 packet for 1 minute. Watch stays active.' : '1분 동안 새 WH-C06 패킷이 없습니다. 감시는 유지 중입니다.',
-            'waiting'
-          );
-        }
-      }, WHC06_NO_PACKET_MS);
+        if(scaleState.connectionType === 'whc06') markWhc06Stale();
+      }, WHC06_STALE_MS);
+    }
+
+    function markWhc06Stale(){
+      clearWhc06PacketTimers();
+      scaleState.watchStale = true;
+      setScaleStatus(
+        'abrahang.scaleStatusWhc06Stale',
+        lang() === 'en' ? 'WH-C06 stream stopped. Use WH-C06 rescan.' : 'WH-C06 수신이 멈췄습니다. WH-C06 새로 스캔을 누르세요.',
+        'error'
+      );
     }
 
     function handleScaleValue(value){
@@ -432,6 +438,7 @@
 
     function handleWhc06Advertisement(event){
       scaleState.lastAdvertisementAt = Date.now();
+      scaleState.watchStale = false;
       resetWhc06PacketTimeout();
       var kg = parseWhc06Advertisement(event);
       if(kg == null){
@@ -451,6 +458,11 @@
 
     function attachWhc06AdvertisementHandler(device){
       if(!device) return;
+      if(scaleState.advertisementHandler){
+        try{
+          device.removeEventListener('advertisementreceived', scaleState.advertisementHandler);
+        }catch(e){ /* ignore */ }
+      }
       scaleState.advertisementHandler = handleWhc06Advertisement;
       device.addEventListener('advertisementreceived', scaleState.advertisementHandler);
     }
@@ -525,6 +537,7 @@
       scaleState.advertisementHandler = null;
       scaleState.advertisementRestarting = false;
       scaleState.lastAdvertisementAt = 0;
+      scaleState.watchStale = false;
     }
 
     function disconnectCurrentScale(){
@@ -564,7 +577,8 @@
       var hasReading = scaleState.readingKg != null;
       var hasBodyWeight = bodyKg > 0;
       var standardConnected = scaleState.connectionType === 'standard' && scaleState.device && scaleState.device.gatt && scaleState.device.gatt.connected;
-      var whc06Connected = scaleState.connectionType === 'whc06' && !!scaleState.device;
+      var whc06NeedsFreshScan = scaleState.connectionType === 'whc06' && !!scaleState.device && scaleState.watchStale;
+      var whc06Connected = scaleState.connectionType === 'whc06' && !!scaleState.device && !scaleState.watchStale;
       var isCraneScale = getScaleDisplayMode() === 'crane';
 
       for(var i = 0; i < scaleModeButtons.length; i++){
@@ -611,8 +625,10 @@
         scaleConnectWhc06.disabled = scaleState.connecting;
         if(scaleState.connecting && scaleState.connectingType === 'whc06'){
           scaleConnectWhc06.textContent = siteT('abrahang.scaleStatusWhc06Searching', lang() === 'en' ? 'Searching for WH-C06 / IF_B7...' : 'WH-C06 / IF_B7 검색 중...');
+        }else if(whc06NeedsFreshScan){
+          scaleConnectWhc06.textContent = siteT('abrahang.scaleReconnectWhc06', lang() === 'en' ? 'Rescan WH-C06' : 'WH-C06 새로 스캔');
         }else if(whc06Connected){
-          scaleConnectWhc06.textContent = siteT('abrahang.scaleReconnectWhc06', lang() === 'en' ? 'Reconnect WH-C06' : 'WH-C06 다시 연결');
+          scaleConnectWhc06.textContent = siteT('abrahang.scaleReconnectWhc06', lang() === 'en' ? 'Rescan WH-C06' : 'WH-C06 새로 스캔');
         }else{
           scaleConnectWhc06.textContent = siteT('abrahang.scaleConnectWhc06', lang() === 'en' ? 'WH-C06 / IF_B7 (beta)' : 'WH-C06 / IF_B7 연결(beta)');
         }
@@ -710,16 +726,13 @@
         return;
       }
       setScaleDisplayMode('crane');
-      if(scaleState.connectionType === 'whc06' && scaleState.device){
-        await restartWhc06AdvertisementWatch(true);
-        return;
-      }
       scaleState.connecting = true;
       scaleState.connectingType = 'whc06';
       setScaleStatus('abrahang.scaleStatusWhc06Searching', lang() === 'en' ? 'Searching for WH-C06 / IF_B7...' : 'WH-C06 / IF_B7 검색 중...', 'waiting');
       try{
         disconnectCurrentScale();
         scaleState.readingKg = null;
+        scaleState.watchStale = false;
         var device = await requestWhc06Device();
         scaleState.device = device;
         scaleState.connectionType = 'whc06';
@@ -1164,7 +1177,7 @@
     document.addEventListener('visibilitychange', function(){
       if(document.visibilityState === 'visible'){
         renderNextSession();
-        if(scaleState.connectionType === 'whc06' && scaleState.device) restartWhc06AdvertisementWatch(false);
+        if(scaleState.connectionType === 'whc06' && scaleState.device && !scaleState.watchStale) restartWhc06AdvertisementWatch(false);
       }
     });
 
