@@ -2,7 +2,7 @@
   'use strict';
 
   var STORAGE_KEY = 'grind.lotto645.history.v1';
-  var VISION_STORAGE_KEY = 'grind.lotto645.vision.v1';
+  var SAVED_SETS_STORAGE_KEY = 'grind.lotto645.manualSets.v1';
   var BUNDLED_URL = 'assets/data/lotto-645-history.json?v=20260629-1';
   var MIRROR_ALL_URL = 'https://smok95.github.io/lotto/results/all.json';
   var OFFICIAL_URL = 'https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=';
@@ -19,6 +19,8 @@
     isDrawing: false,
     drawNumbers: [],
     manualSelected: [],
+    savedSets: [],
+    activeSavedId: '',
     statusKey: 'lottery.status.loading',
     statusParams: {},
     statusKind: ''
@@ -123,6 +125,65 @@
         source: source || state.source,
         updatedAt: state.updatedAt,
         draws: state.history
+      }));
+    } catch (err) {
+      /* ignore storage failures */
+    }
+  }
+
+  function normalizeNumbers(raw){
+    if (!Array.isArray(raw)) return [];
+    var seen = {};
+    var nums = [];
+    raw.forEach(function(value){
+      var n = Number(value);
+      if (!Number.isFinite(n) || Math.floor(n) !== n || n < 1 || n > 45 || seen[n]) return;
+      seen[n] = true;
+      nums.push(n);
+    });
+    nums.sort(function(a, b){ return a - b; });
+    return nums.length === 6 ? nums : [];
+  }
+
+  function keyForNumbers(nums){
+    return normalizeNumbers(nums).join(',');
+  }
+
+  function makeSavedId(){
+    var random = Math.floor(Math.random() * 0xFFFFFF).toString(36);
+    return 'manual-' + Date.now().toString(36) + '-' + random;
+  }
+
+  function readSavedSets(){
+    try {
+      var text = localStorage.getItem(SAVED_SETS_STORAGE_KEY);
+      if (!text) return [];
+      var parsed = JSON.parse(text);
+      var list = Array.isArray(parsed) ? parsed : (Array.isArray(parsed.sets) ? parsed.sets : []);
+      var seen = {};
+      return list.map(function(item){
+        var nums = normalizeNumbers(item && item.numbers);
+        if (nums.length !== 6) return null;
+        var key = nums.join(',');
+        if (seen[key]) return null;
+        seen[key] = true;
+        return {
+          id: String((item && item.id) || makeSavedId()),
+          numbers: nums,
+          createdAt: (item && item.createdAt) || new Date().toISOString()
+        };
+      }).filter(Boolean);
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function saveManualSets(){
+    try {
+      localStorage.setItem(SAVED_SETS_STORAGE_KEY, JSON.stringify({
+        version: 1,
+        updatedAt: new Date().toISOString(),
+        sets: state.savedSets
       }));
     } catch (err) {
       /* ignore storage failures */
@@ -493,11 +554,7 @@
 
   function renderManualSelection(){
     if (el.manualCount) el.manualCount.textContent = state.manualSelected.length + '/6';
-    if (el.secretSend) {
-      var ready = state.manualSelected.length === 6;
-      el.secretSend.hidden = !ready;
-      el.secretSend.disabled = !ready;
-    }
+    if (el.manualSave) el.manualSave.disabled = state.manualSelected.length !== 6;
     if (!el.manualGrid) return;
     var selected = new Set(state.manualSelected);
     el.manualGrid.querySelectorAll('.lottery-manual-number').forEach(function(button){
@@ -529,11 +586,13 @@
     if (isOpen) {
       buildManualGrid();
       renderManualSelection();
+      renderSavedSets();
     }
   }
 
   function toggleManualNumber(n){
     if (!Number.isFinite(n) || n < 1 || n > 45) return;
+    state.activeSavedId = '';
     var index = state.manualSelected.indexOf(n);
     if (index >= 0) {
       state.manualSelected.splice(index, 1);
@@ -542,23 +601,118 @@
     }
     state.manualSelected.sort(function(a, b){ return a - b; });
     renderManualSelection();
+    renderSavedSets();
   }
 
-  function clearManualSelection(){
-    state.manualSelected = [];
+  function setManualSelection(nums){
+    state.manualSelected = normalizeNumbers(nums);
     renderManualSelection();
   }
 
-  function saveVisionNumbers(nums){
-    try {
-      localStorage.setItem(VISION_STORAGE_KEY, JSON.stringify({
-        version: 1,
-        numbers: nums,
-        updatedAt: new Date().toISOString()
-      }));
-    } catch (err) {
-      /* ignore storage failures */
+  function renderSavedSetBalls(container, nums){
+    container.textContent = '';
+    nums.forEach(function(n){
+      container.appendChild(createBall(n, 'lottery-saved-ball'));
+    });
+  }
+
+  function renderSavedSets(){
+    if (!el.manualList) return;
+    el.manualList.textContent = '';
+
+    if (!state.savedSets.length) {
+      var empty = document.createElement('div');
+      empty.className = 'lottery-saved-empty';
+      empty.textContent = t('lottery.savedEmpty');
+      el.manualList.appendChild(empty);
+      return;
     }
+
+    state.savedSets.forEach(function(item){
+      var row = document.createElement('div');
+      row.className = 'lottery-saved-set';
+      row.dataset.setId = item.id;
+      row.classList.toggle('is-active', item.id === state.activeSavedId);
+
+      var pick = document.createElement('button');
+      pick.type = 'button';
+      pick.className = 'lottery-saved-pick';
+      pick.dataset.setId = item.id;
+
+      var balls = document.createElement('span');
+      balls.className = 'lottery-saved-balls';
+      renderSavedSetBalls(balls, item.numbers);
+      pick.appendChild(balls);
+
+      var visualize = document.createElement('button');
+      visualize.type = 'button';
+      visualize.className = 'lottery-secret-btn lottery-saved-visualize';
+      visualize.dataset.setId = item.id;
+      visualize.textContent = t('lottery.secretSend');
+      visualize.hidden = item.id !== state.activeSavedId;
+
+      var remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'lottery-saved-delete';
+      remove.dataset.setId = item.id;
+      remove.setAttribute('aria-label', t('lottery.deleteSavedAria'));
+      remove.title = t('lottery.deleteSavedAria');
+      remove.textContent = '×';
+
+      row.appendChild(pick);
+      row.appendChild(visualize);
+      row.appendChild(remove);
+      el.manualList.appendChild(row);
+    });
+  }
+
+  function saveManualSelection(){
+    var nums = normalizeNumbers(state.manualSelected);
+    if (nums.length !== 6) {
+      setStatus('lottery.status.saveNeedSix', {}, 'error');
+      return;
+    }
+
+    var key = keyForNumbers(nums);
+    var existing = state.savedSets.find(function(item){ return keyForNumbers(item.numbers) === key; });
+    if (existing) {
+      state.activeSavedId = existing.id;
+      setManualSelection(existing.numbers);
+      renderSavedSets();
+      setStatus('lottery.status.manualDuplicate', {}, 'ok');
+      return;
+    }
+
+    var saved = {
+      id: makeSavedId(),
+      numbers: nums,
+      createdAt: new Date().toISOString()
+    };
+    state.savedSets.unshift(saved);
+    state.activeSavedId = saved.id;
+    saveManualSets();
+    renderManualSelection();
+    renderSavedSets();
+    setStatus('lottery.status.manualSaved', {}, 'ok');
+  }
+
+  function activateSavedSet(id){
+    var item = state.savedSets.find(function(set){ return set.id === id; });
+    if (!item) return;
+    state.activeSavedId = item.id;
+    setManualSelection(item.numbers);
+    renderSavedSets();
+  }
+
+  function deleteSavedSet(id){
+    var before = state.savedSets.length;
+    state.savedSets = state.savedSets.filter(function(item){ return item.id !== id; });
+    if (before === state.savedSets.length) return;
+    if (state.activeSavedId === id) state.activeSavedId = '';
+    saveManualSets();
+    renderSavedSets();
+    renderManualSelection();
+    setStatus('lottery.status.manualDeleted', {}, 'ok');
   }
 
   function activateBreathingTab(){
@@ -578,12 +732,12 @@
   }
 
   function sendManualVision(){
-    if (state.manualSelected.length !== 6) return;
-    var nums = state.manualSelected.slice().sort(function(a, b){ return a - b; });
-    saveVisionNumbers(nums);
+    var item = state.savedSets.find(function(set){ return set.id === state.activeSavedId; });
+    if (!item) return;
+    var nums = item.numbers.slice();
+    activateBreathingTab();
     document.dispatchEvent(new CustomEvent('lottery:vision', { detail: { numbers: nums } }));
     setStatus('lottery.status.secretSent', {}, 'ok');
-    activateBreathingTab();
   }
 
   function renderResults(){
@@ -773,8 +927,8 @@
     el.manualPanel = get('lotteryManual');
     el.manualGrid = get('lotteryManualGrid');
     el.manualCount = get('lotteryManualCount');
-    el.manualClear = get('lotteryManualClear');
-    el.secretSend = get('lotterySecretSend');
+    el.manualSave = get('lotteryManualSave');
+    el.manualList = get('lotteryManualList');
     el.results = get('lotteryResults');
     el.seedLabel = get('lotterySeedLabel');
     el.dataSource = get('lotteryDataSource');
@@ -805,15 +959,36 @@
         toggleManualNumber(Number(button.dataset.number));
       });
     }
-    if (el.manualClear) el.manualClear.addEventListener('click', clearManualSelection);
-    if (el.secretSend) el.secretSend.addEventListener('click', sendManualVision);
+    if (el.manualSave) el.manualSave.addEventListener('click', saveManualSelection);
+    if (el.manualList) {
+      el.manualList.addEventListener('click', function(event){
+        var deleteButton = event.target && event.target.closest ? event.target.closest('.lottery-saved-delete') : null;
+        if (deleteButton && el.manualList.contains(deleteButton)) {
+          deleteSavedSet(deleteButton.dataset.setId);
+          return;
+        }
 
+        var visualizeButton = event.target && event.target.closest ? event.target.closest('.lottery-saved-visualize') : null;
+        if (visualizeButton && el.manualList.contains(visualizeButton)) {
+          state.activeSavedId = visualizeButton.dataset.setId || '';
+          sendManualVision();
+          return;
+        }
+
+        var row = event.target && event.target.closest ? event.target.closest('.lottery-saved-set') : null;
+        if (row && el.manualList.contains(row)) activateSavedSet(row.dataset.setId);
+      });
+    }
+
+    state.savedSets = readSavedSets();
     buildManualGrid();
     renderManualSelection();
+    renderSavedSets();
 
     document.addEventListener('app:lang', function(){
       renderAll();
       renderManualSelection();
+      renderSavedSets();
     });
 
     var cache = readCache();

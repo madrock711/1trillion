@@ -127,7 +127,6 @@
         var NUDGE_STEP_SEC = 0.5;
         var AUTO_GROW_MIN_SEC = 0.1;
         var AUTO_GROW_STEP_DELTA_SEC = 0.1;
-        var LOTTO_VISION_STORAGE_KEY = 'grind.lotto645.vision.v1';
         if(ringProg){ ringProg.style.strokeDasharray=String(CIRC); ringProg.style.strokeDashoffset=String(CIRC); }
 
         var syncOn = true;
@@ -484,15 +483,6 @@
           lottoVision.hidden = false;
         }
 
-        function loadStoredLottoVision(){
-          try{
-            var saved = localStorage.getItem(LOTTO_VISION_STORAGE_KEY);
-            return saved ? JSON.parse(saved) : null;
-          }catch(e){
-            return null;
-          }
-        }
-
         function applySyncUI(){
           var btn=q('#br-sync'), ex=getExEl(), inn=getInEl();
           if(!btn||!ex||!inn) return;
@@ -658,9 +648,18 @@
         document.addEventListener('lottery:vision', function(e){
           renderLottoVision(e && e.detail ? e.detail.numbers : null);
         }, false);
+        document.addEventListener('click', function(e){
+          var t = e.target;
+          var tab = t && t.closest ? t.closest('.tab-link[data-tab]') : null;
+          if(tab && tab.getAttribute('data-tab') !== 'breathing') renderLottoVision(null);
+        }, false);
+        window.addEventListener('hashchange', function(){
+          var active = document.querySelector('.tab-content.active');
+          if(active && active.id !== 'breathing') renderLottoVision(null);
+        }, false);
 
         applySyncUI(); applyAutoGrowUI(); updateChakraUI(); setPhase('INHALE'); if(totalLbl) totalLbl.textContent = '00:00';
-        renderLottoVision(loadStoredLottoVision());
+        renderLottoVision(null);
         applyLanguageState();
       }
 
