@@ -11,6 +11,8 @@
   var BAND_LABELS = ['1-10', '11-20', '21-30', '31-40', '41-45'];
   var BAND_CAPACITIES = [10, 10, 10, 10, 5];
   var DIFFUSION_STEPS = 12;
+  var DIFFUSION_SURVIVAL_STEPS = 14;
+  var DIFFUSION_ANIMATION_MS = 170;
 
   var state = {
     history: [],
@@ -20,12 +22,13 @@
     seed: 0,
     stats: null,
     isDrawing: false,
-    drawNumbers: [],
     pendingGenerated: [],
     pendingSeed: 0,
-    diffusionTrace: [],
+    drawSurvivors: [],
+    drawRemovalOrder: [],
+    drawAssignmentOrder: [],
     diffusionStep: 0,
-    diffusionTotal: DIFFUSION_STEPS,
+    diffusionTotal: DIFFUSION_SURVIVAL_STEPS,
     manualSelected: [],
     savedSets: [],
     activeSavedId: '',
@@ -762,32 +765,62 @@
     return nums.sort(function(a, b){ return a - b; });
   }
 
-  function makeRevealTrace(target, stats, rng){
-    var targetProfile = bandProfile(target);
-    var current = makeRollingNumbers(rng);
-    var order = target.slice().sort(function(){ return rng() - 0.5; });
-    var trace = [current.slice()];
-
-    for (var step = 1; step <= DIFFUSION_STEPS; step++) {
-      var revealCount = Math.min(6, Math.floor(step / 2));
-      var fixed = order.slice(0, revealCount);
-      current = current.filter(function(n){ return fixed.indexOf(n) >= 0 || target.indexOf(n) < 0; });
-      var loose = current.filter(function(n){ return fixed.indexOf(n) < 0; });
-      while (loose.length > 6 - fixed.length) {
-        var removable = current.filter(function(n){ return fixed.indexOf(n) < 0; });
-        current.splice(current.indexOf(removable[Math.floor(rng() * removable.length)]), 1);
-        loose = current.filter(function(n){ return fixed.indexOf(n) < 0; });
-      }
-      fixed.forEach(function(n){
-        if (current.indexOf(n) < 0) current.push(n);
-      });
-      current = denoiseStep(enforceProfile(current, targetProfile, stats, rng), targetProfile, stats, rng, (DIFFUSION_STEPS - step) / DIFFUSION_STEPS);
-      if (step >= DIFFUSION_STEPS - 1) current = target.slice();
-      trace.push(current.slice().sort(function(a, b){ return a - b; }));
+  function shuffleList(list, rng){
+    var items = list.slice();
+    for (var i = items.length - 1; i > 0; i--) {
+      var j = Math.floor(rng() * (i + 1));
+      var tmp = items[i];
+      items[i] = items[j];
+      items[j] = tmp;
     }
+    return items;
+  }
 
-    trace[trace.length - 1] = target.slice();
-    return trace;
+  function uniqueNumbersFromSets(sets){
+    var seen = {};
+    var nums = [];
+    (sets || []).forEach(function(item){
+      (item.numbers || []).forEach(function(n){
+        if (seen[n]) return;
+        seen[n] = true;
+        nums.push(n);
+      });
+    });
+    return nums.sort(function(a, b){ return a - b; });
+  }
+
+  function makeRemovalOrder(survivors, rng){
+    var alive = new Set(survivors);
+    var removed = [];
+    for (var n = 1; n <= 45; n++) {
+      if (!alive.has(n)) removed.push(n);
+    }
+    return shuffleList(removed, rng);
+  }
+
+  function makeAssignmentOrder(sets){
+    var order = [];
+    (sets || []).forEach(function(item, setIndex){
+      (item.numbers || []).forEach(function(n, numberIndex){
+        order.push({
+          setIndex: setIndex,
+          numberIndex: numberIndex,
+          number: n
+        });
+      });
+    });
+    return order;
+  }
+
+  function removedCountForStep(){
+    if (state.diffusionStep >= DIFFUSION_SURVIVAL_STEPS) return state.drawRemovalOrder.length;
+    var progress = Math.max(0, Math.min(1, state.diffusionStep / DIFFUSION_SURVIVAL_STEPS));
+    var eased = 1 - Math.pow(1 - progress, 2);
+    return Math.floor(state.drawRemovalOrder.length * eased);
+  }
+
+  function assignedCountForStep(){
+    return Math.max(0, Math.min(state.drawAssignmentOrder.length, state.diffusionStep - DIFFUSION_SURVIVAL_STEPS));
   }
 
   function startDraw(){
@@ -804,17 +837,18 @@
       return;
     }
     var traceRng = createRng((seed ^ 0x9E3779B9) >>> 0);
-    var trace = makeRevealTrace(result.sets[0].numbers, state.stats, traceRng);
+    var survivors = uniqueNumbersFromSets(result.sets);
 
     state.isDrawing = true;
     state.generated = [];
     state.seed = seed;
     state.pendingGenerated = result.sets;
     state.pendingSeed = seed;
-    state.diffusionTrace = trace;
+    state.drawSurvivors = survivors;
+    state.drawRemovalOrder = makeRemovalOrder(survivors, traceRng);
+    state.drawAssignmentOrder = makeAssignmentOrder(result.sets);
     state.diffusionStep = 0;
-    state.diffusionTotal = Math.max(1, trace.length - 1);
-    state.drawNumbers = trace[0] || makeRollingNumbers(traceRng);
+    state.diffusionTotal = DIFFUSION_SURVIVAL_STEPS + state.drawAssignmentOrder.length;
     setStatus('lottery.status.drawing', { step: 0, total: state.diffusionTotal }, '');
     setControlsBusy(true);
     renderAll();
@@ -823,7 +857,6 @@
     var interval = window.setInterval(function(){
       index += 1;
       state.diffusionStep = Math.min(index, state.diffusionTotal);
-      state.drawNumbers = state.diffusionTrace[state.diffusionStep] || state.drawNumbers;
       renderResults();
       if (index >= state.diffusionTotal) {
         window.clearInterval(interval);
@@ -832,10 +865,13 @@
         state.generated = state.pendingGenerated.slice();
         state.seed = state.pendingSeed;
         state.pendingGenerated = [];
+        state.drawSurvivors = [];
+        state.drawRemovalOrder = [];
+        state.drawAssignmentOrder = [];
         setStatus('lottery.status.generated', { count: state.generated.length, draws: state.history.length }, 'ok');
         renderAll();
       }
-    }, 115);
+    }, DIFFUSION_ANIMATION_MS);
   }
 
   function band(n){
@@ -1046,20 +1082,79 @@
     setStatus('lottery.status.secretSent', {}, 'ok');
   }
 
+  function renderDiffusionPool(container){
+    var survivors = new Set(state.drawSurvivors);
+    var removed = new Set(state.drawRemovalOrder.slice(0, removedCountForStep()));
+    for (var n = 1; n <= 45; n++) {
+      var ball = createBall(n, 'lottery-pool-ball');
+      ball.classList.toggle('is-survivor', survivors.has(n));
+      ball.classList.toggle('is-gone', removed.has(n));
+      ball.classList.toggle('is-noise', !survivors.has(n) && !removed.has(n));
+      ball.classList.toggle('is-locked', survivors.has(n) && state.diffusionStep >= DIFFUSION_SURVIVAL_STEPS);
+      container.appendChild(ball);
+    }
+  }
+
+  function renderDiffusionSets(container){
+    var assigned = assignedCountForStep();
+    var revealed = new Set();
+    state.drawAssignmentOrder.slice(0, assigned).forEach(function(item){
+      revealed.add(item.setIndex + '-' + item.numberIndex);
+    });
+
+    state.pendingGenerated.forEach(function(item, setIndex){
+      var row = document.createElement('div');
+      row.className = 'lottery-diffusion-set';
+
+      var label = document.createElement('span');
+      label.className = 'lottery-diffusion-set-label';
+      label.textContent = String.fromCharCode(65 + setIndex);
+
+      var slots = document.createElement('div');
+      slots.className = 'lottery-diffusion-slots';
+      item.numbers.forEach(function(n, numberIndex){
+        if (revealed.has(setIndex + '-' + numberIndex)) {
+          slots.appendChild(createBall(n, 'lottery-diffusion-set-ball'));
+        } else {
+          var slot = document.createElement('span');
+          slot.className = 'lottery-diffusion-slot';
+          slot.textContent = '·';
+          slots.appendChild(slot);
+        }
+      });
+
+      row.appendChild(label);
+      row.appendChild(slots);
+      container.appendChild(row);
+    });
+  }
+
   function renderResults(){
     if (!el.results) return;
     el.results.textContent = '';
     if (state.isDrawing) {
       var drawing = document.createElement('div');
-      drawing.className = 'lottery-draw-machine';
+      drawing.className = 'lottery-draw-machine lottery-diffusion-machine';
 
-      var balls = document.createElement('div');
-      balls.className = 'lottery-draw-balls';
-      (state.drawNumbers.length ? state.drawNumbers : makeRollingNumbers()).forEach(function(n){
-        balls.appendChild(createBall(n, 'lottery-draw-ball'));
+      var stage = document.createElement('div');
+      stage.className = 'lottery-diffusion-stage';
+
+      var poolHead = document.createElement('div');
+      poolHead.className = 'lottery-diffusion-caption';
+      poolHead.textContent = t('lottery.diffusionPool', {
+        count: 45 - removedCountForStep()
       });
 
+      var pool = document.createElement('div');
+      pool.className = 'lottery-diffusion-pool';
+      renderDiffusionPool(pool);
+
+      var sets = document.createElement('div');
+      sets.className = 'lottery-diffusion-sets';
+      renderDiffusionSets(sets);
+
       var label = document.createElement('div');
+      label.className = 'lottery-diffusion-label';
       label.textContent = t('lottery.diffusionStep', {
         step: state.diffusionStep,
         total: state.diffusionTotal
@@ -1071,7 +1166,10 @@
       fill.style.width = Math.min(100, Math.max(0, (state.diffusionStep / Math.max(1, state.diffusionTotal)) * 100)) + '%';
       meter.appendChild(fill);
 
-      drawing.appendChild(balls);
+      stage.appendChild(poolHead);
+      stage.appendChild(pool);
+      stage.appendChild(sets);
+      drawing.appendChild(stage);
       drawing.appendChild(meter);
       drawing.appendChild(label);
       el.results.appendChild(drawing);

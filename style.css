@@ -1394,6 +1394,8 @@ main {
 .lottery-draw-machine {
   border-style: solid;
   border-color: rgba(29, 185, 84, 0.4);
+  place-items: stretch;
+  align-content: center;
 }
 
 .lottery-draw-balls {
@@ -1418,6 +1420,134 @@ main {
   background: linear-gradient(90deg, #1667a7, var(--accent-color));
   transition: width 0.1s ease;
 }
+
+.lottery-diffusion-stage {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+}
+
+.lottery-diffusion-caption,
+.lottery-diffusion-label {
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.lottery-diffusion-pool {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 5px;
+  align-items: center;
+  justify-items: center;
+}
+
+.lottery-pool-ball {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: #242424;
+  color: rgba(255,255,255,0.72);
+  font-size: 0.76rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  transition: opacity 0.24s ease, filter 0.24s ease, transform 0.24s ease, box-shadow 0.24s ease;
+}
+
+.lottery-pool-ball.is-noise {
+  opacity: 0.78;
+}
+
+.lottery-pool-ball.is-gone {
+  opacity: 0.12;
+  filter: grayscale(1);
+  transform: scale(0.82);
+  color: transparent;
+}
+
+.lottery-pool-ball.is-survivor {
+  opacity: 1;
+  color: #fff;
+  border-color: rgba(255,255,255,0.28);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.06), 0 0 14px rgba(29,185,84,0.16);
+}
+
+.lottery-pool-ball.is-locked {
+  transform: scale(1.06);
+}
+
+.lottery-pool-ball[data-band="1"].is-survivor { background: #b38600; }
+.lottery-pool-ball[data-band="2"].is-survivor { background: #1667a7; }
+.lottery-pool-ball[data-band="3"].is-survivor { background: #a43b38; }
+.lottery-pool-ball[data-band="4"].is-survivor { background: #4f5966; }
+.lottery-pool-ball[data-band="5"].is-survivor { background: #25824f; }
+
+.lottery-diffusion-sets {
+  display: grid;
+  gap: 7px;
+}
+
+.lottery-diffusion-set {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+}
+
+.lottery-diffusion-set-label {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.lottery-diffusion-slots {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.lottery-diffusion-slot,
+.lottery-diffusion-set-ball {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.lottery-diffusion-slot {
+  border: 1px dashed rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.025);
+}
+
+.lottery-diffusion-set-ball {
+  border: 1px solid rgba(255,255,255,0.14);
+  color: #fff;
+  animation: lotterySettleIn 0.28s ease-out both;
+}
+
+.lottery-diffusion-set-ball[data-band="1"] { background: #b38600; }
+.lottery-diffusion-set-ball[data-band="2"] { background: #1667a7; }
+.lottery-diffusion-set-ball[data-band="3"] { background: #a43b38; }
+.lottery-diffusion-set-ball[data-band="4"] { background: #4f5966; }
+.lottery-diffusion-set-ball[data-band="5"] { background: #25824f; }
 
 .lottery-draw-ball {
   display: inline-flex;
@@ -1660,6 +1790,45 @@ main {
     width: 31px;
     height: 31px;
     font-size: 0.8rem;
+  }
+
+  .lottery-draw-machine {
+    padding: 14px;
+  }
+
+  .lottery-diffusion-pool {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .lottery-pool-ball {
+    width: 26px;
+    height: 26px;
+    font-size: 0.68rem;
+  }
+
+  .lottery-diffusion-set {
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .lottery-diffusion-set-label,
+  .lottery-diffusion-slot,
+  .lottery-diffusion-set-ball {
+    width: 23px;
+    height: 23px;
+    font-size: 0.64rem;
+  }
+}
+
+@keyframes lotterySettleIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px) scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
