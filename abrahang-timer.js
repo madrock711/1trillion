@@ -273,7 +273,8 @@
     };
 
     function protocolTotalMs(protocol){
-      return protocol.steps.length * (protocol.hangMs + protocol.restMs);
+      var steps = protocol.steps.length;
+      return steps * protocol.hangMs + Math.max(0, steps - 1) * protocol.restMs;
     }
 
     function phaseDuration(){
@@ -1270,9 +1271,9 @@
       if(state.phase === 'ready') return protocolTotalMs(state.protocol);
       if(state.phase === 'prestart') return state.remainingMs + protocolTotalMs(state.protocol);
       var remaining = state.remainingMs;
-      if(state.phase === 'hang') remaining += state.protocol.restMs;
       var remainingSteps = Math.max(0, state.protocol.steps.length - state.stepIndex - 1);
-      return remaining + remainingSteps * (state.protocol.hangMs + state.protocol.restMs);
+      if(state.phase === 'hang' && remainingSteps > 0) remaining += state.protocol.restMs;
+      return remaining + remainingSteps * state.protocol.hangMs + Math.max(0, remainingSteps - 1) * state.protocol.restMs;
     }
 
     function setMode(mode){
@@ -1316,18 +1317,28 @@
       if(!audioCtx) return;
       try{
         if(audioCtx.state === 'suspended' && audioCtx.resume) audioCtx.resume();
-        var osc = audioCtx.createOscillator();
-        var gain = audioCtx.createGain();
         var now = audioCtx.currentTime;
         var freq = kind === 'done' ? 880 : (kind === 'countdown' ? 560 : 740);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now);
-        gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(BEEP_GAIN, now + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + (kind === 'countdown' ? 0.12 : 0.24));
-        osc.connect(gain).connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + (kind === 'countdown' ? 0.14 : 0.26));
+        function tone(start, duration){
+          var osc = audioCtx.createOscillator();
+          var gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, start);
+          gain.gain.setValueAtTime(0.0001, start);
+          gain.gain.exponentialRampToValueAtTime(BEEP_GAIN, start + 0.03);
+          if(duration > 0.2) gain.gain.setValueAtTime(BEEP_GAIN, start + duration - 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+          osc.connect(gain).connect(audioCtx.destination);
+          osc.start(start);
+          osc.stop(start + duration + 0.03);
+        }
+        if(kind === 'done'){
+          tone(now, 0.65);
+          tone(now + 0.9, 0.65);
+          tone(now + 1.8, 1.25);
+          return;
+        }
+        tone(now, kind === 'countdown' ? 0.14 : 0.26);
       }catch(e){ /* ignore audio errors */ }
     }
 
@@ -1389,6 +1400,10 @@
         return;
       }
       if(state.phase === 'hang'){
+        if(state.stepIndex >= state.protocol.steps.length - 1){
+          finish();
+          return;
+        }
         state.phase = 'rest';
         state.remainingMs = state.protocol.restMs;
         beep('phase');
