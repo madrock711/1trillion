@@ -1928,6 +1928,8 @@ main {
 }
 
 .abrahang-timer-panel {
+  display: flex;
+  flex-direction: column;
   padding: 18px;
 }
 
@@ -2366,6 +2368,10 @@ main {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.abrahang-timer-panel > .abrahang-history {
+  margin-top: auto;
+}
+
 .abrahang-history-head {
   display: flex;
   align-items: center;
@@ -2432,20 +2438,32 @@ main {
 }
 
 .abrahang-history-item-head {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(70px, auto) minmax(140px, auto);
   align-items: flex-start;
-  justify-content: space-between;
   gap: 10px;
 }
 
 .abrahang-history-item-head strong {
   color: var(--text-primary);
+  min-width: 0;
 }
 
 .abrahang-history-item-head span {
   color: var(--ab-muted);
   font-size: 0.78rem;
   text-align: right;
+}
+
+.abrahang-history-item-head .abrahang-history-load {
+  color: #e0f2fe;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.abrahang-history-item-head .abrahang-history-date {
+  white-space: nowrap;
 }
 
 .abrahang-history-detail-body {
@@ -2677,8 +2695,16 @@ main {
     display: grid;
   }
 
+  .abrahang-history-item-head {
+    grid-template-columns: 1fr auto;
+  }
+
   .abrahang-history-item-head span {
     text-align: left;
+  }
+
+  .abrahang-history-item-head .abrahang-history-date {
+    grid-column: 1 / -1;
   }
 
   .abrahang-history-stats,

@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260703-11">
+    <link rel="stylesheet" href="style.css?v=20260703-12">
 </head>
 <body>
     <header>
@@ -881,6 +881,16 @@
                             <span data-i18n="abrahang.totalRemaining">남은 시간</span>
                             <strong id="abTotalRemaining">10:00</strong>
                         </div>
+
+                        <div class="abrahang-history">
+                            <div class="abrahang-history-head">
+                                <h3 data-i18n="abrahang.historyTitle">훈련 히스토리</h3>
+                                <button class="abrahang-btn ghost" type="button" id="abHistoryClear" data-i18n="abrahang.historyClear">전체 삭제</button>
+                            </div>
+                            <div class="abrahang-history-list" id="abHistoryList">
+                                <div class="abrahang-history-empty" data-i18n="abrahang.historyEmpty">훈련 히스토리가 없습니다.</div>
+                            </div>
+                        </div>
                     </section>
 
                     <section class="abrahang-settings-panel">
@@ -957,16 +967,6 @@
                         <div class="abrahang-next">
                             <span data-i18n="abrahang.nextLabel">다음 권장 시작</span>
                             <strong id="abNextSession" data-i18n="abrahang.nextEmpty">아직 완료 기록 없음</strong>
-                        </div>
-
-                        <div class="abrahang-history">
-                            <div class="abrahang-history-head">
-                                <h3 data-i18n="abrahang.historyTitle">훈련 히스토리</h3>
-                                <button class="abrahang-btn ghost" type="button" id="abHistoryClear" data-i18n="abrahang.historyClear">전체 삭제</button>
-                            </div>
-                            <div class="abrahang-history-list" id="abHistoryList">
-                                <div class="abrahang-history-empty" data-i18n="abrahang.historyEmpty">훈련 히스토리가 없습니다.</div>
-                            </div>
                         </div>
 
                         <div class="abrahang-safety">
@@ -1135,7 +1135,7 @@
     <script src="stopwatch.js?v=20260619-6"></script>
     <script src="sequence-generator.js?v=20260219-1"></script>
     <script src="lottery-generator.js?v=20260703-5"></script>
-    <script src="abrahang-timer.js?v=20260703-14"></script>
+    <script src="abrahang-timer.js?v=20260703-15"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const tabs = document.querySelectorAll('.tab-link');

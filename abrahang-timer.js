@@ -995,12 +995,10 @@
       }catch(e){ /* ignore migration errors */ }
     }
 
-    function protocolHistoryLabel(mode, legacy){
-      var label = mode === 'video'
+    function protocolHistoryLabel(mode){
+      return mode === 'video'
         ? siteT('abrahang.historyModeVideo', lang() === 'en' ? 'Emil' : 'Emil')
         : siteT('abrahang.historyModePaper', lang() === 'en' ? 'Abrahangs' : 'Abrahangs');
-      if(legacy) label += lang() === 'en' ? ' · legacy log' : ' · 기존 로그';
-      return label;
     }
 
     function formatDateTime(ms){
@@ -1045,6 +1043,12 @@
       if(item && item.intensityPct != null && isFinite(item.intensityPct)) parts.push(formatHistoryPercent(item.intensityPct, missingText));
       if(item && item.targetLoadKg != null && isFinite(item.targetLoadKg)) parts.push(formatHistoryKg(item.targetLoadKg, missingText));
       return parts.length ? parts.join(' · ') : missingText;
+    }
+
+    function formatHistorySummaryLoad(item, missingText){
+      return item && item.targetLoadKg != null && isFinite(item.targetLoadKg)
+        ? formatHistoryKg(item.targetLoadKg, missingText)
+        : missingText;
     }
 
     function achievementPct(item){
@@ -1093,7 +1097,8 @@
       for(var i = 0; i < history.length; i++){
         var item = history[i];
         var pct = achievementPct(item);
-        var title = protocolHistoryLabel(item.mode, item.legacy);
+        var title = protocolHistoryLabel(item.mode);
+        var summaryLoad = formatHistorySummaryLoad(item, missingSetting);
         if(editingHistoryId === item.id){
           html += '<article class="abrahang-history-item is-editing" data-history-id="' + item.id + '">';
           html += '<div class="abrahang-history-edit-grid">';
@@ -1109,7 +1114,7 @@
         }
         html += '<article class="abrahang-history-item" data-history-id="' + item.id + '">';
         html += '<details class="abrahang-history-details">';
-        html += '<summary class="abrahang-history-summary"><span class="abrahang-history-item-head"><strong>' + title + '</strong><span>' + formatDateTime(item.completedAt) + '</span></span></summary>';
+        html += '<summary class="abrahang-history-summary"><span class="abrahang-history-item-head"><strong>' + title + '</strong><span class="abrahang-history-load">' + summaryLoad + '</span><span class="abrahang-history-date">' + formatDateTime(item.completedAt) + '</span></span></summary>';
         html += '<div class="abrahang-history-detail-body">';
         html += '<dl class="abrahang-history-stats">';
         html += '<div><dt>' + siteT('abrahang.historyTargetSetting', lang() === 'en' ? 'Target setting' : '목표 설정') + '</dt><dd>' + formatTargetSetting(item, missingSetting) + '</dd></div>';
