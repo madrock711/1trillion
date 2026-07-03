@@ -273,6 +273,7 @@
       connecting: false,
       connectingType: null,
       readingKg: null,
+      peakLoadKg: null,
       statusKey: 'abrahang.scaleStatusIdle',
       statusFallback: 'Not connected',
       statusTone: 'idle'
@@ -337,10 +338,6 @@
       return bodyKg * intensityValueNumber / 100 * handFactor;
     }
 
-    function targetScaleReadingKg(bodyKg){
-      return Math.max(0, bodyKg - targetLoadKg(bodyKg));
-    }
-
     function measuredLoadFromScaleReading(readingKg){
       if(readingKg == null || !isFinite(readingKg)) return null;
       if(getScaleDisplayMode() === 'crane') return Math.max(0, readingKg);
@@ -355,10 +352,22 @@
       state.lastMeasuredLoadKg = null;
     }
 
-    function recordScaleLoadSample(readingKg){
-      if(!state.running || state.phase !== 'hang') return;
+    function resetScalePeakLoad(){
+      scaleState.peakLoadKg = null;
+    }
+
+    function updateScalePeakLoad(readingKg){
       var loadKg = measuredLoadFromScaleReading(readingKg);
       if(loadKg == null) return;
+      if(scaleState.peakLoadKg == null || loadKg > scaleState.peakLoadKg){
+        scaleState.peakLoadKg = loadKg;
+      }
+      return loadKg;
+    }
+
+    function recordScaleLoadSample(readingKg){
+      var loadKg = updateScalePeakLoad(readingKg);
+      if(loadKg == null || !state.running || state.phase !== 'hang') return;
       state.loadSampleCount += 1;
       state.lastMeasuredLoadKg = loadKg;
       if(state.maxMeasuredLoadKg == null || loadKg > state.maxMeasuredLoadKg){
@@ -626,7 +635,10 @@
       await cleanupScaleDevice({ skipWhc06Unwatch: !!options.skipWhc06Unwatch });
       var generation = scaleState.watchGeneration + 1;
       scaleState.watchGeneration = generation;
-      if(options.clearReading !== false) scaleState.readingKg = null;
+      if(options.clearReading !== false){
+        scaleState.readingKg = null;
+        resetScalePeakLoad();
+      }
       scaleState.device = device;
       scaleState.connectionType = 'whc06';
       scaleState.watchStale = false;
@@ -857,7 +869,9 @@
     }
 
     function setScaleDisplayMode(mode, save){
-      scaleDisplayMode = mode === 'crane' ? 'crane' : 'foot';
+      var nextMode = mode === 'crane' ? 'crane' : 'foot';
+      if(nextMode !== scaleDisplayMode) resetScalePeakLoad();
+      scaleDisplayMode = nextMode;
       if(save !== false) saveScaleDisplayMode(scaleDisplayMode);
       renderScale();
     }
@@ -871,7 +885,6 @@
 
     function renderScale(){
       var bodyKg = parseBodyWeight();
-      var targetKg = bodyKg > 0 ? targetLoadKg(bodyKg) : 0;
       var hasReading = scaleState.readingKg != null;
       var hasBodyWeight = bodyKg > 0;
       var standardConnected = scaleState.connectionType === 'standard' && scaleState.device && scaleState.device.gatt && scaleState.device.gatt.connected;
@@ -895,10 +908,7 @@
         scaleFingerLoadLabel.textContent = siteT('abrahang.scaleFingerLoadLabel', lang() === 'en' ? 'Finger load' : '실제 하중');
       }
       if(scaleTargetLabel){
-        scaleTargetLabel.textContent = siteT(
-          isCraneScale ? 'abrahang.scaleTargetLoadLabel' : 'abrahang.scaleTargetLabel',
-          isCraneScale ? (lang() === 'en' ? 'Target load' : '목표 하중') : (lang() === 'en' ? 'Target scale' : '목표 저울값')
-        );
+        scaleTargetLabel.textContent = siteT('abrahang.scalePeakLoadLabel', lang() === 'en' ? 'Peak load' : '피크 하중');
       }
       if(scaleFingerLoadMetric) scaleFingerLoadMetric.hidden = isCraneScale;
       if(scaleMetrics) scaleMetrics.classList.toggle('is-crane', isCraneScale);
@@ -939,11 +949,7 @@
         else scaleFingerLoad.textContent = hasReading ? siteT('abrahang.scaleNeedBody', lang() === 'en' ? 'Enter body weight' : '체중 입력 필요') : emptyScaleText();
       }
       if(scaleTargetReading){
-        if(hasBodyWeight){
-          scaleTargetReading.textContent = isCraneScale ? formatKg(targetKg) : formatKg(targetScaleReadingKg(bodyKg));
-        }else{
-          scaleTargetReading.textContent = siteT('abrahang.scaleNeedBody', lang() === 'en' ? 'Enter body weight' : '체중 입력 필요');
-        }
+        scaleTargetReading.textContent = scaleState.peakLoadKg == null ? emptyScaleText() : formatKg(scaleState.peakLoadKg);
       }
     }
 
@@ -959,6 +965,7 @@
       try{
         await disconnectCurrentScaleAsync();
         scaleState.readingKg = null;
+        resetScalePeakLoad();
         var device = await navigator.bluetooth.requestDevice({
           filters: [{ services: [WEIGHT_SCALE_SERVICE] }]
         });
@@ -1404,6 +1411,7 @@
       state.completedLogged = false;
       state.historyLogged = false;
       resetSessionMeasurements();
+      resetScalePeakLoad();
       lastCountdownSecond = -1;
       if(window.appWakeLock) window.appWakeLock.release('abrahang');
       if(shouldRender !== false) render();
@@ -1445,6 +1453,7 @@
       if(state.phase === 'done') resetState(false);
       if(state.phase === 'ready'){
         resetSessionMeasurements();
+        resetScalePeakLoad();
         state.historyLogged = false;
         state.phase = 'prestart';
         state.stepIndex = 0;
@@ -1722,10 +1731,12 @@
     if(bodyWeight){
       bodyWeight.addEventListener('input', function(){
         saveBodyWeight();
+        resetScalePeakLoad();
         render();
       });
       bodyWeight.addEventListener('change', function(){
         saveBodyWeight();
+        resetScalePeakLoad();
         render();
       });
       loadBodyWeight();
