@@ -293,7 +293,7 @@ main {
 .br-embed .br-layout{display:grid;grid-template-columns:1fr;gap:18px}
 @media(min-width:880px){.br-embed .br-layout{grid-template-columns: 1.1fr .9fr}}
 .br-embed .br-timer{display:flex;flex-direction:column;align-items:center;gap:12px}
-.br-embed .br-timer-main{display:grid;grid-template-columns:minmax(86px,104px) 260px minmax(86px,104px);gap:12px;align-items:center;justify-content:center;width:100%}
+.br-embed .br-timer-main{display:grid;grid-template-columns:minmax(96px,110px) 260px minmax(96px,110px);gap:8px;align-items:center;justify-content:center;width:100%}
 .br-embed .br-focus-stack{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:0}
 .br-embed .br-circle{width:260px;height:260px;border-radius:50%;position:relative;display:grid;place-items:center;transition:background .25s ease;overflow:hidden}
 .br-embed .br-circle[data-phase="INHALE"]{background: radial-gradient(ellipse at center, rgba(239,68,68,.14), rgba(239,68,68,0));}
@@ -348,18 +348,18 @@ main {
 .br-embed .br-volume-vertical{width:34px;height:210px;min-height:160px;padding:0;border:0;background:transparent;accent-color:#3b82f6;writing-mode:vertical-lr;direction:rtl}
 .br-embed .br-chakra-selector{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
 .br-embed .br-chakra-frequency{min-height:34px;width:100%;font-size:12px;font-weight:800;line-height:1.25;color:#d7e3ee;text-align:center;overflow-wrap:anywhere}
-.br-embed .br-chakra-map{position:relative;display:block;width:78px;min-height:248px;padding:0 8px;overflow:hidden;border:1px solid #3a3a3a;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.01)), #1b1b1b}
-.br-embed .br-chakra-map::before{content:"";position:absolute;inset:7px 0;background:url("assets/images/chakra-body-outline.png?v=20260703-1") center center / auto 96% no-repeat;opacity:.46;filter:drop-shadow(0 0 5px rgba(198,209,223,.18));pointer-events:none;z-index:0}
-.br-embed .br-chakra-map::after{content:"";position:absolute;left:50%;top:23px;bottom:36px;width:1px;background:rgba(215,227,238,.1);transform:translateX(-50%);z-index:1}
-.br-embed .br-chakra-node{position:absolute;left:50%;z-index:2;display:grid;place-items:center;width:29px;height:29px;border:2px solid rgba(255,255,255,.18);border-radius:50%;background:var(--chakra-color);color:#111;font-size:11px;font-weight:900;line-height:1;cursor:pointer;box-shadow:0 0 10px rgba(0,0,0,.28);transform:translate(-50%, -50%);transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease}
+.br-embed .br-chakra-map{--chakra-node-x:28px;position:relative;isolation:isolate;display:block;box-sizing:border-box;width:108px;min-height:286px;overflow:hidden;border:1px solid #3a3a3a;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.012)), #171717}
+.br-embed .br-chakra-map::before{content:"";position:absolute;left:46px;right:0;top:8px;bottom:8px;background:url("assets/images/chakra-body-outline-right.png?v=20260703-1") left center / auto 97% no-repeat;opacity:.92;filter:drop-shadow(0 0 5px rgba(198,209,223,.34));pointer-events:none;z-index:0}
+.br-embed .br-chakra-map::after{content:"";position:absolute;left:var(--chakra-node-x);top:28px;bottom:38px;width:1px;background:rgba(215,227,238,.13);transform:translateX(-50%);z-index:1}
+.br-embed .br-chakra-node{position:absolute;left:var(--chakra-node-x);z-index:2;display:grid;place-items:center;width:27px;height:27px;border:2px solid rgba(255,255,255,.18);border-radius:50%;background:var(--chakra-color);color:#111;font-size:10.5px;font-weight:900;line-height:1;cursor:pointer;box-shadow:0 0 10px rgba(0,0,0,.28);transform:translate(-50%, -50%);transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease}
 .br-embed .br-chakra-node[data-chakra="crown"]{background:radial-gradient(circle at 35% 35%, #fff 0 18%, #c084fc 34%, #7e22ce 100%)}
-.br-embed .br-chakra-node[data-chakra="crown"]{top:16%}
+.br-embed .br-chakra-node[data-chakra="crown"]{top:12%}
 .br-embed .br-chakra-node[data-chakra="third-eye"]{top:23%}
-.br-embed .br-chakra-node[data-chakra="throat"]{top:34%}
-.br-embed .br-chakra-node[data-chakra="heart"]{top:45.5%}
-.br-embed .br-chakra-node[data-chakra="solar"]{top:55%}
-.br-embed .br-chakra-node[data-chakra="sacral"]{top:64%}
-.br-embed .br-chakra-node[data-chakra="root"]{top:74%}
+.br-embed .br-chakra-node[data-chakra="throat"]{top:35%}
+.br-embed .br-chakra-node[data-chakra="heart"]{top:47%}
+.br-embed .br-chakra-node[data-chakra="solar"]{top:58%}
+.br-embed .br-chakra-node[data-chakra="sacral"]{top:69%}
+.br-embed .br-chakra-node[data-chakra="root"]{top:81%}
 .br-embed .br-chakra-node:hover{transform:translate(-50%, -50%) scale(1.04)}
 .br-embed .br-chakra-node[aria-pressed="true"]{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.16),0 0 18px var(--chakra-color);transform:translate(-50%, -50%) scale(1.12)}
 .br-embed .br-status{display:flex;gap:16px;margin-top:8px;font-size:12px;color:#ccc}
@@ -378,8 +378,8 @@ main {
 .br-embed .br-lotto-vision-ball[data-band="5"]{background:#25824f}
 .br-embed .pulse{animation: brPulse .6s ease-out}
 @keyframes brPulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
-@media(max-width:520px){.br-embed .br-timer-main{grid-template-columns:54px 186px 54px;gap:5px}.br-embed .br-circle{width:186px;height:186px}.br-embed .br-lotto-vision{max-width:186px;padding:6px 5px}.br-embed .br-lotto-vision-balls{gap:3px}.br-embed .br-lotto-vision-ball{width:23px;height:23px;font-size:10.5px}.br-embed .br-chakra-map{width:50px;min-height:182px;padding:0 4px}.br-embed .br-chakra-map::before{inset:5px 0;background-size:auto 95%;opacity:.42}.br-embed .br-chakra-map::after{top:19px;bottom:28px}.br-embed .br-chakra-node{width:22px;height:22px;font-size:8.5px}.br-embed .br-chakra-frequency{font-size:9.5px;min-height:30px}.br-embed .br-volume-vertical{height:166px;width:28px}.br-embed .br-volume-column label{font-size:9.5px}}
-@media(max-width:380px){.br-embed .br-timer-main{grid-template-columns:50px 176px 50px;gap:4px}.br-embed .br-circle{width:176px;height:176px}.br-embed .br-lotto-vision{max-width:176px}.br-embed .br-lotto-vision-ball{width:22px;height:22px;font-size:10px}.br-embed .br-chakra-map{width:47px;min-height:172px;padding:0 3px}.br-embed .br-chakra-node{width:21px;height:21px;font-size:8px}.br-embed .br-volume-vertical{height:156px;width:26px}}
+@media(max-width:520px){.br-embed .br-timer-main{grid-template-columns:74px 186px 74px;gap:5px}.br-embed .br-circle{width:186px;height:186px}.br-embed .br-lotto-vision{max-width:186px;padding:6px 5px}.br-embed .br-lotto-vision-balls{gap:3px}.br-embed .br-lotto-vision-ball{width:23px;height:23px;font-size:10.5px}.br-embed .br-chakra-map{--chakra-node-x:20px;width:72px;min-height:216px}.br-embed .br-chakra-map::before{left:35px;right:0;top:6px;bottom:6px;background-size:auto 96%;opacity:.86}.br-embed .br-chakra-map::after{top:23px;bottom:31px}.br-embed .br-chakra-node{width:21px;height:21px;font-size:8.5px}.br-embed .br-chakra-frequency{font-size:9.5px;min-height:30px}.br-embed .br-volume-vertical{height:166px;width:28px}.br-embed .br-volume-column label{font-size:9.5px}}
+@media(max-width:380px){.br-embed .br-timer-main{grid-template-columns:68px 176px 68px;gap:4px}.br-embed .br-circle{width:176px;height:176px}.br-embed .br-lotto-vision{max-width:176px}.br-embed .br-lotto-vision-ball{width:22px;height:22px;font-size:10px}.br-embed .br-chakra-map{--chakra-node-x:19px;width:66px;min-height:204px}.br-embed .br-chakra-map::before{left:34px;right:0}.br-embed .br-chakra-node{width:20px;height:20px;font-size:8px}.br-embed .br-volume-vertical{height:156px;width:26px}}
 
 /* Stopwatch (CO2 Table) Styles */
 .sw-embed .clockbox-wrapper { display:flex; justify-content:center; margin:30px auto; }
