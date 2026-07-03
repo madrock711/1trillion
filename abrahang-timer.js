@@ -1172,10 +1172,17 @@
       return formatKg(value);
     }
 
-    function formatHistoryPercent(value){
-      if(value == null || !isFinite(value)) return siteT('abrahang.historyMissing', lang() === 'en' ? 'Missing' : '측정누락');
+    function formatHistoryPercent(value, missingText){
+      if(value == null || !isFinite(value)) return missingText || siteT('abrahang.historyMissing', lang() === 'en' ? 'Missing' : '측정누락');
       var rounded = Math.round(value * 10) / 10;
       return rounded.toFixed(rounded % 1 === 0 ? 0 : 1) + '%';
+    }
+
+    function formatTargetSetting(item, missingText){
+      var parts = [];
+      if(item && item.intensityPct != null && isFinite(item.intensityPct)) parts.push(formatHistoryPercent(item.intensityPct, missingText));
+      if(item && item.targetLoadKg != null && isFinite(item.targetLoadKg)) parts.push(formatHistoryKg(item.targetLoadKg, missingText));
+      return parts.length ? parts.join(' · ') : missingText;
     }
 
     function achievementPct(item){
@@ -1218,7 +1225,8 @@
         historyList.innerHTML = '<div class="abrahang-history-empty">' + siteT('abrahang.historyEmpty', lang() === 'en' ? 'No training history yet.' : '훈련 히스토리가 없습니다.') + '</div>';
         return;
       }
-      var missing = siteT('abrahang.historyMissing', lang() === 'en' ? 'Missing measurement' : '측정누락');
+      var missingSetting = siteT('abrahang.historySettingMissing', lang() === 'en' ? 'Missing setting' : '설정누락');
+      var missingMeasurement = siteT('abrahang.historyMissing', lang() === 'en' ? 'Missing measurement' : '측정누락');
       var html = '';
       for(var i = 0; i < history.length; i++){
         var item = history[i];
@@ -1238,14 +1246,16 @@
           continue;
         }
         html += '<article class="abrahang-history-item" data-history-id="' + item.id + '">';
-        html += '<div class="abrahang-history-item-head"><strong>' + title + '</strong><span>' + formatDateTime(item.completedAt) + '</span></div>';
+        html += '<details class="abrahang-history-details">';
+        html += '<summary class="abrahang-history-summary"><span class="abrahang-history-item-head"><strong>' + title + '</strong><span>' + formatDateTime(item.completedAt) + '</span></span></summary>';
+        html += '<div class="abrahang-history-detail-body">';
         html += '<dl class="abrahang-history-stats">';
-        html += '<div><dt>' + siteT('abrahang.historyIntensity', lang() === 'en' ? 'Target intensity' : '목표 강도') + '</dt><dd>' + formatHistoryPercent(item.intensityPct) + '</dd></div>';
-        html += '<div><dt>' + siteT('abrahang.historyTargetLoad', lang() === 'en' ? 'Target load' : '목표 하중') + '</dt><dd>' + formatHistoryKg(item.targetLoadKg, missing) + '</dd></div>';
-        html += '<div><dt>' + siteT('abrahang.historyMaxLoad', lang() === 'en' ? 'Max measured load' : '최대 측정 하중') + '</dt><dd>' + formatHistoryKg(item.maxLoadKg, missing) + '</dd></div>';
-        html += '<div><dt>' + siteT('abrahang.historyAchievement', lang() === 'en' ? 'Achievement' : '하중달성률') + '</dt><dd>' + formatHistoryPercent(pct) + '</dd></div>';
+        html += '<div><dt>' + siteT('abrahang.historyTargetSetting', lang() === 'en' ? 'Target setting' : '목표 설정') + '</dt><dd>' + formatTargetSetting(item, missingSetting) + '</dd></div>';
+        html += '<div><dt>' + siteT('abrahang.historyMaxLoad', lang() === 'en' ? 'Max measured load' : '최대 측정 하중') + '</dt><dd>' + formatHistoryKg(item.maxLoadKg, missingMeasurement) + '</dd></div>';
+        html += '<div><dt>' + siteT('abrahang.historyAchievement', lang() === 'en' ? 'Load achievement' : '하중달성률') + '</dt><dd>' + formatHistoryPercent(pct, missingMeasurement) + '</dd></div>';
         html += '</dl>';
         html += '<div class="abrahang-history-actions"><button type="button" class="abrahang-btn ghost" data-history-action="edit">' + siteT('abrahang.historyEdit', lang() === 'en' ? 'Edit' : '편집') + '</button><button type="button" class="abrahang-btn ghost danger" data-history-action="delete">' + siteT('abrahang.historyDelete', lang() === 'en' ? 'Delete' : '삭제') + '</button></div>';
+        html += '</div></details>';
         html += '</article>';
       }
       historyList.innerHTML = html;

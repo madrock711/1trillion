@@ -2172,10 +2172,38 @@ main {
 }
 
 .abrahang-history-item {
-  padding: 10px;
   border: 1px solid var(--ab-line);
   border-radius: 8px;
   background: #101010;
+}
+
+.abrahang-history-item.is-editing {
+  padding: 10px;
+}
+
+.abrahang-history-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.abrahang-history-summary::-webkit-details-marker {
+  display: none;
+}
+
+.abrahang-history-summary::after {
+  content: "+";
+  color: var(--ab-muted);
+  font-weight: 900;
+  text-align: center;
+}
+
+.abrahang-history-details[open] .abrahang-history-summary::after {
+  content: "-";
 }
 
 .abrahang-history-item-head {
@@ -2195,9 +2223,14 @@ main {
   text-align: right;
 }
 
+.abrahang-history-detail-body {
+  padding: 0 10px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .abrahang-history-stats {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
   gap: 8px;
   margin: 10px 0 0;
 }
