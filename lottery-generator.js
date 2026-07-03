@@ -8,6 +8,9 @@
   var OFFICIAL_URL = 'https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=';
   var DRAW_ONE_DATE = new Date(Date.UTC(2002, 11, 7, 12, 0, 0));
   var MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
+  var BAND_LABELS = ['1-10', '11-20', '21-30', '31-40', '41-45'];
+  var BAND_CAPACITIES = [10, 10, 10, 10, 5];
+  var DIFFUSION_STEPS = 12;
 
   var state = {
     history: [],
@@ -18,6 +21,11 @@
     stats: null,
     isDrawing: false,
     drawNumbers: [],
+    pendingGenerated: [],
+    pendingSeed: 0,
+    diffusionTrace: [],
+    diffusionStep: 0,
+    diffusionTotal: DIFFUSION_STEPS,
     manualSelected: [],
     savedSets: [],
     activeSavedId: '',
@@ -259,19 +267,71 @@
     renderAll();
   }
 
+  function bandIndex(n){
+    return Math.min(4, Math.floor((n - 1) / 10));
+  }
+
+  function bandProfile(nums){
+    var profile = [0, 0, 0, 0, 0];
+    nums.forEach(function(n){
+      profile[bandIndex(n)] += 1;
+    });
+    return profile;
+  }
+
+  function profileKey(profile){
+    return profile.join('-');
+  }
+
+  function profileFromKey(key){
+    return String(key || '').split('-').map(function(value){ return Number(value) || 0; }).slice(0, 5);
+  }
+
+  function validProfile(profile){
+    if (!Array.isArray(profile) || profile.length !== 5) return false;
+    var total = 0;
+    for (var i = 0; i < profile.length; i++) {
+      if (profile[i] < 0 || profile[i] > BAND_CAPACITIES[i]) return false;
+      total += profile[i];
+    }
+    return total === 6;
+  }
+
+  function profileDistance(a, b){
+    var total = 0;
+    for (var i = 0; i < 5; i++) total += Math.abs((a[i] || 0) - (b[i] || 0));
+    return total;
+  }
+
   function computeStats(history){
     var counts = Array(46).fill(0);
     var recentCounts = Array(46).fill(0);
     var lastSeen = Array(46).fill(0);
     var pairCounts = new Map();
+    var profileCounts = new Map();
+    var recentProfileCounts = new Map();
+    var transitionCounts = new Map();
     var sums = [];
     var latestNo = history.length ? history[history.length - 1].drawNo : 0;
     var recentFloor = Math.max(1, latestNo - 51);
+    var previousProfileKey = '';
+    var latestProfileKey = '';
 
     history.forEach(function(draw){
       var nums = draw.numbers;
       var sum = nums.reduce(function(acc, n){ return acc + n; }, 0);
+      var currentProfileKey = profileKey(bandProfile(nums));
       sums.push(sum);
+      profileCounts.set(currentProfileKey, (profileCounts.get(currentProfileKey) || 0) + 1);
+      if (draw.drawNo >= recentFloor) {
+        recentProfileCounts.set(currentProfileKey, (recentProfileCounts.get(currentProfileKey) || 0) + 1);
+      }
+      if (previousProfileKey) {
+        var transitionKey = previousProfileKey + '>' + currentProfileKey;
+        transitionCounts.set(transitionKey, (transitionCounts.get(transitionKey) || 0) + 1);
+      }
+      previousProfileKey = currentProfileKey;
+      latestProfileKey = currentProfileKey;
       nums.forEach(function(n){
         counts[n] += 1;
         lastSeen[n] = draw.drawNo;
@@ -287,17 +347,25 @@
 
     sums.sort(function(a, b){ return a - b; });
     var avg = sums.length ? sums.reduce(function(acc, n){ return acc + n; }, 0) / sums.length : 138;
+    var pairValues = Array.from(pairCounts.values());
+    var profileValues = Array.from(profileCounts.values());
     return {
       counts: counts,
       recentCounts: recentCounts,
       lastSeen: lastSeen,
       pairCounts: pairCounts,
+      profileCounts: profileCounts,
+      recentProfileCounts: recentProfileCounts,
+      transitionCounts: transitionCounts,
+      latestProfileKey: latestProfileKey,
       latestNo: latestNo,
       sumAvg: avg,
       sumLow: percentile(sums, 0.1) || 90,
       sumHigh: percentile(sums, 0.9) || 190,
       maxCount: Math.max.apply(null, counts) || 1,
       maxRecent: Math.max.apply(null, recentCounts) || 1,
+      maxPair: pairValues.length ? Math.max.apply(null, pairValues) : 1,
+      maxProfile: profileValues.length ? Math.max.apply(null, profileValues) : 1,
       maxGap: Math.max(1, latestNo)
     };
   }
@@ -430,6 +498,186 @@
       maxRun(nums) <= 3;
   }
 
+  function topProfile(stats){
+    var bestKey = '';
+    var bestScore = -Infinity;
+    stats.profileCounts.forEach(function(count, key){
+      var recent = stats.recentProfileCounts.get(key) || 0;
+      var transition = stats.transitionCounts.get((stats.latestProfileKey || '') + '>' + key) || 0;
+      var score = count + recent * 1.15 + transition * 1.35;
+      if (score > bestScore) {
+        bestScore = score;
+        bestKey = key;
+      }
+    });
+    return bestKey ? profileFromKey(bestKey) : [1, 1, 2, 1, 1];
+  }
+
+  function pickTargetProfile(stats, rng){
+    var entries = [];
+    stats.profileCounts.forEach(function(count, key){
+      var profile = profileFromKey(key);
+      if (!validProfile(profile)) return;
+      var recent = stats.recentProfileCounts.get(key) || 0;
+      var transition = stats.transitionCounts.get((stats.latestProfileKey || '') + '>' + key) || 0;
+      var occupied = profile.filter(function(n){ return n > 0; }).length;
+      var spread = occupied >= 4 ? 1.08 : 0.92;
+      entries.push({
+        profile: profile,
+        weight: Math.max(0.05, (count / stats.maxProfile) * 1.15 + recent * 0.38 + transition * 0.5 + spread)
+      });
+    });
+    if (!entries.length) return [1, 1, 2, 1, 1];
+    var index = weightedPick(entries, entries.map(function(entry){ return entry.weight; }), rng);
+    return entries[index].profile.slice();
+  }
+
+  function bandCount(nums, bandNo){
+    return nums.filter(function(n){ return bandIndex(n) === bandNo; }).length;
+  }
+
+  function numberDenoiseWeight(n, selected, targetProfile, stats, temperature){
+    var b = bandIndex(n);
+    var inBand = bandCount(selected, b);
+    var need = Math.max(0, (targetProfile[b] || 0) - inBand);
+    var frequency = stats.counts[n] / stats.maxCount;
+    var recent = stats.recentCounts[n] / stats.maxRecent;
+    var gap = stats.latestNo && stats.lastSeen[n] ? (stats.latestNo - stats.lastSeen[n]) / stats.maxGap : 0.5;
+    var pair = 0;
+
+    selected.forEach(function(other){
+      if (other !== n) {
+        pair += stats.pairCounts.get(Math.min(n, other) + '-' + Math.max(n, other)) || 0;
+      }
+    });
+    pair = pair / Math.max(1, stats.maxPair * Math.max(1, selected.length - 1));
+
+    var profileFit = need > 0 ? 1.55 : (inBand < (targetProfile[b] || 0) + 1 ? 0.92 : 0.34);
+    var centerBias = 1 - Math.abs(n - 23) / 44;
+    var noise = Math.max(0, temperature || 0) * 0.32;
+    return Math.max(0.03, profileFit + frequency * 0.44 + recent * 0.22 + gap * 0.16 + pair * 0.28 + centerBias * 0.05 + noise);
+  }
+
+  function pickRemovalIndex(nums, targetProfile, stats, rng, temperature){
+    var weights = nums.map(function(n){
+      var b = bandIndex(n);
+      var overTarget = bandCount(nums, b) > (targetProfile[b] || 0);
+      var keep = numberDenoiseWeight(n, nums.filter(function(x){ return x !== n; }), targetProfile, stats, 0);
+      return (overTarget ? 1.8 : 0.42) + (1 / Math.max(0.08, keep)) + rng() * Math.max(0.05, temperature || 0);
+    });
+    return weightedPick(nums, weights, rng);
+  }
+
+  function pickAddition(pool, current, targetProfile, stats, rng, temperature){
+    var counts = bandProfile(current);
+    var neededBands = [];
+    for (var b = 0; b < 5; b++) {
+      if (counts[b] < (targetProfile[b] || 0)) neededBands.push(b);
+    }
+    var scoped = neededBands.length ? pool.filter(function(n){ return neededBands.indexOf(bandIndex(n)) >= 0; }) : pool.slice();
+    if (!scoped.length) scoped = pool.slice();
+    var weights = scoped.map(function(n){
+      return numberDenoiseWeight(n, current, targetProfile, stats, temperature) * (0.72 + rng() * 0.56);
+    });
+    return scoped[weightedPick(scoped, weights, rng)];
+  }
+
+  function denoiseStep(nums, targetProfile, stats, rng, temperature){
+    var current = nums.slice().sort(function(a, b){ return a - b; });
+    var replacements = temperature > 0.62 ? 2 : 1;
+    for (var i = 0; i < replacements; i++) {
+      if (!current.length) break;
+      var removeIndex = pickRemovalIndex(current, targetProfile, stats, rng, temperature);
+      current.splice(removeIndex, 1);
+      var pool = [];
+      for (var n = 1; n <= 45; n++) {
+        if (current.indexOf(n) < 0) pool.push(n);
+      }
+      var added = pickAddition(pool, current, targetProfile, stats, rng, temperature);
+      if (added) current.push(added);
+      current.sort(function(a, b){ return a - b; });
+    }
+    return current;
+  }
+
+  function weakestNumber(nums, targetProfile, stats, rng, predicate){
+    var scoped = nums.filter(predicate || function(){ return true; });
+    if (!scoped.length) scoped = nums.slice();
+    scoped.sort(function(a, b){
+      var aw = numberDenoiseWeight(a, nums.filter(function(x){ return x !== a; }), targetProfile, stats, 0);
+      var bw = numberDenoiseWeight(b, nums.filter(function(x){ return x !== b; }), targetProfile, stats, 0);
+      return aw - bw || rng() - 0.5;
+    });
+    return scoped[0];
+  }
+
+  function enforceProfile(nums, targetProfile, stats, rng){
+    var current = nums.slice().sort(function(a, b){ return a - b; });
+    var counts = bandProfile(current);
+
+    for (var b = 0; b < 5; b++) {
+      while (counts[b] > (targetProfile[b] || 0)) {
+        var remove = weakestNumber(current, targetProfile, stats, rng, function(n){ return bandIndex(n) === b; });
+        current.splice(current.indexOf(remove), 1);
+        counts = bandProfile(current);
+      }
+    }
+
+    for (var bandNo = 0; bandNo < 5; bandNo++) {
+      while (counts[bandNo] < (targetProfile[bandNo] || 0)) {
+        var pool = [];
+        for (var n = 1; n <= 45; n++) {
+          if (bandIndex(n) === bandNo && current.indexOf(n) < 0) pool.push(n);
+        }
+        var added = pickAddition(pool, current, targetProfile, stats, rng, 0);
+        if (!added) break;
+        current.push(added);
+        current.sort(function(a, b){ return a - b; });
+        counts = bandProfile(current);
+      }
+    }
+
+    while (current.length > 6) {
+      var weak = weakestNumber(current, targetProfile, stats, rng);
+      current.splice(current.indexOf(weak), 1);
+    }
+    while (current.length < 6) {
+      var allPool = [];
+      for (var x = 1; x <= 45; x++) {
+        if (current.indexOf(x) < 0) allPool.push(x);
+      }
+      current.push(pickAddition(allPool, current, targetProfile, stats, rng, 0));
+      current.sort(function(a, b){ return a - b; });
+    }
+
+    return current;
+  }
+
+  function diffusionSetScore(nums, targetProfile, stats){
+    var profile = bandProfile(nums);
+    var key = profileKey(profile);
+    var profileMatch = 1 - profileDistance(profile, targetProfile) / 12;
+    var profilePrior = (stats.profileCounts.get(key) || 0) / stats.maxProfile;
+    var recentPrior = (stats.recentProfileCounts.get(key) || 0) / 52;
+    return profileMatch * 0.74 + profilePrior * 0.42 + recentPrior * 0.3;
+  }
+
+  function generateDiffusionCandidate(stats, rng){
+    var targetProfile = pickTargetProfile(stats, rng);
+    var nums = makeRollingNumbers(rng);
+
+    for (var step = DIFFUSION_STEPS; step >= 1; step--) {
+      nums = denoiseStep(nums, targetProfile, stats, rng, step / DIFFUSION_STEPS);
+    }
+
+    nums = enforceProfile(nums, targetProfile, stats, rng);
+
+    return {
+      numbers: nums,
+      profile: targetProfile
+    };
+  }
+
   function keyFor(nums){
     return nums.join(',');
   }
@@ -454,53 +702,92 @@
     return selected;
   }
 
-  function generateSets(){
+  function buildGeneratedSets(seed){
     if (!state.history.length) return;
     var stats = state.stats || computeStats(state.history);
     stats.historyLength = state.history.length;
-    var seed = makeSeed();
     var rng = createRng(seed);
     var candidates = [];
     var seen = new Set();
 
-    for (var i = 0; i < 5000; i++) {
-      var nums = generateCandidate(stats, rng);
-      var key = keyFor(nums);
+    for (var i = 0; i < 1400; i++) {
+      var result = generateDiffusionCandidate(stats, rng);
+      var key = keyFor(result.numbers);
       if (seen.has(key)) continue;
       seen.add(key);
-      if (!passesBalance(nums, stats)) continue;
+      if (!passesBalance(result.numbers, stats)) continue;
       candidates.push({
-        numbers: nums,
-        score: scoreSet(nums, stats)
+        numbers: result.numbers,
+        score: scoreSet(result.numbers, stats) * 0.72 + diffusionSetScore(result.numbers, result.profile, stats) * 1.28,
+        profile: result.profile
       });
     }
 
     candidates.sort(function(a, b){ return b.score - a.score; });
     var selected = selectSets(candidates);
     while (selected.length < 5) {
-      var fallback = generateCandidate(stats, rng);
+      var fallback = generateDiffusionCandidate(stats, rng);
       selected.push({
-        numbers: fallback,
-        score: scoreSet(fallback, stats)
+        numbers: fallback.numbers,
+        score: scoreSet(fallback.numbers, stats) * 0.72 + diffusionSetScore(fallback.numbers, fallback.profile, stats) * 1.28,
+        profile: fallback.profile
       });
     }
 
-    state.seed = seed;
-    state.generated = selected.slice(0, 5);
+    return {
+      seed: seed,
+      sets: selected.slice(0, 5)
+    };
+  }
+
+  function generateSets(seed){
+    var result = buildGeneratedSets(seed || makeSeed());
+    if (!result) return;
+    state.seed = result.seed;
+    state.generated = result.sets;
     setStatus('lottery.status.generated', { count: state.generated.length, draws: state.history.length }, 'ok');
     renderAll();
   }
 
-  function makeRollingNumbers(){
+  function makeRollingNumbers(rng){
     var pool = [];
     for (var n = 1; n <= 45; n++) pool.push(n);
     var nums = [];
     while (nums.length < 6) {
-      var index = Math.floor(Math.random() * pool.length);
+      var roll = typeof rng === 'function' ? rng() : Math.random();
+      var index = Math.floor(roll * pool.length);
       nums.push(pool[index]);
       pool.splice(index, 1);
     }
-    return nums;
+    return nums.sort(function(a, b){ return a - b; });
+  }
+
+  function makeRevealTrace(target, stats, rng){
+    var targetProfile = bandProfile(target);
+    var current = makeRollingNumbers(rng);
+    var order = target.slice().sort(function(){ return rng() - 0.5; });
+    var trace = [current.slice()];
+
+    for (var step = 1; step <= DIFFUSION_STEPS; step++) {
+      var revealCount = Math.min(6, Math.floor(step / 2));
+      var fixed = order.slice(0, revealCount);
+      current = current.filter(function(n){ return fixed.indexOf(n) >= 0 || target.indexOf(n) < 0; });
+      var loose = current.filter(function(n){ return fixed.indexOf(n) < 0; });
+      while (loose.length > 6 - fixed.length) {
+        var removable = current.filter(function(n){ return fixed.indexOf(n) < 0; });
+        current.splice(current.indexOf(removable[Math.floor(rng() * removable.length)]), 1);
+        loose = current.filter(function(n){ return fixed.indexOf(n) < 0; });
+      }
+      fixed.forEach(function(n){
+        if (current.indexOf(n) < 0) current.push(n);
+      });
+      current = denoiseStep(enforceProfile(current, targetProfile, stats, rng), targetProfile, stats, rng, (DIFFUSION_STEPS - step) / DIFFUSION_STEPS);
+      if (step >= DIFFUSION_STEPS - 1) current = target.slice();
+      trace.push(current.slice().sort(function(a, b){ return a - b; }));
+    }
+
+    trace[trace.length - 1] = target.slice();
+    return trace;
   }
 
   function startDraw(){
@@ -510,30 +797,49 @@
     }
     if (state.isDrawing) return;
 
+    var seed = makeSeed();
+    var result = buildGeneratedSets(seed);
+    if (!result || !result.sets.length) {
+      setStatus('lottery.status.refreshFailed', {}, 'error');
+      return;
+    }
+    var traceRng = createRng((seed ^ 0x9E3779B9) >>> 0);
+    var trace = makeRevealTrace(result.sets[0].numbers, state.stats, traceRng);
+
     state.isDrawing = true;
     state.generated = [];
-    state.seed = 0;
-    state.drawNumbers = makeRollingNumbers();
-    setStatus('lottery.status.drawing', {}, '');
+    state.seed = seed;
+    state.pendingGenerated = result.sets;
+    state.pendingSeed = seed;
+    state.diffusionTrace = trace;
+    state.diffusionStep = 0;
+    state.diffusionTotal = Math.max(1, trace.length - 1);
+    state.drawNumbers = trace[0] || makeRollingNumbers(traceRng);
+    setStatus('lottery.status.drawing', { step: 0, total: state.diffusionTotal }, '');
     setControlsBusy(true);
     renderAll();
 
-    var elapsed = 0;
+    var index = 0;
     var interval = window.setInterval(function(){
-      elapsed += 90;
-      state.drawNumbers = makeRollingNumbers();
+      index += 1;
+      state.diffusionStep = Math.min(index, state.diffusionTotal);
+      state.drawNumbers = state.diffusionTrace[state.diffusionStep] || state.drawNumbers;
       renderResults();
-      if (elapsed >= 1350) {
+      if (index >= state.diffusionTotal) {
         window.clearInterval(interval);
         state.isDrawing = false;
         setControlsBusy(false);
-        generateSets();
+        state.generated = state.pendingGenerated.slice();
+        state.seed = state.pendingSeed;
+        state.pendingGenerated = [];
+        setStatus('lottery.status.generated', { count: state.generated.length, draws: state.history.length }, 'ok');
+        renderAll();
       }
-    }, 90);
+    }, 115);
   }
 
   function band(n){
-    return String(Math.min(5, Math.floor((n - 1) / 10) + 1));
+    return String(bandIndex(n) + 1);
   }
 
   function createBall(n, className){
@@ -754,9 +1060,19 @@
       });
 
       var label = document.createElement('div');
-      label.textContent = t('lottery.status.drawing');
+      label.textContent = t('lottery.diffusionStep', {
+        step: state.diffusionStep,
+        total: state.diffusionTotal
+      });
+
+      var meter = document.createElement('div');
+      meter.className = 'lottery-diffusion-meter';
+      var fill = document.createElement('span');
+      fill.style.width = Math.min(100, Math.max(0, (state.diffusionStep / Math.max(1, state.diffusionTotal)) * 100)) + '%';
+      meter.appendChild(fill);
 
       drawing.appendChild(balls);
+      drawing.appendChild(meter);
       drawing.appendChild(label);
       el.results.appendChild(drawing);
       if (el.seedLabel) el.seedLabel.textContent = '-';
@@ -852,6 +1168,22 @@
     if (!state.stats) return;
     renderBalls(el.hotNumbers, topNumbers(state.stats.counts, 8), 'lottery-chip');
     renderBalls(el.recentNumbers, topNumbers(state.stats.recentCounts, 8), 'lottery-chip');
+    if (el.diffusionProfile) {
+      el.diffusionProfile.textContent = '';
+      topProfile(state.stats).forEach(function(count, index){
+        var segment = document.createElement('span');
+        segment.className = 'lottery-diffusion-segment';
+        segment.dataset.band = String(index + 1);
+        segment.textContent = BAND_LABELS[index] + ' ' + count;
+        el.diffusionProfile.appendChild(segment);
+      });
+    }
+    if (el.diffusionMeta) {
+      el.diffusionMeta.textContent = t('lottery.diffusionMeta', {
+        patterns: state.stats.profileCounts.size,
+        steps: DIFFUSION_STEPS
+      });
+    }
   }
 
   function renderAll(){
@@ -938,6 +1270,8 @@
     el.latestDraw = get('lotteryLatestDraw');
     el.hotNumbers = get('lotteryHotNumbers');
     el.recentNumbers = get('lotteryRecentNumbers');
+    el.diffusionProfile = get('lotteryDiffusionProfile');
+    el.diffusionMeta = get('lotteryDiffusionMeta');
   }
 
   function init(){
