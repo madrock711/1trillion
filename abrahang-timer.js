@@ -3,6 +3,7 @@
   var HISTORY_KEY = 'abrahang:trainingHistory';
   var HISTORY_MIGRATED_KEY = 'abrahang:trainingHistoryMigrated';
   var BODY_WEIGHT_KEY = 'abrahang:bodyWeightKg';
+  var INTENSITY_KEY = 'abrahang:intensityPct';
   var ONE_HAND_KEY = 'abrahang:oneHandMode';
   var SCALE_MODE_KEY = 'abrahang:scaleMode';
   var RECOVERY_MS = 6 * 60 * 60 * 1000;
@@ -309,10 +310,26 @@
       return lang() === 'en' ? sec + 's' : sec + '초';
     }
 
-    function setDefaultIntensityForMode(mode){
+    function normalizeIntensityValue(value){
+      if(value == null || value === '') return null;
+      var number = Number(value);
+      if(!isFinite(number)) return null;
+      var min = intensity ? Number(intensity.min) || 30 : 30;
+      var max = intensity ? Number(intensity.max) || 80 : 80;
+      return Math.min(max, Math.max(min, number));
+    }
+
+    function setIntensityValue(value, shouldSave){
       if(!intensity) return;
-      var next = DEFAULT_INTENSITY[mode] || DEFAULT_INTENSITY.paper;
+      var next = normalizeIntensityValue(value);
+      if(next == null) return;
       intensity.value = String(next);
+      if(shouldSave) saveIntensity();
+    }
+
+    function setDefaultIntensityForMode(mode, shouldSave){
+      var next = DEFAULT_INTENSITY[mode] || DEFAULT_INTENSITY.paper;
+      setIntensityValue(next, shouldSave);
     }
 
     function parseBodyWeight(){
@@ -1343,6 +1360,28 @@
       }catch(e){ /* ignore */ }
     }
 
+    function saveIntensity(){
+      if(!intensity) return;
+      var next = normalizeIntensityValue(intensity.value);
+      try{
+        if(next == null) localStorage.removeItem(INTENSITY_KEY);
+        else localStorage.setItem(INTENSITY_KEY, String(next));
+      }catch(e){ /* ignore */ }
+    }
+
+    function loadIntensity(){
+      if(!intensity) return false;
+      try{
+        var stored = localStorage.getItem(INTENSITY_KEY);
+        var next = normalizeIntensityValue(stored);
+        if(next == null) return false;
+        intensity.value = String(next);
+        return true;
+      }catch(e){
+        return false;
+      }
+    }
+
     function saveOneHandMode(){
       if(!oneHand) return;
       try { localStorage.setItem(ONE_HAND_KEY, oneHand.checked ? '1' : '0'); } catch(e){ /* ignore */ }
@@ -1396,7 +1435,7 @@
     function setMode(mode){
       state.mode = mode === 'video' ? 'video' : 'paper';
       state.protocol = buildProtocol(state.mode);
-      setDefaultIntensityForMode(state.mode);
+      setDefaultIntensityForMode(state.mode, true);
       resetState(false);
       render();
     }
@@ -1720,7 +1759,12 @@
     if(scaleConnectWhc06) scaleConnectWhc06.addEventListener('click', connectWhc06Scale);
     if(historyList) historyList.addEventListener('click', handleHistoryClick);
     if(historyClear) historyClear.addEventListener('click', clearTrainingHistory);
-    if(intensity) intensity.addEventListener('input', render);
+    if(intensity){
+      intensity.addEventListener('input', function(){
+        saveIntensity();
+        render();
+      });
+    }
     if(oneHand){
       oneHand.addEventListener('change', function(){
         saveOneHandMode();
@@ -1743,7 +1787,7 @@
     }
 
     loadScaleDisplayMode();
-    setDefaultIntensityForMode(state.mode);
+    if(!loadIntensity()) setDefaultIntensityForMode(state.mode, false);
     migrateLegacyTrainingHistory();
     document.addEventListener('app:lang', function(){ render(); renderHistory(); });
     document.addEventListener('visibilitychange', function(){
