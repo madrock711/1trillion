@@ -1259,6 +1259,37 @@
       return -1;
     }
 
+    function stepGroupKey(step){
+      return [step.titleKey, step.cueKey, step.restCueKey || '', step.edge || ''].join('|');
+    }
+
+    function groupedSteps(){
+      var groups = [];
+      for(var i = 0; i < state.protocol.steps.length; i++){
+        var step = state.protocol.steps[i];
+        var key = stepGroupKey(step);
+        var last = groups[groups.length - 1];
+        if(last && last.key === key){
+          last.end = i;
+        }else{
+          groups.push({ key: key, start: i, end: i, step: step });
+        }
+      }
+      return groups;
+    }
+
+    function formatStepRange(start, end){
+      var first = start + 1;
+      var last = end + 1;
+      return first === last ? String(first) : first + '~' + last;
+    }
+
+    function isGroupDone(group){
+      if(state.phase === 'done') return true;
+      if(group.end < state.stepIndex) return true;
+      return state.phase === 'rest' && group.end <= state.stepIndex;
+    }
+
     function formatStepPreview(index, step){
       if(!step) return '';
       var prefix = String(index + 1) + ' / ' + state.protocol.steps.length;
@@ -1448,20 +1479,22 @@
     function renderSteps(){
       stepsEl.innerHTML = '';
       var highlightedIndex = getHighlightedStepIndex();
-      for(var i = 0; i < state.protocol.steps.length; i++){
-        var step = state.protocol.steps[i];
+      var groups = groupedSteps();
+      for(var i = 0; i < groups.length; i++){
+        var group = groups[i];
+        var step = group.step;
         var li = document.createElement('li');
         li.className = 'abrahang-step';
-        if(i === highlightedIndex){
+        if(highlightedIndex >= group.start && highlightedIndex <= group.end){
           li.className += ' is-current';
           if(state.phase === 'hang' && state.running) li.className += ' is-loading';
           if(state.phase === 'rest' || state.phase === 'prestart') li.className += ' is-preview';
           li.setAttribute('aria-current', 'step');
         }
-        if(state.phase === 'done' || i < state.stepIndex || (state.phase === 'rest' && i === state.stepIndex)) li.className += ' is-done';
+        if(isGroupDone(group)) li.className += ' is-done';
         var num = document.createElement('span');
         num.className = 'abrahang-step-num';
-        num.textContent = String(i + 1);
+        num.textContent = formatStepRange(group.start, group.end);
         var body = document.createElement('div');
         var title = document.createElement('strong');
         title.textContent = stepText(step);

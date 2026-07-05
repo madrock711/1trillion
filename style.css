@@ -2594,7 +2594,7 @@ main {
 
 .abrahang-step {
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   gap: 10px;
   min-height: 76px;
   padding: 10px;
@@ -2624,12 +2624,15 @@ main {
 .abrahang-step-num {
   display: inline-grid;
   place-items: center;
-  width: 30px;
+  min-width: 30px;
+  width: auto;
   height: 30px;
+  padding: 0 8px;
   border-radius: 999px;
   background: #242424;
   color: var(--text-primary);
   font-weight: 900;
+  white-space: nowrap;
 }
 
 .abrahang-step.is-current .abrahang-step-num {
@@ -2648,7 +2651,7 @@ main {
 }
 
 .abrahang-step strong,
-.abrahang-step span {
+.abrahang-step span:not(.abrahang-step-num) {
   display: block;
 }
 
