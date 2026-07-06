@@ -292,6 +292,8 @@
       characteristic: null,
       disconnectHandler: null,
       advertisementHandler: null,
+      leScan: null,
+      leScanHandler: null,
       advertisementTimeout: 0,
       firstPacketTimeout: 0,
       firstPacketExpectedSince: 0,
@@ -700,6 +702,14 @@
       return !!(navigator.bluetooth && typeof navigator.bluetooth.requestDevice === 'function');
     }
 
+    function hasWhc06DeviceWatchSupport(){
+      return !!(window.BluetoothDevice && window.BluetoothDevice.prototype && typeof window.BluetoothDevice.prototype.watchAdvertisements === 'function');
+    }
+
+    function hasWhc06LeScanSupport(){
+      return !!(navigator.bluetooth && typeof navigator.bluetooth.requestLEScan === 'function' && typeof navigator.bluetooth.addEventListener === 'function');
+    }
+
     function getWhc06Support(){
       if(typeof window.isSecureContext !== 'undefined' && !window.isSecureContext){
         return {
@@ -715,7 +725,7 @@
           fallback: lang() === 'en' ? 'This browser cannot use Web Bluetooth.' : '이 브라우저는 Web Bluetooth를 사용할 수 없습니다.'
         };
       }
-      if(!window.BluetoothDevice || !window.BluetoothDevice.prototype || typeof window.BluetoothDevice.prototype.watchAdvertisements !== 'function'){
+      if(!hasWhc06DeviceWatchSupport() && !hasWhc06LeScanSupport()){
         return {
           ok: false,
           key: 'abrahang.scaleSupportNoAdvertisements',
@@ -772,6 +782,16 @@
       var kg = raw / 100;
       if(!isFinite(kg) || kg < 0) return null;
       return kg;
+    }
+
+    function isWhc06AdvertisementEvent(event){
+      if(!event) return false;
+      var eventDevice = event.device || null;
+      var eventName = String((eventDevice && eventDevice.name) || event.name || '');
+      if(eventName && eventName.indexOf(WHC06_NAME_PREFIX) === 0) return true;
+      if(!event.manufacturerData || typeof event.manufacturerData.get !== 'function') return false;
+      var data = event.manufacturerData.get(WHC06_MANUFACTURER_ID);
+      return !!(data && data.byteLength > WHC06_WEIGHT_OFFSET + 1);
     }
 
     function clearWhc06PacketTimers(){
@@ -858,6 +878,7 @@
     }
 
     function handleWhc06Advertisement(event){
+      if(scaleState.leScan && !isWhc06AdvertisementEvent(event)) return;
       scaleState.lastAdvertisementAt = Date.now();
       scaleState.watchStale = false;
       if(scaleState.firstPacketTimeout){
@@ -896,6 +917,17 @@
       device.addEventListener('advertisementreceived', scaleState.advertisementHandler);
     }
 
+    function attachWhc06LeScanHandler(){
+      if(!navigator.bluetooth || typeof navigator.bluetooth.addEventListener !== 'function') return;
+      if(scaleState.leScanHandler){
+        try{
+          navigator.bluetooth.removeEventListener('advertisementreceived', scaleState.leScanHandler);
+        }catch(e){ /* ignore */ }
+      }
+      scaleState.leScanHandler = handleWhc06Advertisement;
+      navigator.bluetooth.addEventListener('advertisementreceived', scaleState.leScanHandler);
+    }
+
     function isAlreadyWatchingError(error){
       var text = String(error ? ((error.name || '') + ' ' + (error.message || '')) : '');
       return text.indexOf('InvalidStateError') !== -1 || text.toLowerCase().indexOf('already') !== -1;
@@ -926,21 +958,59 @@
       return !!(device && device.name && device.name.indexOf(WHC06_NAME_PREFIX) === 0);
     }
 
-    function isSameBluetoothDevice(a, b){
-      if(!a || !b) return false;
-      if(a === b) return true;
-      return !!(a.id && b.id && a.id === b.id);
+    function stopWhc06LeScan(){
+      if(!scaleState.leScan) return;
+      try{
+        if(typeof scaleState.leScan.stop === 'function') scaleState.leScan.stop();
+      }catch(e){ /* ignore */ }
+      scaleState.leScan = null;
     }
 
-    async function findGrantedWhc06Device(selectedDevice){
-      if(!navigator.bluetooth || typeof navigator.bluetooth.getDevices !== 'function') return selectedDevice;
+    async function requestWhc06LeScan(){
       try{
-        var devices = await navigator.bluetooth.getDevices();
-        for(var i = 0; i < devices.length; i++){
-          if(isWhc06Device(devices[i]) && isSameBluetoothDevice(devices[i], selectedDevice)) return devices[i];
-        }
-      }catch(e){ /* getDevices is optional; keep the selected wrapper. */ }
-      return selectedDevice;
+        return await navigator.bluetooth.requestLEScan({
+          acceptAllAdvertisements: true,
+          keepRepeatedDevices: true
+        });
+      }catch(e){
+        if(e && e.name !== 'TypeError') throw e;
+        return await navigator.bluetooth.requestLEScan({
+          filters: [{ namePrefix: WHC06_NAME_PREFIX }],
+          keepRepeatedDevices: true
+        });
+      }
+    }
+
+    async function startWhc06LeScanWatch(options){
+      if(!hasWhc06LeScanSupport()) throw new Error('requestLEScan unsupported for WH-C06');
+      options = options || {};
+      await cleanupScaleDevice();
+      var scan = await requestWhc06LeScan();
+      var generation = scaleState.watchGeneration + 1;
+      scaleState.watchGeneration = generation;
+      if(options.clearReading !== false){
+        scaleState.readingKg = null;
+        resetScalePeakLoad();
+      }
+      scaleState.device = null;
+      scaleState.connectionType = 'whc06';
+      scaleState.watchStale = false;
+      scaleState.lastAdvertisementAt = 0;
+      attachWhc06LeScanHandler();
+      if(scaleState.watchGeneration !== generation){
+        try{
+          if(scan && typeof scan.stop === 'function') scan.stop();
+        }catch(e){ /* ignore */ }
+        return;
+      }
+      scaleState.leScan = scan;
+      resetWhc06PacketTimeout();
+      setWhc06FirstPacketTimeout(options.firstPacketTimeout || 0);
+      setScaleStatus(
+        options.statusKey || 'abrahang.scaleStatusWhc06LeScanRestart',
+        options.statusFallback || (lang() === 'en' ? 'WH-C06 BLE scan started. Waiting for weight advertisements.' : 'WH-C06 BLE 스캔 시작됨. 저울 광고값 대기 중'),
+        options.statusTone || 'waiting'
+      );
     }
 
     async function startWhc06DeviceWatch(device, options){
@@ -1039,6 +1109,12 @@
           scaleState.device.removeEventListener('advertisementreceived', scaleState.advertisementHandler);
         }catch(e){ /* ignore */ }
       }
+      if(scaleState.leScanHandler && navigator.bluetooth && typeof navigator.bluetooth.removeEventListener === 'function'){
+        try{
+          navigator.bluetooth.removeEventListener('advertisementreceived', scaleState.leScanHandler);
+        }catch(e){ /* ignore */ }
+      }
+      if(!options.skipWhc06LeScan) stopWhc06LeScan();
       if(!options.skipWhc06Unwatch && scaleState.device && scaleState.connectionType === 'whc06' && typeof scaleState.device.unwatchAdvertisements === 'function'){
         unwatchPromise = stopWhc06AdvertisementWatch(scaleState.device);
       }
@@ -1050,6 +1126,7 @@
       scaleState.characteristic = null;
       scaleState.disconnectHandler = null;
       scaleState.advertisementHandler = null;
+      scaleState.leScanHandler = null;
       scaleState.advertisementRestarting = false;
       scaleState.lastAdvertisementAt = 0;
       if(!options.preserveWatchGeneration) scaleState.watchGeneration += 1;
@@ -1105,8 +1182,9 @@
       var hasReading = scaleState.readingKg != null;
       var hasBodyWeight = bodyKg > 0;
       var standardConnected = scaleState.connectionType === 'standard' && scaleState.device && scaleState.device.gatt && scaleState.device.gatt.connected;
-      var whc06NeedsFreshScan = scaleState.connectionType === 'whc06' && !!scaleState.device && scaleState.watchStale;
-      var whc06Connected = scaleState.connectionType === 'whc06' && !!scaleState.device && !scaleState.watchStale;
+      var whc06Active = scaleState.connectionType === 'whc06' && (!!scaleState.device || !!scaleState.leScan);
+      var whc06NeedsFreshScan = whc06Active && scaleState.watchStale;
+      var whc06Connected = whc06Active && !scaleState.watchStale;
       var isCraneScale = getScaleDisplayMode() === 'crane';
 
       for(var i = 0; i < scaleModeButtons.length; i++){
@@ -1257,6 +1335,30 @@
       scaleState.connectingType = 'whc06';
       setScaleStatus('abrahang.scaleStatusWhc06Searching', lang() === 'en' ? 'Searching for WH-C06 / IF_B7...' : 'WH-C06 / IF_B7 검색 중...', 'waiting');
       try{
+        if(hasWhc06LeScanSupport()){
+          try{
+            await startWhc06LeScanWatch({
+              clearReading: true,
+              firstPacketTimeout: WHC06_MANUAL_FIRST_PACKET_MS,
+              firstPacketStatusKey: 'abrahang.scaleStatusWhc06LeScanNoPacket',
+              firstPacketStatusFallback: lang() === 'en'
+                ? 'WH-C06 BLE scan started, but no WH-C06 weight advertisements arrived. Pull the scale once or rescan again.'
+                : 'WH-C06 BLE 스캔을 시작했지만 저울 광고값이 아직 들어오지 않습니다. 저울을 한 번 당기거나 새로 스캔을 다시 누르세요.',
+              statusKey: 'abrahang.scaleStatusWhc06LeScanRestart',
+              statusFallback: lang() === 'en' ? 'WH-C06 BLE scan started. Waiting for weight advertisements.' : 'WH-C06 BLE 스캔 시작됨. 저울 광고값 대기 중',
+              statusTone: 'waiting'
+            });
+            return;
+          }catch(scanError){
+            if(scanError && (scanError.name === 'NotFoundError' || scanError.name === 'NotAllowedError')) throw scanError;
+            if(!hasWhc06DeviceWatchSupport()) throw scanError;
+            setScaleStatus(
+              'abrahang.scaleStatusWhc06ManualReset',
+              lang() === 'en' ? 'BLE scan failed. Falling back to device watch.' : 'BLE 스캔 실패. 장치 감시 방식으로 전환 중',
+              'waiting'
+            );
+          }
+        }
         var previousWhc06Device = scaleState.connectionType === 'whc06' ? scaleState.device : null;
         var device = await requestWhc06Device();
         setScaleStatus(
@@ -1270,7 +1372,6 @@
           await stopWhc06AdvertisementWatch(previousWhc06Device, WHC06_UNWATCH_TIMEOUT_MS);
           await waitMs(WHC06_RESTART_GAP_MS);
         }
-        device = await findGrantedWhc06Device(device);
         await startWhc06DeviceWatch(device, {
           clearReading: true,
           skipWhc06Unwatch: true,
