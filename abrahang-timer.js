@@ -305,6 +305,7 @@
       watchGeneration: 0,
       watchStale: false,
       autoRecovering: false,
+      forceDeviceChooserReconnect: false,
       lastAutoRecoverAt: 0,
       connecting: false,
       connectingType: null,
@@ -828,8 +829,7 @@
     function markWhc06Stale(){
       clearWhc06PacketTimers();
       if(scaleState.device && document.visibilityState !== 'hidden'){
-        scaleState.watchStale = false;
-        scheduleWhc06DeviceRecovery('stale', 0);
+        prepareWhc06DeviceChooserReconnect('stale');
         return;
       }
       scaleState.watchStale = true;
@@ -837,6 +837,25 @@
         'abrahang.scaleStatusWhc06Stale',
         lang() === 'en' ? 'WH-C06 stream stopped. Press WH-C06 restart.' : 'WH-C06 수신이 멈췄습니다. WH-C06 재시작을 누르세요.',
         'error'
+      );
+    }
+
+    function prepareWhc06DeviceChooserReconnect(reason){
+      if(scaleState.connectionType !== 'whc06' || !scaleState.device) return;
+      clearWhc06PacketTimers();
+      scaleState.watchStale = true;
+      scaleState.forceDeviceChooserReconnect = true;
+      scaleState.autoRecovering = false;
+      setScaleStatus(
+        'abrahang.scaleStatusWhc06ChooserReconnect',
+        reason === 'focus'
+          ? (lang() === 'en'
+            ? 'Chrome returned. Press WH-C06 reconnect to open the device list again.'
+            : 'Chrome 복귀 감지. WH-C06 다시 연결을 눌러 장치 목록을 다시 여세요.')
+          : (lang() === 'en'
+            ? 'WH-C06 packets stopped. Press WH-C06 reconnect to open the device list again.'
+            : 'WH-C06 수신이 멈췄습니다. WH-C06 다시 연결을 눌러 장치 목록을 다시 여세요.'),
+        'waiting'
       );
     }
 
@@ -1171,7 +1190,7 @@
     function scheduleWhc06ResumeCheck(reason){
       if(scaleState.connecting || scaleState.connectionType !== 'whc06' || !scaleState.device) return;
       window.setTimeout(function(){
-        scheduleWhc06DeviceRecovery(reason === 'focus' ? 'focus' : 'resume', 0);
+        prepareWhc06DeviceChooserReconnect(reason === 'focus' ? 'focus' : 'resume');
       }, 250);
     }
 
@@ -1215,6 +1234,7 @@
       scaleState.leScanHandler = null;
       scaleState.advertisementRestarting = false;
       scaleState.autoRecovering = false;
+      scaleState.forceDeviceChooserReconnect = false;
       scaleState.lastAdvertisementAt = 0;
       if(!options.preserveWatchGeneration) scaleState.watchGeneration += 1;
       scaleState.watchStale = false;
@@ -1270,6 +1290,7 @@
       var hasBodyWeight = bodyKg > 0;
       var standardConnected = scaleState.connectionType === 'standard' && scaleState.device && scaleState.device.gatt && scaleState.device.gatt.connected;
       var whc06Active = scaleState.connectionType === 'whc06' && (!!scaleState.device || !!scaleState.leScan);
+      var whc06NeedsChooserReconnect = whc06Active && scaleState.forceDeviceChooserReconnect;
       var whc06NeedsFreshScan = whc06Active && scaleState.watchStale;
       var whc06Connected = whc06Active && !scaleState.watchStale;
       var isCraneScale = getScaleDisplayMode() === 'crane';
@@ -1317,6 +1338,8 @@
           scaleConnectWhc06.textContent = siteT('abrahang.scaleStatusWhc06AutoRestart', lang() === 'en' ? 'Restarting WH-C06...' : 'WH-C06 재시작 중...');
         }else if(scaleState.connecting && scaleState.connectingType === 'whc06'){
           scaleConnectWhc06.textContent = siteT('abrahang.scaleStatusWhc06Searching', lang() === 'en' ? 'Searching for WH-C06 / IF_B7...' : 'WH-C06 / IF_B7 검색 중...');
+        }else if(whc06NeedsChooserReconnect){
+          scaleConnectWhc06.textContent = siteT('abrahang.scaleReconnectWhc06Chooser', lang() === 'en' ? 'Reconnect WH-C06' : 'WH-C06 다시 연결');
         }else if(whc06NeedsFreshScan){
           scaleConnectWhc06.textContent = siteT('abrahang.scaleReconnectWhc06', lang() === 'en' ? 'Restart WH-C06' : 'WH-C06 재시작');
         }else if(whc06Connected){
@@ -1416,22 +1439,24 @@
       }
       setScaleDisplayMode('crane');
       var hasExistingWhc06Device = scaleState.connectionType === 'whc06' && !!scaleState.device;
+      var shouldOpenDeviceChooser = scaleState.forceDeviceChooserReconnect || !hasExistingWhc06Device;
       var previousScaleStatus = {
         key: scaleState.statusKey,
         fallback: scaleState.statusFallback,
         tone: scaleState.statusTone
       };
       scaleState.connecting = true;
-      scaleState.connectingType = hasExistingWhc06Device ? 'whc06-restart' : 'whc06';
+      scaleState.connectingType = shouldOpenDeviceChooser ? 'whc06' : 'whc06-restart';
+      var reconnectStatusFallback = shouldOpenDeviceChooser
+        ? (lang() === 'en' ? 'Searching for WH-C06 / IF_B7...' : 'WH-C06 / IF_B7 검색 중...')
+        : (lang() === 'en' ? 'Restarting the existing WH-C06 device watch.' : '기존 WH-C06 장치 감시를 재시작 중');
       setScaleStatus(
-        hasExistingWhc06Device ? 'abrahang.scaleStatusWhc06AutoRestart' : 'abrahang.scaleStatusWhc06Searching',
-        hasExistingWhc06Device
-          ? (lang() === 'en' ? 'Restarting the existing WH-C06 device watch.' : '기존 WH-C06 장치 감시를 재시작 중')
-          : (lang() === 'en' ? 'Searching for WH-C06 / IF_B7...' : 'WH-C06 / IF_B7 검색 중...'),
+        shouldOpenDeviceChooser ? 'abrahang.scaleStatusWhc06Searching' : 'abrahang.scaleStatusWhc06AutoRestart',
+        reconnectStatusFallback,
         'waiting'
       );
       try{
-        if(hasExistingWhc06Device){
+        if(hasExistingWhc06Device && !shouldOpenDeviceChooser){
           await restartWhc06ExistingDeviceWatch('manual', {
             ignoreConnecting: true,
             firstPacketTimeout: WHC06_MANUAL_FIRST_PACKET_MS,
@@ -1480,6 +1505,7 @@
         );
         await disconnectCurrentScaleAsync({ skipWhc06Unwatch: true });
         scaleState.watchStale = false;
+        scaleState.forceDeviceChooserReconnect = false;
         if(previousWhc06Device){
           await stopWhc06AdvertisementWatch(previousWhc06Device, WHC06_UNWATCH_TIMEOUT_MS);
           await waitMs(WHC06_RESTART_GAP_MS);
