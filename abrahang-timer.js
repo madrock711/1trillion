@@ -1335,7 +1335,8 @@
       scaleState.connectingType = 'whc06';
       setScaleStatus('abrahang.scaleStatusWhc06Searching', lang() === 'en' ? 'Searching for WH-C06 / IF_B7...' : 'WH-C06 / IF_B7 검색 중...', 'waiting');
       try{
-        if(hasWhc06LeScanSupport()){
+        var hasWhc06Session = scaleState.connectionType === 'whc06' && (!!scaleState.device || !!scaleState.leScan || scaleState.watchStale);
+        if(hasWhc06Session && hasWhc06LeScanSupport()){
           try{
             await startWhc06LeScanWatch({
               clearReading: true,
