@@ -5,6 +5,7 @@
   var BODY_WEIGHT_KEY = 'abrahang:bodyWeightKg';
   var INTENSITY_KEY = 'abrahang:intensityPct';
   var ONE_HAND_KEY = 'abrahang:oneHandMode';
+  var HAND_SIDE_KEY = 'abrahang:preferredHandSide';
   var SCALE_MODE_KEY = 'abrahang:scaleMode';
   var RECOVERY_MS = 6 * 60 * 60 * 1000;
   var HISTORY_LIMIT = 100;
@@ -24,6 +25,17 @@
   var WHC06_UNWATCH_TIMEOUT_MS = 1500;
   var PRECOUNT_MS = 3000;
   var BEEP_GAIN = 1;
+  var GRIP_IMAGE_VERSION = '20260706-1';
+  var GRIP_IMAGE_ROOT = 'assets/images/abrahang-grip-candidates/20260706/';
+  var GRIP_IMAGE_BY_TITLE = {
+    baseTitle: 'abrahang-grip-4finger.png',
+    videoHalfTitle: 'abrahang-grip-4finger.png',
+    front3Title: 'abrahang-grip-front3.png',
+    front2OpenTitle: 'abrahang-grip-front2.png',
+    front2CrimpTitle: 'abrahang-grip-front2.png',
+    middle2OpenTitle: 'abrahang-grip-middle2.png',
+    middle2CrimpTitle: 'abrahang-grip-middle2.png'
+  };
 
   var TEXT = {
     en: {
@@ -217,6 +229,9 @@
     var totalRemaining = q('#abTotalRemaining');
     var ringFill = q('#abRingFill');
     var dial = q('.abrahang-dial');
+    var handGuides = root.querySelectorAll('[data-ab-hand]');
+    var handLeftImage = q('#abHandLeftImage');
+    var handRightImage = q('#abHandRightImage');
     var stepsEl = q('#abSteps');
     var noteEl = q('#abProtocolNote');
     var nextEl = q('#abNextSession');
@@ -232,6 +247,7 @@
     var lastCountdownSecond = -1;
     var temporaryCueTimer = 0;
     var editingHistoryId = null;
+    var preferredHandSide = 'right';
 
     var state = {
       mode: 'paper',
@@ -340,6 +356,80 @@
 
     function isOneHandMode(){
       return !!(oneHand && oneHand.checked);
+    }
+
+    function normalizeHandSide(side){
+      return side === 'left' ? 'left' : 'right';
+    }
+
+    function oppositeHand(side){
+      return normalizeHandSide(side) === 'left' ? 'right' : 'left';
+    }
+
+    function handSideForStepIndex(index){
+      var safeIndex = Math.max(0, Number(index) || 0);
+      return safeIndex % 2 === 0 ? preferredHandSide : oppositeHand(preferredHandSide);
+    }
+
+    function currentHandTargetIndex(){
+      if(state.phase === 'done') return -1;
+      if(state.phase === 'rest' && getNextStep()) return state.stepIndex + 1;
+      if(state.phase === 'ready' || state.phase === 'prestart') return 0;
+      return state.stepIndex;
+    }
+
+    function setPreferredHandForTarget(side){
+      var targetSide = normalizeHandSide(side);
+      var targetIndex = currentHandTargetIndex();
+      if(targetIndex < 0) targetIndex = 0;
+      preferredHandSide = targetIndex % 2 === 0 ? targetSide : oppositeHand(targetSide);
+      savePreferredHandSide();
+      renderHandGuides();
+    }
+
+    function gripImageSrcForStep(step){
+      var file = step && GRIP_IMAGE_BY_TITLE[step.titleKey] ? GRIP_IMAGE_BY_TITLE[step.titleKey] : GRIP_IMAGE_BY_TITLE.baseTitle;
+      return GRIP_IMAGE_ROOT + file + '?v=' + GRIP_IMAGE_VERSION;
+    }
+
+    function handDisplayStep(){
+      if(state.phase === 'rest' && getNextStep()) return getNextStep();
+      if(state.phase === 'done') return getCurrentStep() || state.protocol.steps[state.protocol.steps.length - 1] || null;
+      return getCurrentStep() || state.protocol.steps[0] || null;
+    }
+
+    function renderHandGuides(){
+      if(!handGuides || !handGuides.length) return;
+      var step = handDisplayStep();
+      var src = gripImageSrcForStep(step);
+      var title = step ? stepText(step) : '';
+      if(handLeftImage){
+        if(handLeftImage.getAttribute('src') !== src) handLeftImage.setAttribute('src', src);
+        handLeftImage.alt = title;
+      }
+      if(handRightImage){
+        if(handRightImage.getAttribute('src') !== src) handRightImage.setAttribute('src', src);
+        handRightImage.alt = title;
+      }
+
+      var oneHandMode = isOneHandMode();
+      var targetIndex = currentHandTargetIndex();
+      var targetSide = targetIndex >= 0 ? handSideForStepIndex(targetIndex) : '';
+      var isLoading = state.phase === 'hang';
+      var isWaitingTimer = state.phase === 'prestart' || state.phase === 'rest';
+      var shouldBlink = state.running && (isLoading || isWaitingTimer);
+
+      for(var i = 0; i < handGuides.length; i++){
+        var guide = handGuides[i];
+        var side = normalizeHandSide(guide.getAttribute('data-ab-hand'));
+        var selected = !oneHandMode || side === targetSide;
+        guide.classList.toggle('is-disabled', oneHandMode && !selected);
+        guide.classList.toggle('is-active', selected && isLoading);
+        guide.classList.toggle('is-preview', selected && isWaitingTimer);
+        guide.classList.toggle('is-planned', selected && !isLoading && !isWaitingTimer && state.phase !== 'done');
+        guide.classList.toggle('is-blinking', selected && shouldBlink);
+        guide.setAttribute('aria-pressed', oneHandMode && selected ? 'true' : 'false');
+      }
     }
 
     function targetLoadKg(bodyKg){
@@ -1236,6 +1326,14 @@
       try { oneHand.checked = localStorage.getItem(ONE_HAND_KEY) === '1'; } catch(e){ /* ignore */ }
     }
 
+    function savePreferredHandSide(){
+      try { localStorage.setItem(HAND_SIDE_KEY, preferredHandSide); } catch(e){ /* ignore */ }
+    }
+
+    function loadPreferredHandSide(){
+      try { preferredHandSide = normalizeHandSide(localStorage.getItem(HAND_SIDE_KEY)); } catch(e){ preferredHandSide = 'right'; }
+    }
+
     function stepText(step){
       return tt(step.titleKey);
     }
@@ -1558,6 +1656,7 @@
           }
         }
       }
+      renderHandGuides();
     }
 
     function renderNextSession(){
@@ -1634,6 +1733,11 @@
         setScaleDisplayMode(this.getAttribute('data-ab-scale-mode'));
       });
     }
+    for(var h = 0; h < handGuides.length; h++){
+      handGuides[h].addEventListener('click', function(){
+        setPreferredHandForTarget(this.getAttribute('data-ab-hand'));
+      });
+    }
 
     if(startBtn){
       startBtn.addEventListener('click', function(){
@@ -1675,6 +1779,7 @@
     }
 
     loadScaleDisplayMode();
+    loadPreferredHandSide();
     if(!loadIntensity()) setDefaultIntensityForMode(state.mode, false);
     migrateLegacyTrainingHistory();
     document.addEventListener('app:lang', function(){ render(); renderHistory(); });
