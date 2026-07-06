@@ -2766,6 +2766,76 @@ main {
   font-weight: 850;
 }
 
+.abrahang-history-grip-averages {
+  margin-top: 10px;
+}
+
+.abrahang-history-grip-averages h4 {
+  margin: 0 0 8px;
+  color: var(--text-primary);
+  font-size: 0.84rem;
+}
+
+.abrahang-history-grip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(154px, 1fr));
+  gap: 8px;
+}
+
+.abrahang-history-grip-card {
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.abrahang-history-grip-card > strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+}
+
+.abrahang-history-grip-side {
+  display: grid;
+  grid-template-columns: 34px minmax(36px, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 5px 0;
+}
+
+.abrahang-history-grip-side + .abrahang-history-grip-side {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.abrahang-history-grip-side img {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.abrahang-history-grip-side.is-left img {
+  transform: scaleX(-1);
+}
+
+.abrahang-history-grip-side span {
+  min-width: 0;
+  color: var(--ab-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.abrahang-history-grip-side b {
+  color: #e0f2fe;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 .abrahang-history-analysis-toggle {
   display: inline-flex;
   align-items: center;

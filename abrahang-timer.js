@@ -53,6 +53,12 @@
     middle2OpenTitle: 'middle2',
     middle2CrimpTitle: 'middle2'
   };
+  var GRIP_IMAGE_BY_KEY = {
+    base: 'abrahang-grip-4finger-display.webp',
+    front3: 'abrahang-grip-front3-display.webp',
+    front2: 'abrahang-grip-front2-display.webp',
+    middle2: 'abrahang-grip-middle2-display.webp'
+  };
   var ANALYSIS_GRIPS = [
     { key: 'base', labelKey: 'abrahang.analysisGripBase', fallbackEn: '4 fingers', fallbackKo: '4손가락', color: '#22c55e' },
     { key: 'front3', labelKey: 'abrahang.analysisGripFront3', fallbackEn: 'Front 3', fallbackKo: '앞 3손가락', color: '#38bdf8' },
@@ -389,6 +395,7 @@
         out[key] = {
           gripKey: key,
           maxLoadKg: null,
+          totalLoadKg: 0,
           targetLoadKg: null,
           achievementPct: null,
           sampleCount: 0
@@ -437,6 +444,7 @@
           handSides: handSides,
           oneHandMode: handSides.length === 1,
           maxLoadKg: normalizeNumber(source.maxLoadKg),
+          totalLoadKg: Math.max(0, normalizeNumber(source.totalLoadKg) || 0),
           targetLoadKg: normalizeNumber(source.targetLoadKg),
           achievementPct: normalizeNumber(source.achievementPct),
           sampleCount: Math.max(0, Math.round(normalizeNumber(source.sampleCount) || 0))
@@ -458,6 +466,7 @@
         out[key] = {
           gripKey: key,
           maxLoadKg: normalizeNumber(source.maxLoadKg),
+          totalLoadKg: Math.max(0, normalizeNumber(source.totalLoadKg) || 0),
           targetLoadKg: normalizeNumber(source.targetLoadKg),
           achievementPct: normalizeNumber(source.achievementPct),
           sampleCount: Math.max(0, Math.round(normalizeNumber(source.sampleCount) || 0))
@@ -535,6 +544,7 @@
           var result = out[side] && out[side][key];
           if(!result) continue;
           result.sampleCount += Math.max(0, Math.round(normalizeNumber(source.sampleCount) || 0));
+          result.totalLoadKg += Math.max(0, normalizeNumber(source.totalLoadKg) || 0);
           if(result.maxLoadKg == null || source.maxLoadKg > result.maxLoadKg) result.maxLoadKg = source.maxLoadKg;
         }
       }
@@ -553,10 +563,11 @@
       if(!sideResults) return;
       var result = sideResults[gripKey];
       if(!result){
-        result = { gripKey: gripKey, maxLoadKg: null, targetLoadKg: null, achievementPct: null, sampleCount: 0 };
+        result = { gripKey: gripKey, maxLoadKg: null, totalLoadKg: 0, targetLoadKg: null, achievementPct: null, sampleCount: 0 };
         sideResults[gripKey] = result;
       }
       result.sampleCount += 1;
+      result.totalLoadKg = Math.max(0, normalizeNumber(result.totalLoadKg) || 0) + loadKg;
       if(result.maxLoadKg == null || loadKg > result.maxLoadKg) result.maxLoadKg = loadKg;
     }
 
@@ -579,6 +590,7 @@
           handSides: handSides.slice(),
           oneHandMode: handSides.length === 1,
           maxLoadKg: null,
+          totalLoadKg: 0,
           targetLoadKg: null,
           achievementPct: null,
           sampleCount: 0
@@ -590,14 +602,16 @@
         result.oneHandMode = handSides.length === 1;
       }
       result.sampleCount += 1;
+      result.totalLoadKg = Math.max(0, normalizeNumber(result.totalLoadKg) || 0) + loadKg;
       if(result.maxLoadKg == null || loadKg > result.maxLoadKg) result.maxLoadKg = loadKg;
       if(!state.gripResults) state.gripResults = emptyGripResults();
       var gripResult = state.gripResults[gripKey];
       if(!gripResult){
-        gripResult = { gripKey: gripKey, maxLoadKg: null, targetLoadKg: null, achievementPct: null, sampleCount: 0 };
+        gripResult = { gripKey: gripKey, maxLoadKg: null, totalLoadKg: 0, targetLoadKg: null, achievementPct: null, sampleCount: 0 };
         state.gripResults[gripKey] = gripResult;
       }
       gripResult.sampleCount += 1;
+      gripResult.totalLoadKg = Math.max(0, normalizeNumber(gripResult.totalLoadKg) || 0) + loadKg;
       if(gripResult.maxLoadKg == null || loadKg > gripResult.maxLoadKg) gripResult.maxLoadKg = loadKg;
       for(var s = 0; s < handSides.length; s++){
         updateHandGripLoad(handSides[s], gripKey, loadKg);
@@ -619,6 +633,7 @@
           handSides: cleanHandSides(state.setResults[i].handSides || state.setResults[i].handSide),
           oneHandMode: !!state.setResults[i].oneHandMode,
           maxLoadKg: normalizeNumber(state.setResults[i].maxLoadKg),
+          totalLoadKg: Math.max(0, normalizeNumber(state.setResults[i].totalLoadKg) || 0),
           targetLoadKg: null,
           achievementPct: null,
           sampleCount: Math.max(0, Math.round(normalizeNumber(state.setResults[i].sampleCount) || 0))
@@ -640,6 +655,7 @@
         var result = out[key];
         var original = source[key] || {};
         result.maxLoadKg = normalizeNumber(original.maxLoadKg);
+        result.totalLoadKg = Math.max(0, normalizeNumber(original.totalLoadKg) || 0);
         result.sampleCount = Math.max(0, Math.round(normalizeNumber(original.sampleCount) || 0));
         updateAchievementForTarget(result, targetKg);
       }
@@ -657,6 +673,7 @@
           var result = out[side][key];
           var original = sourceSide[key] || {};
           result.maxLoadKg = normalizeNumber(original.maxLoadKg);
+          result.totalLoadKg = Math.max(0, normalizeNumber(original.totalLoadKg) || 0);
           result.sampleCount = Math.max(0, Math.round(normalizeNumber(original.sampleCount) || 0));
           updateAchievementForTarget(result, targetKg);
         }
@@ -1966,6 +1983,11 @@
       return rounded.toFixed(rounded % 1 === 0 ? 0 : 1) + '%';
     }
 
+    function formatHistoryAverageKg(value, missingText){
+      if(value == null || !isFinite(value)) return missingText || siteT('abrahang.historyMissing', lang() === 'en' ? 'Missing measurement' : '측정누락');
+      return formatKg(value);
+    }
+
     function formatTargetSetting(item, missingText){
       var parts = [];
       if(item && item.intensityPct != null && isFinite(item.intensityPct)) parts.push(formatHistoryPercent(item.intensityPct, missingText));
@@ -1995,6 +2017,71 @@
         if(max == null || value > max) max = value;
       }
       return max;
+    }
+
+    function gripImageSrcForGripKey(gripKey){
+      var file = GRIP_IMAGE_BY_KEY[normalizeGripKey(gripKey)] || GRIP_IMAGE_BY_KEY.base;
+      return GRIP_IMAGE_ROOT + file + '?v=' + GRIP_IMAGE_VERSION;
+    }
+
+    function averageFromSetMaxLoads(item, side, gripKey){
+      if(!item || !Array.isArray(item.setResults)) return null;
+      var targetSide = normalizeHandSide(side);
+      var targetGrip = normalizeGripKey(gripKey);
+      var sum = 0;
+      var count = 0;
+      for(var i = 0; i < item.setResults.length; i++){
+        var set = item.setResults[i];
+        if(!set || normalizeGripKey(set.gripKey) !== targetGrip) continue;
+        var value = normalizeNumber(set.maxLoadKg);
+        if(value == null) continue;
+        var sides = cleanHandSides(set.handSides);
+        if(!sides.length) sides = cleanHandSides(set.handSide);
+        if(!sides.length) sides = ['left', 'right'];
+        if(sides.indexOf(targetSide) < 0) continue;
+        sum += value;
+        count += 1;
+      }
+      return count > 0 ? sum / count : null;
+    }
+
+    function historyGripAverageLoad(item, side, gripKey){
+      var targetSide = normalizeHandSide(side);
+      var targetGrip = normalizeGripKey(gripKey);
+      var result = item && item.handGripResults && item.handGripResults[targetSide]
+        ? item.handGripResults[targetSide][targetGrip]
+        : null;
+      if(result){
+        var sampleCount = Math.max(0, Math.round(normalizeNumber(result.sampleCount) || 0));
+        var total = normalizeNumber(result.totalLoadKg);
+        if(sampleCount > 0 && total != null && total > 0) return total / sampleCount;
+      }
+      return averageFromSetMaxLoads(item, targetSide, targetGrip);
+    }
+
+    function renderHistoryGripAverageGrid(item, missingText){
+      var title = siteT('abrahang.historyGripAverageTitle', lang() === 'en' ? 'Grip average load' : '그립별 평균 하중');
+      var html = '<div class="abrahang-history-grip-averages"><h4>' + title + '</h4><div class="abrahang-history-grip-grid">';
+      for(var g = 0; g < ANALYSIS_GRIPS.length; g++){
+        var grip = ANALYSIS_GRIPS[g];
+        var gripKey = grip.key;
+        var src = gripImageSrcForGripKey(gripKey);
+        html += '<article class="abrahang-history-grip-card">';
+        html += '<strong>' + gripLabel(gripKey) + '</strong>';
+        for(var h = 0; h < HAND_SIDES.length; h++){
+          var side = HAND_SIDES[h].key;
+          var sideClass = side === 'left' ? ' is-left' : ' is-right';
+          var avg = historyGripAverageLoad(item, side, gripKey);
+          html += '<div class="abrahang-history-grip-side' + sideClass + '">';
+          html += '<img src="' + src + '" alt="" loading="lazy" decoding="async">';
+          html += '<span>' + handLabel(side) + '</span>';
+          html += '<b>' + formatHistoryAverageKg(avg, missingText) + '</b>';
+          html += '</div>';
+        }
+        html += '</article>';
+      }
+      html += '</div></div>';
+      return html;
     }
 
     function readAnalysisSelection(){
@@ -2335,6 +2422,7 @@
         html += '<div><dt>' + siteT('abrahang.historyRightMaxLoad', lang() === 'en' ? 'Right max load' : '오른손 최대 하중') + '</dt><dd>' + formatHistoryKg(handMaxLoadKg(item, 'right'), missingMeasurement) + '</dd></div>';
         html += '<div><dt>' + siteT('abrahang.historyAchievement', lang() === 'en' ? 'Load achievement' : '하중달성률') + '</dt><dd>' + formatHistoryPercent(pct, missingMeasurement) + '</dd></div>';
         html += '</dl>';
+        html += renderHistoryGripAverageGrid(item, missingMeasurement);
         html += '<label class="abrahang-history-analysis-toggle"><input type="checkbox" data-history-analysis-id="' + item.id + '"' + (selectedForAnalysis[item.id] ? ' checked' : '') + '><span>' + siteT('abrahang.analysisUseSession', lang() === 'en' ? 'Use for result analysis' : '결과분석') + '</span></label>';
         html += '<div class="abrahang-history-actions"><button type="button" class="abrahang-btn ghost" data-history-action="edit">' + siteT('abrahang.historyEdit', lang() === 'en' ? 'Edit' : '편집') + '</button><button type="button" class="abrahang-btn ghost danger" data-history-action="delete">' + siteT('abrahang.historyDelete', lang() === 'en' ? 'Delete' : '삭제') + '</button></div>';
         html += '</div></details>';
