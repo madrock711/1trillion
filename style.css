@@ -2177,6 +2177,7 @@ main {
 
 .abrahang-setting + .abrahang-setting,
 .abrahang-next,
+.abrahang-scale-links,
 .abrahang-history,
 .abrahang-safety {
   margin-top: 14px;
@@ -2425,6 +2426,20 @@ main {
   font-size: 0.72rem;
   font-style: normal;
   font-weight: 750;
+}
+
+.abrahang-scale-links {
+  display: grid;
+  gap: 10px;
+}
+
+.abrahang-scale-links .abrahang-scale-affiliate,
+.abrahang-scale-links .abrahang-chrome-flags {
+  margin-top: 0;
+}
+
+.abrahang-scale-panel .abrahang-next {
+  margin-top: 10px;
 }
 
 .abrahang-chrome-flags {

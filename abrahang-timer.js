@@ -3,6 +3,7 @@
   var HISTORY_KEY = 'abrahang:trainingHistory';
   var HISTORY_MIGRATED_KEY = 'abrahang:trainingHistoryMigrated';
   var HISTORY_ANALYSIS_SELECTION_KEY = 'abrahang:historyAnalysisSelection';
+  var RELOAD_RECOVERY_KEY = 'abrahang:whc06ReloadRecovery';
   var BODY_WEIGHT_KEY = 'abrahang:bodyWeightKg';
   var INTENSITY_KEY = 'abrahang:intensityPct';
   var ONE_HAND_KEY = 'abrahang:oneHandMode';
@@ -28,6 +29,8 @@
   var WHC06_CHOOSER_RESET_GAP_MS = 1200;
   var WHC06_UNWATCH_TIMEOUT_MS = 8000;
   var CHROME_FLAGS_URL = 'chrome://flags/#enable-experimental-web-platform-features';
+  var RELOAD_RECOVERY_MAX_AGE_MS = 10 * 60 * 1000;
+  var RELOAD_RECOVERY_MAX_ELAPSED_MS = 15000;
   var PRECOUNT_MS = 3000;
   var BEEP_GAIN = 1;
   var GRIP_IMAGE_VERSION = '20260706-1';
@@ -226,6 +229,7 @@
     var loadTarget = q('#abLoadTarget');
     var scaleConnect = q('#abScaleConnect');
     var scaleConnectWhc06 = q('#abScaleConnectWhc06');
+    var scaleHardResetWhc06 = q('#abScaleHardResetWhc06');
     var chromeFlagsCopy = q('#abChromeFlagsCopy');
     var scaleStatus = q('#abScaleStatus');
     var scaleSupport = q('#abScaleSupport');
@@ -805,6 +809,97 @@
       }
       if(copied) setChromeFlagsCopyLabel('abrahang.chromeFlagsCopied', lang() === 'en' ? 'Copied' : '복사됨');
       else setChromeFlagsCopyLabel('abrahang.chromeFlagsCopyFailed', lang() === 'en' ? 'Copy failed' : '복사 실패');
+    }
+
+    function saveWhc06ReloadRecovery(){
+      var payload = {
+        version: 1,
+        savedAt: Date.now(),
+        mode: state.mode,
+        running: !!state.running,
+        phase: state.phase,
+        stepIndex: state.stepIndex,
+        remainingMs: state.remainingMs,
+        elapsedMs: state.elapsedMs,
+        completedLogged: !!state.completedLogged,
+        historyLogged: !!state.historyLogged,
+        loadSampleCount: state.loadSampleCount || 0,
+        maxMeasuredLoadKg: state.maxMeasuredLoadKg,
+        lastMeasuredLoadKg: state.lastMeasuredLoadKg,
+        setResults: state.setResults || [],
+        gripResults: state.gripResults || emptyGripResults(),
+        scaleDisplayMode: scaleDisplayMode,
+        scalePeakLoadKg: scaleState.peakLoadKg
+      };
+      try { sessionStorage.setItem(RELOAD_RECOVERY_KEY, JSON.stringify(payload)); } catch(e){ /* ignore */ }
+    }
+
+    function restoreWhc06ReloadRecovery(){
+      var raw = '';
+      try { raw = sessionStorage.getItem(RELOAD_RECOVERY_KEY) || ''; } catch(e){ raw = ''; }
+      if(!raw) return false;
+      try { sessionStorage.removeItem(RELOAD_RECOVERY_KEY); } catch(e){ /* ignore */ }
+      var payload = null;
+      try { payload = JSON.parse(raw); } catch(e){ payload = null; }
+      if(!payload || payload.version !== 1) return false;
+      var age = Date.now() - Number(payload.savedAt || 0);
+      if(!isFinite(age) || age < 0 || age > RELOAD_RECOVERY_MAX_AGE_MS) return false;
+      state.mode = payload.mode === 'video' ? 'video' : 'paper';
+      state.protocol = buildProtocol(state.mode);
+      state.phase = ['ready', 'prestart', 'hang', 'rest', 'done'].indexOf(payload.phase) >= 0 ? payload.phase : 'ready';
+      state.stepIndex = Math.max(0, Math.min(state.protocol.steps.length - 1, Math.floor(Number(payload.stepIndex) || 0)));
+      state.remainingMs = Math.max(0, Number(payload.remainingMs) || 0);
+      state.elapsedMs = Math.max(0, Number(payload.elapsedMs) || 0);
+      state.completedLogged = !!payload.completedLogged;
+      state.historyLogged = !!payload.historyLogged;
+      state.loadSampleCount = Math.max(0, Math.floor(Number(payload.loadSampleCount) || 0));
+      state.maxMeasuredLoadKg = normalizeNumber(payload.maxMeasuredLoadKg);
+      state.lastMeasuredLoadKg = normalizeNumber(payload.lastMeasuredLoadKg);
+      state.setResults = [];
+      var cleanedSetResults = cleanSetResults(payload.setResults);
+      for(var r = 0; r < cleanedSetResults.length; r++){
+        state.setResults[cleanedSetResults[r].index] = cleanedSetResults[r];
+      }
+      state.gripResults = cleanGripResults(payload.gripResults);
+      scaleDisplayMode = payload.scaleDisplayMode === 'crane' ? 'crane' : 'foot';
+      scaleState.peakLoadKg = normalizeNumber(payload.scalePeakLoadKg);
+      if(payload.running && state.phase !== 'ready' && state.phase !== 'done'){
+        var elapsedSinceSave = Math.min(RELOAD_RECOVERY_MAX_ELAPSED_MS, Math.max(0, age));
+        state.remainingMs = Math.max(0, state.remainingMs - elapsedSinceSave);
+        state.elapsedMs += elapsedSinceSave;
+        state.running = true;
+        lastTick = performance.now();
+        if(window.appWakeLock) window.appWakeLock.request('abrahang');
+        rafId = requestAnimationFrame(tick);
+      }else{
+        state.running = false;
+      }
+      setScaleStatusSilently(
+        'abrahang.scaleStatusWhc06HardReloadReady',
+        lang() === 'en' ? 'Page reloaded. Press WH-C06 connect to open the device list again.' : '페이지를 새로 열었습니다. WH-C06 연결을 눌러 장치 목록을 다시 여세요.',
+        'waiting'
+      );
+      return true;
+    }
+
+    function hardReloadWhc06Scale(){
+      saveWhc06ReloadRecovery();
+      try { cleanupScaleDevice({ whc06UnwatchTimeoutMs: 1000 }); } catch(e){ /* ignore */ }
+      setScaleStatus(
+        'abrahang.scaleStatusWhc06HardReloading',
+        lang() === 'en' ? 'Reloading the page to reset Web Bluetooth.' : 'Web Bluetooth 초기화를 위해 페이지를 새로 여는 중',
+        'waiting'
+      );
+      var href = window.location.href;
+      try{
+        var url = new URL(window.location.href);
+        url.searchParams.set('tab', 'abrahang');
+        url.searchParams.set('whc06Reload', String(Date.now()));
+        href = url.toString();
+      }catch(e){
+        href = window.location.pathname + '?tab=abrahang&whc06Reload=' + Date.now();
+      }
+      window.setTimeout(function(){ window.location.href = href; }, 100);
     }
 
     function parseWeightMeasurement(value){
@@ -1409,12 +1504,17 @@
         }else if(whc06NeedsChooserReconnect){
           scaleConnectWhc06.textContent = siteT('abrahang.scaleReconnectWhc06Chooser', lang() === 'en' ? 'Reconnect WH-C06' : 'WH-C06 다시 연결');
         }else if(whc06NeedsFreshScan){
-          scaleConnectWhc06.textContent = siteT('abrahang.scaleReconnectWhc06', lang() === 'en' ? 'Restart WH-C06' : 'WH-C06 재시작');
+          scaleConnectWhc06.textContent = siteT('abrahang.scaleReconnectWhc06', lang() === 'en' ? 'Reconnect WH-C06' : 'WH-C06 다시 연결');
         }else if(whc06Connected){
-          scaleConnectWhc06.textContent = siteT('abrahang.scaleReconnectWhc06', lang() === 'en' ? 'Restart WH-C06' : 'WH-C06 재시작');
+          scaleConnectWhc06.textContent = siteT('abrahang.scaleReconnectWhc06', lang() === 'en' ? 'Reconnect WH-C06' : 'WH-C06 다시 연결');
         }else{
           scaleConnectWhc06.textContent = siteT('abrahang.scaleConnectWhc06', lang() === 'en' ? 'WH-C06 / IF_B7 (beta)' : 'WH-C06 / IF_B7 연결(beta)');
         }
+      }
+      if(scaleHardResetWhc06){
+        scaleHardResetWhc06.hidden = !(whc06Active && (scaleState.watchStale || scaleState.forceDeviceChooserReconnect || scaleState.statusTone === 'error'));
+        scaleHardResetWhc06.disabled = scaleState.connecting;
+        scaleHardResetWhc06.textContent = siteT('abrahang.scaleHardReconnectWhc06', lang() === 'en' ? 'Full WH-C06 reconnect' : 'WH-C06 완전 재접속');
       }
       renderWhc06Support();
       if(scaleReading) scaleReading.textContent = hasReading ? formatKg(scaleState.readingKg) : emptyScaleText();
@@ -2600,6 +2700,7 @@
     if(resetBtn) resetBtn.addEventListener('click', function(){ resetState(true); });
     if(scaleConnect) scaleConnect.addEventListener('click', connectScale);
     if(scaleConnectWhc06) scaleConnectWhc06.addEventListener('click', connectWhc06Scale);
+    if(scaleHardResetWhc06) scaleHardResetWhc06.addEventListener('click', hardReloadWhc06Scale);
     if(chromeFlagsCopy) chromeFlagsCopy.addEventListener('click', copyChromeFlagsUrl);
     if(historyList) historyList.addEventListener('click', handleHistoryClick);
     if(historyList) historyList.addEventListener('change', handleHistoryChange);
@@ -2633,6 +2734,7 @@
 
     loadScaleDisplayMode();
     loadPreferredHandSide();
+    restoreWhc06ReloadRecovery();
     if(!loadIntensity()) setDefaultIntensityForMode(state.mode, false);
     migrateLegacyTrainingHistory();
     document.addEventListener('app:lang', function(){ render(); renderHistory(); });
