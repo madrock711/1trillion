@@ -229,7 +229,6 @@
     var loadTarget = q('#abLoadTarget');
     var scaleConnect = q('#abScaleConnect');
     var scaleConnectWhc06 = q('#abScaleConnectWhc06');
-    var scaleHardResetWhc06 = q('#abScaleHardResetWhc06');
     var chromeFlagsCopy = q('#abChromeFlagsCopy');
     var scaleStatus = q('#abScaleStatus');
     var scaleSupport = q('#abScaleSupport');
@@ -887,7 +886,7 @@
       try { cleanupScaleDevice({ whc06UnwatchTimeoutMs: 1000 }); } catch(e){ /* ignore */ }
       setScaleStatus(
         'abrahang.scaleStatusWhc06HardReloading',
-        lang() === 'en' ? 'Reloading the page to reset Web Bluetooth.' : 'Web Bluetooth 초기화를 위해 페이지를 새로 여는 중',
+        lang() === 'en' ? 'Reloading the page to reset Web Bluetooth.' : 'Web Bluetooth 초기화를 위해 페이지를 새로고침하는 중',
         'waiting'
       );
       var href = window.location.href;
@@ -970,7 +969,7 @@
       scaleState.watchStale = true;
       setScaleStatus(
         'abrahang.scaleStatusWhc06Stale',
-        lang() === 'en' ? 'WH-C06 stream stopped. Press WH-C06 restart.' : 'WH-C06 수신이 멈췄습니다. WH-C06 재시작을 누르세요.',
+        lang() === 'en' ? 'WH-C06 stream stopped. Reload the page to reset Web Bluetooth.' : 'WH-C06 수신이 멈췄습니다. 페이지 새로고침으로 Web Bluetooth를 초기화하세요.',
         'error'
       );
     }
@@ -986,15 +985,15 @@
         : 'abrahang.scaleStatusWhc06ChooserReconnect';
       var statusFallback = reason === 'focus'
         ? (lang() === 'en'
-          ? 'Chrome returned. Press WH-C06 reconnect to open the device list again.'
-          : 'Chrome 복귀 감지. WH-C06 다시 연결을 눌러 장치 목록을 다시 여세요.')
+          ? 'Chrome returned. Reload the page to reset Web Bluetooth.'
+          : 'Chrome 복귀 감지. 페이지 새로고침으로 Web Bluetooth를 초기화하세요.')
         : reason === 'no-first-packet'
           ? (lang() === 'en'
-            ? 'WH-C06 was selected, but no packets arrived. Press WH-C06 reconnect to open the device list again.'
-            : 'WH-C06를 선택했지만 값이 들어오지 않습니다. WH-C06 다시 연결을 눌러 장치 목록을 다시 여세요.')
+            ? 'WH-C06 was selected, but no packets arrived. Reload the page, then connect again.'
+            : 'WH-C06를 선택했지만 값이 들어오지 않습니다. 페이지 새로고침 후 다시 연결하세요.')
           : (lang() === 'en'
-            ? 'WH-C06 packets stopped. Press WH-C06 reconnect to open the device list again.'
-            : 'WH-C06 수신이 멈췄습니다. WH-C06 다시 연결을 눌러 장치 목록을 다시 여세요.');
+            ? 'WH-C06 packets stopped. Reload the page to reset Web Bluetooth.'
+            : 'WH-C06 수신이 멈췄습니다. 페이지 새로고침으로 Web Bluetooth를 초기화하세요.');
       setScaleStatus(
         statusKey,
         statusFallback,
@@ -1011,7 +1010,7 @@
         return;
       }
       var statusKey = scaleState.firstPacketStatusKey || 'abrahang.scaleStatusWhc06NoFirstPacket';
-      var statusFallback = scaleState.firstPacketStatusFallback || (lang() === 'en' ? 'No WH-C06 packets from the paired device. Press WH-C06 restart.' : '페어링된 WH-C06에서 값이 들어오지 않습니다. WH-C06 재시작을 누르세요.');
+      var statusFallback = scaleState.firstPacketStatusFallback || (lang() === 'en' ? 'No WH-C06 packets from the selected device. Reload the page, then connect again.' : '선택한 WH-C06에서 값이 들어오지 않습니다. 페이지 새로고침 후 다시 연결하세요.');
       clearWhc06PacketTimers();
       scaleState.watchStale = true;
       setScaleStatus(
@@ -1265,8 +1264,8 @@
           options.firstPacketTimeout || WHC06_RESUME_FIRST_PACKET_MS,
           options.firstPacketStatusKey || 'abrahang.scaleStatusWhc06AutoNoPacket',
           options.firstPacketStatusFallback || (lang() === 'en'
-            ? 'WH-C06 watch restarted, but no packets arrived. Press WH-C06 restart once more.'
-            : 'WH-C06 감시를 재시작했지만 패킷이 들어오지 않습니다. WH-C06 재시작을 한 번 더 누르세요.')
+            ? 'WH-C06 packets did not resume. Reload the page, then connect again.'
+            : 'WH-C06 수신이 재개되지 않습니다. 페이지 새로고침 후 다시 연결하세요.')
         );
         return true;
       }catch(e){
@@ -1274,7 +1273,7 @@
           scaleState.watchStale = true;
           setScaleStatus(
             'abrahang.scaleStatusWhc06NoPacket',
-            lang() === 'en' ? 'WH-C06 stream stopped. Press WH-C06 restart.' : 'WH-C06 수신이 멈췄습니다. WH-C06 재시작을 누르세요.',
+            lang() === 'en' ? 'WH-C06 stream stopped. Reload the page to reset Web Bluetooth.' : 'WH-C06 수신이 멈췄습니다. 페이지 새로고침으로 Web Bluetooth를 초기화하세요.',
             'error'
           );
         }
@@ -1298,8 +1297,8 @@
             : (lang() === 'en' ? 'WH-C06 stream interrupted. Restarting device watch.' : 'WH-C06 수신 끊김 감지. 장치 감시를 재시작 중'),
           firstPacketStatusKey: 'abrahang.scaleStatusWhc06AutoNoPacket',
           firstPacketStatusFallback: lang() === 'en'
-            ? 'WH-C06 device watch restarted, but no packets arrived. Press WH-C06 restart once more.'
-            : 'WH-C06 장치 감시를 재시작했지만 패킷이 들어오지 않습니다. WH-C06 재시작을 한 번 더 누르세요.'
+            ? 'WH-C06 packets did not resume. Reload the page, then connect again.'
+            : 'WH-C06 수신이 재개되지 않습니다. 페이지 새로고침 후 다시 연결하세요.'
         });
       }, delayMs || 0);
     }
@@ -1322,8 +1321,8 @@
         WHC06_RESUME_FIRST_PACKET_MS,
         'abrahang.scaleStatusWhc06ResumeNoPacket',
         lang() === 'en'
-          ? 'Chrome returned, but no WH-C06 packets arrived. Use WH-C06 rescan.'
-          : 'Chrome 복귀 후 WH-C06 패킷이 들어오지 않습니다. WH-C06 새로 스캔을 누르세요.'
+          ? 'Chrome returned, but no WH-C06 packets arrived. Reload the page, then connect again.'
+          : 'Chrome 복귀 후 WH-C06 값이 들어오지 않습니다. 페이지 새로고침 후 다시 연결하세요.'
       );
       setScaleStatus(
         'abrahang.scaleStatusWhc06Resume',
@@ -1501,20 +1500,11 @@
           scaleConnectWhc06.textContent = siteT('abrahang.scaleStatusWhc06AutoRestart', lang() === 'en' ? 'Restarting WH-C06...' : 'WH-C06 재시작 중...');
         }else if(scaleState.connecting && scaleState.connectingType === 'whc06'){
           scaleConnectWhc06.textContent = siteT('abrahang.scaleStatusWhc06Searching', lang() === 'en' ? 'Searching for WH-C06 / IF_B7...' : 'WH-C06 / IF_B7 검색 중...');
-        }else if(whc06NeedsChooserReconnect){
-          scaleConnectWhc06.textContent = siteT('abrahang.scaleReconnectWhc06Chooser', lang() === 'en' ? 'Reconnect WH-C06' : 'WH-C06 다시 연결');
-        }else if(whc06NeedsFreshScan){
-          scaleConnectWhc06.textContent = siteT('abrahang.scaleReconnectWhc06', lang() === 'en' ? 'Reconnect WH-C06' : 'WH-C06 다시 연결');
-        }else if(whc06Connected){
-          scaleConnectWhc06.textContent = siteT('abrahang.scaleReconnectWhc06', lang() === 'en' ? 'Reconnect WH-C06' : 'WH-C06 다시 연결');
+        }else if(whc06NeedsChooserReconnect || whc06NeedsFreshScan || whc06Connected){
+          scaleConnectWhc06.textContent = siteT('abrahang.scaleReloadWhc06', lang() === 'en' ? 'Reload page' : '페이지 새로고침');
         }else{
           scaleConnectWhc06.textContent = siteT('abrahang.scaleConnectWhc06', lang() === 'en' ? 'WH-C06 / IF_B7 (beta)' : 'WH-C06 / IF_B7 연결(beta)');
         }
-      }
-      if(scaleHardResetWhc06){
-        scaleHardResetWhc06.hidden = !(whc06Active && (scaleState.watchStale || scaleState.forceDeviceChooserReconnect || scaleState.statusTone === 'error'));
-        scaleHardResetWhc06.disabled = scaleState.connecting;
-        scaleHardResetWhc06.textContent = siteT('abrahang.scaleHardReconnectWhc06', lang() === 'en' ? 'Full WH-C06 reconnect' : 'WH-C06 완전 재접속');
       }
       renderWhc06Support();
       if(scaleReading) scaleReading.textContent = hasReading ? formatKg(scaleState.readingKg) : emptyScaleText();
@@ -1605,6 +1595,10 @@
         setScaleStatus('abrahang.scaleStatusWhc06Unsupported', lang() === 'en' ? 'WH-C06 advertisement scanning is unavailable.' : 'WH-C06 광고 수신 미지원', 'error');
         return;
       }
+      if(scaleState.connectionType === 'whc06' && (scaleState.device || scaleState.leScan)){
+        hardReloadWhc06Scale();
+        return;
+      }
       setScaleDisplayMode('crane');
       var hasExistingWhc06Device = scaleState.connectionType === 'whc06' && !!scaleState.device;
       var shouldOpenDeviceChooser = scaleState.forceDeviceChooserReconnect || !hasExistingWhc06Device;
@@ -1634,8 +1628,8 @@
               : '기존 WH-C06 장치 감시를 재시작 중',
             firstPacketStatusKey: 'abrahang.scaleStatusWhc06ManualNoPacket',
             firstPacketStatusFallback: lang() === 'en'
-              ? 'WH-C06 watch restarted, but no packets arrived. Press WH-C06 restart once more.'
-              : 'WH-C06 감시를 재시작했지만 패킷이 들어오지 않습니다. WH-C06 재시작을 한 번 더 누르세요.'
+              ? 'WH-C06 packets did not resume. Reload the page, then connect again.'
+              : 'WH-C06 수신이 재개되지 않습니다. 페이지 새로고침 후 다시 연결하세요.'
           });
           return;
         }
@@ -1664,8 +1658,8 @@
           firstPacketTimeout: WHC06_MANUAL_FIRST_PACKET_MS,
           firstPacketStatusKey: 'abrahang.scaleStatusWhc06ManualNoPacket',
           firstPacketStatusFallback: lang() === 'en'
-            ? 'WH-C06 was selected again, but no new packets arrived. Pull the scale once, or press WH-C06 rescan again.'
-            : 'WH-C06를 다시 선택했지만 아직 새 패킷이 들어오지 않습니다. 저울을 한 번 당기거나 WH-C06 새로 스캔을 다시 누르세요.',
+            ? 'WH-C06 was selected, but no packets arrived. Reload the page, then connect again.'
+            : 'WH-C06를 선택했지만 값이 들어오지 않습니다. 페이지 새로고침 후 다시 연결하세요.',
           statusKey: 'abrahang.scaleStatusWhc06ManualRestart',
           statusFallback: lang() === 'en' ? 'WH-C06 selected. Starting a fresh advertisement watch.' : 'WH-C06 선택됨. 광고 감시를 새로 시작 중',
           statusTone: 'waiting'
@@ -2700,7 +2694,6 @@
     if(resetBtn) resetBtn.addEventListener('click', function(){ resetState(true); });
     if(scaleConnect) scaleConnect.addEventListener('click', connectScale);
     if(scaleConnectWhc06) scaleConnectWhc06.addEventListener('click', connectWhc06Scale);
-    if(scaleHardResetWhc06) scaleHardResetWhc06.addEventListener('click', hardReloadWhc06Scale);
     if(chromeFlagsCopy) chromeFlagsCopy.addEventListener('click', copyChromeFlagsUrl);
     if(historyList) historyList.addEventListener('click', handleHistoryClick);
     if(historyList) historyList.addEventListener('change', handleHistoryChange);
