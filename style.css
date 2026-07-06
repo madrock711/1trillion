@@ -2944,6 +2944,10 @@ main {
   background: rgba(245, 158, 11, 0.08);
 }
 
+.abrahang-safety-mobile {
+  display: none;
+}
+
 .abrahang-safety h3 {
   margin: 0 0 8px;
   font-size: 1rem;
@@ -3067,16 +3071,48 @@ main {
 }
 
 @media (max-width: 900px) {
-  .abrahang-summary,
   .abrahang-grid,
   .abrahang-steps {
     grid-template-columns: 1fr;
+  }
+
+  .abrahang-safety-desktop {
+    display: none;
+  }
+
+  .abrahang-safety-mobile {
+    display: block;
+    margin-top: 14px;
   }
 }
 
 @media (max-width: 560px) {
   .abrahang-app {
     padding: 16px;
+  }
+
+  .abrahang-summary {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+    margin: 10px 0 12px;
+  }
+
+  .abrahang-summary div {
+    padding: 7px 4px;
+    text-align: center;
+  }
+
+  .abrahang-summary span {
+    font-size: 0.66rem;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .abrahang-summary strong {
+    margin-top: 3px;
+    font-size: 0.82rem;
+    line-height: 1.1;
+    white-space: nowrap;
   }
 
   .abrahang-controls {
