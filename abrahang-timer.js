@@ -252,6 +252,8 @@
     var scaleReading = q('#abScaleReading');
     var scaleFingerLoad = q('#abScaleFingerLoad');
     var scaleTargetReading = q('#abScaleTargetReading');
+    var dialCurrentLoad = q('#abDialCurrentLoad');
+    var dialPeakLoad = q('#abDialPeakLoad');
     var sound = q('#abSound');
     var autoLog = q('#abAutoLog');
     var phaseEl = q('#abPhase');
@@ -1681,6 +1683,9 @@
         }
       }
       renderWhc06Support();
+      var currentLoadKg = hasReading ? measuredLoadFromScaleReading(scaleState.readingKg) : null;
+      var currentLoadText = currentLoadKg == null ? emptyScaleText() : formatKg(currentLoadKg);
+      var peakLoadText = scaleState.peakLoadKg == null ? emptyScaleText() : formatKg(scaleState.peakLoadKg);
       if(scaleReading) scaleReading.textContent = hasReading ? formatKg(scaleState.readingKg) : emptyScaleText();
       if(scaleFingerLoad){
         if(isCraneScale) scaleFingerLoad.textContent = hasReading ? formatKg(scaleState.readingKg) : emptyScaleText();
@@ -1688,8 +1693,10 @@
         else scaleFingerLoad.textContent = hasReading ? siteT('abrahang.scaleNeedBody', lang() === 'en' ? 'Enter body weight' : '체중 입력 필요') : emptyScaleText();
       }
       if(scaleTargetReading){
-        scaleTargetReading.textContent = scaleState.peakLoadKg == null ? emptyScaleText() : formatKg(scaleState.peakLoadKg);
+        scaleTargetReading.textContent = peakLoadText;
       }
+      if(dialCurrentLoad) dialCurrentLoad.textContent = currentLoadText;
+      if(dialPeakLoad) dialPeakLoad.textContent = peakLoadText;
     }
 
     async function connectScale(){

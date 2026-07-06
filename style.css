@@ -1980,6 +1980,51 @@ main {
   background: #121212;
 }
 
+.abrahang-dial-loads {
+  display: none;
+}
+
+.abrahang-dial-load {
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(7, 10, 14, 0.78);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+.abrahang-dial-load span,
+.abrahang-dial-load strong {
+  display: block;
+}
+
+.abrahang-dial-load span {
+  color: var(--ab-muted);
+  font-size: 0.68rem;
+  font-weight: 850;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.abrahang-dial-load strong {
+  margin-top: 3px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.abrahang-dial-load.is-current {
+  border-color: rgba(56, 189, 248, 0.32);
+}
+
+.abrahang-dial-load.is-peak {
+  border-color: rgba(34, 197, 94, 0.3);
+  text-align: right;
+}
+
 .abrahang-ring,
 .abrahang-ring-fill {
   position: absolute;
@@ -3083,6 +3128,29 @@ main {
 
   .abrahang-dial {
     width: min(280px, 78vw);
+  }
+
+  .abrahang-dial-stage {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .abrahang-dial-loads {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 7%;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+    pointer-events: none;
+  }
+
+  .abrahang-dial-load {
+    width: clamp(74px, 23%, 92px);
   }
 
   .abrahang-hand-guide {

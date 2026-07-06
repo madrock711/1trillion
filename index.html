@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260707-2">
+    <link rel="stylesheet" href="style.css?v=20260707-3">
 </head>
 <body>
     <header>
@@ -856,6 +856,16 @@
                         </div>
 
                         <div class="abrahang-dial-stage">
+                            <div class="abrahang-dial-loads" aria-hidden="true">
+                                <div class="abrahang-dial-load is-current">
+                                    <span data-i18n="abrahang.scaleCurrentLoadLabel">현재 하중</span>
+                                    <strong id="abDialCurrentLoad">--</strong>
+                                </div>
+                                <div class="abrahang-dial-load is-peak">
+                                    <span data-i18n="abrahang.scalePeakLoadLabel">피크 하중</span>
+                                    <strong id="abDialPeakLoad">--</strong>
+                                </div>
+                            </div>
                             <div class="abrahang-dial" data-ab-phase="ready">
                                 <div class="abrahang-ring" aria-hidden="true">
                                     <div class="abrahang-ring-fill" id="abRingFill"></div>
@@ -1172,7 +1182,7 @@
     <script src="stopwatch.js?v=20260619-6"></script>
     <script src="sequence-generator.js?v=20260219-1"></script>
     <script src="lottery-generator.js?v=20260703-5"></script>
-    <script src="abrahang-timer.js?v=20260707-2"></script>
+    <script src="abrahang-timer.js?v=20260707-3"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const tabs = document.querySelectorAll('.tab-link');
