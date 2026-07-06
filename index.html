@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260706-1">
+    <link rel="stylesheet" href="style.css?v=20260706-2">
 </head>
 <body>
     <header>
@@ -855,21 +855,23 @@
                             <button class="abrahang-mode" type="button" data-ab-mode="video" data-i18n="abrahang.modeVideo">Emil 10분</button>
                         </div>
 
-                        <div class="abrahang-dial" data-ab-phase="ready">
-                            <div class="abrahang-ring" aria-hidden="true">
-                                <div class="abrahang-ring-fill" id="abRingFill"></div>
+                        <div class="abrahang-dial-stage">
+                            <div class="abrahang-dial" data-ab-phase="ready">
+                                <div class="abrahang-ring" aria-hidden="true">
+                                    <div class="abrahang-ring-fill" id="abRingFill"></div>
+                                </div>
+                                <div class="abrahang-phase" id="abPhase" data-i18n="abrahang.phaseReady">준비</div>
+                                <div class="abrahang-time" id="abTime">10</div>
+                                <div class="abrahang-step-count" id="abStepCount">0 / 20</div>
                             </div>
-                            <div class="abrahang-phase" id="abPhase" data-i18n="abrahang.phaseReady">준비</div>
-                            <div class="abrahang-time" id="abTime">10</div>
-                            <div class="abrahang-step-count" id="abStepCount">0 / 20</div>
-                        </div>
-                        <div class="abrahang-hand-guides" id="abHandGuides" role="group" aria-label="Hand selection" data-i18n="abrahang.handGuidesAria" data-i18n-attr="aria-label">
-                            <button class="abrahang-hand-guide is-left" type="button" data-ab-hand="left" aria-label="Select left hand" data-i18n="abrahang.handLeftAria" data-i18n-attr="aria-label">
-                                <img id="abHandLeftImage" src="assets/images/abrahang-grip-candidates/20260706/abrahang-grip-4finger.png?v=20260706-1" alt="">
-                            </button>
-                            <button class="abrahang-hand-guide is-right" type="button" data-ab-hand="right" aria-label="Select right hand" data-i18n="abrahang.handRightAria" data-i18n-attr="aria-label">
-                                <img id="abHandRightImage" src="assets/images/abrahang-grip-candidates/20260706/abrahang-grip-4finger.png?v=20260706-1" alt="">
-                            </button>
+                            <div class="abrahang-hand-guides" id="abHandGuides" role="group" aria-label="Hand selection" data-i18n="abrahang.handGuidesAria" data-i18n-attr="aria-label">
+                                <button class="abrahang-hand-guide is-left" type="button" data-ab-hand="left" aria-label="Select left hand" data-i18n="abrahang.handLeftAria" data-i18n-attr="aria-label">
+                                    <img id="abHandLeftImage" src="assets/images/abrahang-grip-candidates/20260706/abrahang-grip-4finger.png?v=20260706-1" alt="">
+                                </button>
+                                <button class="abrahang-hand-guide is-right" type="button" data-ab-hand="right" aria-label="Select right hand" data-i18n="abrahang.handRightAria" data-i18n-attr="aria-label">
+                                    <img id="abHandRightImage" src="assets/images/abrahang-grip-candidates/20260706/abrahang-grip-4finger.png?v=20260706-1" alt="">
+                                </button>
+                            </div>
                         </div>
 
                         <div class="abrahang-current">

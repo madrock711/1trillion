@@ -1961,6 +1961,13 @@ main {
   color: #e0f2fe;
 }
 
+.abrahang-dial-stage {
+  position: relative;
+  width: min(580px, 100%);
+  margin: 8px auto 16px;
+  min-height: min(330px, 74vw);
+}
+
 .abrahang-dial {
   --ab-ring-deg: 0deg;
   position: relative;
@@ -1968,7 +1975,7 @@ main {
   place-items: center;
   width: min(330px, 74vw);
   aspect-ratio: 1;
-  margin: 8px auto 16px;
+  margin: 0 auto;
   border-radius: 50%;
   background: #121212;
 }
@@ -2027,14 +2034,16 @@ main {
 }
 
 .abrahang-hand-guides {
-  position: relative;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 7%;
   z-index: 2;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  width: min(330px, 74vw);
-  min-height: 92px;
-  margin: 0 auto 14px;
+  width: 100%;
+  margin: 0;
   pointer-events: none;
 }
 
@@ -2042,7 +2051,7 @@ main {
   position: relative;
   display: grid;
   place-items: center;
-  width: clamp(82px, 28%, 112px);
+  width: clamp(78px, 18%, 112px);
   aspect-ratio: 1;
   padding: 0;
   overflow: hidden;
