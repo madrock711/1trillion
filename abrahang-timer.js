@@ -27,6 +27,7 @@
   var WHC06_RESTART_GAP_MS = 650;
   var WHC06_CHOOSER_RESET_GAP_MS = 1200;
   var WHC06_UNWATCH_TIMEOUT_MS = 8000;
+  var CHROME_FLAGS_URL = 'chrome://flags/#enable-experimental-web-platform-features';
   var PRECOUNT_MS = 3000;
   var BEEP_GAIN = 1;
   var GRIP_IMAGE_VERSION = '20260706-1';
@@ -225,6 +226,7 @@
     var loadTarget = q('#abLoadTarget');
     var scaleConnect = q('#abScaleConnect');
     var scaleConnectWhc06 = q('#abScaleConnectWhc06');
+    var chromeFlagsCopy = q('#abChromeFlagsCopy');
     var scaleStatus = q('#abScaleStatus');
     var scaleSupport = q('#abScaleSupport');
     var scaleModeButtons = root.querySelectorAll('[data-ab-scale-mode]');
@@ -268,6 +270,7 @@
     var lastTick = 0;
     var lastCountdownSecond = -1;
     var temporaryCueTimer = 0;
+    var chromeFlagsCopyTimer = 0;
     var editingHistoryId = null;
     var preferredHandSide = 'right';
 
@@ -766,6 +769,42 @@
       scaleState.statusKey = key;
       scaleState.statusFallback = fallback;
       scaleState.statusTone = tone || 'idle';
+    }
+
+    function setChromeFlagsCopyLabel(key, fallback){
+      if(!chromeFlagsCopy) return;
+      chromeFlagsCopy.textContent = siteT(key, fallback);
+      if(chromeFlagsCopyTimer) clearTimeout(chromeFlagsCopyTimer);
+      chromeFlagsCopyTimer = setTimeout(function(){
+        chromeFlagsCopy.textContent = siteT('abrahang.chromeFlagsCopy', lang() === 'en' ? 'Copy address' : '주소 복사');
+        chromeFlagsCopyTimer = 0;
+      }, 1800);
+    }
+
+    async function copyChromeFlagsUrl(){
+      var copied = false;
+      try{
+        if(navigator.clipboard && typeof navigator.clipboard.writeText === 'function' && window.isSecureContext){
+          await navigator.clipboard.writeText(CHROME_FLAGS_URL);
+          copied = true;
+        }
+      }catch(e){ copied = false; }
+      if(!copied){
+        try{
+          var textArea = document.createElement('textarea');
+          textArea.value = CHROME_FLAGS_URL;
+          textArea.setAttribute('readonly', '');
+          textArea.style.position = 'fixed';
+          textArea.style.left = '-9999px';
+          textArea.style.top = '0';
+          document.body.appendChild(textArea);
+          textArea.select();
+          copied = document.execCommand('copy');
+          document.body.removeChild(textArea);
+        }catch(e){ copied = false; }
+      }
+      if(copied) setChromeFlagsCopyLabel('abrahang.chromeFlagsCopied', lang() === 'en' ? 'Copied' : '복사됨');
+      else setChromeFlagsCopyLabel('abrahang.chromeFlagsCopyFailed', lang() === 'en' ? 'Copy failed' : '복사 실패');
     }
 
     function parseWeightMeasurement(value){
@@ -2561,6 +2600,7 @@
     if(resetBtn) resetBtn.addEventListener('click', function(){ resetState(true); });
     if(scaleConnect) scaleConnect.addEventListener('click', connectScale);
     if(scaleConnectWhc06) scaleConnectWhc06.addEventListener('click', connectWhc06Scale);
+    if(chromeFlagsCopy) chromeFlagsCopy.addEventListener('click', copyChromeFlagsUrl);
     if(historyList) historyList.addEventListener('click', handleHistoryClick);
     if(historyList) historyList.addEventListener('change', handleHistoryChange);
     if(historyClear) historyClear.addEventListener('click', clearTrainingHistory);

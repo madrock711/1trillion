@@ -2427,6 +2427,64 @@ main {
   font-weight: 750;
 }
 
+.abrahang-chrome-flags {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.07);
+}
+
+.abrahang-chrome-flags strong {
+  color: #e0f2fe;
+  font-size: 0.86rem;
+  line-height: 1.25;
+}
+
+.abrahang-chrome-flags p {
+  margin: 0;
+  color: var(--ab-muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.abrahang-chrome-flag-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.abrahang-chrome-flag-actions .abrahang-btn {
+  min-width: 0;
+  min-height: 36px;
+  height: auto;
+  padding: 8px 10px;
+  text-align: center;
+  white-space: normal;
+}
+
+.abrahang-chrome-flags code {
+  display: block;
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.22);
+  color: #e0f2fe;
+  font-size: 0.74rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.abrahang-chrome-flags em {
+  color: var(--ab-muted);
+  font-size: 0.72rem;
+  font-style: normal;
+  line-height: 1.4;
+}
+
 .abrahang-scale-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
