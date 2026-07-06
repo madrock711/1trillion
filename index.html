@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260707-4">
+    <link rel="stylesheet" href="style.css?v=20260707-5">
 </head>
 <body>
     <header>
@@ -901,24 +901,6 @@
                             <span data-i18n="abrahang.totalRemaining">남은 시간</span>
                             <strong id="abTotalRemaining">10:00</strong>
                         </div>
-
-                        <div class="abrahang-history">
-                            <div class="abrahang-history-head">
-                                <h3 data-i18n="abrahang.historyTitle">훈련 히스토리</h3>
-                                <button class="abrahang-btn ghost" type="button" id="abHistoryClear" data-i18n="abrahang.historyClear">전체 삭제</button>
-                            </div>
-                            <div class="abrahang-history-list" id="abHistoryList">
-                                <div class="abrahang-history-empty" data-i18n="abrahang.historyEmpty">훈련 히스토리가 없습니다.</div>
-                            </div>
-                            <div class="abrahang-history-analysis">
-                                <div class="abrahang-history-analysis-head">
-                                    <h4 data-i18n="abrahang.analysisTitle">결과 분석</h4>
-                                    <span id="abHistoryAnalysisStatus" data-i18n="abrahang.analysisEmpty">체크한 세션 없음</span>
-                                </div>
-                                <canvas id="abHistoryAnalysisChart" width="720" height="360" aria-label="Selected Abrahang history analysis chart" data-i18n="abrahang.analysisCanvasLabel" data-i18n-attr="aria-label"></canvas>
-                                <div class="abrahang-analysis-legend" id="abHistoryAnalysisLegend"></div>
-                            </div>
-                        </div>
                     </section>
 
                     <section class="abrahang-settings-panel">
@@ -1026,6 +1008,24 @@
                             </ul>
                         </div>
                     </section>
+
+                    <div class="abrahang-history">
+                        <div class="abrahang-history-head">
+                            <h3 data-i18n="abrahang.historyTitle">훈련 히스토리</h3>
+                            <button class="abrahang-btn ghost" type="button" id="abHistoryClear" data-i18n="abrahang.historyClear">전체 삭제</button>
+                        </div>
+                        <div class="abrahang-history-list" id="abHistoryList">
+                            <div class="abrahang-history-empty" data-i18n="abrahang.historyEmpty">훈련 히스토리가 없습니다.</div>
+                        </div>
+                        <div class="abrahang-history-analysis">
+                            <div class="abrahang-history-analysis-head">
+                                <h4 data-i18n="abrahang.analysisTitle">결과 분석</h4>
+                                <span id="abHistoryAnalysisStatus" data-i18n="abrahang.analysisEmpty">체크한 세션 없음</span>
+                            </div>
+                            <canvas id="abHistoryAnalysisChart" width="720" height="360" aria-label="Selected Abrahang history analysis chart" data-i18n="abrahang.analysisCanvasLabel" data-i18n-attr="aria-label"></canvas>
+                            <div class="abrahang-analysis-legend" id="abHistoryAnalysisLegend"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <section class="abrahang-schedule-panel">

@@ -1916,7 +1916,11 @@ main {
 .abrahang-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  grid-template-areas:
+    "timer settings"
+    "history settings";
   gap: 14px;
+  align-items: start;
 }
 
 .abrahang-timer-panel,
@@ -1928,12 +1932,14 @@ main {
 }
 
 .abrahang-timer-panel {
+  grid-area: timer;
   display: flex;
   flex-direction: column;
   padding: 18px;
 }
 
 .abrahang-settings-panel {
+  grid-area: settings;
   padding: 16px;
 }
 
@@ -2610,14 +2616,15 @@ main {
 }
 
 .abrahang-history {
+  grid-area: history;
   padding: 12px;
   border: 1px solid var(--ab-line);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.03);
 }
 
-.abrahang-timer-panel > .abrahang-history {
-  margin-top: auto;
+.abrahang-grid > .abrahang-history {
+  margin-top: 0;
 }
 
 .abrahang-history-head {
@@ -3071,7 +3078,14 @@ main {
 }
 
 @media (max-width: 900px) {
-  .abrahang-grid,
+  .abrahang-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "timer"
+      "settings"
+      "history";
+  }
+
   .abrahang-steps {
     grid-template-columns: 1fr;
   }
