@@ -2380,6 +2380,53 @@ main {
   overflow-wrap: anywhere;
 }
 
+.abrahang-scale-affiliate {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.abrahang-scale-affiliate:hover {
+  border-color: rgba(34, 197, 94, 0.38);
+  background: rgba(34, 197, 94, 0.09);
+}
+
+.abrahang-scale-affiliate img {
+  display: block;
+  width: 56px;
+  height: 56px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: #0b0b0b;
+}
+
+.abrahang-scale-affiliate span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.abrahang-scale-affiliate strong {
+  color: var(--text-primary);
+  font-size: 0.86rem;
+  line-height: 1.25;
+}
+
+.abrahang-scale-affiliate em {
+  color: var(--ab-muted);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 750;
+}
+
 .abrahang-scale-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
