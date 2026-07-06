@@ -2,6 +2,7 @@
   var STORAGE_KEY = 'abrahang:lastCompletedAt';
   var HISTORY_KEY = 'abrahang:trainingHistory';
   var HISTORY_MIGRATED_KEY = 'abrahang:trainingHistoryMigrated';
+  var HISTORY_ANALYSIS_SELECTION_KEY = 'abrahang:historyAnalysisSelection';
   var BODY_WEIGHT_KEY = 'abrahang:bodyWeightKg';
   var INTENSITY_KEY = 'abrahang:intensityPct';
   var ONE_HAND_KEY = 'abrahang:oneHandMode';
@@ -36,6 +37,21 @@
     middle2OpenTitle: 'abrahang-grip-middle2.png',
     middle2CrimpTitle: 'abrahang-grip-middle2.png'
   };
+  var GRIP_KEY_BY_TITLE = {
+    baseTitle: 'base',
+    videoHalfTitle: 'base',
+    front3Title: 'front3',
+    front2OpenTitle: 'front2',
+    front2CrimpTitle: 'front2',
+    middle2OpenTitle: 'middle2',
+    middle2CrimpTitle: 'middle2'
+  };
+  var ANALYSIS_GRIPS = [
+    { key: 'base', labelKey: 'abrahang.analysisGripBase', fallbackEn: '4 fingers', fallbackKo: '4손가락', color: '#22c55e' },
+    { key: 'front3', labelKey: 'abrahang.analysisGripFront3', fallbackEn: 'Front 3', fallbackKo: '앞 3손가락', color: '#38bdf8' },
+    { key: 'front2', labelKey: 'abrahang.analysisGripFront2', fallbackEn: 'Front 2', fallbackKo: '앞 2손가락', color: '#f59e0b' },
+    { key: 'middle2', labelKey: 'abrahang.analysisGripMiddle2', fallbackEn: 'Middle 2', fallbackKo: '중간 2손가락', color: '#f472b6' }
+  ];
 
   var TEXT = {
     en: {
@@ -237,6 +253,9 @@
     var nextEl = q('#abNextSession');
     var historyList = q('#abHistoryList');
     var historyClear = q('#abHistoryClear');
+    var historyAnalysisStatus = q('#abHistoryAnalysisStatus');
+    var historyAnalysisChart = q('#abHistoryAnalysisChart');
+    var historyAnalysisLegend = q('#abHistoryAnalysisLegend');
     var metricLoad = q('#abMetricLoad');
     var metricRest = q('#abMetricRest');
     var metricReps = q('#abMetricReps');
@@ -261,7 +280,9 @@
       historyLogged: false,
       loadSampleCount: 0,
       maxMeasuredLoadKg: null,
-      lastMeasuredLoadKg: null
+      lastMeasuredLoadKg: null,
+      setResults: [],
+      gripResults: emptyGripResults()
     };
     var scaleDisplayMode = 'foot';
     var scaleState = {
@@ -287,6 +308,198 @@
       statusFallback: 'Not connected',
       statusTone: 'idle'
     };
+
+    function normalizeGripKey(value){
+      var key = String(value || '');
+      for(var i = 0; i < ANALYSIS_GRIPS.length; i++){
+        if(ANALYSIS_GRIPS[i].key === key) return key;
+      }
+      return '';
+    }
+
+    function gripKeyForStep(step){
+      if(!step) return '';
+      return GRIP_KEY_BY_TITLE[step.titleKey] || '';
+    }
+
+    function gripLabel(key){
+      for(var i = 0; i < ANALYSIS_GRIPS.length; i++){
+        if(ANALYSIS_GRIPS[i].key === key){
+          return siteT(
+            ANALYSIS_GRIPS[i].labelKey,
+            lang() === 'en' ? ANALYSIS_GRIPS[i].fallbackEn : ANALYSIS_GRIPS[i].fallbackKo
+          );
+        }
+      }
+      return key;
+    }
+
+    function emptyGripResults(){
+      var out = {};
+      for(var i = 0; i < ANALYSIS_GRIPS.length; i++){
+        var key = ANALYSIS_GRIPS[i].key;
+        out[key] = {
+          gripKey: key,
+          maxLoadKg: null,
+          targetLoadKg: null,
+          achievementPct: null,
+          sampleCount: 0
+        };
+      }
+      return out;
+    }
+
+    function updateAchievementForTarget(result, targetKg){
+      if(!result) return result;
+      result.targetLoadKg = targetKg != null && isFinite(targetKg) ? targetKg : null;
+      result.achievementPct = result.targetLoadKg > 0 && result.maxLoadKg != null && isFinite(result.maxLoadKg)
+        ? result.maxLoadKg / result.targetLoadKg * 100
+        : null;
+      return result;
+    }
+
+    function cleanSetResults(value, targetKg){
+      if(!Array.isArray(value)) return [];
+      var out = [];
+      for(var i = 0; i < value.length; i++){
+        var source = value[i] || {};
+        var index = Number(source.index);
+        if(!isFinite(index) || index < 0) continue;
+        var gripKey = normalizeGripKey(source.gripKey);
+        if(!gripKey && source.titleKey) gripKey = GRIP_KEY_BY_TITLE[source.titleKey] || '';
+        if(!gripKey) continue;
+        var result = {
+          index: Math.floor(index),
+          setNumber: Math.floor(index) + 1,
+          gripKey: gripKey,
+          titleKey: String(source.titleKey || ''),
+          edge: String(source.edge || ''),
+          maxLoadKg: normalizeNumber(source.maxLoadKg),
+          targetLoadKg: normalizeNumber(source.targetLoadKg),
+          achievementPct: normalizeNumber(source.achievementPct),
+          sampleCount: Math.max(0, Math.round(normalizeNumber(source.sampleCount) || 0))
+        };
+        if(targetKg !== undefined) updateAchievementForTarget(result, targetKg);
+        else if(result.achievementPct == null) updateAchievementForTarget(result, result.targetLoadKg);
+        out.push(result);
+      }
+      out.sort(function(a, b){ return a.index - b.index; });
+      return out;
+    }
+
+    function cleanGripResults(value, targetKg){
+      var out = emptyGripResults();
+      if(!value || typeof value !== 'object') return out;
+      for(var i = 0; i < ANALYSIS_GRIPS.length; i++){
+        var key = ANALYSIS_GRIPS[i].key;
+        var source = value[key] || {};
+        out[key] = {
+          gripKey: key,
+          maxLoadKg: normalizeNumber(source.maxLoadKg),
+          targetLoadKg: normalizeNumber(source.targetLoadKg),
+          achievementPct: normalizeNumber(source.achievementPct),
+          sampleCount: Math.max(0, Math.round(normalizeNumber(source.sampleCount) || 0))
+        };
+        if(targetKg !== undefined) updateAchievementForTarget(out[key], targetKg);
+        else if(out[key].achievementPct == null) updateAchievementForTarget(out[key], out[key].targetLoadKg);
+      }
+      return out;
+    }
+
+    function hasGripResultData(results){
+      if(!results) return false;
+      for(var i = 0; i < ANALYSIS_GRIPS.length; i++){
+        var result = results[ANALYSIS_GRIPS[i].key];
+        if(result && result.maxLoadKg != null && isFinite(result.maxLoadKg)) return true;
+      }
+      return false;
+    }
+
+    function gripResultsFromSetResults(setResults, targetKg){
+      var out = emptyGripResults();
+      for(var i = 0; i < setResults.length; i++){
+        var source = setResults[i];
+        if(!source || source.maxLoadKg == null || !isFinite(source.maxLoadKg)) continue;
+        var key = normalizeGripKey(source.gripKey);
+        if(!key) continue;
+        var result = out[key];
+        result.sampleCount += Math.max(0, Math.round(normalizeNumber(source.sampleCount) || 0));
+        if(result.maxLoadKg == null || source.maxLoadKg > result.maxLoadKg) result.maxLoadKg = source.maxLoadKg;
+      }
+      for(var g = 0; g < ANALYSIS_GRIPS.length; g++){
+        updateAchievementForTarget(out[ANALYSIS_GRIPS[g].key], targetKg);
+      }
+      return out;
+    }
+
+    function recordGripLoadSample(loadKg){
+      var current = getCurrentStep();
+      var gripKey = gripKeyForStep(current);
+      if(!gripKey) return;
+      var index = state.stepIndex;
+      if(!state.setResults) state.setResults = [];
+      var result = state.setResults[index];
+      if(!result || result.index !== index){
+        result = {
+          index: index,
+          setNumber: index + 1,
+          gripKey: gripKey,
+          titleKey: current ? current.titleKey : '',
+          edge: current && current.edge ? current.edge : '',
+          maxLoadKg: null,
+          targetLoadKg: null,
+          achievementPct: null,
+          sampleCount: 0
+        };
+        state.setResults[index] = result;
+      }
+      result.sampleCount += 1;
+      if(result.maxLoadKg == null || loadKg > result.maxLoadKg) result.maxLoadKg = loadKg;
+      if(!state.gripResults) state.gripResults = emptyGripResults();
+      var gripResult = state.gripResults[gripKey];
+      if(!gripResult){
+        gripResult = { gripKey: gripKey, maxLoadKg: null, targetLoadKg: null, achievementPct: null, sampleCount: 0 };
+        state.gripResults[gripKey] = gripResult;
+      }
+      gripResult.sampleCount += 1;
+      if(gripResult.maxLoadKg == null || loadKg > gripResult.maxLoadKg) gripResult.maxLoadKg = loadKg;
+    }
+
+    function finalizedSetResults(targetKg){
+      var out = [];
+      for(var i = 0; i < state.protocol.steps.length; i++){
+        if(!state.setResults[i]) continue;
+        var step = state.protocol.steps[i];
+        var result = {
+          index: i,
+          setNumber: i + 1,
+          gripKey: gripKeyForStep(step),
+          titleKey: step ? step.titleKey : '',
+          edge: step && step.edge ? step.edge : '',
+          maxLoadKg: normalizeNumber(state.setResults[i].maxLoadKg),
+          targetLoadKg: null,
+          achievementPct: null,
+          sampleCount: Math.max(0, Math.round(normalizeNumber(state.setResults[i].sampleCount) || 0))
+        };
+        updateAchievementForTarget(result, targetKg);
+        out.push(result);
+      }
+      return out;
+    }
+
+    function finalizedGripResults(targetKg){
+      var out = emptyGripResults();
+      var source = state.gripResults || {};
+      for(var i = 0; i < ANALYSIS_GRIPS.length; i++){
+        var key = ANALYSIS_GRIPS[i].key;
+        var result = out[key];
+        var original = source[key] || {};
+        result.maxLoadKg = normalizeNumber(original.maxLoadKg);
+        result.sampleCount = Math.max(0, Math.round(normalizeNumber(original.sampleCount) || 0));
+        updateAchievementForTarget(result, targetKg);
+      }
+      return out;
+    }
 
     function protocolTotalMs(protocol){
       var steps = protocol.steps.length;
@@ -450,6 +663,8 @@
       state.loadSampleCount = 0;
       state.maxMeasuredLoadKg = null;
       state.lastMeasuredLoadKg = null;
+      state.setResults = [];
+      state.gripResults = emptyGripResults();
     }
 
     function resetScalePeakLoad(){
@@ -473,6 +688,7 @@
       if(state.maxMeasuredLoadKg == null || loadKg > state.maxMeasuredLoadKg){
         state.maxMeasuredLoadKg = loadKg;
       }
+      recordGripLoadSample(loadKg);
     }
 
     function emptyScaleText(){
@@ -1047,13 +1263,19 @@
         var mode = item.mode === 'video' ? 'video' : 'paper';
         var id = String(item.id || '');
         if(!/^[A-Za-z0-9_-]+$/.test(id)) id = makeHistoryId();
+        var targetLoad = normalizeNumber(item.targetLoadKg);
+        var setResults = cleanSetResults(item.setResults);
+        var gripResults = cleanGripResults(item.gripResults);
+        if(!hasGripResultData(gripResults) && setResults.length) gripResults = gripResultsFromSetResults(setResults, targetLoad);
         items.push({
           id: id,
           mode: mode,
           completedAt: completedAt,
           intensityPct: normalizeNumber(item.intensityPct),
-          targetLoadKg: normalizeNumber(item.targetLoadKg),
+          targetLoadKg: targetLoad,
           maxLoadKg: normalizeNumber(item.maxLoadKg),
+          setResults: setResults,
+          gripResults: gripResults,
           legacy: !!item.legacy
         });
       }
@@ -1147,6 +1369,255 @@
       return item.maxLoadKg / item.targetLoadKg * 100;
     }
 
+    function readAnalysisSelection(){
+      var raw = '[]';
+      try { raw = localStorage.getItem(HISTORY_ANALYSIS_SELECTION_KEY) || '[]'; } catch(e){ raw = '[]'; }
+      var parsed = [];
+      try { parsed = JSON.parse(raw); } catch(e){ parsed = []; }
+      if(!Array.isArray(parsed)) parsed = [];
+      var selected = {};
+      for(var i = 0; i < parsed.length; i++){
+        var id = String(parsed[i] || '');
+        if(/^[A-Za-z0-9_-]+$/.test(id)) selected[id] = true;
+      }
+      return selected;
+    }
+
+    function saveAnalysisSelection(selected){
+      var ids = [];
+      for(var id in selected){
+        if(Object.prototype.hasOwnProperty.call(selected, id) && selected[id]) ids.push(id);
+      }
+      try { localStorage.setItem(HISTORY_ANALYSIS_SELECTION_KEY, JSON.stringify(ids.slice(0, HISTORY_LIMIT))); } catch(e){ /* ignore */ }
+    }
+
+    function clearAnalysisSelection(){
+      try { localStorage.removeItem(HISTORY_ANALYSIS_SELECTION_KEY); } catch(e){ /* ignore */ }
+    }
+
+    function setAnalysisSelection(id, enabled){
+      var selected = readAnalysisSelection();
+      if(enabled) selected[id] = true;
+      else delete selected[id];
+      saveAnalysisSelection(selected);
+    }
+
+    function removeAnalysisSelection(id){
+      var selected = readAnalysisSelection();
+      if(!selected[id]) return;
+      delete selected[id];
+      saveAnalysisSelection(selected);
+    }
+
+    function selectedHistoryForAnalysis(history){
+      var selected = readAnalysisSelection();
+      var out = [];
+      for(var i = 0; i < history.length; i++){
+        if(selected[history[i].id]) out.push(history[i]);
+      }
+      out.sort(function(a, b){ return a.completedAt - b.completedAt; });
+      return out;
+    }
+
+    function formatShortDateTime(ms){
+      try{
+        return new Date(ms).toLocaleString(lang() === 'en' ? 'en-US' : 'ko-KR', {
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }catch(e){ return '-'; }
+    }
+
+    function analysisPoint(item, gripKey){
+      if(!item || !item.gripResults) return null;
+      var result = item.gripResults[gripKey];
+      if(!result) return null;
+      var maxLoad = normalizeNumber(result.maxLoadKg);
+      if(maxLoad == null) return null;
+      var pct = normalizeNumber(result.achievementPct);
+      if(pct == null && item.targetLoadKg > 0) pct = maxLoad / item.targetLoadKg * 100;
+      return {
+        maxLoadKg: maxLoad,
+        achievementPct: pct
+      };
+    }
+
+    function resizeAnalysisCanvas(){
+      if(!historyAnalysisChart) return null;
+      var cssWidth = Math.max(320, Math.floor(historyAnalysisChart.clientWidth || 640));
+      var cssHeight = Math.max(300, Math.floor(historyAnalysisChart.clientHeight || 360));
+      var dpr = Math.max(1, window.devicePixelRatio || 1);
+      var pixelWidth = Math.round(cssWidth * dpr);
+      var pixelHeight = Math.round(cssHeight * dpr);
+      if(historyAnalysisChart.width !== pixelWidth) historyAnalysisChart.width = pixelWidth;
+      if(historyAnalysisChart.height !== pixelHeight) historyAnalysisChart.height = pixelHeight;
+      var ctx = historyAnalysisChart.getContext('2d');
+      if(!ctx) return null;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, cssWidth, cssHeight);
+      return { ctx: ctx, width: cssWidth, height: cssHeight };
+    }
+
+    function drawAnalysisAxes(ctx, chart, maxValue, label){
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.16)';
+      ctx.lineWidth = 1;
+      ctx.fillStyle = 'rgba(229,231,235,0.78)';
+      ctx.font = '700 11px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(label, chart.x, chart.y - 8);
+      for(var i = 0; i <= 4; i++){
+        var y = chart.y + chart.h - chart.h * i / 4;
+        ctx.beginPath();
+        ctx.moveTo(chart.x, y);
+        ctx.lineTo(chart.x + chart.w, y);
+        ctx.stroke();
+        var value = Math.round(maxValue * i / 4);
+        ctx.fillText(String(value), 8, y + 4);
+      }
+      ctx.restore();
+    }
+
+    function drawAnalysisSeries(ctx, chart, sessions, gripKey, field, maxValue, color){
+      var started = false;
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      for(var i = 0; i < sessions.length; i++){
+        var point = analysisPoint(sessions[i], gripKey);
+        var value = point ? normalizeNumber(point[field]) : null;
+        if(value == null || !isFinite(value)){
+          started = false;
+          continue;
+        }
+        var x = sessions.length === 1 ? chart.x + chart.w / 2 : chart.x + chart.w * i / (sessions.length - 1);
+        var y = chart.y + chart.h - chart.h * Math.max(0, Math.min(1, value / maxValue));
+        if(!started){
+          ctx.moveTo(x, y);
+          started = true;
+        }else{
+          ctx.lineTo(x, y);
+        }
+      }
+      ctx.stroke();
+      for(var j = 0; j < sessions.length; j++){
+        var dotPoint = analysisPoint(sessions[j], gripKey);
+        var dotValue = dotPoint ? normalizeNumber(dotPoint[field]) : null;
+        if(dotValue == null || !isFinite(dotValue)) continue;
+        var dx = sessions.length === 1 ? chart.x + chart.w / 2 : chart.x + chart.w * j / (sessions.length - 1);
+        var dy = chart.y + chart.h - chart.h * Math.max(0, Math.min(1, dotValue / maxValue));
+        ctx.beginPath();
+        ctx.arc(dx, dy, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawAnalysisEmpty(message){
+      var canvas = resizeAnalysisCanvas();
+      if(!canvas) return;
+      var ctx = canvas.ctx;
+      ctx.save();
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(229,231,235,0.72)';
+      ctx.font = '800 14px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(message, canvas.width / 2, canvas.height / 2);
+      ctx.restore();
+    }
+
+    function renderHistoryAnalysis(history){
+      if(!historyAnalysisChart) return;
+      var sessions = selectedHistoryForAnalysis(history || []);
+      var emptyText = siteT('abrahang.analysisEmpty', lang() === 'en' ? 'No selected sessions' : '체크한 세션 없음');
+      if(!sessions.length){
+        if(historyAnalysisStatus) historyAnalysisStatus.textContent = emptyText;
+        if(historyAnalysisLegend) historyAnalysisLegend.innerHTML = '';
+        drawAnalysisEmpty(emptyText);
+        return;
+      }
+
+      var maxLoad = 0;
+      var maxPct = 100;
+      var pointCount = 0;
+      for(var i = 0; i < sessions.length; i++){
+        for(var g = 0; g < ANALYSIS_GRIPS.length; g++){
+          var point = analysisPoint(sessions[i], ANALYSIS_GRIPS[g].key);
+          if(!point) continue;
+          pointCount += 1;
+          maxLoad = Math.max(maxLoad, point.maxLoadKg);
+          if(point.achievementPct != null && isFinite(point.achievementPct)) maxPct = Math.max(maxPct, point.achievementPct);
+        }
+      }
+
+      var missingText = siteT('abrahang.analysisMissingData', lang() === 'en' ? 'No per-grip measurement data in selected sessions' : '체크한 세션에 그립별 측정 데이터 없음');
+      if(!pointCount){
+        if(historyAnalysisStatus) historyAnalysisStatus.textContent = missingText;
+        if(historyAnalysisLegend) historyAnalysisLegend.innerHTML = '';
+        drawAnalysisEmpty(missingText);
+        return;
+      }
+
+      var countText = siteT('abrahang.analysisSelectedCount', lang() === 'en' ? '{count} sessions selected' : '{count}개 세션 분석 중').replace('{count}', String(sessions.length));
+      if(historyAnalysisStatus) historyAnalysisStatus.textContent = countText;
+      if(historyAnalysisLegend){
+        var legend = '';
+        for(var lg = 0; lg < ANALYSIS_GRIPS.length; lg++){
+          legend += '<span><i style="background:' + ANALYSIS_GRIPS[lg].color + '"></i>' + gripLabel(ANALYSIS_GRIPS[lg].key) + '</span>';
+        }
+        historyAnalysisLegend.innerHTML = legend;
+      }
+
+      var canvas = resizeAnalysisCanvas();
+      if(!canvas) return;
+      var ctx = canvas.ctx;
+      var loadAxisMax = Math.max(5, Math.ceil(maxLoad / 5) * 5);
+      var pctAxisMax = Math.max(100, Math.ceil(maxPct / 25) * 25);
+      var left = 44;
+      var right = 10;
+      var top = 26;
+      var gap = 54;
+      var bottom = 28;
+      var chartHeight = Math.max(86, Math.floor((canvas.height - top - gap - bottom) / 2));
+      var loadChart = { x: left, y: top, w: canvas.width - left - right, h: chartHeight };
+      var pctChart = { x: left, y: top + chartHeight + gap, w: canvas.width - left - right, h: chartHeight };
+
+      ctx.save();
+      ctx.fillStyle = '#101010';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      drawAnalysisAxes(ctx, loadChart, loadAxisMax, siteT('abrahang.analysisMaxLoadAxis', lang() === 'en' ? 'Max load kg' : '최대하중 kg'));
+      drawAnalysisAxes(ctx, pctChart, pctAxisMax, siteT('abrahang.analysisAchievementAxis', lang() === 'en' ? 'Achievement %' : '달성률 %'));
+
+      for(var series = 0; series < ANALYSIS_GRIPS.length; series++){
+        var grip = ANALYSIS_GRIPS[series];
+        drawAnalysisSeries(ctx, loadChart, sessions, grip.key, 'maxLoadKg', loadAxisMax, grip.color);
+        drawAnalysisSeries(ctx, pctChart, sessions, grip.key, 'achievementPct', pctAxisMax, grip.color);
+      }
+
+      ctx.fillStyle = 'rgba(229,231,235,0.66)';
+      ctx.font = '700 10px system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
+      for(var labelIndex = 0; labelIndex < sessions.length; labelIndex++){
+        if(sessions.length > 6 && labelIndex % Math.ceil(sessions.length / 6) !== 0 && labelIndex !== sessions.length - 1) continue;
+        var x = sessions.length === 1 ? pctChart.x + pctChart.w / 2 : pctChart.x + pctChart.w * labelIndex / (sessions.length - 1);
+        if(labelIndex === 0){
+          ctx.textAlign = 'left';
+          x = pctChart.x;
+        }else if(labelIndex === sessions.length - 1){
+          ctx.textAlign = 'right';
+          x = pctChart.x + pctChart.w;
+        }else{
+          ctx.textAlign = 'center';
+        }
+        ctx.fillText(formatShortDateTime(sessions[labelIndex].completedAt), x, canvas.height - 8);
+      }
+      ctx.restore();
+    }
+
     function makeTrainingHistoryRecord(completedAt){
       var bodyKg = parseBodyWeight();
       var targetKg = bodyKg > 0 ? targetLoadKg(bodyKg) : null;
@@ -1158,6 +1629,8 @@
         intensityPct: intensity ? Number(intensity.value) || null : null,
         targetLoadKg: targetKg,
         maxLoadKg: maxLoad,
+        setResults: finalizedSetResults(targetKg),
+        gripResults: finalizedGripResults(targetKg),
         legacy: false
       };
     }
@@ -1180,10 +1653,12 @@
       var history = readTrainingHistory();
       if(history.length === 0){
         historyList.innerHTML = '<div class="abrahang-history-empty">' + siteT('abrahang.historyEmpty', lang() === 'en' ? 'No training history yet.' : '훈련 히스토리가 없습니다.') + '</div>';
+        renderHistoryAnalysis(history);
         return;
       }
       var missingSetting = siteT('abrahang.historySettingMissing', lang() === 'en' ? 'Missing setting' : '설정누락');
       var missingMeasurement = siteT('abrahang.historyMissing', lang() === 'en' ? 'Missing measurement' : '측정누락');
+      var selectedForAnalysis = readAnalysisSelection();
       var html = '';
       for(var i = 0; i < history.length; i++){
         var item = history[i];
@@ -1212,23 +1687,31 @@
         html += '<div><dt>' + siteT('abrahang.historyMaxLoad', lang() === 'en' ? 'Max measured load' : '최대 측정 하중') + '</dt><dd>' + formatHistoryKg(item.maxLoadKg, missingMeasurement) + '</dd></div>';
         html += '<div><dt>' + siteT('abrahang.historyAchievement', lang() === 'en' ? 'Load achievement' : '하중달성률') + '</dt><dd>' + formatHistoryPercent(pct, missingMeasurement) + '</dd></div>';
         html += '</dl>';
+        html += '<label class="abrahang-history-analysis-toggle"><input type="checkbox" data-history-analysis-id="' + item.id + '"' + (selectedForAnalysis[item.id] ? ' checked' : '') + '><span>' + siteT('abrahang.analysisUseSession', lang() === 'en' ? 'Use for result analysis' : '결과분석') + '</span></label>';
         html += '<div class="abrahang-history-actions"><button type="button" class="abrahang-btn ghost" data-history-action="edit">' + siteT('abrahang.historyEdit', lang() === 'en' ? 'Edit' : '편집') + '</button><button type="button" class="abrahang-btn ghost danger" data-history-action="delete">' + siteT('abrahang.historyDelete', lang() === 'en' ? 'Delete' : '삭제') + '</button></div>';
         html += '</div></details>';
         html += '</article>';
       }
       historyList.innerHTML = html;
+      renderHistoryAnalysis(history);
     }
 
     function historyItemFromForm(container, original){
       function field(name){ return container.querySelector('[data-history-field="' + name + '"]'); }
       var maxLoad = normalizeNumber(field('maxLoadKg') && field('maxLoadKg').value);
+      var targetLoad = normalizeNumber(field('targetLoadKg') && field('targetLoadKg').value);
+      var setResults = cleanSetResults(original.setResults, targetLoad);
+      var gripResults = cleanGripResults(original.gripResults, targetLoad);
+      if(!hasGripResultData(gripResults) && setResults.length) gripResults = gripResultsFromSetResults(setResults, targetLoad);
       return {
         id: original.id,
         mode: field('mode') && field('mode').value === 'video' ? 'video' : 'paper',
         completedAt: fromDateTimeLocalValue(field('completedAt') && field('completedAt').value),
         intensityPct: normalizeNumber(field('intensityPct') && field('intensityPct').value),
-        targetLoadKg: normalizeNumber(field('targetLoadKg') && field('targetLoadKg').value),
+        targetLoadKg: targetLoad,
         maxLoadKg: maxLoad,
+        setResults: setResults,
+        gripResults: gripResults,
         legacy: !!original.legacy
       };
     }
@@ -1256,6 +1739,7 @@
         if(window.confirm(siteT('abrahang.historyDeleteConfirm', lang() === 'en' ? 'Delete this training history item?' : '이 훈련 히스토리를 삭제할까요?'))){
           history.splice(index, 1);
           saveTrainingHistory(history);
+          removeAnalysisSelection(id);
           if(editingHistoryId === id) editingHistoryId = null;
           renderHistory();
         }
@@ -1269,10 +1753,18 @@
       }
     }
 
+    function handleHistoryChange(event){
+      var target = event.target;
+      if(!target || !target.matches || !target.matches('[data-history-analysis-id]')) return;
+      setAnalysisSelection(target.getAttribute('data-history-analysis-id'), target.checked);
+      renderHistoryAnalysis(readTrainingHistory());
+    }
+
     function clearTrainingHistory(){
       if(!window.confirm(siteT('abrahang.historyClearConfirm', lang() === 'en' ? 'Delete all training history?' : '훈련 히스토리를 모두 삭제할까요?'))) return;
       saveTrainingHistory([]);
       try { localStorage.setItem(HISTORY_MIGRATED_KEY, '1'); } catch(e){ /* ignore */ }
+      clearAnalysisSelection();
       editingHistoryId = null;
       renderHistory();
     }
@@ -1750,6 +2242,7 @@
     if(scaleConnect) scaleConnect.addEventListener('click', connectScale);
     if(scaleConnectWhc06) scaleConnectWhc06.addEventListener('click', connectWhc06Scale);
     if(historyList) historyList.addEventListener('click', handleHistoryClick);
+    if(historyList) historyList.addEventListener('change', handleHistoryChange);
     if(historyClear) historyClear.addEventListener('click', clearTrainingHistory);
     if(intensity){
       intensity.addEventListener('input', function(){
@@ -1783,11 +2276,15 @@
     if(!loadIntensity()) setDefaultIntensityForMode(state.mode, false);
     migrateLegacyTrainingHistory();
     document.addEventListener('app:lang', function(){ render(); renderHistory(); });
+    document.addEventListener('app:tab', function(event){
+      if(event && event.detail && event.detail.tab === 'abrahang') renderHistoryAnalysis(readTrainingHistory());
+    });
     document.addEventListener('visibilitychange', function(){
       if(document.visibilityState === 'visible') renderNextSession();
     });
     window.addEventListener('focus', renderNextSession);
     window.addEventListener('pageshow', renderNextSession);
+    window.addEventListener('resize', function(){ renderHistoryAnalysis(readTrainingHistory()); });
 
     render();
     renderHistory();

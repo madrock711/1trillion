@@ -2480,6 +2480,64 @@ main {
   gap: 8px;
 }
 
+.abrahang-history-analysis {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.abrahang-history-analysis-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.abrahang-history-analysis-head h4 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.92rem;
+}
+
+.abrahang-history-analysis-head span {
+  color: var(--ab-muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+#abHistoryAnalysisChart {
+  display: block;
+  width: 100%;
+  height: 360px;
+  border-radius: 8px;
+  background: #101010;
+}
+
+.abrahang-analysis-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 8px;
+  color: var(--ab-muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.abrahang-analysis-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.abrahang-analysis-legend i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
 .abrahang-history-empty {
   color: var(--ab-muted);
   font-size: 0.88rem;
@@ -2580,6 +2638,22 @@ main {
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
   font-weight: 850;
+}
+
+.abrahang-history-analysis-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.abrahang-history-analysis-toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--ab-rest);
 }
 
 .abrahang-history-actions {
@@ -2797,6 +2871,18 @@ main {
   .abrahang-history-stats,
   .abrahang-history-edit-grid {
     grid-template-columns: 1fr;
+  }
+
+  .abrahang-history-analysis-head {
+    display: grid;
+  }
+
+  .abrahang-history-analysis-head span {
+    text-align: left;
+  }
+
+  #abHistoryAnalysisChart {
+    height: 320px;
   }
 
   .abrahang-dial {
