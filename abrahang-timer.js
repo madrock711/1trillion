@@ -33,16 +33,16 @@
   var RELOAD_RECOVERY_MAX_ELAPSED_MS = 15000;
   var PRECOUNT_MS = 3000;
   var BEEP_GAIN = 1;
-  var GRIP_IMAGE_VERSION = '20260706-1';
+  var GRIP_IMAGE_VERSION = '20260707-1';
   var GRIP_IMAGE_ROOT = 'assets/images/abrahang-grip-candidates/20260706/';
   var GRIP_IMAGE_BY_TITLE = {
-    baseTitle: 'abrahang-grip-4finger.png',
-    videoHalfTitle: 'abrahang-grip-4finger.png',
-    front3Title: 'abrahang-grip-front3.png',
-    front2OpenTitle: 'abrahang-grip-front2.png',
-    front2CrimpTitle: 'abrahang-grip-front2.png',
-    middle2OpenTitle: 'abrahang-grip-middle2.png',
-    middle2CrimpTitle: 'abrahang-grip-middle2.png'
+    baseTitle: 'abrahang-grip-4finger-display.webp',
+    videoHalfTitle: 'abrahang-grip-4finger-display.webp',
+    front3Title: 'abrahang-grip-front3-display.webp',
+    front2OpenTitle: 'abrahang-grip-front2-display.webp',
+    front2CrimpTitle: 'abrahang-grip-front2-display.webp',
+    middle2OpenTitle: 'abrahang-grip-middle2-display.webp',
+    middle2CrimpTitle: 'abrahang-grip-middle2-display.webp'
   };
   var GRIP_KEY_BY_TITLE = {
     baseTitle: 'base',
@@ -58,6 +58,10 @@
     { key: 'front3', labelKey: 'abrahang.analysisGripFront3', fallbackEn: 'Front 3', fallbackKo: '앞 3손가락', color: '#38bdf8' },
     { key: 'front2', labelKey: 'abrahang.analysisGripFront2', fallbackEn: 'Front 2', fallbackKo: '앞 2손가락', color: '#f59e0b' },
     { key: 'middle2', labelKey: 'abrahang.analysisGripMiddle2', fallbackEn: 'Middle 2', fallbackKo: '중간 2손가락', color: '#f472b6' }
+  ];
+  var HAND_SIDES = [
+    { key: 'left', labelKey: 'abrahang.analysisHandLeft', fallbackEn: 'Left', fallbackKo: '왼손', dash: [5, 4] },
+    { key: 'right', labelKey: 'abrahang.analysisHandRight', fallbackEn: 'Right', fallbackKo: '오른손', dash: [] }
   ];
 
   var TEXT = {
@@ -291,7 +295,8 @@
       maxMeasuredLoadKg: null,
       lastMeasuredLoadKg: null,
       setResults: [],
-      gripResults: emptyGripResults()
+      gripResults: emptyGripResults(),
+      handGripResults: emptyHandGripResults()
     };
     var scaleDisplayMode = 'foot';
     var scaleState = {
@@ -348,6 +353,35 @@
       return key;
     }
 
+    function handLabel(side){
+      var key = normalizeHandSide(side);
+      for(var i = 0; i < HAND_SIDES.length; i++){
+        if(HAND_SIDES[i].key === key){
+          return siteT(
+            HAND_SIDES[i].labelKey,
+            lang() === 'en' ? HAND_SIDES[i].fallbackEn : HAND_SIDES[i].fallbackKo
+          );
+        }
+      }
+      return key;
+    }
+
+    function cleanHandSides(value){
+      var values = Array.isArray(value) ? value : [value];
+      var out = [];
+      for(var i = 0; i < values.length; i++){
+        var raw = String(values[i] || '');
+        if(raw === 'both'){
+          if(out.indexOf('left') < 0) out.push('left');
+          if(out.indexOf('right') < 0) out.push('right');
+          continue;
+        }
+        var side = raw === 'left' ? 'left' : (raw === 'right' ? 'right' : '');
+        if(side && out.indexOf(side) < 0) out.push(side);
+      }
+      return out;
+    }
+
     function emptyGripResults(){
       var out = {};
       for(var i = 0; i < ANALYSIS_GRIPS.length; i++){
@@ -359,6 +393,14 @@
           achievementPct: null,
           sampleCount: 0
         };
+      }
+      return out;
+    }
+
+    function emptyHandGripResults(){
+      var out = {};
+      for(var i = 0; i < HAND_SIDES.length; i++){
+        out[HAND_SIDES[i].key] = emptyGripResults();
       }
       return out;
     }
@@ -382,12 +424,18 @@
         var gripKey = normalizeGripKey(source.gripKey);
         if(!gripKey && source.titleKey) gripKey = GRIP_KEY_BY_TITLE[source.titleKey] || '';
         if(!gripKey) continue;
+        var handSides = cleanHandSides(source.handSides);
+        if(!handSides.length) handSides = cleanHandSides(source.handSide);
+        if(!handSides.length) handSides = ['left', 'right'];
         var result = {
           index: Math.floor(index),
           setNumber: Math.floor(index) + 1,
           gripKey: gripKey,
           titleKey: String(source.titleKey || ''),
           edge: String(source.edge || ''),
+          handSide: handSides.length === 1 ? handSides[0] : 'both',
+          handSides: handSides,
+          oneHandMode: handSides.length === 1,
           maxLoadKg: normalizeNumber(source.maxLoadKg),
           targetLoadKg: normalizeNumber(source.targetLoadKg),
           achievementPct: normalizeNumber(source.achievementPct),
@@ -429,6 +477,32 @@
       return false;
     }
 
+    function hasHandGripResultData(results){
+      if(!results) return false;
+      for(var i = 0; i < HAND_SIDES.length; i++){
+        var sideResults = results[HAND_SIDES[i].key];
+        if(hasGripResultData(sideResults)) return true;
+      }
+      return false;
+    }
+
+    function cleanHandGripResults(value, targetKg, fallbackGripResults){
+      var out = emptyHandGripResults();
+      var hasValue = !!(value && typeof value === 'object');
+      if(hasValue){
+        for(var i = 0; i < HAND_SIDES.length; i++){
+          var side = HAND_SIDES[i].key;
+          out[side] = cleanGripResults(value[side], targetKg);
+        }
+      }
+      if(!hasHandGripResultData(out) && hasGripResultData(fallbackGripResults)){
+        for(var f = 0; f < HAND_SIDES.length; f++){
+          out[HAND_SIDES[f].key] = cleanGripResults(fallbackGripResults, targetKg);
+        }
+      }
+      return out;
+    }
+
     function gripResultsFromSetResults(setResults, targetKg){
       var out = emptyGripResults();
       for(var i = 0; i < setResults.length; i++){
@@ -446,11 +520,52 @@
       return out;
     }
 
+    function handGripResultsFromSetResults(setResults, targetKg){
+      var out = emptyHandGripResults();
+      for(var i = 0; i < setResults.length; i++){
+        var source = setResults[i];
+        if(!source || source.maxLoadKg == null || !isFinite(source.maxLoadKg)) continue;
+        var key = normalizeGripKey(source.gripKey);
+        if(!key) continue;
+        var sides = cleanHandSides(source.handSides);
+        if(!sides.length) sides = cleanHandSides(source.handSide);
+        if(!sides.length) sides = ['left', 'right'];
+        for(var s = 0; s < sides.length; s++){
+          var side = sides[s];
+          var result = out[side] && out[side][key];
+          if(!result) continue;
+          result.sampleCount += Math.max(0, Math.round(normalizeNumber(source.sampleCount) || 0));
+          if(result.maxLoadKg == null || source.maxLoadKg > result.maxLoadKg) result.maxLoadKg = source.maxLoadKg;
+        }
+      }
+      for(var h = 0; h < HAND_SIDES.length; h++){
+        var sideResults = out[HAND_SIDES[h].key];
+        for(var g = 0; g < ANALYSIS_GRIPS.length; g++){
+          updateAchievementForTarget(sideResults[ANALYSIS_GRIPS[g].key], targetKg);
+        }
+      }
+      return out;
+    }
+
+    function updateHandGripLoad(side, gripKey, loadKg){
+      if(!state.handGripResults) state.handGripResults = emptyHandGripResults();
+      var sideResults = state.handGripResults[normalizeHandSide(side)];
+      if(!sideResults) return;
+      var result = sideResults[gripKey];
+      if(!result){
+        result = { gripKey: gripKey, maxLoadKg: null, targetLoadKg: null, achievementPct: null, sampleCount: 0 };
+        sideResults[gripKey] = result;
+      }
+      result.sampleCount += 1;
+      if(result.maxLoadKg == null || loadKg > result.maxLoadKg) result.maxLoadKg = loadKg;
+    }
+
     function recordGripLoadSample(loadKg){
       var current = getCurrentStep();
       var gripKey = gripKeyForStep(current);
       if(!gripKey) return;
       var index = state.stepIndex;
+      var handSides = handSidesForStepIndex(index);
       if(!state.setResults) state.setResults = [];
       var result = state.setResults[index];
       if(!result || result.index !== index){
@@ -460,12 +575,19 @@
           gripKey: gripKey,
           titleKey: current ? current.titleKey : '',
           edge: current && current.edge ? current.edge : '',
+          handSide: handSides.length === 1 ? handSides[0] : 'both',
+          handSides: handSides.slice(),
+          oneHandMode: handSides.length === 1,
           maxLoadKg: null,
           targetLoadKg: null,
           achievementPct: null,
           sampleCount: 0
         };
         state.setResults[index] = result;
+      }else{
+        result.handSide = handSides.length === 1 ? handSides[0] : 'both';
+        result.handSides = handSides.slice();
+        result.oneHandMode = handSides.length === 1;
       }
       result.sampleCount += 1;
       if(result.maxLoadKg == null || loadKg > result.maxLoadKg) result.maxLoadKg = loadKg;
@@ -477,6 +599,9 @@
       }
       gripResult.sampleCount += 1;
       if(gripResult.maxLoadKg == null || loadKg > gripResult.maxLoadKg) gripResult.maxLoadKg = loadKg;
+      for(var s = 0; s < handSides.length; s++){
+        updateHandGripLoad(handSides[s], gripKey, loadKg);
+      }
     }
 
     function finalizedSetResults(targetKg){
@@ -490,11 +615,17 @@
           gripKey: gripKeyForStep(step),
           titleKey: step ? step.titleKey : '',
           edge: step && step.edge ? step.edge : '',
+          handSide: state.setResults[i].handSide || 'both',
+          handSides: cleanHandSides(state.setResults[i].handSides || state.setResults[i].handSide),
+          oneHandMode: !!state.setResults[i].oneHandMode,
           maxLoadKg: normalizeNumber(state.setResults[i].maxLoadKg),
           targetLoadKg: null,
           achievementPct: null,
           sampleCount: Math.max(0, Math.round(normalizeNumber(state.setResults[i].sampleCount) || 0))
         };
+        if(!result.handSides.length) result.handSides = result.handSide === 'both' ? ['left', 'right'] : [normalizeHandSide(result.handSide)];
+        result.handSide = result.handSides.length === 1 ? result.handSides[0] : 'both';
+        result.oneHandMode = result.handSides.length === 1;
         updateAchievementForTarget(result, targetKg);
         out.push(result);
       }
@@ -511,6 +642,24 @@
         result.maxLoadKg = normalizeNumber(original.maxLoadKg);
         result.sampleCount = Math.max(0, Math.round(normalizeNumber(original.sampleCount) || 0));
         updateAchievementForTarget(result, targetKg);
+      }
+      return out;
+    }
+
+    function finalizedHandGripResults(targetKg){
+      var out = emptyHandGripResults();
+      var source = state.handGripResults || {};
+      for(var h = 0; h < HAND_SIDES.length; h++){
+        var side = HAND_SIDES[h].key;
+        var sourceSide = source[side] || {};
+        for(var i = 0; i < ANALYSIS_GRIPS.length; i++){
+          var key = ANALYSIS_GRIPS[i].key;
+          var result = out[side][key];
+          var original = sourceSide[key] || {};
+          result.maxLoadKg = normalizeNumber(original.maxLoadKg);
+          result.sampleCount = Math.max(0, Math.round(normalizeNumber(original.sampleCount) || 0));
+          updateAchievementForTarget(result, targetKg);
+        }
       }
       return out;
     }
@@ -598,6 +747,11 @@
       return safeIndex % 2 === 0 ? preferredHandSide : oppositeHand(preferredHandSide);
     }
 
+    function handSidesForStepIndex(index, oneHandMode){
+      var singleHand = oneHandMode === undefined ? isOneHandMode() : !!oneHandMode;
+      return singleHand ? [handSideForStepIndex(index)] : ['left', 'right'];
+    }
+
     function currentHandTargetIndex(){
       if(state.phase === 'done') return -1;
       if(state.phase === 'rest' && getNextStep()) return state.stepIndex + 1;
@@ -679,6 +833,7 @@
       state.lastMeasuredLoadKg = null;
       state.setResults = [];
       state.gripResults = emptyGripResults();
+      state.handGripResults = emptyHandGripResults();
     }
 
     function resetScalePeakLoad(){
@@ -827,6 +982,7 @@
         lastMeasuredLoadKg: state.lastMeasuredLoadKg,
         setResults: state.setResults || [],
         gripResults: state.gripResults || emptyGripResults(),
+        handGripResults: state.handGripResults || emptyHandGripResults(),
         scaleDisplayMode: scaleDisplayMode,
         scalePeakLoadKg: scaleState.peakLoadKg
       };
@@ -860,6 +1016,7 @@
         state.setResults[cleanedSetResults[r].index] = cleanedSetResults[r];
       }
       state.gripResults = cleanGripResults(payload.gripResults);
+      state.handGripResults = cleanHandGripResults(payload.handGripResults, undefined, state.gripResults);
       scaleDisplayMode = payload.scaleDisplayMode === 'crane' ? 'crane' : 'foot';
       scaleState.peakLoadKg = normalizeNumber(payload.scalePeakLoadKg);
       if(payload.running && state.phase !== 'ready' && state.phase !== 'done'){
@@ -1717,9 +1874,12 @@
         var id = String(item.id || '');
         if(!/^[A-Za-z0-9_-]+$/.test(id)) id = makeHistoryId();
         var targetLoad = normalizeNumber(item.targetLoadKg);
-        var setResults = cleanSetResults(item.setResults);
+        var setResults = cleanSetResults(item.setResults, targetLoad);
         var gripResults = cleanGripResults(item.gripResults);
         if(!hasGripResultData(gripResults) && setResults.length) gripResults = gripResultsFromSetResults(setResults, targetLoad);
+        var handGripResults = cleanHandGripResults(item.handGripResults, targetLoad);
+        if(!hasHandGripResultData(handGripResults) && setResults.length) handGripResults = handGripResultsFromSetResults(setResults, targetLoad);
+        if(!hasHandGripResultData(handGripResults) && hasGripResultData(gripResults)) handGripResults = cleanHandGripResults(null, targetLoad, gripResults);
         items.push({
           id: id,
           mode: mode,
@@ -1729,6 +1889,8 @@
           maxLoadKg: normalizeNumber(item.maxLoadKg),
           setResults: setResults,
           gripResults: gripResults,
+          handGripResults: handGripResults,
+          oneHandMode: !!item.oneHandMode,
           legacy: !!item.legacy
         });
       }
@@ -1822,6 +1984,19 @@
       return item.maxLoadKg / item.targetLoadKg * 100;
     }
 
+    function handMaxLoadKg(item, side){
+      if(!item || !item.handGripResults) return null;
+      var sideResults = item.handGripResults[normalizeHandSide(side)];
+      if(!sideResults) return null;
+      var max = null;
+      for(var i = 0; i < ANALYSIS_GRIPS.length; i++){
+        var value = normalizeNumber(sideResults[ANALYSIS_GRIPS[i].key] && sideResults[ANALYSIS_GRIPS[i].key].maxLoadKg);
+        if(value == null) continue;
+        if(max == null || value > max) max = value;
+      }
+      return max;
+    }
+
     function readAnalysisSelection(){
       var raw = '[]';
       try { raw = localStorage.getItem(HISTORY_ANALYSIS_SELECTION_KEY) || '[]'; } catch(e){ raw = '[]'; }
@@ -1883,9 +2058,11 @@
       }catch(e){ return '-'; }
     }
 
-    function analysisPoint(item, gripKey){
-      if(!item || !item.gripResults) return null;
-      var result = item.gripResults[gripKey];
+    function analysisPoint(item, gripKey, handSide){
+      if(!item) return null;
+      var side = normalizeHandSide(handSide);
+      var result = item.handGripResults && item.handGripResults[side] ? item.handGripResults[side][gripKey] : null;
+      if(!result && !hasHandGripResultData(item.handGripResults) && item.gripResults) result = item.gripResults[gripKey];
       if(!result) return null;
       var maxLoad = normalizeNumber(result.maxLoadKg);
       if(maxLoad == null) return null;
@@ -1933,15 +2110,16 @@
       ctx.restore();
     }
 
-    function drawAnalysisSeries(ctx, chart, sessions, gripKey, field, maxValue, color){
+    function drawAnalysisSeries(ctx, chart, sessions, gripKey, handSide, field, maxValue, color, dash){
       var started = false;
       ctx.save();
       ctx.strokeStyle = color;
       ctx.fillStyle = color;
       ctx.lineWidth = 2.2;
+      if(dash && dash.length) ctx.setLineDash(dash);
       ctx.beginPath();
       for(var i = 0; i < sessions.length; i++){
-        var point = analysisPoint(sessions[i], gripKey);
+        var point = analysisPoint(sessions[i], gripKey, handSide);
         var value = point ? normalizeNumber(point[field]) : null;
         if(value == null || !isFinite(value)){
           started = false;
@@ -1958,7 +2136,7 @@
       }
       ctx.stroke();
       for(var j = 0; j < sessions.length; j++){
-        var dotPoint = analysisPoint(sessions[j], gripKey);
+        var dotPoint = analysisPoint(sessions[j], gripKey, handSide);
         var dotValue = dotPoint ? normalizeNumber(dotPoint[field]) : null;
         if(dotValue == null || !isFinite(dotValue)) continue;
         var dx = sessions.length === 1 ? chart.x + chart.w / 2 : chart.x + chart.w * j / (sessions.length - 1);
@@ -1999,16 +2177,18 @@
       var maxPct = 100;
       var pointCount = 0;
       for(var i = 0; i < sessions.length; i++){
-        for(var g = 0; g < ANALYSIS_GRIPS.length; g++){
-          var point = analysisPoint(sessions[i], ANALYSIS_GRIPS[g].key);
-          if(!point) continue;
-          pointCount += 1;
-          maxLoad = Math.max(maxLoad, point.maxLoadKg);
-          if(point.achievementPct != null && isFinite(point.achievementPct)) maxPct = Math.max(maxPct, point.achievementPct);
+        for(var h = 0; h < HAND_SIDES.length; h++){
+          for(var g = 0; g < ANALYSIS_GRIPS.length; g++){
+            var point = analysisPoint(sessions[i], ANALYSIS_GRIPS[g].key, HAND_SIDES[h].key);
+            if(!point) continue;
+            pointCount += 1;
+            maxLoad = Math.max(maxLoad, point.maxLoadKg);
+            if(point.achievementPct != null && isFinite(point.achievementPct)) maxPct = Math.max(maxPct, point.achievementPct);
+          }
         }
       }
 
-      var missingText = siteT('abrahang.analysisMissingData', lang() === 'en' ? 'No per-grip measurement data in selected sessions' : '체크한 세션에 그립별 측정 데이터 없음');
+      var missingText = siteT('abrahang.analysisMissingData', lang() === 'en' ? 'No per-hand grip measurement data in selected sessions' : '체크한 세션에 손별 그립 측정 데이터 없음');
       if(!pointCount){
         if(historyAnalysisStatus) historyAnalysisStatus.textContent = missingText;
         if(historyAnalysisLegend) historyAnalysisLegend.innerHTML = '';
@@ -2020,8 +2200,11 @@
       if(historyAnalysisStatus) historyAnalysisStatus.textContent = countText;
       if(historyAnalysisLegend){
         var legend = '';
-        for(var lg = 0; lg < ANALYSIS_GRIPS.length; lg++){
-          legend += '<span><i style="background:' + ANALYSIS_GRIPS[lg].color + '"></i>' + gripLabel(ANALYSIS_GRIPS[lg].key) + '</span>';
+        for(var lh = 0; lh < HAND_SIDES.length; lh++){
+          for(var lg = 0; lg < ANALYSIS_GRIPS.length; lg++){
+            var dashClass = HAND_SIDES[lh].dash.length ? ' class="is-dashed"' : '';
+            legend += '<span><i' + dashClass + ' style="--ab-legend-color:' + ANALYSIS_GRIPS[lg].color + ';background:' + ANALYSIS_GRIPS[lg].color + '"></i>' + handLabel(HAND_SIDES[lh].key) + ' ' + gripLabel(ANALYSIS_GRIPS[lg].key) + '</span>';
+          }
         }
         historyAnalysisLegend.innerHTML = legend;
       }
@@ -2046,10 +2229,13 @@
       drawAnalysisAxes(ctx, loadChart, loadAxisMax, siteT('abrahang.analysisMaxLoadAxis', lang() === 'en' ? 'Max load kg' : '최대하중 kg'));
       drawAnalysisAxes(ctx, pctChart, pctAxisMax, siteT('abrahang.analysisAchievementAxis', lang() === 'en' ? 'Achievement %' : '달성률 %'));
 
-      for(var series = 0; series < ANALYSIS_GRIPS.length; series++){
-        var grip = ANALYSIS_GRIPS[series];
-        drawAnalysisSeries(ctx, loadChart, sessions, grip.key, 'maxLoadKg', loadAxisMax, grip.color);
-        drawAnalysisSeries(ctx, pctChart, sessions, grip.key, 'achievementPct', pctAxisMax, grip.color);
+      for(var sideIndex = 0; sideIndex < HAND_SIDES.length; sideIndex++){
+        var hand = HAND_SIDES[sideIndex];
+        for(var series = 0; series < ANALYSIS_GRIPS.length; series++){
+          var grip = ANALYSIS_GRIPS[series];
+          drawAnalysisSeries(ctx, loadChart, sessions, grip.key, hand.key, 'maxLoadKg', loadAxisMax, grip.color, hand.dash);
+          drawAnalysisSeries(ctx, pctChart, sessions, grip.key, hand.key, 'achievementPct', pctAxisMax, grip.color, hand.dash);
+        }
       }
 
       ctx.fillStyle = 'rgba(229,231,235,0.66)';
@@ -2075,6 +2261,11 @@
       var bodyKg = parseBodyWeight();
       var targetKg = bodyKg > 0 ? targetLoadKg(bodyKg) : null;
       var maxLoad = state.loadSampleCount > 0 ? state.maxMeasuredLoadKg : null;
+      var setResults = finalizedSetResults(targetKg);
+      var gripResults = finalizedGripResults(targetKg);
+      var handGripResults = finalizedHandGripResults(targetKg);
+      if(!hasHandGripResultData(handGripResults) && setResults.length) handGripResults = handGripResultsFromSetResults(setResults, targetKg);
+      if(!hasHandGripResultData(handGripResults) && hasGripResultData(gripResults)) handGripResults = cleanHandGripResults(null, targetKg, gripResults);
       return {
         id: makeHistoryId(),
         mode: state.mode === 'video' ? 'video' : 'paper',
@@ -2082,8 +2273,10 @@
         intensityPct: intensity ? Number(intensity.value) || null : null,
         targetLoadKg: targetKg,
         maxLoadKg: maxLoad,
-        setResults: finalizedSetResults(targetKg),
-        gripResults: finalizedGripResults(targetKg),
+        setResults: setResults,
+        gripResults: gripResults,
+        handGripResults: handGripResults,
+        oneHandMode: isOneHandMode(),
         legacy: false
       };
     }
@@ -2138,6 +2331,8 @@
         html += '<dl class="abrahang-history-stats">';
         html += '<div><dt>' + siteT('abrahang.historyTargetSetting', lang() === 'en' ? 'Target setting' : '목표 설정') + '</dt><dd>' + formatTargetSetting(item, missingSetting) + '</dd></div>';
         html += '<div><dt>' + siteT('abrahang.historyMaxLoad', lang() === 'en' ? 'Max measured load' : '최대 측정 하중') + '</dt><dd>' + formatHistoryKg(item.maxLoadKg, missingMeasurement) + '</dd></div>';
+        html += '<div><dt>' + siteT('abrahang.historyLeftMaxLoad', lang() === 'en' ? 'Left max load' : '왼손 최대 하중') + '</dt><dd>' + formatHistoryKg(handMaxLoadKg(item, 'left'), missingMeasurement) + '</dd></div>';
+        html += '<div><dt>' + siteT('abrahang.historyRightMaxLoad', lang() === 'en' ? 'Right max load' : '오른손 최대 하중') + '</dt><dd>' + formatHistoryKg(handMaxLoadKg(item, 'right'), missingMeasurement) + '</dd></div>';
         html += '<div><dt>' + siteT('abrahang.historyAchievement', lang() === 'en' ? 'Load achievement' : '하중달성률') + '</dt><dd>' + formatHistoryPercent(pct, missingMeasurement) + '</dd></div>';
         html += '</dl>';
         html += '<label class="abrahang-history-analysis-toggle"><input type="checkbox" data-history-analysis-id="' + item.id + '"' + (selectedForAnalysis[item.id] ? ' checked' : '') + '><span>' + siteT('abrahang.analysisUseSession', lang() === 'en' ? 'Use for result analysis' : '결과분석') + '</span></label>';
@@ -2156,6 +2351,9 @@
       var setResults = cleanSetResults(original.setResults, targetLoad);
       var gripResults = cleanGripResults(original.gripResults, targetLoad);
       if(!hasGripResultData(gripResults) && setResults.length) gripResults = gripResultsFromSetResults(setResults, targetLoad);
+      var handGripResults = cleanHandGripResults(original.handGripResults, targetLoad);
+      if(!hasHandGripResultData(handGripResults) && setResults.length) handGripResults = handGripResultsFromSetResults(setResults, targetLoad);
+      if(!hasHandGripResultData(handGripResults) && hasGripResultData(gripResults)) handGripResults = cleanHandGripResults(null, targetLoad, gripResults);
       return {
         id: original.id,
         mode: field('mode') && field('mode').value === 'video' ? 'video' : 'paper',
@@ -2165,6 +2363,8 @@
         maxLoadKg: maxLoad,
         setResults: setResults,
         gripResults: gripResults,
+        handGripResults: handGripResults,
+        oneHandMode: !!original.oneHandMode,
         legacy: !!original.legacy
       };
     }
