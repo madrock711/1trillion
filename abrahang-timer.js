@@ -21,9 +21,10 @@
   var WHC06_NAME_PREFIX = 'IF_B7';
   var WHC06_WEIGHT_OFFSET = 10;
   var WHC06_MANUAL_FIRST_PACKET_MS = 20000;
+  var WHC06_RESUME_FIRST_PACKET_MS = 18000;
   var WHC06_STALE_MS = 90000;
-  var WHC06_RESTART_GAP_MS = 250;
-  var WHC06_UNWATCH_TIMEOUT_MS = 1500;
+  var WHC06_RESTART_GAP_MS = 650;
+  var WHC06_UNWATCH_TIMEOUT_MS = 8000;
   var PRECOUNT_MS = 3000;
   var BEEP_GAIN = 1;
   var GRIP_IMAGE_VERSION = '20260706-1';
@@ -905,24 +906,41 @@
     }
 
     function stopWhc06AdvertisementWatch(device, timeoutMs){
-      if(!device || typeof device.unwatchAdvertisements !== 'function') return Promise.resolve();
+      if(!device || typeof device.unwatchAdvertisements !== 'function') return Promise.resolve(true);
       try{
         var result = device.unwatchAdvertisements();
         if(result && typeof result.then === 'function'){
           if(timeoutMs){
             return Promise.race([
-              result.catch(function(){}),
-              waitMs(timeoutMs)
+              result.then(function(){ return true; }).catch(function(){ return true; }),
+              waitMs(timeoutMs).then(function(){ return false; })
             ]);
           }
-          return result.catch(function(){});
+          return result.then(function(){ return true; }).catch(function(){ return true; });
         }
       }catch(e){ /* ignore */ }
-      return Promise.resolve();
+      return Promise.resolve(true);
     }
 
     function isWhc06Device(device){
       return !!(device && device.name && device.name.indexOf(WHC06_NAME_PREFIX) === 0);
+    }
+
+    function isSameBluetoothDevice(a, b){
+      if(!a || !b) return false;
+      if(a === b) return true;
+      return !!(a.id && b.id && a.id === b.id);
+    }
+
+    async function findGrantedWhc06Device(selectedDevice){
+      if(!navigator.bluetooth || typeof navigator.bluetooth.getDevices !== 'function') return selectedDevice;
+      try{
+        var devices = await navigator.bluetooth.getDevices();
+        for(var i = 0; i < devices.length; i++){
+          if(isWhc06Device(devices[i]) && isSameBluetoothDevice(devices[i], selectedDevice)) return devices[i];
+        }
+      }catch(e){ /* getDevices is optional; keep the selected wrapper. */ }
+      return selectedDevice;
     }
 
     async function startWhc06DeviceWatch(device, options){
@@ -962,6 +980,43 @@
         options.statusFallback || (lang() === 'en' ? 'WH-C06 selected. Waiting for advertisement data.' : 'WH-C06 선택됨. 광고 데이터 수신 대기 중'),
         options.statusTone || 'waiting'
       );
+    }
+
+    async function refreshWhc06AdvertisementWatch(reason){
+      if(scaleState.connecting || scaleState.connectionType !== 'whc06' || !scaleState.device) return;
+      if(typeof scaleState.device.watchAdvertisements !== 'function') return;
+      var device = scaleState.device;
+      var generation = scaleState.watchGeneration;
+      try{
+        attachWhc06AdvertisementHandler(device);
+        await device.watchAdvertisements();
+      }catch(e){
+        if(!isAlreadyWatchingError(e)) return;
+      }
+      if(scaleState.device !== device || scaleState.watchGeneration !== generation) return;
+      scaleState.watchStale = false;
+      resetWhc06PacketTimeout();
+      setWhc06FirstPacketTimeout(
+        WHC06_RESUME_FIRST_PACKET_MS,
+        'abrahang.scaleStatusWhc06ResumeNoPacket',
+        lang() === 'en'
+          ? 'Chrome returned, but no WH-C06 packets arrived. Use WH-C06 rescan.'
+          : 'Chrome 복귀 후 WH-C06 패킷이 들어오지 않습니다. WH-C06 새로 스캔을 누르세요.'
+      );
+      setScaleStatus(
+        'abrahang.scaleStatusWhc06Resume',
+        reason === 'pageshow'
+          ? (lang() === 'en' ? 'Page restored. Checking WH-C06 packets.' : '페이지 복귀. WH-C06 수신을 다시 확인 중')
+          : (lang() === 'en' ? 'Chrome returned. Checking WH-C06 packets.' : 'Chrome 복귀. WH-C06 수신을 다시 확인 중'),
+        'waiting'
+      );
+    }
+
+    function scheduleWhc06ResumeCheck(reason){
+      if(scaleState.connecting || scaleState.connectionType !== 'whc06' || !scaleState.device) return;
+      window.setTimeout(function(){
+        refreshWhc06AdvertisementWatch(reason);
+      }, 250);
     }
 
     function handleScaleDisconnected(){
@@ -1193,34 +1248,51 @@
         return;
       }
       setScaleDisplayMode('crane');
+      var previousScaleStatus = {
+        key: scaleState.statusKey,
+        fallback: scaleState.statusFallback,
+        tone: scaleState.statusTone
+      };
       scaleState.connecting = true;
       scaleState.connectingType = 'whc06';
       setScaleStatus('abrahang.scaleStatusWhc06Searching', lang() === 'en' ? 'Searching for WH-C06 / IF_B7...' : 'WH-C06 / IF_B7 검색 중...', 'waiting');
       try{
         var previousWhc06Device = scaleState.connectionType === 'whc06' ? scaleState.device : null;
+        var device = await requestWhc06Device();
+        setScaleStatus(
+          'abrahang.scaleStatusWhc06ManualReset',
+          lang() === 'en' ? 'Resetting WH-C06 advertisement watch.' : 'WH-C06 광고 감시를 새로 준비 중',
+          'waiting'
+        );
         await disconnectCurrentScaleAsync({ skipWhc06Unwatch: true });
         scaleState.watchStale = false;
-        var device = await requestWhc06Device();
-        if(previousWhc06Device && previousWhc06Device !== device){
+        if(previousWhc06Device){
           await stopWhc06AdvertisementWatch(previousWhc06Device, WHC06_UNWATCH_TIMEOUT_MS);
           await waitMs(WHC06_RESTART_GAP_MS);
         }
+        device = await findGrantedWhc06Device(device);
         await startWhc06DeviceWatch(device, {
           clearReading: true,
-          forceRestart: true,
+          skipWhc06Unwatch: true,
           firstPacketTimeout: WHC06_MANUAL_FIRST_PACKET_MS,
           firstPacketStatusKey: 'abrahang.scaleStatusWhc06ManualNoPacket',
           firstPacketStatusFallback: lang() === 'en'
-            ? 'WH-C06 was selected again, but no new packets arrived. Turn the scale off and on, then rescan.'
-            : 'WH-C06를 다시 선택했지만 새 패킷이 들어오지 않습니다. 저울 전원을 껐다 켠 뒤 새로 스캔하세요.',
+            ? 'WH-C06 was selected again, but no new packets arrived. Pull the scale once, or press WH-C06 rescan again.'
+            : 'WH-C06를 다시 선택했지만 아직 새 패킷이 들어오지 않습니다. 저울을 한 번 당기거나 WH-C06 새로 스캔을 다시 누르세요.',
           statusKey: 'abrahang.scaleStatusWhc06ManualRestart',
-          statusFallback: lang() === 'en' ? 'WH-C06 selected. Restarting advertisement watch.' : 'WH-C06 선택됨. 광고 감시를 새로 시작 중',
+          statusFallback: lang() === 'en' ? 'WH-C06 selected. Starting a fresh advertisement watch.' : 'WH-C06 선택됨. 광고 감시를 새로 시작 중',
           statusTone: 'waiting'
         });
       }catch(e){
-        await cleanupScaleDevice({ skipWhc06Unwatch: true });
-        scaleState.device = null;
-        scaleState.connectionType = null;
+        if(e && e.name === 'NotFoundError'){
+          scaleState.statusKey = previousScaleStatus.key;
+          scaleState.statusFallback = previousScaleStatus.fallback;
+          scaleState.statusTone = previousScaleStatus.tone;
+        }else{
+          await cleanupScaleDevice({ skipWhc06Unwatch: true });
+          scaleState.device = null;
+          scaleState.connectionType = null;
+        }
         if(e && e.message && e.message.indexOf('watchAdvertisements') !== -1){
           setScaleStatus(
             'abrahang.scaleStatusWhc06Unsupported',
@@ -1229,7 +1301,7 @@
               : 'WH-C06 광고 수신 미지원',
             'error'
           );
-        }else{
+        }else if(!(e && e.name === 'NotFoundError')){
           setScaleStatus('abrahang.scaleStatusError', lang() === 'en' ? 'Scale connection failed.' : '저울 연결에 실패했습니다.', 'error');
         }
       }finally{
@@ -2280,10 +2352,19 @@
       if(event && event.detail && event.detail.tab === 'abrahang') renderHistoryAnalysis(readTrainingHistory());
     });
     document.addEventListener('visibilitychange', function(){
-      if(document.visibilityState === 'visible') renderNextSession();
+      if(document.visibilityState === 'visible'){
+        renderNextSession();
+        scheduleWhc06ResumeCheck('visible');
+      }
     });
-    window.addEventListener('focus', renderNextSession);
-    window.addEventListener('pageshow', renderNextSession);
+    window.addEventListener('focus', function(){
+      renderNextSession();
+      scheduleWhc06ResumeCheck('focus');
+    });
+    window.addEventListener('pageshow', function(){
+      renderNextSession();
+      scheduleWhc06ResumeCheck('pageshow');
+    });
     window.addEventListener('resize', function(){ renderHistoryAnalysis(readTrainingHistory()); });
 
     render();
