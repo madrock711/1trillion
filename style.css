@@ -114,6 +114,11 @@ header nav {
         margin-left: 0;
         justify-content: center;
     }
+
+    .site-overview,
+    .content-page-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 header nav a {
@@ -3228,6 +3233,155 @@ main {
     color: var(--text-secondary);
     line-height: 1.7;
 }
+.site-overview {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.6fr);
+    gap: 1.5rem;
+    align-items: stretch;
+    margin: 1.5rem 0 2rem;
+    padding: 1.4rem;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(32, 32, 32, 0.92), rgba(18, 18, 18, 0.96));
+}
+
+.section-kicker {
+    margin: 0 0 0.4rem;
+    color: var(--accent-color);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.site-overview h2 {
+    margin: 0 0 0.7rem;
+    color: var(--text-primary);
+    font-size: clamp(1.35rem, 3vw, 2rem);
+    line-height: 1.25;
+}
+
+.site-overview p {
+    color: var(--text-secondary);
+    line-height: 1.75;
+}
+
+.site-overview-links {
+    display: grid;
+    gap: 0.7rem;
+    align-content: center;
+}
+
+.site-overview-links a,
+.content-page-card,
+.footer-links a {
+    color: var(--text-primary);
+}
+
+.site-overview-links a {
+    display: block;
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.035);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.site-overview-links a:hover,
+.site-overview-links a:focus-visible,
+.footer-links a:hover,
+.footer-links a:focus-visible {
+    color: var(--accent-color);
+}
+
+.content-page {
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 2rem 20px 4rem;
+}
+
+.content-page-hero {
+    padding: 2rem 0 1.4rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.content-page-hero h1 {
+    margin: 0 0 0.8rem;
+    color: var(--text-primary);
+    font-size: clamp(2rem, 5vw, 3.1rem);
+    line-height: 1.15;
+}
+
+.content-page-hero p,
+.content-page-section p,
+.content-page-section li {
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+
+.content-page-section {
+    padding: 1.4rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.content-page-section h2 {
+    margin: 0 0 0.8rem;
+    color: var(--text-primary);
+    font-size: 1.45rem;
+}
+
+.content-page-section h3 {
+    margin: 1rem 0 0.45rem;
+    color: var(--text-primary);
+}
+
+.content-page-section ul,
+.content-page-section ol {
+    padding-left: 1.2rem;
+}
+
+.content-page-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.content-page-card {
+    display: block;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.035);
+    text-decoration: none;
+}
+
+.content-page-card strong {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--text-primary);
+}
+
+.content-page-card span {
+    display: block;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.content-page-meta {
+    color: #8b8b8b;
+    font-size: 0.92rem;
+}
+
+.content-page-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin: 1rem 0 0;
+}
+
+.content-page-nav a {
+    color: var(--text-secondary);
+}
+
 .guide-graph {
     margin: 1.2rem 0 1.4rem;
     padding: 1rem 1.2rem;
@@ -3528,6 +3682,19 @@ footer {
     color: var(--text-secondary);
     font-size: 0.9rem;
     margin-top: 2rem;
+}
+
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.9rem 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
 }
 
 /* --- Foot Analysis App --- */

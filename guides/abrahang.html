@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아브라행 행보드 타이머 가이드 | 연마</title>
+    <meta name="description" content="아브라행 행보드 타이머의 목표 하중, 한손 모드, 휴식 간격, WH-C06 크레인 저울 기록 방식을 설명합니다.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="https://www.hpmplab.com/guides/abrahang.html">
+    <link rel="stylesheet" href="../style.css?v=20260708-1">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "아브라행 행보드 타이머 가이드",
+      "inLanguage": "ko-KR",
+      "author": {"@type": "Organization", "name": "HPMPLab"},
+      "publisher": {"@type": "Organization", "name": "HPMPLab"},
+      "mainEntityOfPage": "https://www.hpmplab.com/guides/abrahang.html"
+    }
+    </script>
+</head>
+<body>
+    <main class="content-page">
+        <nav class="content-page-nav" aria-label="상단 이동">
+            <a href="../">타이머 열기</a>
+            <a href="./">가이드 목록</a>
+            <a href="../privacy.html">개인정보처리방침</a>
+        </nav>
+        <section class="content-page-hero">
+            <p class="section-kicker">Hangboard loading</p>
+            <h1>아브라행 행보드 타이머 가이드</h1>
+            <p>아브라행은 최대 힘을 시험하는 데드행이 아니라, 발을 바닥에 둔 상태에서 손가락에 낮은 강도의 반복 자극을 주는 방식입니다. 연마의 타이머는 로딩 시간, 휴식, 목표 하중, 한손 교대, 측정 기록을 한 화면에서 관리하도록 만든 도구입니다.</p>
+            <p class="content-page-meta">최종 업데이트: 2026-07-07</p>
+        </section>
+        <section class="content-page-section">
+            <h2>누구에게 필요한가</h2>
+            <p>손가락 힘을 늘리고 싶지만 매번 고강도 맥스행을 하기 부담스러운 클라이머에게 맞습니다. 특히 훈련 강도를 숫자로 낮게 제한하고, 강한 클라이밍 세션과 충분히 분리하려는 사용자를 기준으로 설계했습니다. 손가락, 손목, 팔꿈치 통증이 있는 상태에서 통증을 참고 진행하는 용도는 아닙니다.</p>
+            <p>초보자는 행보드 자체보다 기본 클라이밍 양과 회복 관리가 먼저입니다. 이 타이머는 몸 상태를 평가해 주지 않으므로, 통증이 있거나 부상 이력이 있으면 전문가의 조언을 우선해야 합니다.</p>
+        </section>
+        <section class="content-page-section">
+            <h2>타이머 구조</h2>
+            <ul>
+                <li><strong>Abrahangs 모드:</strong> 10초 로딩과 20초 휴식을 20회 반복합니다.</li>
+                <li><strong>Emil 10분 모드:</strong> 10초 로딩과 50초 휴식을 10회 반복합니다.</li>
+                <li><strong>강도 목표:</strong> 체중의 30~80% 범위에서 설정하며, 기본값은 Abrahangs 50%, Emil 70%입니다.</li>
+                <li><strong>한손 모드:</strong> 표시 목표 하중을 절반으로 나누고, 라운드마다 수행 손을 바꿔 기록합니다.</li>
+            </ul>
+            <p>목표 하중은 “이 정도를 반드시 당겨야 한다”는 명령이 아니라, 너무 세게 당기지 않기 위한 상한선 역할에 가깝습니다. 하중이 들쭉날쭉하거나 통제가 어렵다면 시작하지 않는 것이 낫습니다.</p>
+        </section>
+        <section class="content-page-section">
+            <h2>WH-C06 크레인 저울 기록</h2>
+            <p>크레인 저울을 쓰면 발판 저울처럼 체중에서 남은 무게를 빼지 않아도 됩니다. 연마는 크레인 저울 모드에서 수신된 저울값을 현재 손가락 하중으로 보고, 세트별 피크와 평균 부하를 히스토리에 저장합니다. 한손 모드에서는 왼손과 오른손 데이터를 분리해 분석합니다.</p>
+            <p>Chrome의 Web Bluetooth 광고 수신은 브라우저 포커스와 장치 상태에 영향을 받을 수 있습니다. 그래서 기록은 보조 지표로 보고, 수신이 멈춘 세션은 히스토리에서 측정 누락 또는 낮은 신뢰도의 데이터로 다루는 것이 안전합니다.</p>
+        </section>
+        <section class="content-page-section">
+            <h2>안전 기준</h2>
+            <ol>
+                <li>발은 항상 바닥에 두고, 하중을 쉽게 통제 가능한 상태에서만 시작합니다.</li>
+                <li>가벼운 워밍업 후에 수행합니다.</li>
+                <li>활차가 찌릿하거나 날카로운 통증, 저림, 팔꿈치 통증이 있으면 즉시 중단합니다.</li>
+                <li>강한 클라이밍, 맥스행, 다음 손가락 로딩과는 최소 6시간 이상 간격을 둡니다.</li>
+                <li>숫자 달성보다 반복 가능한 느낌과 다음날 반응을 우선합니다.</li>
+            </ol>
+        </section>
+        <section class="content-page-section">
+            <h2>근거와 한계</h2>
+            <p>이 도구는 2024년 Sports Medicine - Open에 실린 Abrahangs 연구와 결합조직 로딩에 관한 Keith Baar의 설명을 참고해 만들었습니다. 다만 연구는 완벽한 무작위 대조 실험이 아니며, 앱 기록 기반 후향 분석이라는 한계가 있습니다. 그래서 연마는 논문 내용을 과장하지 않고, 낮은 강도와 긴 회복 간격을 지키기 위한 타이머로만 제공합니다.</p>
+            <p>관련 읽을거리: <a href="https://link.springer.com/article/10.1186/s40798-024-00793-7" target="_blank" rel="noopener">Gilmore et al. 2024</a>, <a href="https://link.springer.com/article/10.1007/s40279-017-0719-x" target="_blank" rel="noopener">Baar 2017</a>.</p>
+        </section>
+    </main>
+    <footer class="container">
+        <nav class="footer-links" aria-label="Footer">
+            <a href="../">홈</a><a href="./">가이드</a><a href="../about.html">소개</a><a href="../contact.html">문의</a><a href="../privacy.html">개인정보처리방침</a><a href="../terms.html">이용 약관</a>
+        </nav>
+        <p>© 2026 Grind.app. 모든 권리 보유.</p>
+    </footer>
+</body>
+</html>
