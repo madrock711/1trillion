@@ -753,12 +753,11 @@
 
         function buildUrl(tab){
           try{
-            var u = new URL(window.location.href);
+            var u = new URL(window.location.origin + window.location.pathname);
             u.searchParams.set('tab', tab);
-            u.hash = tab;
             return u.toString();
           }catch(e){
-            return (window.location.origin + window.location.pathname + '?tab=' + tab + '#' + tab);
+            return (window.location.origin + window.location.pathname + '?tab=' + encodeURIComponent(tab));
           }
         }
 
