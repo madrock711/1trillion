@@ -1121,6 +1121,26 @@
         el.textContent = value;
       }
     }
+    labelGuideTables();
+  }
+
+  function labelGuideTables(){
+    var tables = document.querySelectorAll('.guide-details-body table');
+    for (var i = 0; i < tables.length; i++) {
+      var table = tables[i];
+      var headers = Array.prototype.map.call(table.querySelectorAll('thead th'), function(th){
+        return th.textContent.trim();
+      });
+      var rows = table.querySelectorAll('tbody tr');
+      for (var rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+        var cells = rows[rowIndex].children;
+        for (var cellIndex = 0; cellIndex < cells.length; cellIndex++) {
+          if (headers[cellIndex]) {
+            cells[cellIndex].setAttribute('data-label', headers[cellIndex]);
+          }
+        }
+      }
+    }
   }
 
   function setLang(lang){
