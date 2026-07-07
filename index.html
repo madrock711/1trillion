@@ -16,7 +16,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260707-5">
+    <link rel="stylesheet" href="style.css?v=20260707-6">
 </head>
 <body>
     <header>
@@ -887,6 +887,7 @@
                         <div class="abrahang-current">
                             <h3 id="abMoveTitle" data-i18n="abrahang.readyTitle">발을 바닥에 두고 엣지에 손을 올리세요</h3>
                             <p id="abMoveCue" data-i18n="abrahang.readyCue">전완에 약한 긴장만 느껴지는 강도로 시작합니다. 통증이 있으면 시작하지 마세요.</p>
+                            <div class="abrahang-current-sequence" id="abSequenceSummary" aria-label="Today sequence summary" data-i18n="abrahang.sequenceSummaryAria" data-i18n-attr="aria-label"></div>
                         </div>
 
                         <div class="abrahang-controls">
@@ -1027,15 +1028,6 @@
                         </div>
                     </div>
                 </div>
-
-                <section class="abrahang-schedule-panel">
-                    <div class="abrahang-schedule-head">
-                        <h3 data-i18n="abrahang.scheduleTitle">오늘의 순서</h3>
-                        <span id="abProtocolNote" data-i18n="abrahang.protocolPaper">Abrahangs 모드: 18-22mm 엣지, 10초 로딩/20초 휴식, 총 20회</span>
-                    </div>
-                    <ol class="abrahang-steps" id="abSteps"></ol>
-                </section>
-
                 <div class="abrahang-safety abrahang-safety-mobile">
                     <h3 data-i18n="abrahang.safetyTitle">안전 기준</h3>
                     <ul>
@@ -1192,7 +1184,7 @@
     <script src="stopwatch.js?v=20260619-6"></script>
     <script src="sequence-generator.js?v=20260219-1"></script>
     <script src="lottery-generator.js?v=20260703-5"></script>
-    <script src="abrahang-timer.js?v=20260707-3"></script>
+    <script src="abrahang-timer.js?v=20260707-4"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const tabs = document.querySelectorAll('.tab-link');

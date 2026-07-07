@@ -261,6 +261,7 @@
     var countEl = q('#abStepCount');
     var moveTitle = q('#abMoveTitle');
     var moveCue = q('#abMoveCue');
+    var moveSequence = q('#abSequenceSummary');
     var totalBar = q('#abTotalBar');
     var totalRemaining = q('#abTotalRemaining');
     var ringFill = q('#abRingFill');
@@ -268,8 +269,6 @@
     var handGuides = root.querySelectorAll('[data-ab-hand]');
     var handLeftImage = q('#abHandLeftImage');
     var handRightImage = q('#abHandRightImage');
-    var stepsEl = q('#abSteps');
-    var noteEl = q('#abProtocolNote');
     var nextEl = q('#abNextSession');
     var historyList = q('#abHistoryList');
     var historyClear = q('#abHistoryClear');
@@ -288,6 +287,7 @@
     var chromeFlagsCopyTimer = 0;
     var editingHistoryId = null;
     var preferredHandSide = 'right';
+    var sequenceSummaryKey = '';
 
     var state = {
       mode: 'paper',
@@ -2582,6 +2582,27 @@
       return tt(step.cueKey);
     }
 
+    function compactStepText(step){
+      var labels = lang() === 'en' ? {
+        baseTitle: '4 fingers',
+        videoHalfTitle: 'Half crimp',
+        front3Title: 'Front 3 open',
+        front2OpenTitle: 'Front 2 open',
+        middle2OpenTitle: 'Middle 2 open',
+        front2CrimpTitle: 'Front 2 half',
+        middle2CrimpTitle: 'Middle 2 half'
+      } : {
+        baseTitle: '4손가락',
+        videoHalfTitle: '하프',
+        front3Title: '앞3 오픈',
+        front2OpenTitle: '앞2 오픈',
+        middle2OpenTitle: '중간2 오픈',
+        front2CrimpTitle: '앞2 하프',
+        middle2CrimpTitle: '중간2 하프'
+      };
+      return labels[step.titleKey] || stepText(step);
+    }
+
     function getCurrentStep(){
       return state.protocol.steps[state.stepIndex] || null;
     }
@@ -2633,6 +2654,43 @@
       var prefix = String(index + 1) + ' / ' + state.protocol.steps.length;
       var edge = step.edge ? ' · ' + step.edge : '';
       return prefix + ' · ' + stepText(step) + edge + ' - ' + stepCue(step);
+    }
+
+    function renderSequenceSummary(){
+      if(!moveSequence) return;
+      var highlightedIndex = getHighlightedStepIndex();
+      if(state.phase === 'ready') highlightedIndex = 0;
+      var key = [
+        lang(),
+        state.mode,
+        state.phase,
+        state.stepIndex,
+        state.running ? '1' : '0',
+        highlightedIndex
+      ].join('|');
+      if(sequenceSummaryKey === key) return;
+      sequenceSummaryKey = key;
+      moveSequence.innerHTML = '';
+      var groups = groupedSteps();
+      for(var i = 0; i < groups.length; i++){
+        var group = groups[i];
+        var chip = document.createElement('span');
+        chip.className = 'abrahang-sequence-chip';
+        if(highlightedIndex >= group.start && highlightedIndex <= group.end){
+          chip.className += ' is-current';
+          if(state.phase === 'hang' && state.running) chip.className += ' is-loading';
+          if(state.phase === 'ready' || state.phase === 'prestart' || state.phase === 'rest') chip.className += ' is-preview';
+        }
+        if(isGroupDone(group)) chip.className += ' is-done';
+        var range = document.createElement('b');
+        range.textContent = formatStepRange(group.start, group.end);
+        var label = document.createElement('span');
+        label.textContent = compactStepText(group.step);
+        label.title = stepText(group.step);
+        chip.appendChild(range);
+        chip.appendChild(label);
+        moveSequence.appendChild(chip);
+      }
     }
 
     function remainingTotalMs(){
@@ -2765,7 +2823,6 @@
         state.phase = 'hang';
         state.remainingMs = state.protocol.hangMs;
         beep('phase');
-        renderSteps();
         return;
       }
       if(state.phase === 'hang'){
@@ -2776,7 +2833,6 @@
         state.phase = 'rest';
         state.remainingMs = state.protocol.restMs;
         beep('phase');
-        renderSteps();
         return;
       }
       if(state.phase === 'rest'){
@@ -2788,7 +2844,6 @@
         state.phase = 'hang';
         state.remainingMs = state.protocol.hangMs;
         beep('phase');
-        renderSteps();
       }
     }
 
@@ -2811,38 +2866,6 @@
         }
         renderLive();
         rafId = requestAnimationFrame(tick);
-      }
-    }
-
-    function renderSteps(){
-      stepsEl.innerHTML = '';
-      var highlightedIndex = getHighlightedStepIndex();
-      var groups = groupedSteps();
-      for(var i = 0; i < groups.length; i++){
-        var group = groups[i];
-        var step = group.step;
-        var li = document.createElement('li');
-        li.className = 'abrahang-step';
-        if(highlightedIndex >= group.start && highlightedIndex <= group.end){
-          li.className += ' is-current';
-          if(state.phase === 'hang' && state.running) li.className += ' is-loading';
-          if(state.phase === 'rest' || state.phase === 'prestart') li.className += ' is-preview';
-          li.setAttribute('aria-current', 'step');
-        }
-        if(isGroupDone(group)) li.className += ' is-done';
-        var num = document.createElement('span');
-        num.className = 'abrahang-step-num';
-        num.textContent = formatStepRange(group.start, group.end);
-        var body = document.createElement('div');
-        var title = document.createElement('strong');
-        title.textContent = stepText(step);
-        var cue = document.createElement('span');
-        cue.textContent = step.edge ? step.edge + ' - ' + stepCue(step) : stepCue(step);
-        body.appendChild(title);
-        body.appendChild(cue);
-        li.appendChild(num);
-        li.appendChild(body);
-        stepsEl.appendChild(li);
       }
     }
 
@@ -2897,6 +2920,7 @@
         }
       }
       renderHandGuides();
+      renderSequenceSummary();
     }
 
     function renderNextSession(){
@@ -2931,7 +2955,6 @@
       if(metricLoad) metricLoad.textContent = formatShort(state.protocol.hangMs / 1000);
       if(metricRest) metricRest.textContent = formatShort(state.protocol.restMs / 1000);
       if(metricReps) metricReps.textContent = lang() === 'en' ? state.protocol.steps.length + ' reps' : state.protocol.steps.length + '회';
-      if(noteEl) noteEl.textContent = tt(state.protocol.noteKey);
       if(intensityValue && intensity) intensityValue.textContent = intensity.value + '%';
       if(loadTarget && intensity){
         var kg = parseBodyWeight();
@@ -2948,7 +2971,6 @@
         else startBtn.textContent = siteT('abrahang.start', tt('start'));
       }
       renderLive();
-      renderSteps();
       renderNextSession();
     }
 
