@@ -2002,15 +2002,92 @@
       return parts.length ? parts.join(' · ') : missingText;
     }
 
-    function formatHistorySummaryLoad(item, missingText){
-      return item && item.targetLoadKg != null && isFinite(item.targetLoadKg)
-        ? formatHistoryKg(item.targetLoadKg, missingText)
-        : missingText;
-    }
-
     function achievementPct(item){
       if(!item || !(item.targetLoadKg > 0) || !(item.maxLoadKg >= 0)) return null;
       return item.maxLoadKg / item.targetLoadKg * 100;
+    }
+
+    function averageLoadFromSetSamples(item){
+      if(!item || !Array.isArray(item.setResults)) return null;
+      var total = 0;
+      var count = 0;
+      for(var i = 0; i < item.setResults.length; i++){
+        var set = item.setResults[i];
+        if(!set) continue;
+        var setCount = Math.max(0, Math.round(normalizeNumber(set.sampleCount) || 0));
+        var setTotal = normalizeNumber(set.totalLoadKg);
+        if(setCount <= 0 || setTotal == null || setTotal <= 0) continue;
+        total += setTotal;
+        count += setCount;
+      }
+      return count > 0 ? total / count : null;
+    }
+
+    function averageLoadFromGripSamples(item){
+      if(!item || !item.gripResults) return null;
+      var total = 0;
+      var count = 0;
+      for(var i = 0; i < ANALYSIS_GRIPS.length; i++){
+        var result = item.gripResults[ANALYSIS_GRIPS[i].key];
+        if(!result) continue;
+        var sampleCount = Math.max(0, Math.round(normalizeNumber(result.sampleCount) || 0));
+        var sampleTotal = normalizeNumber(result.totalLoadKg);
+        if(sampleCount <= 0 || sampleTotal == null || sampleTotal <= 0) continue;
+        total += sampleTotal;
+        count += sampleCount;
+      }
+      return count > 0 ? total / count : null;
+    }
+
+    function averageLoadFromHandGripSamples(item){
+      if(!item || !item.handGripResults) return null;
+      var total = 0;
+      var count = 0;
+      for(var h = 0; h < HAND_SIDES.length; h++){
+        var sideResults = item.handGripResults[HAND_SIDES[h].key];
+        if(!sideResults) continue;
+        for(var g = 0; g < ANALYSIS_GRIPS.length; g++){
+          var result = sideResults[ANALYSIS_GRIPS[g].key];
+          if(!result) continue;
+          var sampleCount = Math.max(0, Math.round(normalizeNumber(result.sampleCount) || 0));
+          var sampleTotal = normalizeNumber(result.totalLoadKg);
+          if(sampleCount <= 0 || sampleTotal == null || sampleTotal <= 0) continue;
+          total += sampleTotal;
+          count += sampleCount;
+        }
+      }
+      return count > 0 ? total / count : null;
+    }
+
+    function averageLoadFromSetMaxes(item){
+      if(!item || !Array.isArray(item.setResults)) return null;
+      var total = 0;
+      var count = 0;
+      for(var i = 0; i < item.setResults.length; i++){
+        var value = normalizeNumber(item.setResults[i] && item.setResults[i].maxLoadKg);
+        if(value == null) continue;
+        total += value;
+        count += 1;
+      }
+      return count > 0 ? total / count : null;
+    }
+
+    function historyAverageLoad(item){
+      var average = averageLoadFromSetSamples(item);
+      if(average != null) return average;
+      average = averageLoadFromGripSamples(item);
+      if(average != null) return average;
+      average = averageLoadFromHandGripSamples(item);
+      if(average != null) return average;
+      return averageLoadFromSetMaxes(item);
+    }
+
+    function formatHistorySummaryLoad(item, missingSettingText, missingMeasurementText){
+      var targetText = item && item.targetLoadKg != null && isFinite(item.targetLoadKg)
+        ? formatHistoryKg(item.targetLoadKg, missingSettingText)
+        : missingSettingText;
+      var averageText = formatHistoryAverageKg(historyAverageLoad(item), missingMeasurementText);
+      return targetText + ' / ' + averageText;
     }
 
     function handMaxLoadKg(item, side){
@@ -2404,7 +2481,7 @@
         var item = history[i];
         var pct = achievementPct(item);
         var title = protocolHistoryLabel(item.mode);
-        var summaryLoad = formatHistorySummaryLoad(item, missingSetting);
+        var summaryLoad = formatHistorySummaryLoad(item, missingSetting, missingMeasurement);
         if(editingHistoryId === item.id){
           html += '<article class="abrahang-history-item is-editing" data-history-id="' + item.id + '">';
           html += '<div class="abrahang-history-edit-grid">';
