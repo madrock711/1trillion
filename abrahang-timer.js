@@ -2688,6 +2688,14 @@
       return state.protocol.steps[state.stepIndex + 1] || null;
     }
 
+    function isGripChangeStepIndex(index){
+      var steps = state.protocol.steps;
+      if(index <= 0 || index >= steps.length) return false;
+      var previousGrip = gripKeyForStep(steps[index - 1]);
+      var nextGrip = gripKeyForStep(steps[index]);
+      return !!previousGrip && !!nextGrip && previousGrip !== nextGrip;
+    }
+
     function getHighlightedStepIndex(){
       if(state.phase === 'prestart') return 0;
       if(state.phase === 'hang') return state.stepIndex;
@@ -2823,11 +2831,11 @@
         if(audioCtx.state === 'suspended' && audioCtx.resume) audioCtx.resume();
         var now = audioCtx.currentTime;
         var freq = kind === 'done' ? 880 : (kind === 'countdown' ? 560 : 740);
-        function tone(start, duration){
+        function tone(start, duration, toneFreq, type){
           var osc = audioCtx.createOscillator();
           var gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, start);
+          osc.type = type || 'sine';
+          osc.frequency.setValueAtTime(toneFreq || freq, start);
           gain.gain.setValueAtTime(0.0001, start);
           gain.gain.exponentialRampToValueAtTime(BEEP_GAIN, start + 0.03);
           if(duration > 0.2) gain.gain.setValueAtTime(BEEP_GAIN, start + duration - 0.12);
@@ -2840,6 +2848,12 @@
           tone(now, 0.65);
           tone(now + 0.9, 0.65);
           tone(now + 1.8, 1.25);
+          return;
+        }
+        if(kind === 'grip-change'){
+          tone(now, 0.12, 980, 'triangle');
+          tone(now + 0.18, 0.12, 1240, 'triangle');
+          tone(now + 0.38, 0.28, 1080, 'triangle');
           return;
         }
         tone(now, kind === 'countdown' ? 0.14 : 0.26);
@@ -2913,14 +2927,16 @@
         return;
       }
       if(state.phase === 'rest'){
-        state.stepIndex += 1;
+        var nextStepIndex = state.stepIndex + 1;
+        var gripChanged = isGripChangeStepIndex(nextStepIndex);
+        state.stepIndex = nextStepIndex;
         if(state.stepIndex >= state.protocol.steps.length){
           finish();
           return;
         }
         state.phase = 'hang';
         state.remainingMs = state.protocol.hangMs;
-        beep('phase');
+        beep(gripChanged ? 'grip-change' : 'phase');
       }
     }
 
