@@ -152,6 +152,7 @@
         var chakraFrequencyLabel = q('#br-chakra-frequency');
         var chakraButtons = root.querySelectorAll('.br-chakra-node');
         var selectedChakra = 'root';
+        var BREATH_SETTINGS_KEY = 'breathing:settings:v1';
         var audioUnlocked = false;
         var audioCtx = null;
         var masterGainNode = null;
@@ -187,8 +188,8 @@
         }
 
         if (volumeSlider) {
-          volumeSlider.addEventListener('input', updateVolume);
-          volumeSlider.addEventListener('change', updateVolume);
+          volumeSlider.addEventListener('input', function(){ updateVolume(); saveBreathSettings(); });
+          volumeSlider.addEventListener('change', function(){ updateVolume(); saveBreathSettings(); });
           updateVolume();
         }
 
@@ -279,6 +280,7 @@
           selectedChakra = btn.getAttribute('data-chakra') || selectedChakra;
           updateChakraUI();
           updateActiveToneFrequency();
+          saveBreathSettings();
         }
 
         function ensureAudioContext(){
@@ -410,6 +412,57 @@
           if(el) el.value = formatSecInput(value);
         }
 
+        function readBreathSettings(){
+          try{
+            var raw = localStorage.getItem(BREATH_SETTINGS_KEY);
+            if(!raw) return null;
+            var parsed = JSON.parse(raw);
+            return parsed && typeof parsed === 'object' ? parsed : null;
+          }catch(e){
+            return null;
+          }
+        }
+
+        function saveBreathSettings(){
+          try{
+            var payload = {
+              inhaleSec: getInhale(),
+              exhaleSec: getExhale(),
+              syncOn: !!syncOn,
+              autoGrowOn: !!autoGrowOn,
+              autoGrowStepSec: clampAutoGrowStep(autoGrowStepSec),
+              selectedChakra: selectedChakra,
+              volume: getBreathVolume()
+            };
+            localStorage.setItem(BREATH_SETTINGS_KEY, JSON.stringify(payload));
+          }catch(e){ /* ignore storage failures */ }
+        }
+
+        function restoreBreathSettings(){
+          var saved = readBreathSettings();
+          if(!saved) return;
+          var inn = getInEl();
+          var ex = getExEl();
+          if(saved.inhaleSec != null) setSecInput(inn, saved.inhaleSec);
+          if(saved.exhaleSec != null) setSecInput(ex, saved.exhaleSec);
+          syncOn = saved.syncOn !== false;
+          autoGrowOn = saved.autoGrowOn === true;
+          if(saved.autoGrowStepSec != null) autoGrowStepSec = clampAutoGrowStep(saved.autoGrowStepSec);
+          if(saved.selectedChakra){
+            for(var i=0;i<chakraButtons.length;i++){
+              if(chakraButtons[i].getAttribute('data-chakra') === saved.selectedChakra){
+                selectedChakra = saved.selectedChakra;
+                break;
+              }
+            }
+          }
+          if(volumeSlider && saved.volume != null){
+            var volume = Number(saved.volume);
+            if(isFinite(volume)) volumeSlider.value = String(Math.max(0, Math.min(1, volume)));
+            updateVolume();
+          }
+        }
+
         function clampAutoGrowStep(v){
           v = Number(v);
           if(!isFinite(v)) v = AUTO_GROW_MIN_SEC;
@@ -524,11 +577,13 @@
           }else{
             setSecInput(ex, getExhale() + autoGrowStepSec);
           }
+          saveBreathSettings();
         }
 
         function adjustAutoGrowStep(delta){
           autoGrowStepSec = clampAutoGrowStep(autoGrowStepSec + (delta * AUTO_GROW_STEP_DELTA_SEC));
           applyAutoGrowUI();
+          saveBreathSettings();
         }
 
         function updateBubbles(ratio){
@@ -603,20 +658,20 @@
             if(chakraBtn && root.contains(chakraBtn)){ selectChakra(chakraBtn); }
             else if(t.id==='br-start'){ running? pause(): start(); }
             else if(t.id==='br-reset'){ reset(); }
-            else if(t.id==='br-auto'){ autoGrowOn = !autoGrowOn; applyAutoGrowUI(); }
+            else if(t.id==='br-auto'){ autoGrowOn = !autoGrowOn; applyAutoGrowUI(); saveBreathSettings(); }
             else if(t.id==='br-auto-dec'){ adjustAutoGrowStep(-1); }
             else if(t.id==='br-auto-inc'){ adjustAutoGrowStep(+1); }
-            else if(t.id==='br-sync'){ syncOn = !syncOn; applySyncUI(); if(phase==='EXHALE'){ phaseTargetMs = secToMs(getExhale()); } updatePhaseTimeLabels(); }
+            else if(t.id==='br-sync'){ syncOn = !syncOn; applySyncUI(); if(phase==='EXHALE'){ phaseTargetMs = secToMs(getExhale()); } updatePhaseTimeLabels(); saveBreathSettings(); }
             else if(t.id==='br-in-dec'){ var inn=getInEl(); adjustValue(inn, -1); if(syncOn){ var ex=getExEl(); if(ex) ex.value=inn.value; } if(phase==='INHALE'){ phaseTargetMs = secToMs(getInhale()); }
               if(syncOn && phase==='EXHALE'){ phaseTargetMs = secToMs(getExhale()); }
-              updatePhaseTimeLabels(); }
+              updatePhaseTimeLabels(); saveBreathSettings(); }
             else if(t.id==='br-in-inc'){ var inn2=getInEl(); adjustValue(inn2, +1); if(syncOn){ var ex2=getExEl(); if(ex2) ex2.value=inn2.value; } if(phase==='INHALE'){ phaseTargetMs = secToMs(getInhale()); }
               if(syncOn && phase==='EXHALE'){ phaseTargetMs = secToMs(getExhale()); }
-              updatePhaseTimeLabels(); }
+              updatePhaseTimeLabels(); saveBreathSettings(); }
             else if(t.id==='br-ex-dec'){ var exn=getExEl(); adjustValue(exn, -1); if(!syncOn && phase==='EXHALE'){ phaseTargetMs = secToMs(getExhale()); }
-              updatePhaseTimeLabels(); }
+              updatePhaseTimeLabels(); saveBreathSettings(); }
             else if(t.id==='br-ex-inc'){ var exn2=getExEl(); adjustValue(exn2, +1); if(!syncOn && phase==='EXHALE'){ phaseTargetMs = secToMs(getExhale()); }
-              updatePhaseTimeLabels(); }
+              updatePhaseTimeLabels(); saveBreathSettings(); }
           }catch(err){ /* swallow */ }
         }, false);
 
@@ -630,6 +685,7 @@
               if(syncOn && phase==='EXHALE' && t.id==='br-in-sec') phaseTargetMs = secToMs(getExhale());
               if(phase==='EXHALE' && t.id==='br-ex-sec') phaseTargetMs = secToMs(getExhale());
               updatePhaseTimeLabels();
+              saveBreathSettings();
             }
           }catch(err){ /* swallow */ }
         }, false);
@@ -658,7 +714,7 @@
           if(active && active.id !== 'breathing') renderLottoVision(null);
         }, false);
 
-        applySyncUI(); applyAutoGrowUI(); updateChakraUI(); setPhase('INHALE'); if(totalLbl) totalLbl.textContent = '00:00';
+        restoreBreathSettings(); applySyncUI(); applyAutoGrowUI(); updateChakraUI(); setPhase('INHALE'); if(totalLbl) totalLbl.textContent = '00:00';
         renderLottoVision(null);
         applyLanguageState();
       }
