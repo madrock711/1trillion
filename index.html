@@ -1227,15 +1227,35 @@
                 abrahang: 'abrahang-timer.js?v=20260708-1'
             };
             const loadedToolScripts = new Set();
+            const loadingToolScripts = new Set();
+
+            function setToolBusy(target, isBusy) {
+                const panel = document.getElementById(target);
+                if (!panel) return;
+                if (isBusy) panel.setAttribute('aria-busy', 'true');
+                else panel.removeAttribute('aria-busy');
+                panel.inert = isBusy;
+            }
 
             function loadToolScript(target) {
                 const src = toolScripts[target];
-                if (!src || loadedToolScripts.has(target)) return;
-                loadedToolScripts.add(target);
+                if (!src || loadedToolScripts.has(target) || loadingToolScripts.has(target)) return;
+                loadingToolScripts.add(target);
+                setToolBusy(target, true);
                 const script = document.createElement('script');
                 script.src = src;
+                script.addEventListener('load', function () {
+                    loadingToolScripts.delete(target);
+                    loadedToolScripts.add(target);
+                    setToolBusy(target, false);
+                    const panel = document.getElementById(target);
+                    if (panel && panel.classList.contains('active') && !panel.hidden) {
+                        document.dispatchEvent(new CustomEvent('app:tab', { detail: { tab: target, toolReady: true } }));
+                    }
+                });
                 script.addEventListener('error', function () {
-                    loadedToolScripts.delete(target);
+                    loadingToolScripts.delete(target);
+                    setToolBusy(target, false);
                     console.error('Unable to load tool:', target);
                 });
                 document.body.appendChild(script);
