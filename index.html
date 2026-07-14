@@ -1,31 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="page.title">연마</title>
-    <meta name="description" content="Breathing and CO2 table timers with guided training and detailed records." data-i18n="meta.description" data-i18n-attr="content">
+    <title data-i18n="page.title">연마 | 집중 훈련 도구 모음</title>
+    <meta name="description" content="호흡, CO2 테이블, 암벽화 핏 자가 점검, 시퀀스 제작, 로또 6/45 번호 생성, 아브라행 타이머를 브라우저에서 사용하세요." data-i18n="meta.description" data-i18n-attr="content">
     <meta name="robots" content="index,follow">
     <link rel="canonical" href="https://www.hpmplab.com/">
-    <meta property="og:title" content="Timer App" data-i18n="og.title" data-i18n-attr="content">
-    <meta property="og:description" content="Breathing and CO2 table timers with guided training and detailed records." data-i18n="og.description" data-i18n-attr="content">
+    <meta property="og:title" content="연마 | 집중 훈련 도구 모음" data-i18n="og.title" data-i18n-attr="content">
+    <meta property="og:description" content="명확한 조작과 로컬 기록, 안전 가이드를 갖춘 여섯 가지 브라우저 도구입니다." data-i18n="og.description" data-i18n-attr="content">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.hpmplab.com/">
+    <meta property="og:site_name" content="연마">
+    <meta property="og:locale" content="ko_KR">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Timer App" data-i18n="twitter.title" data-i18n-attr="content">
-    <meta name="twitter:description" content="Breathing and CO2 table timers with guided training and detailed records." data-i18n="twitter.description" data-i18n-attr="content">
+    <meta name="twitter:title" content="연마 | 집중 훈련 도구 모음" data-i18n="twitter.title" data-i18n-attr="content">
+    <meta name="twitter:description" content="명확한 조작과 로컬 기록, 안전 가이드를 갖춘 여섯 가지 브라우저 도구입니다." data-i18n="twitter.description" data-i18n-attr="content">
     <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260708-3">
+    <link rel="stylesheet" href="style.css?v=20260714-1">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "연마",
       "url": "https://www.hpmplab.com/",
-      "description": "호흡, CO2 테이블, 아브라행 행보드, 발 분석을 위한 훈련 도구와 사용 가이드를 제공하는 웹사이트입니다.",
+      "description": "호흡, CO2 테이블, 아브라행 행보드, 암벽화 핏 자가 점검과 제작 유틸리티를 제공하는 웹사이트입니다.",
       "inLanguage": "ko-KR",
       "publisher": {
         "@type": "Organization",
@@ -36,20 +38,21 @@
     </script>
 </head>
 <body>
+    <a class="skip-link" href="#timers" data-i18n="a11y.skipToMain">본문으로 건너뛰기</a>
     <header>
         <div class="container">
             <div class="header-left">
-                <a class="home-link" href="/" aria-label="연마 홈으로 이동">
+                <a class="home-link" href="/" aria-label="연마 홈으로 이동" data-i18n="a11y.home" data-i18n-attr="aria-label">
                     <img class="home-link-icon" src="assets/icons/favicon-32x32.png" alt="">
                 </a>
-                <h1 class="header-title" data-i18n="header.title">Grind</h1>
+                <h1 class="header-title" data-i18n="header.title">연마</h1>
                 <nav>
-                    <a href="/" data-i18n="nav.home">Home</a>
-                    <a href="guides/" data-i18n="nav.guides">Guides</a>
-                    <a href="about.html" data-i18n="nav.about">About</a>
-                    <a href="#subscribe" class="button subscribe-button" data-i18n="nav.subscribe">Subscribe</a>
+                    <a href="guides/" data-i18n="nav.guides">가이드</a>
+                    <a href="about.html" data-i18n="nav.about">소개</a>
+                    <a href="#subscribe" class="button subscribe-button" data-i18n="nav.subscribe">구독</a>
                     <div class="language-selector">
-                        <select>
+                        <label class="sr-only" for="site-language" data-i18n="a11y.languageLabel">언어 선택</label>
+                        <select id="site-language">
                             <option value="en">English</option>
                             <option value="ko" selected>한국어</option>
                         </select>
@@ -60,24 +63,24 @@
     </header>
 
     <main class="container" id="timers">
-        <p class="site-intro" data-i18n="site.intro">Focused timers for breath training and CO2 table practice, with clear guidance and exportable records.</p>
-        <div class="tabs">
-            <div class="tab-link active" data-tab="breathing" data-i18n="tabs.breathing">Breathing Timer</div>
-            <div class="tab-link" data-tab="co2" data-i18n="tabs.co2">CO2 Table Timer</div>
-            <div class="tab-link" data-tab="foot" data-i18n="tabs.foot">Foot Analysis</div>
-            <div class="tab-link" data-tab="sequence" data-i18n="tabs.sequence">Sequence Generator</div>
-            <div class="tab-link" data-tab="lottery" data-i18n="tabs.lottery">Lotto Generator</div>
-            <div class="tab-link" data-tab="abrahang" data-i18n="tabs.abrahang">Abrahang Timer</div>
+        <p class="site-intro" data-i18n="site.intro">반복 훈련을 돕는 타이머와 기록 도구를 안전 기준·사용 가이드와 함께 제공합니다.</p>
+        <div class="tabs" role="tablist" aria-label="연마 도구 선택" data-i18n="a11y.tabList" data-i18n-attr="aria-label">
+            <button id="tab-breathing" class="tab-link active" type="button" role="tab" data-tab="breathing" aria-selected="true" aria-controls="breathing" tabindex="0" data-i18n="tabs.breathing">호흡 타이머</button>
+            <button id="tab-co2" class="tab-link" type="button" role="tab" data-tab="co2" aria-selected="false" aria-controls="co2" tabindex="-1" data-i18n="tabs.co2">CO₂ 테이블</button>
+            <button id="tab-foot" class="tab-link" type="button" role="tab" data-tab="foot" aria-selected="false" aria-controls="foot" tabindex="-1" data-i18n="tabs.foot">암벽화 핏 참고</button>
+            <button id="tab-sequence" class="tab-link" type="button" role="tab" data-tab="sequence" aria-selected="false" aria-controls="sequence" tabindex="-1" data-i18n="tabs.sequence">시퀀스 생성기</button>
+            <button id="tab-lottery" class="tab-link" type="button" role="tab" data-tab="lottery" aria-selected="false" aria-controls="lottery" tabindex="-1" data-i18n="tabs.lottery">로또 생성기</button>
+            <button id="tab-abrahang" class="tab-link" type="button" role="tab" data-tab="abrahang" aria-selected="false" aria-controls="abrahang" tabindex="-1" data-i18n="tabs.abrahang">아브라행 타이머</button>
         </div>
 
-        <div id="breathing" class="tab-content active">
+        <div id="breathing" class="tab-content active" role="tabpanel" aria-labelledby="tab-breathing">
             <div class="br-embed" role="region" aria-label="Breath Timer Embed" data-i18n="breath.embed" data-i18n-attr="aria-label">
                 <!-- 1) 구조 (HTML) -->
                 <div class="br-wrapper" aria-label="Inhale–Exhale Breath Trainer" data-i18n="breath.wrapper" data-i18n-attr="aria-label">
                     <div class="tab-head">
-                        <div class="br-title" data-i18n="breath.title">🫁 호흡 트레이너 — 들숨(빨강) / 날숨(파랑)</div>
+                        <h2 class="br-title" data-i18n="breath.title">🫁 호흡 트레이너</h2>
                         <button class="share-btn" type="button" data-share-tab="breathing" aria-label="Copy share link for Breathing Timer" data-i18n="share.aria.breathing" data-i18n-attr="aria-label">
-                            <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" alt="" aria-hidden="true">
+                            <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" width="32" height="32" alt="" aria-hidden="true">
                         </button>
                     </div>
 
@@ -99,7 +102,7 @@
                                 </div>
 
                                 <div class="br-focus-stack">
-                                    <div class="br-circle" data-phase="INHALE" aria-live="polite" aria-atomic="true">
+                                    <div class="br-circle" data-phase="INHALE" role="timer" aria-live="off" aria-label="호흡 타이머" data-i18n="breath.timerAria" data-i18n-attr="aria-label">
                                         <svg class="br-ring" viewBox="0 0 120 120" aria-hidden="true">
                                             <circle class="br-track" cx="60" cy="60" r="52"></circle>
                                             <circle class="br-progress" cx="60" cy="60" r="52"></circle>
@@ -109,7 +112,7 @@
                                         <div class="br-bubble br-bubble-ex"></div>
 
                                         <div class="br-center">
-                                            <div class="br-phase" id="br-phase-label" data-i18n="breath.inhale">들숨</div>
+                                            <div class="br-phase" id="br-phase-label" role="status" aria-live="polite" aria-atomic="true" data-i18n="breath.inhale">들숨</div>
                                             <div class="br-target-time" id="br-target-time">목표 4초</div>
                                             <div class="br-time" id="br-time">4.00</div>
                                         </div>
@@ -128,13 +131,13 @@
                             </div>
 
                             <div class="br-controls">
-                                <button class="br-btn primary" id="br-start" type="button" data-i18n="breath.start">Start</button>
+                                <button class="br-btn primary" id="br-start" type="button" data-i18n="breath.start">시작</button>
                                 <div class="br-auto-control" aria-label="Auto growth amount" data-i18n="breath.autoGrowControl" data-i18n-attr="aria-label">
                                     <button class="br-auto-step" id="br-auto-dec" type="button" aria-label="Decrease auto growth amount" data-i18n="breath.autoGrowDec" data-i18n-attr="aria-label">‹</button>
-                                    <button class="br-btn toggle" id="br-auto" type="button" aria-pressed="false" title="Increase inhale and exhale each round">Auto +0.1s</button>
+                                    <button class="br-btn toggle" id="br-auto" type="button" aria-pressed="false" title="라운드마다 들숨과 날숨 시간 증가">자동 +0.1초</button>
                                     <button class="br-auto-step" id="br-auto-inc" type="button" aria-label="Increase auto growth amount" data-i18n="breath.autoGrowInc" data-i18n-attr="aria-label">›</button>
                                 </div>
-                                <button class="br-btn danger" id="br-reset" type="button" data-i18n="breath.reset">Reset</button>
+                                <button class="br-btn danger" id="br-reset" type="button" data-i18n="breath.reset">초기화</button>
                             </div>
                         </div>
 
@@ -163,7 +166,7 @@
                             <div class="br-note" data-i18n="breath.note" data-i18n-html="true">기본은 1:1 동기화. <b>=</b> (동기화) / <b>≠</b> (개별설정) 버튼으로 전환하세요.</div>
                             <!-- Sync 토글을 안내 글자 아래로 이동 -->
                             <div class="br-row center">
-                                <button id="br-sync" class="br-sync-mini" type="button" aria-pressed="true" title="Sync inhale & exhale" data-i18n="breath.syncTitle" data-i18n-attr="title">=</button>
+                                <button id="br-sync" class="br-sync-mini" type="button" aria-pressed="true" aria-label="들숨/날숨 시간 동기화" title="들숨/날숨 시간 동기화" data-i18n="breath.syncTitle" data-i18n-attr="aria-label">=</button>
                             </div>
                             
                             <div class="br-status">
@@ -174,7 +177,7 @@
                     </div>
 
                     <!-- Total time (no chart / no error log) -->
-                    <div class="br-total" aria-live="polite">
+                    <div class="br-total">
                         <div class="br-total-label" data-i18n="breath.totalLabel">총 시간</div>
                         <div class="br-total-time" id="br-total">00:00</div>
                     </div>
@@ -182,19 +185,19 @@
             </div>
         </div>
 
-        <div id="co2" class="tab-content">
+        <div id="co2" class="tab-content" role="tabpanel" aria-labelledby="tab-co2" hidden>
             <div class="sw-embed" role="region" aria-label="Stopwatch Embed" data-i18n="sw.embed" data-i18n-attr="aria-label">
                 <!-- 1) 구조(HTML) 먼저 -->
                 <div class="clockbox-wrapper">
                     <div class="clockbox" id="sw-root" aria-label="Stopwatch" data-i18n="sw.wrapper" data-i18n-attr="aria-label">
                         <div class="tab-head">
-                            <div class="clockbox-title" data-i18n="sw.title">⏱ CO2 테이블 스톱워치</div>
+                            <h2 class="clockbox-title" data-i18n="sw.title">⏱ CO₂ 테이블 스톱워치</h2>
                             <button class="share-btn" type="button" data-share-tab="co2" aria-label="Copy share link for CO2 Table Timer" data-i18n="share.aria.co2" data-i18n-attr="aria-label">
-                                <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" alt="" aria-hidden="true">
+                                <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" width="32" height="32" alt="" aria-hidden="true">
                             </button>
                         </div>
 
-                        <div id="sw-time" class="sw-time" aria-live="polite">00:00:00.000</div>
+                        <div id="sw-time" class="sw-time" role="timer" aria-live="off" aria-label="CO₂ 테이블 경과 시간" data-i18n="sw.timerAria" data-i18n-attr="aria-label">00:00:00.000</div>
 
                         <div class="sw-controls">
                             <button id="sw-start" class="sw-btn primary" type="button" data-i18n="sw.start">Start</button>
@@ -208,7 +211,7 @@
                                     <button class="sw-step-btn" type="button" data-sw-adjust="hold" data-delta="-5" aria-label="Decrease breath hold by 5 seconds" data-i18n="sw.holdDec" data-i18n-attr="aria-label">-5s</button>
                                     <span class="sw-setting-value is-hold">
                                         <span class="sw-setting-value-label" aria-hidden="true">hold</span>
-                                        <input id="sw-hold-sec" class="sw-setting-input" type="number" inputmode="numeric" min="5" step="5" value="120">
+                                        <input id="sw-hold-sec" class="sw-setting-input" type="number" inputmode="numeric" min="5" step="5" value="120" aria-label="숨참기 시간(초)" data-i18n="sw.holdInputAria" data-i18n-attr="aria-label">
                                     </span>
                                     <button class="sw-step-btn" type="button" data-sw-adjust="hold" data-delta="5" aria-label="Increase breath hold by 5 seconds" data-i18n="sw.holdInc" data-i18n-attr="aria-label">+5s</button>
                                 </div>
@@ -219,7 +222,7 @@
                                     <button class="sw-step-btn" type="button" data-sw-adjust="rest" data-delta="-5" aria-label="Decrease rest by 5 seconds" data-i18n="sw.restDec" data-i18n-attr="aria-label">-5s</button>
                                     <span class="sw-setting-value is-rest">
                                         <span class="sw-setting-value-label" aria-hidden="true">rest</span>
-                                        <input id="sw-rest-sec" class="sw-setting-input" type="number" inputmode="numeric" min="15" step="5" value="120">
+                                        <input id="sw-rest-sec" class="sw-setting-input" type="number" inputmode="numeric" min="15" step="5" value="120" aria-label="휴식 시간(초)" data-i18n="sw.restInputAria" data-i18n-attr="aria-label">
                                     </span>
                                     <button class="sw-step-btn" type="button" data-sw-adjust="rest" data-delta="5" aria-label="Increase rest by 5 seconds" data-i18n="sw.restInc" data-i18n-attr="aria-label">+5s</button>
                                 </div>
@@ -266,18 +269,18 @@
             </div>
         </div>
 
-        <div id="foot" class="tab-content">
-            <section class="foot-app" aria-label="Foot analysis app" data-i18n="foot.appAria" data-i18n-attr="aria-label">
+        <div id="foot" class="tab-content" role="tabpanel" aria-labelledby="tab-foot" hidden>
+            <section class="foot-app" aria-label="Climbing shoe fit estimator" data-i18n="foot.appAria" data-i18n-attr="aria-label">
                 <header class="foot-hero">
                     <div>
-                        <div class="foot-kicker" data-i18n="foot.kicker">발 사진 기반 암벽화 추천</div>
+                        <div class="foot-kicker" data-i18n="foot.kicker">실측값 기반 암벽화 핏 참고</div>
                         <div class="tab-head">
-                            <h2 class="foot-title" data-i18n="foot.title">발분석</h2>
+                            <h2 class="foot-title" data-i18n="foot.title">암벽화 핏 참고</h2>
                             <button class="share-btn" type="button" data-share-tab="foot" aria-label="Copy share link for Foot Analysis" data-i18n="share.aria.foot" data-i18n-attr="aria-label">
-                                <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" alt="" aria-hidden="true">
+                                <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" width="32" height="32" alt="" aria-hidden="true">
                             </button>
                         </div>
-                        <p class="foot-subtitle" data-i18n="foot.subtitle">촬영 → 분석 → 추천까지 3단계로 진행됩니다. 기준 객체(A4/카드)를 함께 촬영해 주세요.</p>
+                        <p class="foot-subtitle" data-i18n="foot.subtitle">직접 잰 발 길이와 자가 체크 항목으로 핏 후보를 정리합니다. 사진은 비교 기록용이며 자동 측정에 사용하지 않습니다.</p>
                     </div>
                     <p class="foot-privacy-line" data-i18n="foot.privacyLine">사진은 기기에서만 처리되며 업로드되지 않습니다.</p>
                 </header>
@@ -285,7 +288,7 @@
                 <div class="foot-grid">
                     <section class="foot-card" id="foot-capture">
                         <div class="foot-card-header">
-                            <h3 data-i18n="foot.captureTitle">1. 촬영 및 업로드</h3>
+                            <h3 data-i18n="foot.captureTitle">1. 사진 기록 (선택)</h3>
                             <div class="foot-controls">
                                 <button class="foot-btn" id="foot-start-camera" type="button" data-i18n="foot.startCamera">카메라 시작</button>
                                 <button class="foot-btn ghost" id="foot-stop-camera" type="button" data-i18n="foot.stopCamera">카메라 종료</button>
@@ -314,6 +317,7 @@
                             </div>
                         </div>
                         <div class="foot-capture-status" id="foot-capture-status" role="status" aria-live="polite" data-i18n="foot.captureIdle">촬영을 시작하세요.</div>
+                        <p class="foot-note" data-i18n="foot.photoRoleNote">현재 버전에서 사진은 좌우·위/옆 모습을 비교해 보는 기록용입니다. 사진 픽셀에서 치수나 아치·발등을 자동 측정하지 않습니다.</p>
                         <ul class="foot-tips">
                             <li data-i18n="foot.tip1">자연광에서 촬영하고 그림자를 최소화하세요.</li>
                             <li data-i18n="foot.tip2">A4 용지나 신용카드가 발 옆에 완전히 보이게 배치하세요.</li>
@@ -329,21 +333,49 @@
 
                     <section class="foot-card" id="foot-analysis">
                         <div class="foot-card-header">
-                            <h3 data-i18n="foot.analysisTitle">2. 측정 및 분석</h3>
+                            <h3 data-i18n="foot.analysisTitle">2. 실측값과 자가 체크 입력</h3>
                             <div class="foot-progress" id="foot-progress">0%</div>
                         </div>
                         <div class="foot-form">
                             <label class="foot-field">
-                                <span data-i18n="foot.scaleObject">기준 객체</span>
-                                <select id="foot-scale">
-                                    <option value="card" data-i18n="foot.scaleCard">신용카드 (85.6mm x 53.98mm)</option>
-                                    <option value="a4" data-i18n="foot.scaleA4">A4 용지 (210mm x 297mm)</option>
-                                    <option value="none" data-i18n="foot.scaleNone">없음 (간이 추정)</option>
+                                <span data-i18n="foot.leftLength">왼발 실측 길이 (mm)</span>
+                                <input id="foot-length-input" type="number" min="200" max="320" inputmode="decimal" placeholder="예: 255">
+                            </label>
+                            <label class="foot-field">
+                                <span data-i18n="foot.rightLength">오른발 실측 길이 (mm)</span>
+                                <input id="foot-right-length-input" type="number" min="200" max="320" inputmode="decimal" placeholder="예: 256">
+                            </label>
+                            <label class="foot-field">
+                                <span data-i18n="foot.selfWidth">발볼 자가 체크</span>
+                                <select id="foot-width-profile">
+                                    <option value="narrow" data-i18n="foot.widthNarrow">좁음</option>
+                                    <option value="normal" data-i18n="foot.widthNormal" selected>보통</option>
+                                    <option value="wide" data-i18n="foot.widthWide">넓음</option>
                                 </select>
                             </label>
                             <label class="foot-field">
-                                <span data-i18n="foot.userLength">직접 입력 길이 (mm)</span>
-                                <input id="foot-length-input" type="number" min="200" max="320" placeholder="예: 255">
+                                <span data-i18n="foot.selfInstep">발등 자가 체크</span>
+                                <select id="foot-instep-profile">
+                                    <option value="low" data-i18n="foot.instepLow">낮음</option>
+                                    <option value="mid" data-i18n="foot.instepMid" selected>중간</option>
+                                    <option value="high" data-i18n="foot.instepHigh">높음</option>
+                                </select>
+                            </label>
+                            <label class="foot-field">
+                                <span data-i18n="foot.selfArch">아치 자가 체크</span>
+                                <select id="foot-arch-profile">
+                                    <option value="flat" data-i18n="foot.archFlat">평발</option>
+                                    <option value="normal" data-i18n="foot.archNormal" selected>보통</option>
+                                    <option value="high" data-i18n="foot.archHigh">높음</option>
+                                </select>
+                            </label>
+                            <label class="foot-field">
+                                <span data-i18n="foot.selfToe">발가락 형태 자가 체크</span>
+                                <select id="foot-toe-profile">
+                                    <option value="egypt" data-i18n="foot.toeEgypt">이집트형</option>
+                                    <option value="greek" data-i18n="foot.toeGreek" selected>그리스형</option>
+                                    <option value="roman" data-i18n="foot.toeRoman">로마형</option>
+                                </select>
                             </label>
                             <label class="foot-field">
                                 <span data-i18n="foot.fitPref">핏 선호도</span>
@@ -382,12 +414,12 @@
                             </label>
                         </div>
                         <div class="foot-actions">
-                            <button class="foot-btn primary" id="foot-analyze-btn" type="button" data-i18n="foot.analyze">분석 시작</button>
+                            <button class="foot-btn primary" id="foot-analyze-btn" type="button" data-i18n="foot.analyze">핏 참고값 계산</button>
                             <button class="foot-btn ghost" id="foot-reset" type="button" data-i18n="foot.reset">초기화</button>
                         </div>
                         <div class="foot-results" id="foot-results">
                             <div class="foot-results-header">
-                                <div class="foot-results-title" data-i18n="foot.resultsTitle">측정 결과</div>
+                                <div class="foot-results-title" data-i18n="foot.resultsTitle">입력값 요약</div>
                                 <div class="foot-results-col" data-i18n="foot.left">왼발</div>
                                 <div class="foot-results-col" data-i18n="foot.right">오른발</div>
                             </div>
@@ -397,7 +429,7 @@
                                 <strong id="foot-result-right-length">-</strong>
                             </div>
                             <div class="foot-result-row">
-                                <span data-i18n="foot.resultWidth">발 너비</span>
+                                <span data-i18n="foot.resultWidth">발볼 자가 체크</span>
                                 <strong id="foot-result-left-width">-</strong>
                                 <strong id="foot-result-right-width">-</strong>
                             </div>
@@ -416,33 +448,28 @@
                                 <strong id="foot-result-left-toe">-</strong>
                                 <strong id="foot-result-right-toe">-</strong>
                             </div>
-                            <div class="foot-result-row">
-                                <span data-i18n="foot.resultBall">발볼 너비</span>
-                                <strong id="foot-result-left-ball">-</strong>
-                                <strong id="foot-result-right-ball">-</strong>
-                            </div>
                         </div>
-                        <div class="foot-note" id="foot-accuracy-note" data-i18n="foot.accuracyNote">정확도: 기준 객체가 있을수록 향상됩니다. 결과는 참고용입니다.</div>
+                        <div class="foot-note" id="foot-accuracy-note" data-i18n="foot.accuracyNote">사진 픽셀을 자동 측정하지 않습니다. 결과는 입력한 실측 길이와 자가 선택을 정리한 참고 정보이며 실제 착화와 제조사 공식표를 우선하세요.</div>
                         <div class="foot-note foot-privacy-note" data-i18n="foot.privacyNote">발 사진은 서버에 저장되지 않으며, 브라우저에서만 처리됩니다.</div>
                     </section>
                 </div>
 
                 <section class="foot-card foot-reco" id="foot-recommendations">
                     <div class="foot-card-header">
-                        <h3 data-i18n="foot.recoTitle">3. 암벽화 추천</h3>
+                        <h3 data-i18n="foot.recoTitle">3. 핏 후보 정리</h3>
                         <div class="foot-actions">
                             <button class="foot-btn ghost" id="foot-save" type="button" data-i18n="foot.save">결과 저장</button>
                             <button class="foot-btn ghost" id="foot-share" type="button" data-i18n="foot.share">요약 복사</button>
                         </div>
                     </div>
                     <div class="foot-reco-grid" id="foot-reco-grid">
-                        <div class="foot-reco-empty" data-i18n="foot.recoEmpty">분석 후 추천이 표시됩니다.</div>
+                        <div class="foot-reco-empty" data-i18n="foot.recoEmpty">실측값 입력 후 참고 항목이 표시됩니다.</div>
                     </div>
                 </section>
 
                 <section class="foot-card foot-history" id="foot-history">
                     <div class="foot-card-header">
-                        <h3 data-i18n="foot.historyTitle">측정 이력</h3>
+                        <h3 data-i18n="foot.historyTitle">핏 참고 이력</h3>
                         <button class="foot-btn ghost" id="foot-clear-history" type="button" data-i18n="foot.clearHistory">이력 삭제</button>
                     </div>
                     <div class="foot-history-list" id="foot-history-list">
@@ -452,12 +479,12 @@
             </section>
         </div>
 
-        <div id="sequence" class="tab-content">
+        <div id="sequence" class="tab-content" role="tabpanel" aria-labelledby="tab-sequence" hidden>
             <section class="sequence-embed" role="region" aria-label="Sequence generator" data-i18n="sequence.appAria" data-i18n-attr="aria-label">
                 <div class="tab-head">
                     <h2 class="sequence-title" data-i18n="sequence.title">시퀀스 생성기</h2>
                     <button class="share-btn" type="button" data-share-tab="sequence" aria-label="Copy share link for Sequence Generator" data-i18n="share.aria.sequence" data-i18n-attr="aria-label">
-                        <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" alt="" aria-hidden="true">
+                        <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" width="32" height="32" alt="" aria-hidden="true">
                     </button>
                 </div>
                 <p class="sequence-subtitle" data-i18n="sequence.subtitle">비디오를 루핑 시퀀스 텍스처로 변환합니다.</p>
@@ -484,7 +511,7 @@
                         <div class="sequence-upload-icon">📁</div>
                         <h3 data-i18n="sequence.uploadTitle">영상 파일을 드래그하거나 클릭하여 업로드</h3>
                         <p data-i18n="sequence.uploadHint">권장: MP4 (H.264 코덱)</p>
-                        <input type="file" id="sequenceVideoInput" accept="video/mp4,video/webm,video/quicktime">
+                        <input type="file" id="sequenceVideoInput" accept="video/mp4,video/webm,video/quicktime" aria-label="시퀀스로 변환할 영상 업로드" data-i18n="sequence.videoUploadAria" data-i18n-attr="aria-label">
                     </div>
 
                     <video id="sequenceVideoPreview" class="sequence-video-preview" controls preload="auto" muted playsinline></video>
@@ -617,7 +644,7 @@
                             </label>
                         </div>
                         <div class="sequence-mask-body" id="sequenceMaskDrop">
-                            <input type="file" id="sequenceMaskInput" accept="image/*">
+                            <input type="file" id="sequenceMaskInput" accept="image/*" aria-label="시퀀스 마스크 이미지 업로드" data-i18n="sequence.maskUploadAria" data-i18n-attr="aria-label">
                             <img id="sequenceMaskPreview" alt="" />
                             <p class="sequence-mask-hint" data-i18n="sequence.maskHint">알파 채널이 있는 PNG를 권장합니다.</p>
                         </div>
@@ -734,7 +761,7 @@
             </section>
         </div>
 
-        <div id="lottery" class="tab-content">
+        <div id="lottery" class="tab-content" role="tabpanel" aria-labelledby="tab-lottery" hidden>
             <section class="lottery-app" role="region" aria-label="Lotto number generator" data-i18n="lottery.appAria" data-i18n-attr="aria-label">
                 <div class="tab-head lottery-head">
                     <div>
@@ -742,7 +769,7 @@
                         <h2 class="lottery-title" data-i18n="lottery.title">로또번호 생성기</h2>
                     </div>
                     <button class="share-btn" type="button" data-share-tab="lottery" aria-label="Copy share link for Lotto Generator" data-i18n="share.aria.lottery" data-i18n-attr="aria-label">
-                        <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" alt="" aria-hidden="true">
+                        <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" width="32" height="32" alt="" aria-hidden="true">
                     </button>
                 </div>
 
@@ -836,7 +863,7 @@
             </section>
         </div>
 
-        <div id="abrahang" class="tab-content">
+        <div id="abrahang" class="tab-content" role="tabpanel" aria-labelledby="tab-abrahang" hidden>
             <section class="abrahang-app" role="region" aria-label="Abrahang hangboard timer" data-i18n="abrahang.appAria" data-i18n-attr="aria-label">
                 <div class="tab-head abrahang-head">
                     <div>
@@ -844,7 +871,7 @@
                         <h2 class="abrahang-title" data-i18n="abrahang.title">아브라행 행보드 타이머</h2>
                     </div>
                     <button class="share-btn" type="button" data-share-tab="abrahang" aria-label="Copy share link for Abrahang Timer" data-i18n="share.aria.abrahang" data-i18n-attr="aria-label">
-                        <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" alt="" aria-hidden="true">
+                        <img class="share-icon-img" src="assets/images/share_btn.png?v=20260213-1" width="32" height="32" alt="" aria-hidden="true">
                     </button>
                 </div>
 
@@ -868,7 +895,7 @@
                 </div>
 
                 <div class="abrahang-grid">
-                    <section class="abrahang-timer-panel" aria-live="polite">
+                    <section class="abrahang-timer-panel">
                         <div class="abrahang-mode-switch" role="group" aria-label="Protocol mode" data-i18n="abrahang.modeAria" data-i18n-attr="aria-label">
                             <button class="abrahang-mode is-active" type="button" data-ab-mode="paper" data-i18n="abrahang.modePaper">Abrahangs</button>
                             <button class="abrahang-mode" type="button" data-ab-mode="video" data-i18n="abrahang.modeVideo">Emil 10분</button>
@@ -889,16 +916,16 @@
                                 <div class="abrahang-ring" aria-hidden="true">
                                     <div class="abrahang-ring-fill" id="abRingFill"></div>
                                 </div>
-                                <div class="abrahang-phase" id="abPhase" data-i18n="abrahang.phaseReady">준비</div>
+                                <div class="abrahang-phase" id="abPhase" role="status" aria-live="polite" aria-atomic="true" data-i18n="abrahang.phaseReady">준비</div>
                                 <div class="abrahang-time" id="abTime">10</div>
                                 <div class="abrahang-step-count" id="abStepCount">0 / 20</div>
                             </div>
                             <div class="abrahang-hand-guides" id="abHandGuides" role="group" aria-label="Hand selection" data-i18n="abrahang.handGuidesAria" data-i18n-attr="aria-label">
                                 <button class="abrahang-hand-guide is-left" type="button" data-ab-hand="left" aria-label="Select left hand" data-i18n="abrahang.handLeftAria" data-i18n-attr="aria-label">
-                                    <img id="abHandLeftImage" src="assets/images/abrahang-grip-candidates/20260706/abrahang-grip-4finger-display.webp?v=20260707-1" alt="">
+                                    <img id="abHandLeftImage" src="assets/images/abrahang-grip-candidates/20260706/abrahang-grip-4finger-display.webp?v=20260707-1" loading="lazy" decoding="async" alt="">
                                 </button>
                                 <button class="abrahang-hand-guide is-right" type="button" data-ab-hand="right" aria-label="Select right hand" data-i18n="abrahang.handRightAria" data-i18n-attr="aria-label">
-                                    <img id="abHandRightImage" src="assets/images/abrahang-grip-candidates/20260706/abrahang-grip-4finger-display.webp?v=20260707-1" alt="">
+                                    <img id="abHandRightImage" src="assets/images/abrahang-grip-candidates/20260706/abrahang-grip-4finger-display.webp?v=20260707-1" loading="lazy" decoding="async" alt="">
                                 </button>
                             </div>
                         </div>
@@ -1000,7 +1027,7 @@
 
                         <div class="abrahang-scale-links">
                             <a class="abrahang-scale-affiliate" href="https://s.click.aliexpress.com/e/_c3rIE6Iv" target="_blank" rel="sponsored noopener">
-                                <img src="https://ae01.alicdn.com/kf/He812a975b96d4227bac4327c39735188b.jpg_80x80.jpg" width="56" height="56" loading="eager" decoding="async" alt="WH-C06 crane scale" data-i18n="abrahang.scaleAffiliateAlt" data-i18n-attr="alt">
+                                <img src="https://ae01.alicdn.com/kf/He812a975b96d4227bac4327c39735188b.jpg_80x80.jpg" width="56" height="56" loading="lazy" decoding="async" fetchpriority="low" referrerpolicy="no-referrer" alt="WH-C06 crane scale" data-i18n="abrahang.scaleAffiliateAlt" data-i18n-attr="alt">
                                 <span>
                                     <strong data-i18n="abrahang.scaleAffiliateTitle">크레인 저울 보기</strong>
                                     <em data-i18n="abrahang.scaleAffiliateNote">제휴 링크 · 새 창 열림</em>
@@ -1064,22 +1091,16 @@
         <h2 class="blog-title" data-i18n="blog.title">App Guide</h2>
         <article class="blog-post" data-tab="breathing">
             <h3 data-i18n="blog.post1.title">Master Your Breath: A Guide to Breathing Training</h3>
-            <p data-i18n="blog.post1.p1">Proper breathing is the foundation of performance, focus, and stress management. Our Breathing Timer is designed to help you cultivate a powerful and efficient breathing practice. By guiding you through controlled inhale and exhale cycles, you can improve your respiratory muscle strength, increase your lung capacity, and learn to control your physiological response to stress.</p>
-            <p data-i18n="blog.post1.p2">Regular practice with the Breathing Timer can lead to a lower resting heart rate, improved cardiovascular health, and a heightened sense of calm and focus. Whether you're an athlete looking to optimize your performance or simply seeking a way to manage daily stress, our Breathing Timer is an essential tool for your wellness journey.</p>
-            <details class="guide-details">
-                <summary data-i18n="blog.post1.readMoreTitle">Read more</summary>
-                <div class="guide-details-body" data-i18n="blog.post1.readMoreHtml" data-i18n-html="blog.post1.readMoreHtml"></div>
-            </details>
+            <p data-i18n="blog.post1.p1">편안한 자세에서 들숨과 날숨의 리듬을 일정하게 맞추는 연습 도구입니다. 짧고 무리 없는 설정으로 시작하세요.</p>
+            <p data-i18n="blog.post1.p2">이완 기법은 스트레스 관리에 도움이 될 수 있지만 의료 치료를 대신하지 않습니다. 어지럽거나 불편하면 즉시 멈추세요.</p>
+            <a class="button guide-page-button" href="guides/breathing.html" data-i18n="blog.openGuide">전체 가이드 보기</a>
             <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
         </article>
         <article class="blog-post" data-tab="breathing">
             <h3 data-i18n="blog.post5.title">Chakra Frequencies for Breath Timer Practice</h3>
             <p data-i18n="blog.post5.p1">The Breathing Timer can pair each session with a chakra frequency so the sound becomes a simple anchor for attention.</p>
             <p data-i18n="blog.post5.p2">Use these frequencies as a modern sound-healing map, not as fixed medical or traditional scripture values.</p>
-            <details class="guide-details">
-                <summary data-i18n="blog.post5.readMoreTitle">Read more</summary>
-                <div class="guide-details-body" data-i18n="blog.post5.readMoreHtml" data-i18n-html="blog.post5.readMoreHtml"></div>
-            </details>
+            <a class="button guide-page-button" href="guides/breathing.html" data-i18n="blog.openGuide">전체 가이드 보기</a>
             <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
         </article>
         <article class="blog-post" data-tab="co2">
@@ -1087,8 +1108,8 @@
                 <a class="guide-title-link" href="https://alien711.tistory.com/entry/freediving-co2-table-training" target="_blank" rel="noopener" data-i18n="blog.post2.title">Push Your Limits with CO2 Table Training</a>
                 <span class="guide-title-icon" aria-hidden="true">↗</span>
             </h3>
-            <p data-i18n="blog.post2.p1">For athletes looking to gain a serious competitive edge, CO2 Table Training is a game-changer. This advanced technique involves a series of timed breath holds and recoveries, designed to improve your body's tolerance to carbon dioxide and the efficiency of your oxygen utilization.</p>
-            <p data-i18n="blog.post2.p2">Our CO2 Table Timer guides you through these challenging workouts with precision. By systematically increasing the duration of your breath holds, you train your body to perform better under the demanding conditions of high-intensity exercise. The benefits include increased endurance, delayed onset of fatigue, and a stronger dive reflex. Use our CO2 Table Timer to unlock new levels of performance and redefine your limits.</p>
+            <p data-i18n="blog.post2.p1">CO2 테이블은 숨참기 시간을 고정하고 휴식 시간을 단계적으로 줄이는 기록 도구입니다. 기록 향상이나 안전을 보장하지 않습니다.</p>
+            <p data-i18n="blog.post2.p2">과호흡하지 말고, 물속에서는 절대 혼자 연습하지 마세요. 불편하거나 어지러우면 즉시 중단하세요.</p>
             <figure class="guide-graph" aria-label="CO2 table sample graph">
                 <div class="guide-graph-title" data-i18n="blog.post2.chartTitle">Typical CO2 Table Shape (Sample)</div>
                 <svg viewBox="0 0 600 240" role="img" aria-hidden="true">
@@ -1129,50 +1150,35 @@
             </figure>
             <p data-i18n="blog.post2.p3">How to use the timer: set the breath-hold and starting rest times, then press Start. The timer runs the CO2 table automatically, keeping the hold fixed while rest gets 15 seconds shorter each round.</p>
             <p data-i18n="blog.post2.p4">Analyze your progress at a glance with the chart (Hold=red, Rest=blue). Export CSV or JSON for spreadsheets, or save a PNG chart for your training log. Train 2-3 times per week, start on dry land, and never train alone.</p>
-            <details class="guide-details">
-                <summary data-i18n="blog.post2.readMoreTitle">Read more</summary>
-                <div class="guide-details-body" data-i18n="blog.post2.readMoreHtml" data-i18n-html="blog.post2.readMoreHtml"></div>
-            </details>
+            <a class="button guide-page-button" href="guides/co2-table.html" data-i18n="blog.openGuide">전체 가이드 보기</a>
             <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
         </article>
         <article class="blog-post" data-tab="foot">
-            <h3 data-i18n="blog.post3.title">Foot Photo Analysis Guide</h3>
-            <p data-i18n="blog.post3.p1">Foot analysis improves climbing shoe comfort and performance. Use a bright, even light source and include a reference object like an A4 sheet or a credit card to improve scale accuracy.</p>
-            <p data-i18n="blog.post3.p2">Capture both top and side views for each foot. This helps estimate length, width, instep height, arch type, and toe shape so recommendations match your foot volume and intended climbing style.</p>
-            <details class="guide-details">
-                <summary data-i18n="blog.post3.readMoreTitle">Read more</summary>
-                <div class="guide-details-body" data-i18n="blog.post3.readMoreHtml" data-i18n-html="blog.post3.readMoreHtml"></div>
-            </details>
+            <h3 data-i18n="blog.post3.title">암벽화 핏 자가 점검 가이드</h3>
+            <p data-i18n="blog.post3.p1">좌우 발 길이를 직접 재고 발볼·발등·아치·발가락 형태를 선택해 암벽화 피팅 체크리스트를 만듭니다.</p>
+            <p data-i18n="blog.post3.p2">사진은 비교 기록용이며 앱이 픽셀을 측정하거나 신발 사이즈를 확정하지 않습니다. 최종 선택은 제조사 차트와 실제 착화로 확인하세요.</p>
+            <a class="button guide-page-button" href="guides/foot-analysis.html" data-i18n="blog.openGuide">전체 가이드 보기</a>
             <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
         </article>
         <article class="blog-post" data-tab="sequence">
             <h3 data-i18n="blog.post4.title">Looping Sprite Sheets from Video</h3>
             <p data-i18n="blog.post4.p1">The Sequence Generator converts a short clip into a sprite sheet with a clean loop. Choose a grid size and frame dimensions that match your engine.</p>
             <p data-i18n="blog.post4.p2">Use overlap crossfade for the smoothest loops, or pick ping-pong for reversible motion. Download the PNG and drop it into your texture pipeline.</p>
-            <details class="guide-details">
-                <summary data-i18n="blog.post4.readMoreTitle">Read more</summary>
-                <div class="guide-details-body" data-i18n="blog.post4.readMoreHtml" data-i18n-html="blog.post4.readMoreHtml"></div>
-            </details>
+            <a class="button guide-page-button" href="guides/" data-i18n="blog.guideLibrary">가이드 모음 보기</a>
             <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
         </article>
         <article class="blog-post" data-tab="lottery">
             <h3 data-i18n="blog.post6.title">Lotto 6/45 Number Generator Guide</h3>
             <p data-i18n="blog.post6.p1">This generator stores historical first-prize numbers and refreshes the latest draw before making five balanced sets.</p>
             <p data-i18n="blog.post6.p2">Use the output as a structured random pick, not as a prediction guarantee.</p>
-            <details class="guide-details">
-                <summary data-i18n="blog.post6.readMoreTitle">Read more</summary>
-                <div class="guide-details-body" data-i18n="blog.post6.readMoreHtml" data-i18n-html="blog.post6.readMoreHtml"></div>
-            </details>
+            <a class="button guide-page-button" href="guides/" data-i18n="blog.guideLibrary">가이드 모음 보기</a>
             <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
         </article>
         <article class="blog-post" data-tab="abrahang">
             <h3 data-i18n="blog.post7.title">Abrahang hangboard timer guide</h3>
             <p data-i18n="blog.post7.p1">Abrahangs are low-intensity hangboard loading sessions designed around short connective-tissue stimulus and long recovery windows.</p>
             <p data-i18n="blog.post7.p2">Use the timer as a form guide: feet stay on the floor, intensity stays low, and the next hard finger-loading session waits at least six hours.</p>
-            <details class="guide-details">
-                <summary data-i18n="blog.post7.readMoreTitle">Read more</summary>
-                <div class="guide-details-body" data-i18n="blog.post7.readMoreHtml" data-i18n-html="blog.post7.readMoreHtml"></div>
-            </details>
+            <a class="button guide-page-button" href="guides/abrahang.html" data-i18n="blog.openGuide">전체 가이드 보기</a>
             <a href="#timers" class="button back-to-timers-button" data-i18n="blog.backToTimers">Back to Timers</a>
         </article>
     </section>
@@ -1206,18 +1212,34 @@
 
     <div id="share-toast" class="share-toast" role="status" aria-live="polite"></div>
 
-    <script src="i18n.js?v=20260708-2"></script>
-    <script src="main.js?v=20260708-1"></script>
-    <script src="foot-analysis.js?v=20260211-13"></script>
-    <script src="stopwatch.js?v=20260619-6"></script>
-    <script src="sequence-generator.js?v=20260219-1"></script>
-    <script src="lottery-generator.js?v=20260703-5"></script>
-    <script src="abrahang-timer.js?v=20260708-1"></script>
+    <script src="i18n.js?v=20260714-1"></script>
+    <script src="main.js?v=20260714-1"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const tabs = document.querySelectorAll('.tab-link');
             const contents = document.querySelectorAll('.tab-content');
             const guidePosts = document.querySelectorAll('#blog-posts .blog-post');
+            const toolScripts = {
+                co2: 'stopwatch.js?v=20260619-6',
+                foot: 'foot-analysis.js?v=20260714-1',
+                sequence: 'sequence-generator.js?v=20260714-1',
+                lottery: 'lottery-generator.js?v=20260714-1',
+                abrahang: 'abrahang-timer.js?v=20260708-1'
+            };
+            const loadedToolScripts = new Set();
+
+            function loadToolScript(target) {
+                const src = toolScripts[target];
+                if (!src || loadedToolScripts.has(target)) return;
+                loadedToolScripts.add(target);
+                const script = document.createElement('script');
+                script.src = src;
+                script.addEventListener('error', function () {
+                    loadedToolScripts.delete(target);
+                    console.error('Unable to load tool:', target);
+                });
+                document.body.appendChild(script);
+            }
 
             function updateGuide(target) {
                 guidePosts.forEach(post => {
@@ -1240,18 +1262,21 @@
                 const tab = document.querySelector('.tab-link[data-tab="' + target + '"]');
                 if (!tab) { return; }
 
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
+                tabs.forEach(t => {
+                    const isActive = t === tab;
+                    t.classList.toggle('active', isActive);
+                    t.setAttribute('aria-selected', String(isActive));
+                    t.tabIndex = isActive ? 0 : -1;
+                });
 
                 contents.forEach(content => {
-                    if (content.id === target) {
-                        content.classList.add('active');
-                    } else {
-                        content.classList.remove('active');
-                    }
+                    const isActive = content.id === target;
+                    content.classList.toggle('active', isActive);
+                    content.hidden = !isActive;
                 });
 
                 updateGuide(target);
+                loadToolScript(target);
                 document.dispatchEvent(new CustomEvent('app:tab', { detail: { tab: target } }));
 
                 if (updateLocation) {
@@ -1274,6 +1299,20 @@
                     const target = tab.getAttribute('data-tab');
                     activateTab(target, true);
                 });
+                tab.addEventListener('keydown', event => {
+                    const currentIndex = Array.prototype.indexOf.call(tabs, tab);
+                    let nextIndex = currentIndex;
+                    if (event.key === 'ArrowRight') nextIndex = (currentIndex + 1) % tabs.length;
+                    else if (event.key === 'ArrowLeft') nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+                    else if (event.key === 'Home') nextIndex = 0;
+                    else if (event.key === 'End') nextIndex = tabs.length - 1;
+                    else return;
+
+                    event.preventDefault();
+                    const nextTab = tabs[nextIndex];
+                    activateTab(nextTab.getAttribute('data-tab'), true);
+                    nextTab.focus();
+                });
             });
 
             const activeTab = document.querySelector('.tab-link.active');
@@ -1293,12 +1332,17 @@
         });
     </script>
     <script>
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                e.preventDefault();
+                const href = this.getAttribute('href');
+                if (!href || href === '#') return;
+                const target = document.querySelector(href);
+                if (!target) return;
 
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
+                e.preventDefault();
+                target.scrollIntoView({
+                    behavior: reduceMotion ? 'auto' : 'smooth'
                 });
             });
         });

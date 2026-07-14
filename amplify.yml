@@ -1,0 +1,23 @@
+version: 1
+frontend:
+  phases:
+    build:
+      commands: []
+  artifacts:
+    baseDirectory: /
+    files:
+      - '*.html'
+      - '*.js'
+      - '*.css'
+      - '*.txt'
+      - '*.xml'
+      - 'customHttp.yml'
+      - 'guides/*.html'
+      - 'assets/data/*.json'
+      - 'assets/icons/*'
+      - 'assets/images/FootType_*.png'
+      - 'assets/images/share_btn.png'
+      - 'assets/images/chakra-body-outline-right.png'
+      - 'assets/images/abrahang-grip-candidates/20260706/*-display.webp'
+  cache:
+    paths: []

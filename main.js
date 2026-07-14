@@ -118,6 +118,7 @@
         var stepEl   = q('#br-step');
         var bubbleIn = q('.br-bubble-in');
         var bubbleEx = q('.br-bubble-ex');
+        var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         var lottoVision = q('#br-lotto-vision');
         var lottoVisionBalls = q('#br-lotto-vision-balls');
 
@@ -540,6 +541,8 @@
           var btn=q('#br-sync'), ex=getExEl(), inn=getInEl();
           if(!btn||!ex||!inn) return;
           btn.setAttribute('aria-pressed', syncOn?'true':'false');
+          btn.setAttribute('aria-label', t('breath.syncTitle'));
+          btn.title = t('breath.syncTitle');
           btn.textContent = syncOn ? '=' : '≠' ;
           ex.disabled = !!syncOn;
           if(syncOn){ setSecInput(ex, inn.value); }
@@ -588,6 +591,13 @@
 
         function updateBubbles(ratio){
           if(!bubbleIn || !bubbleEx) return;
+          if(reduceMotion){
+            bubbleIn.style.transform = 'scale(0.72)';
+            bubbleEx.style.transform = 'scale(0.72)';
+            bubbleIn.style.opacity = phase === 'INHALE' ? '0.9' : '0.35';
+            bubbleEx.style.opacity = phase === 'EXHALE' ? '0.9' : '0.35';
+            return;
+          }
           if(phase==='INHALE'){
             var sIn = 0.2 + 0.8*ratio; bubbleIn.style.transform = 'scale(' + sIn + ')'; bubbleIn.style.opacity = '1';
             bubbleEx.style.transform = 'scale(0.2)'; bubbleEx.style.opacity = '0.25';
@@ -694,6 +704,7 @@
           var b=q('#br-start');
           if(b) b.textContent = running ? t('breath.pause') : t('breath.start');
           applyAutoGrowUI();
+          applySyncUI();
           updateChakraUI();
           if(phaseLbl) phaseLbl.textContent = (phase==='INHALE'? t('breath.inhale') : t('breath.exhale'));
           if(stepEl) stepEl.textContent = (phase==='INHALE'? t('breath.inhale') : t('breath.exhale'));

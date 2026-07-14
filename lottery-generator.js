@@ -38,6 +38,7 @@
   };
 
   var el = {};
+  var historyLoadPromise = null;
 
   function t(key, params){
     var value = window.appI18n && typeof window.appI18n.t === 'function' ? window.appI18n.t(key) : key;
@@ -201,8 +202,8 @@
     }
   }
 
-  function fetchJson(url){
-    return fetch(url, { cache: 'no-store' }).then(function(response){
+  function fetchJson(url, options){
+    return fetch(url, options || { cache: 'no-store' }).then(function(response){
       if (!response.ok) throw new Error('HTTP ' + response.status);
       return response.json();
     });
@@ -256,7 +257,7 @@
   }
 
   function loadBundled(){
-    return fetchJson(BUNDLED_URL).then(normalizeList).catch(function(){
+    return fetchJson(BUNDLED_URL, { cache: 'force-cache' }).then(normalizeList).catch(function(){
       return [];
     });
   }
@@ -268,6 +269,33 @@
     state.stats = computeStats(state.history);
     saveCache(state.source);
     renderAll();
+  }
+
+  function ensureHistoryLoaded(){
+    if (state.history.length && state.stats) return Promise.resolve(true);
+    if (historyLoadPromise) return historyLoadPromise;
+
+    setStatus('lottery.status.loading', {}, '');
+    var cache = readCache();
+    historyLoadPromise = loadBundled().then(function(bundled){
+      var cachedHistory = cache && cache.history ? cache.history : [];
+      var history = mergeHistory(cachedHistory, bundled);
+      if (!history.length) {
+        setStatus('lottery.status.refreshFailed', {}, 'error');
+        return false;
+      }
+
+      var hasCache = cachedHistory.length > 0;
+      var source = hasCache ? 'sourceCache' : 'sourceBundled';
+      var updatedAt = hasCache && cache.updatedAt ? cache.updatedAt : new Date().toISOString();
+      applyHistory(history, source, updatedAt);
+      setStatus('lottery.status.ready', { source: sourceLabel(source) }, 'ok');
+      return true;
+    }).finally(function(){
+      historyLoadPromise = null;
+    });
+
+    return historyLoadPromise;
   }
 
   function bandIndex(n){
@@ -823,16 +851,13 @@
     return Math.max(0, Math.min(state.drawAssignmentOrder.length, state.diffusionStep - DIFFUSION_SURVIVAL_STEPS));
   }
 
-  function startDraw(){
-    if (!state.history.length) {
-      setStatus('lottery.status.loading', {}, '');
-      return;
-    }
+  function startDrawReady(){
     if (state.isDrawing) return;
 
     var seed = makeSeed();
     var result = buildGeneratedSets(seed);
     if (!result || !result.sets.length) {
+      if (el.generate) el.generate.disabled = false;
       setStatus('lottery.status.refreshFailed', {}, 'error');
       return;
     }
@@ -872,6 +897,21 @@
         renderAll();
       }
     }, DIFFUSION_ANIMATION_MS);
+  }
+
+  function startDraw(){
+    if (state.isDrawing) return;
+    if (el.generate) el.generate.disabled = true;
+    ensureHistoryLoaded().then(function(ready){
+      if (!ready) {
+        if (el.generate) el.generate.disabled = false;
+        return;
+      }
+      startDrawReady();
+    }).catch(function(){
+      if (el.generate) el.generate.disabled = false;
+      setStatus('lottery.status.refreshFailed', {}, 'error');
+    });
   }
 
   function band(n){
@@ -1324,10 +1364,14 @@
   }
 
   function refreshHistory(){
-    setStatus('lottery.status.refreshing', {}, '');
     if (el.refresh) el.refresh.disabled = true;
 
-    refreshFromOfficial()
+    ensureHistoryLoaded()
+      .catch(function(){ return false; })
+      .then(function(){
+        setStatus('lottery.status.refreshing', {}, '');
+        return refreshFromOfficial();
+      })
       .then(function(list){
         applyHistory(list, 'sourceOfficial', new Date().toISOString());
         var latest = state.history[state.history.length - 1];
@@ -1423,22 +1467,11 @@
       renderSavedSets();
     });
 
-    var cache = readCache();
-    if (cache && cache.history.length) {
-      applyHistory(cache.history, 'sourceCache', cache.updatedAt || new Date().toISOString());
-      setStatus('lottery.status.ready', { source: sourceLabel('sourceCache') }, 'ok');
-    }
-
-    loadBundled().then(function(list){
-      if (!list.length && state.history.length) return;
-      if (list.length) {
-        var source = state.history.length ? state.source : 'sourceBundled';
-        applyHistory(list, source, state.updatedAt || new Date().toISOString());
-        setStatus('lottery.status.ready', { source: sourceLabel(source) }, 'ok');
-      }
-    }).catch(function(){
-      if (!state.history.length) setStatus('lottery.status.refreshFailed', {}, 'error');
+    document.addEventListener('app:tab', function(event){
+      if (event.detail && event.detail.tab === 'lottery') ensureHistoryLoaded();
     });
+
+    if (get('lottery').classList.contains('active')) ensureHistoryLoaded();
   }
 
   if (document.readyState === 'loading') {

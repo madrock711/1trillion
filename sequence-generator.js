@@ -2,6 +2,17 @@
   function initSequenceGenerator(root) {
     if (!root) { return; }
 
+    function tr(key, fallback) {
+      const value = window.appI18n && typeof window.appI18n.t === 'function' ? window.appI18n.t(key) : key;
+      return value && value !== key ? value : fallback;
+    }
+
+    function formatMessage(template, values) {
+      return Object.keys(values || {}).reduce((message, key) => {
+        return message.split('{' + key + '}').join(String(values[key]));
+      }, String(template || ''));
+    }
+
     const videoInput = root.querySelector('#sequenceVideoInput');
     const uploadSection = root.querySelector('#sequenceUpload');
     const videoPreview = root.querySelector('#sequenceVideoPreview');
@@ -256,8 +267,10 @@
         autoMeta.innerHTML = defaultAutoMeta;
         return;
       }
-      const extra = clamped ? ' (최대 256프레임으로 제한됨)' : '';
-      autoMeta.textContent = `총 ${frames}프레임 · ${cols}×${rows}${extra}`;
+      const template = clamped
+        ? tr('sequence.autoMetaClamped', '{frames} frames · {cols}×{rows} (limited to 256 frames)')
+        : tr('sequence.autoMeta', '{frames} frames · {cols}×{rows}');
+      autoMeta.textContent = formatMessage(template, { frames, cols, rows });
     }
 
     function handleVideoFile(file) {
@@ -290,7 +303,7 @@
         clearTimeout(timeoutId);
 
         if (!isFinite(testVideo.duration) || testVideo.duration <= 0) {
-          showError('비디오의 재생 시간을 확인할 수 없습니다.\n다른 파일을 사용하거나 재인코딩해 주세요.');
+          showError(tr('sequence.errorDuration', 'Unable to read the video duration.\nUse another file or re-encode it.'));
           return;
         }
 
@@ -300,12 +313,17 @@
         generateBtn.disabled = false;
 
         videoInfo.style.display = 'block';
-        videoInfoContent.innerHTML = `
-          재생시간: ${testVideo.duration.toFixed(2)}초<br>
-          해상도: ${testVideo.videoWidth} × ${testVideo.videoHeight}px<br>
-          형식: ${file.type || '알 수 없음'}<br>
-          파일크기: ${(file.size / 1024 / 1024).toFixed(2)}MB
-        `;
+        videoInfoContent.replaceChildren();
+        [
+          [tr('sequence.infoDuration', 'Duration'), testVideo.duration.toFixed(2) + 's'],
+          [tr('sequence.infoResolution', 'Resolution'), testVideo.videoWidth + ' × ' + testVideo.videoHeight + 'px'],
+          [tr('sequence.infoFormat', 'Format'), file.type || tr('sequence.infoUnknown', 'Unknown')],
+          [tr('sequence.infoSize', 'File size'), (file.size / 1024 / 1024).toFixed(2) + 'MB']
+        ].forEach(([label, value]) => {
+          const line = document.createElement('div');
+          line.textContent = label + ': ' + value;
+          videoInfoContent.appendChild(line);
+        });
         applyTrimDefaults(testVideo.duration);
         updateAutoMeta();
       };
@@ -313,7 +331,7 @@
       const onError = () => {
         if (loadSuccess) { return; }
         clearTimeout(timeoutId);
-        showError('비디오를 로드할 수 없습니다.\nMP4 (H.264) 형식으로 변환 후 다시 시도해 주세요.');
+        showError(tr('sequence.errorLoad', 'Unable to load the video.\nConvert it to MP4 (H.264) and try again.'));
       };
 
       timeoutId = setTimeout(() => {
@@ -321,7 +339,7 @@
         if (isFinite(testVideo.duration) && testVideo.duration > 0) {
           onSuccess();
         } else {
-          showError('비디오 로딩 시간이 초과되었습니다.\n더 짧은 파일로 다시 시도해 주세요.');
+          showError(tr('sequence.errorTimeout', 'Video loading timed out.\nTry a shorter file.'));
         }
       }, 10000);
 
@@ -380,7 +398,7 @@
       };
       img.onerror = () => {
         clearMask();
-        showError('마스크 이미지를 불러올 수 없습니다.');
+        showError(tr('sequence.errorMaskLoad', 'Unable to load the mask image.'));
       };
       img.src = maskUrl;
     }
@@ -510,7 +528,7 @@
       }
 
       if (!segmentDuration || !isFinite(segmentDuration) || segmentDuration <= 0) {
-        throw new Error('비디오 duration을 읽을 수 없습니다.');
+        throw new Error(tr('sequence.errorDurationShort', 'Unable to read video duration.'));
       }
 
       canvas.width = cols * frameWidth;
@@ -567,7 +585,7 @@
       }
 
       if (!segmentDuration || !isFinite(segmentDuration) || segmentDuration <= 0) {
-        throw new Error('비디오 duration을 읽을 수 없습니다.');
+        throw new Error(tr('sequence.errorDurationShort', 'Unable to read video duration.'));
       }
 
       canvas.width = cols * frameWidth;
@@ -624,7 +642,7 @@
       }
 
       if (!segmentDuration || !isFinite(segmentDuration) || segmentDuration <= 0) {
-        throw new Error('비디오 duration을 읽을 수 없습니다.');
+        throw new Error(tr('sequence.errorDurationShort', 'Unable to read video duration.'));
       }
 
       canvas.width = cols * frameWidth;
@@ -633,7 +651,7 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (!isFinite(overlapFramesInput)) {
-        throw new Error('오버랩 프레임 값이 올바르지 않습니다.');
+        throw new Error(tr('sequence.errorOverlap', 'The overlap-frame value is invalid.'));
       }
       const overlapFrames = Math.min(totalFrames - 1, Math.max(1, Math.round(overlapFramesInput)));
       const uniqueFrames = totalFrames - overlapFrames;
@@ -1291,7 +1309,7 @@
 
     if (maskSaveBtn) {
       maskSaveBtn.addEventListener('click', () => {
-        const name = prompt('저장할 이름을 입력하세요');
+        const name = prompt(tr('sequence.maskPresetNamePrompt', 'Enter a name for this preset.'));
         if (!name) { return; }
         const data = collectMaskSettings();
         try {
@@ -1302,10 +1320,10 @@
           if (maskPresetSelect) {
             maskPresetSelect.value = 'saved:' + name;
           }
-          if (maskStatus) { maskStatus.textContent = '저장됨: ' + name; }
+          if (maskStatus) { maskStatus.textContent = tr('sequence.maskPresetSaved', 'Saved') + ': ' + name; }
         } catch (e) {
           console.warn('Unable to save mask settings', e);
-          if (maskStatus) { maskStatus.textContent = '저장 실패'; }
+          if (maskStatus) { maskStatus.textContent = tr('sequence.maskPresetSaveFailed', 'Save failed'); }
         }
       });
     }
@@ -1321,14 +1339,14 @@
           const preset = builtinPresets.find(p => p.id === id);
           if (preset) {
             applyMaskSettings(preset.values);
-            if (maskStatus) { maskStatus.textContent = '불러옴: ' + preset.name; }
+            if (maskStatus) { maskStatus.textContent = tr('sequence.maskPresetLoaded', 'Loaded') + ': ' + preset.name; }
           }
         } else if (value.startsWith('saved:')) {
           const name = value.replace('saved:', '');
           const saved = loadSavedPresets();
           if (saved[name]) {
             applyMaskSettings(saved[name]);
-            if (maskStatus) { maskStatus.textContent = '불러옴: ' + name; }
+            if (maskStatus) { maskStatus.textContent = tr('sequence.maskPresetLoaded', 'Loaded') + ': ' + name; }
           }
         }
       });
@@ -1354,7 +1372,7 @@
 
     autoGridBtn.addEventListener('click', () => {
       if (!currentVideo || !isFinite(currentVideo.duration) || currentVideo.duration <= 0) {
-        showError('먼저 비디오를 업로드해 주세요.');
+        showError(tr('sequence.errorUploadFirst', 'Upload a video first.'));
         return;
       }
       const trim = getTrimRange();
@@ -1394,12 +1412,12 @@
       let overlapFramesInput = parseInt(root.querySelector('#sequenceOverlapFrames').value, 10);
       const trim = getTrimRange();
       if (!trim.duration || trim.duration < 0.05) {
-        alert('트림 구간이 너무 짧습니다. 시작/끝 값을 확인해 주세요.');
+        alert(tr('sequence.errorTrimShort', 'The trim range is too short. Check the start and end values.'));
         return;
       }
       if (loopMode === 'overlap') {
         if (!isFinite(overlapFramesInput)) {
-          alert('오버랩 프레임 값을 확인해 주세요.');
+          alert(tr('sequence.errorOverlap', 'Check the overlap-frame value.'));
           return;
         }
         const totalFrames = cols * rows;
@@ -1420,9 +1438,9 @@
           await generateDirectSpriteSheet(currentVideo, cols, rows, frameWidth, frameHeight);
         }
         previewSection.classList.add('is-active');
-        previewSection.scrollIntoView({ behavior: 'smooth' });
+        previewSection.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
       } catch (error) {
-        alert('오류 발생: ' + error.message);
+        alert(tr('sequence.errorPrefix', 'Error') + ': ' + error.message);
         console.error(error);
       } finally {
         generateBtn.disabled = false;
@@ -1451,7 +1469,28 @@
     });
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    initSequenceGenerator(document.querySelector('.sequence-embed'));
+  let initialized = false;
+
+  function ensureInitialized() {
+    if (initialized) return;
+    const root = document.querySelector('.sequence-embed');
+    if (!root) return;
+    initialized = true;
+    initSequenceGenerator(root);
+  }
+
+  function initializeIfActive() {
+    const panel = document.querySelector('#sequence');
+    if (panel && panel.classList.contains('active') && !panel.hidden) ensureInitialized();
+  }
+
+  document.addEventListener('app:tab', event => {
+    if (event.detail && event.detail.tab === 'sequence') ensureInitialized();
   });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeIfActive);
+  } else {
+    initializeIfActive();
+  }
 })();

@@ -933,20 +933,6 @@ function detectAngleWithPose(dataUrl){
     });
   }
 
-  function countCaptures(){
-    var count = 0;
-    Object.keys(state.captures).forEach(function(key){
-      if(state.captures[key]) count += 1;
-    });
-    return count;
-  }
-
-  function pickBySeed(list, seed){
-    if(!list.length) return '';
-    var idx = Math.abs(seed) % list.length;
-    return list[idx];
-  }
-
   function toeImageForLabel(label){
     if(!label) return null;
     var s = String(label).toLowerCase();
@@ -976,304 +962,251 @@ function detectAngleWithPose(dataUrl){
     render(rightEl, rightLabel, false);
   }
 
-  function estimateLength(){
-    var input = qs('#foot-length-input');
-    var val = input ? Number(input.value) : 0;
-    if(val && !isNaN(val)) return Math.max(200, Math.min(320, val));
-    var scale = qs('#foot-scale');
-    var scaleVal = scale ? scale.value : 'none';
-    if(scaleVal === 'a4') return 255;
-    if(scaleVal === 'card') return 250;
-    return 260;
+  function isKorean(){
+    return String(document.documentElement.lang || 'ko').toLowerCase().indexOf('ko') === 0;
   }
 
-  function analyze(){
-    var count = countCaptures();
-    var hasTop = !!(state.captures['left-top'] || state.captures['right-top']);
-    var hasSide = !!(state.captures['left-side'] || state.captures['right-side']);
-    if(!hasTop || !hasSide){
-      updateCaptureStatus('foot.analyzeNeedPhotos', null, true);
-      alert(t('foot.analyzeNeedPhotos'));
-      return;
-    }
-    updateProgress(10);
-    setStep(2);
-
-    function computeFootResult(sideKey, seedOffset){
-      var baseLength = estimateLength();
-      var lengthMm = Math.max(200, Math.min(320, baseLength + (seedOffset % 2 ? -1 : 1)));
-      var seed = Math.round(lengthMm) + (count * 7) + seedOffset;
-      var widthMm = Math.round(lengthMm * 0.39);
-      var widthRatio = widthMm / lengthMm;
-      var widthType = widthRatio < 0.37 ? t('foot.widthNarrow') : (widthRatio > 0.41 ? t('foot.widthWide') : t('foot.widthNormal'));
-
-      var sideAvailable = !!(state.captures['left-side'] || state.captures['right-side']);
-      var instep = sideAvailable ? pickBySeed([t('foot.instepMid'), t('foot.instepHigh')], seed + 3) : pickBySeed([t('foot.instepLow'), t('foot.instepMid')], seed + 5);
-      if(widthRatio > 0.41 && instep === t('foot.instepLow')) instep = t('foot.instepMid');
-      if(widthRatio < 0.37 && instep === t('foot.instepHigh')) instep = t('foot.instepMid');
-
-      var arch = pickBySeed([t('foot.archFlat'), t('foot.archNormal'), t('foot.archHigh')], seed + 11);
-      if(widthRatio > 0.41) arch = t('foot.archFlat');
-      if(widthRatio < 0.37) arch = t('foot.archHigh');
-
-      var toe = t('foot.toeGreek');
-      if(lengthMm >= 270 && widthRatio < 0.38) toe = t('foot.toeEgypt');
-      if(widthRatio > 0.41) toe = t('foot.toeRoman');
-
-      return {
-        lengthMm: lengthMm,
-        widthMm: widthMm,
-        widthType: widthType,
-        instep: instep,
-        arch: arch,
-        toe: toe,
-        ball: widthType
-      };
-    }
-
-    var left = computeFootResult('left', 1);
-    var right = computeFootResult('right', 7);
-    state.results = { left: left, right: right };
-
-    setTimeout(function(){ updateProgress(55); }, 200);
-    setTimeout(function(){ updateProgress(100); }, 600);
-
-    setTimeout(function(){
-      var l = state.results.left;
-      var r = state.results.right;
-      var lLen = qs('#foot-result-left-length');
-      var lWidth = qs('#foot-result-left-width');
-      var lInstep = qs('#foot-result-left-instep');
-      var lArch = qs('#foot-result-left-arch');
-      var lToe = qs('#foot-result-left-toe');
-      var lBall = qs('#foot-result-left-ball');
-      var rLen = qs('#foot-result-right-length');
-      var rWidth = qs('#foot-result-right-width');
-      var rInstep = qs('#foot-result-right-instep');
-      var rArch = qs('#foot-result-right-arch');
-      var rToe = qs('#foot-result-right-toe');
-      var rBall = qs('#foot-result-right-ball');
-      if(lLen) lLen.textContent = l.lengthMm + ' mm';
-      if(lWidth) lWidth.textContent = l.widthMm + ' mm';
-      if(lInstep) lInstep.textContent = l.instep;
-      if(lArch) lArch.textContent = l.arch;
-      if(lToe) lToe.textContent = l.toe;
-      if(lBall) lBall.textContent = l.ball;
-      if(rLen) rLen.textContent = r.lengthMm + ' mm';
-      if(rWidth) rWidth.textContent = r.widthMm + ' mm';
-      if(rInstep) rInstep.textContent = r.instep;
-      if(rArch) rArch.textContent = r.arch;
-      if(rToe) rToe.textContent = r.toe;
-      if(rBall) rBall.textContent = r.ball;
-      setToeGuideImage(lToe, rToe, l.toe, r.toe);
-      buildRecommendations();
-      setStep(3);
-    }, 650);
+  function translated(key, englishFallback, koreanFallback){
+    var value = t(key);
+    if(value && value !== key) return value;
+    return isKorean() ? koreanFallback : englishFallback;
   }
 
-  function sizeAdvice(lengthMm){
-    var fit = qs('#foot-fit');
-    var fitVal = fit ? fit.value : 'balanced';
-    if(fitVal === 'comfort') return t('foot.sizeComfort').replace('{mm}', lengthMm);
-    if(fitVal === 'performance') return t('foot.sizePerformance').replace('{mm}', lengthMm);
-    return t('foot.sizeBalanced').replace('{mm}', lengthMm);
+  function formatText(template, replacements){
+    var output = String(template || '');
+    Object.keys(replacements || {}).forEach(function(key){
+      output = output.split('{' + key + '}').join(String(replacements[key]));
+    });
+    return output;
   }
 
-  function getStreetSize(){
-    var sizeEl = qs('#foot-street-size');
-    var scaleEl = qs('#foot-street-scale');
-    var sizeVal = sizeEl ? Number(sizeEl.value) : 0;
-    if(!sizeVal || isNaN(sizeVal)) return null;
-    return { value: sizeVal, scale: scaleEl ? scaleEl.value : 'eu' };
+  var PROFILE_LABEL_KEYS = {
+    width: { narrow: 'foot.widthNarrow', normal: 'foot.widthNormal', wide: 'foot.widthWide' },
+    instep: { low: 'foot.instepLow', mid: 'foot.instepMid', high: 'foot.instepHigh' },
+    arch: { flat: 'foot.archFlat', normal: 'foot.archNormal', high: 'foot.archHigh' },
+    toe: { egypt: 'foot.toeEgypt', greek: 'foot.toeGreek', roman: 'foot.toeRoman' },
+    fit: { comfort: 'foot.fitComfort', balanced: 'foot.fitBalanced', performance: 'foot.fitPerformance' },
+    level: { beginner: 'foot.levelBeginner', intermediate: 'foot.levelIntermediate', advanced: 'foot.levelAdvanced' },
+    type: { bouldering: 'foot.typeBouldering', sport: 'foot.typeSport', multi: 'foot.typeMulti' }
+  };
+
+  function profileLabel(group, value){
+    var groupKeys = PROFILE_LABEL_KEYS[group] || {};
+    var key = groupKeys[value];
+    return key ? t(key) : String(value || '-');
   }
 
-  var TENAYA_SIZE_TABLE = [
-    { cm: 22.1, eu: 36, usW: '5.5', usM: '4.5', uk: '3.5' },
-    { cm: 22.8, eu: 37, usW: '6.25', usM: '5.25', uk: '4.25' },
-    { cm: 23.5, eu: 38, usW: '7', usM: '6', uk: '5' },
-    { cm: 24.1, eu: 39, usW: '7.75', usM: '6.75', uk: '5.75' },
-    { cm: 24.8, eu: 40, usW: '8.5', usM: '7.5', uk: '6.5' },
-    { cm: 25.5, eu: 41, usW: '9.25', usM: '8.25', uk: '7.25' },
-    { cm: 26.1, eu: 42, usW: '10', usM: '9', uk: '8' },
-    { cm: 26.8, eu: 43, usW: '10.75', usM: '9.75', uk: '8.75' },
-    { cm: 27.5, eu: 44, usW: '11.5', usM: '10.5', uk: '9.5' },
-    { cm: 28.1, eu: 45, usW: '12.5', usM: '11.5', uk: '10.5' },
-    { cm: 28.8, eu: 46, usW: '13.25', usM: '12.25', uk: '11.25' },
-    { cm: 29.5, eu: 47, usW: '14', usM: '13', uk: '12' }
-  ];
-
-  var BD_SIZE_TABLE = [
-    { cm: 21.72, eu: 35, usW: '4.5', usM: '3.5' },
-    { cm: 22.05, eu: 35.5, usW: '5', usM: '4' },
-    { cm: 22.38, eu: 36, usW: '5.5', usM: '4.5' },
-    { cm: 22.71, eu: 36.5, usW: '5.5+', usM: '4.5+' },
-    { cm: 23.04, eu: 37, usW: '6', usM: '5' },
-    { cm: 23.37, eu: 37.5, usW: '6.5', usM: '5.5' },
-    { cm: 23.7, eu: 38, usW: '7', usM: '6' },
-    { cm: 24.03, eu: 38.5, usW: '7.5', usM: '6.5' },
-    { cm: 24.36, eu: 39, usW: '7.5+', usM: '6.5+' },
-    { cm: 24.69, eu: 39.5, usW: '8', usM: '7' },
-    { cm: 25.02, eu: 40, usW: '8.5', usM: '7.5' },
-    { cm: 25.35, eu: 40.5, usW: '9', usM: '8' },
-    { cm: 25.68, eu: 41, usW: '9.5', usM: '8.5' },
-    { cm: 26.01, eu: 41.5, usW: '9.5+', usM: '8.5+' },
-    { cm: 26.34, eu: 42, usW: '10', usM: '9' },
-    { cm: 26.67, eu: 42.5, usW: '10.5', usM: '9.5' },
-    { cm: 27, eu: 43, usW: '11', usM: '10' },
-    { cm: 27.33, eu: 43.5, usW: '11.5', usM: '10.5' },
-    { cm: 27.66, eu: 44, usW: '11.5+', usM: '10.5+' },
-    { cm: 27.99, eu: 44.5, usW: '12', usM: '11' },
-    { cm: 28.32, eu: 45, usW: '12.5', usM: '11.5' },
-    { cm: 28.65, eu: 45.5, usW: '13', usM: '12' },
-    { cm: 28.98, eu: 46, usW: '13.5', usM: '12.5' },
-    { cm: 29.31, eu: 46.5, usW: '13.5+', usM: '12.5+' },
-    { cm: 29.64, eu: 47, usW: '14', usM: '13' }
-  ];
-
-  function closestTenayaSize(cm){
-    if(!cm) return null;
-    var best = TENAYA_SIZE_TABLE[0];
-    var bestDiff = Math.abs(cm - best.cm);
-    for(var i=1;i<TENAYA_SIZE_TABLE.length;i++){
-      var diff = Math.abs(cm - TENAYA_SIZE_TABLE[i].cm);
-      if(diff < bestDiff){
-        best = TENAYA_SIZE_TABLE[i];
-        bestDiff = diff;
+  function readLengthInput(selector){
+    var input = qs(selector);
+    var value = input && input.value !== '' ? Number(input.value) : NaN;
+    if(!input || !Number.isFinite(value) || value < 200 || value > 320){
+      var message = translated(
+        'foot.lengthInputError',
+        'Enter both measured foot lengths between 200 and 320 mm.',
+        '왼발과 오른발 실측 길이를 각각 200~320mm 범위로 입력해 주세요.'
+      );
+      if(input){
+        input.setCustomValidity(message);
+        input.reportValidity();
+        input.focus();
       }
+      return null;
     }
-    return best;
+    input.setCustomValidity('');
+    return Math.round(value * 10) / 10;
   }
 
-  function closestBdSize(cm){
-    if(!cm) return null;
-    var best = BD_SIZE_TABLE[0];
-    var bestDiff = Math.abs(cm - best.cm);
-    for(var i=1;i<BD_SIZE_TABLE.length;i++){
-      var diff = Math.abs(cm - BD_SIZE_TABLE[i].cm);
-      if(diff < bestDiff){
-        best = BD_SIZE_TABLE[i];
-        bestDiff = diff;
-      }
-    }
-    return best;
+  function readSelectValue(selector, fallback){
+    var select = qs(selector);
+    return select && select.value ? select.value : fallback;
   }
 
-  function sizeTipForBrand(brand, level, fit, climbType, street, footCm){
-    function scaleLabel(scale){
-      if(scale === 'usm') return 'US(M)';
-      if(scale === 'usw') return 'US(W)';
-      return 'EU';
+  function readOptionalStreetSize(){
+    var size = qs('#foot-street-size');
+    var scale = qs('#foot-street-scale');
+    var value = size && size.value !== '' ? Number(size.value) : NaN;
+    if(!Number.isFinite(value)) return null;
+    return { value: value, scale: scale ? scale.value : 'eu' };
+  }
+
+  function formatLength(value){
+    return String(value) + ' mm';
+  }
+
+  function renderResults(){
+    if(!state.results) return;
+    var result = state.results;
+    var width = profileLabel('width', result.width);
+    var instep = profileLabel('instep', result.instep);
+    var arch = profileLabel('arch', result.arch);
+    var toe = profileLabel('toe', result.toe);
+    var values = {
+      '#foot-result-left-length': formatLength(result.leftLengthMm),
+      '#foot-result-right-length': formatLength(result.rightLengthMm),
+      '#foot-result-left-width': width,
+      '#foot-result-right-width': width,
+      '#foot-result-left-instep': instep,
+      '#foot-result-right-instep': instep,
+      '#foot-result-left-arch': arch,
+      '#foot-result-right-arch': arch,
+      '#foot-result-left-toe': toe,
+      '#foot-result-right-toe': toe
+    };
+    Object.keys(values).forEach(function(selector){
+      var element = qs(selector);
+      if(element) element.textContent = values[selector];
+    });
+    setToeGuideImage(qs('#foot-result-left-toe'), qs('#foot-result-right-toe'), toe, toe);
+  }
+
+  function sizeChecklistBody(result){
+    var longer = Math.max(result.leftLengthMm, result.rightLengthMm);
+    var difference = Math.round(Math.abs(result.leftLengthMm - result.rightLengthMm) * 10) / 10;
+    var body = formatText(translated(
+      'foot.checklistSizeBody',
+      'Compare the manufacturer\'s internal-length chart with the longer foot ({longer} mm; L {left} / R {right}, difference {difference} mm). Use the {fit} preference only as a fitting intent, then check toe curl, heel lift, and pressure after 10 minutes of wear.',
+      '더 긴 발 {longer}mm(왼발 {left} / 오른발 {right}, 차이 {difference}mm)을 기준으로 제조사 내측 길이표를 대조하세요. {fit} 선호는 착화 방향으로만 사용하고, 발가락 말림·뒤꿈치 들뜸·10분 착화 후 압박을 직접 확인하세요.'
+    ), {
+      longer: longer,
+      left: result.leftLengthMm,
+      right: result.rightLengthMm,
+      difference: difference,
+      fit: profileLabel('fit', result.fit)
+    });
+    if(result.streetSize){
+      body += ' ' + formatText(translated(
+        'foot.checklistStreetContext',
+        'Treat the entered street size ({scale} {size}) as a comparison point, not a conversion rule.',
+        '입력한 평소 신발 사이즈({scale} {size})는 비교 기준으로만 보고 암벽화 환산 공식으로 사용하지 마세요.'
+      ), { scale: result.streetSize.scale.toUpperCase(), size: result.streetSize.value });
     }
-    function fmtStreet(val, scale){
-      return val + ' ' + scaleLabel(scale);
-    }
-    if(brand === 'Evolv'){
-      if(street){
-        var delta = level === 'beginner' ? 2 : (level === 'intermediate' ? 1 : 0);
-        return fmtStreet(street.value, street.scale) + ' + ' + delta;
+    return body;
+  }
+
+  function volumeChecklistBody(result){
+    var widthGuidance = {
+      narrow: {
+        en: 'Check that the forefoot does not slide sideways and that the closure can secure the foot without bottoming out.',
+        ko: '전족부가 좌우로 밀리지 않고 잠금 장치가 끝까지 남지 않은 채 발을 고정하는지 확인하세요.'
+      },
+      normal: {
+        en: 'Check for even contact around the forefoot without a single pressure ridge.',
+        ko: '전족부 둘레가 한 지점만 눌리지 않고 고르게 밀착되는지 확인하세요.'
+      },
+      wide: {
+        en: 'Check the outer metatarsal area and toe-box sidewalls for pinching or numbness.',
+        ko: '새끼발가락 쪽 중족부와 토박스 측벽에 찝힘이나 저림이 없는지 확인하세요.'
       }
-      return t('foot.sizeTipEvolv');
-    }
-    if(brand === 'Black Diamond'){
-      var row = closestBdSize(footCm);
-      if(row){
-        return 'EU ' + row.eu + ' / US ' + row.usM + ' / ' + row.usW;
+    }[result.width];
+    var instepGuidance = {
+      low: {
+        en: 'Also confirm heel retention before the closure reaches its limit.',
+        ko: '또한 잠금 장치가 조절 한계에 닿기 전에 뒤꿈치가 안정적으로 잡히는지 확인하세요.'
+      },
+      mid: {
+        en: 'Also confirm that the closure wraps the instep evenly.',
+        ko: '또한 잠금 장치가 발등 전체를 고르게 감싸는지 확인하세요.'
+      },
+      high: {
+        en: 'Also confirm enough closure adjustment and no concentrated pressure on the top of the foot.',
+        ko: '또한 잠금 조절 여유가 충분하고 발등 한 지점에 압박이 몰리지 않는지 확인하세요.'
       }
-      if(street && street.scale === 'eu'){
-        if(fit === 'comfort') return 'EU ' + street.value + ' → ' + (street.value - 1).toFixed(1) + ' ~ ' + (street.value - 0.5).toFixed(1);
-        if(fit === 'performance') return 'EU ' + street.value + ' → ' + (street.value - 2.5).toFixed(1) + ' ~ ' + (street.value - 2).toFixed(1);
-        return 'EU ' + street.value + ' → ' + (street.value - 2).toFixed(1) + ' ~ ' + (street.value - 1.5).toFixed(1);
-      }
-      return t('foot.sizeTipBlackDiamond');
-    }
-    if(brand === 'Scarpa'){
-      return t('foot.sizeTipScarpa');
-    }
-    if(brand === 'Tenaya'){
-      var row = closestTenayaSize(footCm);
-      if(row){
-        return 'EU ' + row.eu + ' / US ' + row.usM + ' / ' + row.usW;
-      }
-      return t('foot.sizeTipTenaya');
-    }
-    if(brand === 'La Sportiva'){
-      return t('foot.sizeTipLaSportivaChart');
-    }
-    return '';
+    }[result.instep];
+    return formatText(translated(
+      'foot.checklistVolumeBody',
+      'Self-check: {width} width / {instep} instep. {widthCheck} {instepCheck}',
+      '자가 체크: 발볼 {width} / 발등 {instep}. {widthCheck} {instepCheck}'
+    ), {
+      width: profileLabel('width', result.width),
+      instep: profileLabel('instep', result.instep),
+      widthCheck: isKorean() ? widthGuidance.ko : widthGuidance.en,
+      instepCheck: isKorean() ? instepGuidance.ko : instepGuidance.en
+    });
+  }
+
+  function shapeChecklistBody(result){
+    var toeGuidance = {
+      egypt: { en: 'Check big-toe alignment and tapered toe-box pressure.', ko: '엄지 정렬과 좁아지는 토박스의 엄지 압박을 확인하세요.' },
+      greek: { en: 'Check pressure at the second toe and whether it is forced to curl.', ko: '둘째 발가락 끝 압박과 과도한 말림이 없는지 확인하세요.' },
+      roman: { en: 'Check that the first three toes are not crowded across the forefoot.', ko: '첫 세 발가락이 전족부에서 서로 겹치거나 몰리지 않는지 확인하세요.' }
+    }[result.toe];
+    var archGuidance = {
+      flat: { en: 'Check for uncomfortable midfoot ridges during edging.', ko: '엣징할 때 중족부 한 지점이 능선처럼 눌리지 않는지 확인하세요.' },
+      normal: { en: 'Check that midfoot support stays comfortable under load.', ko: '하중을 실었을 때 중족부 지지가 편안하게 유지되는지 확인하세요.' },
+      high: { en: 'Check for an under-arch gap and heel movement under load.', ko: '하중을 실었을 때 아치 아래 뜸과 뒤꿈치 움직임을 확인하세요.' }
+    }[result.arch];
+    var useGuidance = {
+      bouldering: { en: 'For bouldering, repeat heel- and toe-hook motions before deciding.', ko: '볼더링용이라면 힐훅과 토훅 동작을 반복해 본 뒤 결정하세요.' },
+      sport: { en: 'For sport climbing, balance edging support with sustained forefoot comfort.', ko: '스포츠클라이밍용이라면 엣징 지지와 지속적인 전족부 편안함을 함께 확인하세요.' },
+      multi: { en: 'For multi-pitch use, test prolonged wear and swelling allowance.', ko: '멀티피치용이라면 장시간 착화와 발 부종 여유를 확인하세요.' }
+    }[result.type];
+    return formatText(translated(
+      'foot.checklistShapeBody',
+      'Self-check: {arch} arch / {toe} toe; {level}, {type}. {toeCheck} {archCheck} {useCheck}',
+      '자가 체크: 아치 {arch} / 발가락 {toe}, {level}·{type}. {toeCheck} {archCheck} {useCheck}'
+    ), {
+      arch: profileLabel('arch', result.arch),
+      toe: profileLabel('toe', result.toe),
+      level: profileLabel('level', result.level),
+      type: profileLabel('type', result.type),
+      toeCheck: isKorean() ? toeGuidance.ko : toeGuidance.en,
+      archCheck: isKorean() ? archGuidance.ko : archGuidance.en,
+      useCheck: isKorean() ? useGuidance.ko : useGuidance.en
+    });
+  }
+
+  function appendChecklistCard(grid, title, body){
+    var card = document.createElement('div');
+    card.className = 'foot-reco-card';
+    var top = document.createElement('div');
+    top.className = 'foot-reco-top';
+    var heading = document.createElement('strong');
+    heading.className = 'foot-reco-model';
+    heading.textContent = title;
+    var meta = document.createElement('div');
+    meta.className = 'foot-reco-meta';
+    var description = document.createElement('span');
+    description.style.gridColumn = '1 / -1';
+    description.textContent = body;
+    top.appendChild(heading);
+    meta.appendChild(description);
+    card.appendChild(top);
+    card.appendChild(meta);
+    grid.appendChild(card);
   }
 
   function buildRecommendations(){
     var grid = qs('#foot-reco-grid');
     if(!grid || !state.results) return;
-
-    var level = qs('#foot-level') ? qs('#foot-level').value : 'beginner';
-    var type = qs('#foot-type') ? qs('#foot-type').value : 'bouldering';
-    var fit = qs('#foot-fit') ? qs('#foot-fit').value : 'balanced';
-    var widthType = state.results.left.widthType;
-    var lengthMm = Math.max(state.results.left.lengthMm, state.results.right.lengthMm);
-    var footCm = Math.round(lengthMm / 10 * 10) / 10;
-
-    var models = [
-      { brand: 'La Sportiva', model: 'Performance Series', level: 'advanced', types: ['bouldering', 'sport'], width: 'normal', price: '$$$$' },
-      { brand: 'La Sportiva', model: 'All-day Comfort', level: 'beginner', types: ['sport', 'multi'], width: 'normal', price: '$$' },
-      { brand: 'Scarpa', model: 'Performance Line', level: 'advanced', types: ['bouldering', 'sport'], width: 'wide', price: '$$$$' },
-      { brand: 'Scarpa', model: 'Comfort Line', level: 'beginner', types: ['sport', 'multi'], width: 'normal', price: '$$' },
-      { brand: 'Evolv', model: 'Training Line', level: 'beginner', types: ['sport', 'multi'], width: 'normal', price: '$$' },
-      { brand: 'Evolv', model: 'Performance Line', level: 'advanced', types: ['bouldering', 'sport'], width: 'wide', price: '$$$$' },
-      { brand: 'Black Diamond', model: 'Momentum Series', level: 'beginner', types: ['sport', 'multi'], width: 'normal', price: '$$' },
-      { brand: 'Tenaya', model: 'Precision Line', level: 'intermediate', types: ['sport', 'bouldering'], width: 'narrow', price: '$$$' }
-    ];
-
-    function widthMatch(){
-      if(widthType === t('foot.widthWide')) return 'wide';
-      if(widthType === t('foot.widthNarrow')) return 'narrow';
-      return 'normal';
-    }
-
-    var targetWidth = widthMatch();
-    var scored = models.map(function(item){
-      var score = 60;
-      if(item.level === level) score += 10;
-      if(item.types.indexOf(type) > -1) score += 10;
-      if(item.width === targetWidth) score += 12;
-      if(state.results.left.instep === t('foot.instepHigh') || state.results.right.instep === t('foot.instepHigh')) {
-        if(item.width === 'wide') score += 4;
-      }
-      if(state.results.left.instep === t('foot.instepLow') || state.results.right.instep === t('foot.instepLow')) {
-        if(item.width === 'narrow') score += 4;
-      }
-      score = Math.min(95, score);
-      return { item: item, score: score };
-    }).sort(function(a,b){ return b.score - a.score; });
-
     grid.innerHTML = '';
+    appendChecklistCard(grid, translated('foot.checklistSizeTitle', '1. Length & size-chart check', '1. 길이·사이즈표 확인'), sizeChecklistBody(state.results));
+    appendChecklistCard(grid, translated('foot.checklistVolumeTitle', '2. Width & instep check', '2. 발볼·발등 확인'), volumeChecklistBody(state.results));
+    appendChecklistCard(grid, translated('foot.checklistShapeTitle', '3. Shape & use check', '3. 형태·용도 확인'), shapeChecklistBody(state.results));
+  }
 
-    var advice = sizeAdvice(lengthMm);
-    var street = getStreetSize();
-    scored.slice(0, 6).forEach(function(entry){
-      var card = document.createElement('div');
-      card.className = 'foot-reco-card';
-      var sizeTip = sizeTipForBrand(entry.item.brand, level, fit, type, street, footCm);
-      card.innerHTML = '' +
-        '<div class="foot-reco-top">' +
-          '<div>' +
-            '<div class="foot-reco-brand">' + entry.item.brand + '</div>' +
-            '<div class="foot-reco-model">' + entry.item.model + '</div>' +
-          '</div>' +
-          '<div class="foot-score">' + entry.score + '%</div>' +
-        '</div>' +
-        '<div class="foot-reco-meta">' +
-          '<span>' + t('foot.recoLevel') + ': ' + t('foot.level.' + entry.item.level) + '</span>' +
-          '<span>' + t('foot.recoType') + ': ' + t('foot.type.' + entry.item.types[0]) + '</span>' +
-          '<span>' + t('foot.recoWidth') + ': ' + entry.item.width + '</span>' +
-          (sizeTip ? '<span>' + t('foot.recoSize') + ': ' + sizeTip + '</span>' : '') +
-        '</div>' +
-        '<div class="foot-reco-footer">' +
-          '<span class="foot-reco-price">' + entry.item.price + '</span>' +
-          '<span class="foot-reco-size">' + advice + '</span>' +
-        '</div>';
-      grid.appendChild(card);
-    });
+  function analyze(){
+    var leftLength = readLengthInput('#foot-length-input');
+    if(leftLength === null) return;
+    var rightLength = readLengthInput('#foot-right-length-input');
+    if(rightLength === null) return;
+
+    state.results = {
+      leftLengthMm: leftLength,
+      rightLengthMm: rightLength,
+      width: readSelectValue('#foot-width-profile', 'normal'),
+      instep: readSelectValue('#foot-instep-profile', 'mid'),
+      arch: readSelectValue('#foot-arch-profile', 'normal'),
+      toe: readSelectValue('#foot-toe-profile', 'greek'),
+      fit: readSelectValue('#foot-fit', 'balanced'),
+      streetSize: readOptionalStreetSize(),
+      level: readSelectValue('#foot-level', 'beginner'),
+      type: readSelectValue('#foot-type', 'bouldering')
+    };
+
+    updateProgress(100);
+    renderResults();
+    buildRecommendations();
+    setStep(3);
   }
 
   function resetAll(){
@@ -1287,7 +1220,7 @@ function detectAngleWithPose(dataUrl){
       slot.classList.remove('has-image');
       slot.classList.remove('is-active');
     });
-    var resIds = ['length','width','instep','arch','toe','ball'];
+    var resIds = ['length','width','instep','arch','toe'];
     ['left','right'].forEach(function(side){
       resIds.forEach(function(id){
         var el = qs('#foot-result-' + side + '-' + id);
@@ -1295,7 +1228,34 @@ function detectAngleWithPose(dataUrl){
       });
     });
     var grid = qs('#foot-reco-grid');
-    if(grid) grid.innerHTML = '<div class="foot-reco-empty">' + t('foot.recoEmpty') + '</div>';
+    if(grid){
+      grid.innerHTML = '';
+      var empty = document.createElement('div');
+      empty.className = 'foot-reco-empty';
+      empty.textContent = t('foot.recoEmpty');
+      grid.appendChild(empty);
+    }
+    ['#foot-length-input', '#foot-right-length-input', '#foot-street-size'].forEach(function(selector){
+      var input = qs(selector);
+      if(input){
+        input.value = '';
+        input.setCustomValidity('');
+      }
+    });
+    var defaults = {
+      '#foot-width-profile': 'normal',
+      '#foot-instep-profile': 'mid',
+      '#foot-arch-profile': 'normal',
+      '#foot-toe-profile': 'greek',
+      '#foot-fit': 'balanced',
+      '#foot-street-scale': 'eu',
+      '#foot-level': 'beginner',
+      '#foot-type': 'bouldering'
+    };
+    Object.keys(defaults).forEach(function(selector){
+      var control = qs(selector);
+      if(control) control.value = defaults[selector];
+    });
     updateProgress(0);
     setStep(1);
     updateCaptureStatus('foot.captureIdle');
@@ -1305,29 +1265,74 @@ function detectAngleWithPose(dataUrl){
     if(upload) upload.value = '';
   }
 
+  function readHistory(){
+    try {
+      var parsed = JSON.parse(localStorage.getItem('footAnalysisHistory') || '[]');
+      if(!Array.isArray(parsed)) return [];
+      return parsed.filter(function(item){ return item && typeof item === 'object'; }).slice(0, 8);
+    } catch(error){
+      return [];
+    }
+  }
+
+  function writeHistory(history){
+    try {
+      localStorage.setItem('footAnalysisHistory', JSON.stringify(history.slice(0, 8)));
+      return true;
+    } catch(error){
+      return false;
+    }
+  }
+
   function saveHistory(){
     if(!state.results) return;
-    var history = JSON.parse(localStorage.getItem('footAnalysisHistory') || '[]');
-    var maxLen = Math.max(state.results.left.lengthMm, state.results.right.lengthMm);
+    var history = readHistory();
     var entry = {
+      version: 2,
       date: new Date().toISOString(),
-      lengthMm: maxLen,
-      widthType: state.results.left.widthType + '/' + state.results.right.widthType,
-      arch: state.results.left.arch + '/' + state.results.right.arch,
-      toe: state.results.left.toe + '/' + state.results.right.toe
+      leftLengthMm: state.results.leftLengthMm,
+      rightLengthMm: state.results.rightLengthMm,
+      width: state.results.width,
+      instep: state.results.instep,
+      arch: state.results.arch,
+      toe: state.results.toe,
+      fit: state.results.fit,
+      level: state.results.level,
+      type: state.results.type
     };
     history.unshift(entry);
-    history = history.slice(0, 8);
-    localStorage.setItem('footAnalysisHistory', JSON.stringify(history));
+    writeHistory(history);
     renderHistory();
+  }
+
+  function historySummary(item){
+    if(item.version === 2 && Number.isFinite(Number(item.leftLengthMm)) && Number.isFinite(Number(item.rightLengthMm))){
+      return formatText(translated(
+        'foot.historyTemplateExplicit',
+        'L {left}mm / R {right}mm · {width} · {instep} · {arch} · {toe}',
+        '왼발 {left}mm / 오른발 {right}mm · {width} · {instep} · {arch} · {toe}'
+      ), {
+        left: Number(item.leftLengthMm),
+        right: Number(item.rightLengthMm),
+        width: profileLabel('width', item.width),
+        instep: profileLabel('instep', item.instep),
+        arch: profileLabel('arch', item.arch),
+        toe: profileLabel('toe', item.toe)
+      });
+    }
+    return '';
   }
 
   function renderHistory(){
     var list = qs('#foot-history-list');
     if(!list) return;
-    var history = JSON.parse(localStorage.getItem('footAnalysisHistory') || '[]');
+    var history = readHistory().filter(function(item){ return !!historySummary(item); });
     if(!history.length){
-      list.innerHTML = '<div class="foot-history-empty">' + t('foot.historyEmpty') + '</div>';
+      list.innerHTML = '';
+      var empty = document.createElement('div');
+      empty.className = 'foot-history-empty';
+      empty.textContent = t('foot.historyEmpty');
+      list.appendChild(empty);
       return;
     }
     list.innerHTML = '';
@@ -1335,22 +1340,32 @@ function detectAngleWithPose(dataUrl){
       var row = document.createElement('div');
       row.className = 'foot-history-item';
       var date = new Date(item.date);
-      row.innerHTML = '<div class="foot-history-date">' + date.toLocaleDateString() + '</div>' +
-        '<div class="foot-history-meta">' +
-        item.lengthMm + 'mm · ' + item.widthType + ' · ' + item.arch + ' · ' + item.toe +
-        '</div>';
+      var dateElement = document.createElement('div');
+      dateElement.className = 'foot-history-date';
+      dateElement.textContent = Number.isNaN(date.getTime()) ? '-' : date.toLocaleDateString();
+      var meta = document.createElement('div');
+      meta.className = 'foot-history-meta';
+      meta.textContent = historySummary(item);
+      row.appendChild(dateElement);
+      row.appendChild(meta);
       list.appendChild(row);
     });
   }
 
   function copySummary(){
     if(!state.results) return;
-    var maxLen = Math.max(state.results.left.lengthMm, state.results.right.lengthMm);
-    var summary = t('foot.shareTemplate')
-      .replace('{length}', maxLen)
-      .replace('{width}', state.results.left.widthType + '/' + state.results.right.widthType)
-      .replace('{arch}', state.results.left.arch + '/' + state.results.right.arch)
-      .replace('{toe}', state.results.left.toe + '/' + state.results.right.toe);
+    var summary = formatText(translated(
+      'foot.shareTemplateExplicit',
+      'Foot fit reference: L {left}mm / R {right}mm, width {width}, instep {instep}, arch {arch}, toe {toe}.',
+      '암벽화 핏 참고: 왼발 {left}mm / 오른발 {right}mm, 발볼 {width}, 발등 {instep}, 아치 {arch}, 발가락 {toe}.'
+    ), {
+      left: state.results.leftLengthMm,
+      right: state.results.rightLengthMm,
+      width: profileLabel('width', state.results.width),
+      instep: profileLabel('instep', state.results.instep),
+      arch: profileLabel('arch', state.results.arch),
+      toe: profileLabel('toe', state.results.toe)
+    });
 
     if(navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(summary).then(function(){
@@ -1405,13 +1420,18 @@ function detectAngleWithPose(dataUrl){
     if(angleSel) angleSel.addEventListener('change', updateCaptureTarget);
     if(sideSel) sideSel.addEventListener('change', updateCaptureTarget);
     if(clearHistory) clearHistory.addEventListener('click', function(){
-      localStorage.removeItem('footAnalysisHistory');
+      try { localStorage.removeItem('footAnalysisHistory'); } catch(error){ /* storage may be unavailable */ }
       renderHistory();
     });
-
-    document.addEventListener('app:tab', function(e){
-      if(e.detail && e.detail.tab !== 'foot'){
-        stopCamera();
+    ['#foot-length-input', '#foot-right-length-input'].forEach(function(selector){
+      var input = qs(selector);
+      if(input) input.addEventListener('input', function(){ input.setCustomValidity(''); });
+    });
+    document.addEventListener('app:lang', function(){
+      renderHistory();
+      if(state.results){
+        renderResults();
+        buildRecommendations();
       }
     });
   }
@@ -1431,9 +1451,28 @@ function detectAngleWithPose(dataUrl){
     });
   }
 
+  var initialized = false;
+
+  function ensureInitialized(){
+    if(initialized || !qs('#foot')) return;
+    initialized = true;
+    init();
+  }
+
+  function initializeIfFootIsActive(){
+    var foot = qs('#foot');
+    if(foot && foot.classList.contains('active') && !foot.hidden) ensureInitialized();
+  }
+
+  document.addEventListener('app:tab', function(event){
+    var tab = event && event.detail ? event.detail.tab : '';
+    if(tab === 'foot') ensureInitialized();
+    else if(initialized) stopCamera();
+  });
+
   if(document.readyState === 'complete' || document.readyState === 'interactive'){
-    setTimeout(init, 0);
+    setTimeout(initializeIfFootIsActive, 0);
   } else {
-    document.addEventListener('DOMContentLoaded', init, false);
+    document.addEventListener('DOMContentLoaded', initializeIfFootIsActive, false);
   }
 })();
