@@ -20,7 +20,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260714-1">
+    <link rel="stylesheet" href="style.css?v=20260715-1">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -890,7 +890,7 @@
                     </div>
                     <div>
                         <span data-i18n="abrahang.metricGap">다음 세션</span>
-                        <strong data-i18n="abrahang.metricGapValue">6시간 뒤</strong>
+                        <strong id="abMetricGapValue" data-i18n="abrahang.metricGapValue">6시간 뒤</strong>
                     </div>
                 </div>
 
@@ -899,6 +899,7 @@
                         <div class="abrahang-mode-switch" role="group" aria-label="Protocol mode" data-i18n="abrahang.modeAria" data-i18n-attr="aria-label">
                             <button class="abrahang-mode is-active" type="button" data-ab-mode="paper" data-i18n="abrahang.modePaper">Abrahangs</button>
                             <button class="abrahang-mode" type="button" data-ab-mode="video" data-i18n="abrahang.modeVideo">Emil 10분</button>
+                            <button class="abrahang-mode" type="button" data-ab-mode="max" data-i18n="abrahang.modeMax">맥스행 측정</button>
                         </div>
 
                         <div class="abrahang-dial-stage">
@@ -952,25 +953,80 @@
 
                     <section class="abrahang-settings-panel">
                         <div class="abrahang-setting">
-                            <label for="abIntensity" data-i18n="abrahang.intensityLabel">강도 목표</label>
-                            <div class="abrahang-range-row">
-                                <input id="abIntensity" type="range" min="30" max="80" step="5" value="50">
-                                <strong id="abIntensityValue">50%</strong>
+                            <div id="abRoutineSettings" class="abrahang-mode-section">
+                                <label for="abIntensity" data-i18n="abrahang.intensityLabel">강도 목표</label>
+                                <div class="abrahang-range-row">
+                                    <input id="abIntensity" type="range" min="30" max="80" step="5" value="50">
+                                    <strong id="abIntensityValue">50%</strong>
+                                </div>
+                                <label class="abrahang-checkbox abrahang-onehand-toggle">
+                                    <input id="abOneHand" type="checkbox">
+                                    <span data-i18n="abrahang.oneHandLabel">한손 모드: 목표 하중 1/2</span>
+                                </label>
+                                <div class="abrahang-load-target">
+                                    <span data-i18n="abrahang.loadTargetLabel">목표 하중</span>
+                                    <strong id="abLoadTarget" data-i18n="abrahang.loadTargetEmpty">체중 입력 필요</strong>
+                                </div>
+                                <p data-i18n="abrahang.intensityHint">최대 힘 기준이 아니라, 통제 가능한 약한 전완 긴장 기준입니다.</p>
                             </div>
+
+                            <div id="abMaxSettings" class="abrahang-mode-section abrahang-max-settings" hidden>
+                                <h3 data-i18n="abrahang.maxSettingsTitle">맥스행 측정 설정</h3>
+                                <div class="abrahang-max-config">
+                                    <label>
+                                        <span data-i18n="abrahang.maxGripLabel">그립</span>
+                                        <select id="abMaxGrip">
+                                            <option value="base" data-i18n="abrahang.maxGripBase">4손가락</option>
+                                            <option value="front3" data-i18n="abrahang.maxGripFront3">앞 3손가락</option>
+                                            <option value="front2" data-i18n="abrahang.maxGripFront2">앞 2손가락</option>
+                                            <option value="middle2" data-i18n="abrahang.maxGripMiddle2">중간 2손가락</option>
+                                        </select>
+                                    </label>
+                                    <label>
+                                        <span data-i18n="abrahang.maxGripFormLabel">그립 형태</span>
+                                        <select id="abMaxGripForm">
+                                            <option value="half" selected data-i18n="abrahang.maxGripFormHalf">하프 크림프</option>
+                                            <option value="open" data-i18n="abrahang.maxGripFormOpen">오픈 핸드</option>
+                                        </select>
+                                    </label>
+                                    <label>
+                                        <span data-i18n="abrahang.maxDepthLabel">그립 깊이</span>
+                                        <span class="abrahang-max-input-unit">
+                                            <input id="abMaxDepth" type="number" min="10" max="50" step="1" value="20" inputmode="numeric">
+                                            <em>mm</em>
+                                        </span>
+                                    </label>
+                                    <label>
+                                        <span data-i18n="abrahang.maxRestLabel">시도 사이 휴식</span>
+                                        <span class="abrahang-max-input-unit">
+                                            <input id="abMaxRest" type="number" min="120" max="300" step="30" value="180" inputmode="numeric">
+                                            <em data-i18n="abrahang.maxSecondsUnit">초</em>
+                                        </span>
+                                    </label>
+                                </div>
+                                <div class="abrahang-max-protocol-note">
+                                    <strong data-i18n="abrahang.maxProtocolTitle">5초 측정 · 한 손 3회 · 1초 피크/200ms/90% 유지</strong>
+                                    <p data-i18n="abrahang.maxProtocolNote">기본 휴식 180초는 최대 힘 시도 사이 3분을 사용한 연구 프로토콜을 따른 보수적 값입니다. 연구는 좌우 교대가 흔하지만 이 앱은 왼손 3회 후 오른손 3회로 진행합니다.</p>
+                                    <a href="https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2024.1461820/full" target="_blank" rel="noopener" data-i18n="abrahang.maxProtocolSource">측정 프로토콜 근거 보기</a>
+                                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7997018/" target="_blank" rel="noopener" data-i18n="abrahang.maxForceSource">200ms 힘 측정 근거 보기</a>
+                                </div>
+                                <div class="abrahang-safety abrahang-max-safety">
+                                    <h3 data-i18n="abrahang.maxSafetyTitle">맥스행 안전 기준</h3>
+                                    <ul>
+                                        <li data-i18n="abrahang.maxSafetyWarmup">10~20분 워밍업과 점진적인 준비 당김을 2회 이상 수행합니다.</li>
+                                        <li data-i18n="abrahang.maxSafetyFresh">테스트 전 24~48시간은 강한 클라이밍과 행보드를 피합니다.</li>
+                                        <li data-i18n="abrahang.maxSafetyPain">손가락·손목·팔꿈치·어깨 통증이나 손상이 있으면 시작하지 않습니다.</li>
+                                        <li data-i18n="abrahang.maxSafetyControl">충격 없이 서서히 하중을 싣고 날카로운 통증이 있으면 즉시 중단합니다.</li>
+                                    </ul>
+                                </div>
+                            </div>
+
                             <div class="abrahang-bodyweight-row">
                                 <label for="abBodyWeight" data-i18n="abrahang.bodyWeightLabel">체중</label>
                                 <div class="abrahang-weight-input">
                                     <input id="abBodyWeight" type="number" inputmode="decimal" min="20" max="180" step="0.1" placeholder="70" data-i18n="abrahang.bodyWeightPlaceholder" data-i18n-attr="placeholder">
                                     <span data-i18n="abrahang.bodyWeightUnit">kg</span>
                                 </div>
-                            </div>
-                            <label class="abrahang-checkbox abrahang-onehand-toggle">
-                                <input id="abOneHand" type="checkbox">
-                                <span data-i18n="abrahang.oneHandLabel">한손 모드: 목표 하중 1/2</span>
-                            </label>
-                            <div class="abrahang-load-target">
-                                <span data-i18n="abrahang.loadTargetLabel">목표 하중</span>
-                                <strong id="abLoadTarget" data-i18n="abrahang.loadTargetEmpty">체중 입력 필요</strong>
                             </div>
                             <div class="abrahang-scale-panel">
                                 <div class="abrahang-scale-head">
@@ -1011,7 +1067,6 @@
                                 </div>
                                 <p data-i18n="abrahang.scaleHint">발판 저울은 체중 - 저울값으로 손가락 하중을 추정하고, 크레인 저울은 저울값을 현재 하중으로 봅니다. WH-C06 최초 연결은 장치 목록에서 선택합니다. 수신이 끊기면 페이지 새로고침으로 Web Bluetooth를 초기화한 뒤 다시 연결합니다.</p>
                             </div>
-                            <p data-i18n="abrahang.intensityHint">최대 힘 기준이 아니라, 통제 가능한 약한 전완 긴장 기준입니다.</p>
                         </div>
 
                         <div class="abrahang-setting">
@@ -1057,20 +1112,66 @@
                     </section>
 
                     <div class="abrahang-history">
-                        <div class="abrahang-history-head">
-                            <h3 data-i18n="abrahang.historyTitle">훈련 히스토리</h3>
-                            <button class="abrahang-btn ghost" type="button" id="abHistoryClear" data-i18n="abrahang.historyClear">전체 삭제</button>
-                        </div>
-                        <div class="abrahang-history-list" id="abHistoryList">
-                            <div class="abrahang-history-empty" data-i18n="abrahang.historyEmpty">훈련 히스토리가 없습니다.</div>
-                        </div>
-                        <div class="abrahang-history-analysis">
-                            <div class="abrahang-history-analysis-head">
-                                <h4 data-i18n="abrahang.analysisTitle">결과 분석</h4>
-                                <span id="abHistoryAnalysisStatus" data-i18n="abrahang.analysisEmpty">체크한 세션 없음</span>
+                        <div id="abRoutineHistory" class="abrahang-mode-section">
+                            <div class="abrahang-history-head">
+                                <h3 data-i18n="abrahang.historyTitle">훈련 히스토리</h3>
+                                <button class="abrahang-btn ghost" type="button" id="abHistoryClear" data-i18n="abrahang.historyClear">전체 삭제</button>
                             </div>
-                            <canvas id="abHistoryAnalysisChart" width="720" height="360" aria-label="Selected Abrahang history analysis chart" data-i18n="abrahang.analysisCanvasLabel" data-i18n-attr="aria-label"></canvas>
-                            <div class="abrahang-analysis-legend" id="abHistoryAnalysisLegend"></div>
+                            <div class="abrahang-history-list" id="abHistoryList">
+                                <div class="abrahang-history-empty" data-i18n="abrahang.historyEmpty">훈련 히스토리가 없습니다.</div>
+                            </div>
+                            <div class="abrahang-history-analysis">
+                                <div class="abrahang-history-analysis-head">
+                                    <h4 data-i18n="abrahang.analysisTitle">결과 분석</h4>
+                                    <span id="abHistoryAnalysisStatus" data-i18n="abrahang.analysisEmpty">체크한 세션 없음</span>
+                                </div>
+                                <canvas id="abHistoryAnalysisChart" width="720" height="360" aria-label="Selected Abrahang history analysis chart" data-i18n="abrahang.analysisCanvasLabel" data-i18n-attr="aria-label"></canvas>
+                                <div class="abrahang-analysis-legend" id="abHistoryAnalysisLegend"></div>
+                            </div>
+                        </div>
+
+                        <div id="abMaxHistory" class="abrahang-mode-section abrahang-max-history" hidden>
+                            <div class="abrahang-history-head">
+                                <h3 data-i18n="abrahang.maxResultsTitle">맥스행 측정 결과</h3>
+                                <button class="abrahang-btn ghost" type="button" id="abMaxHistoryClear" data-i18n="abrahang.maxHistoryClear">기록 전체 삭제</button>
+                            </div>
+                            <div class="abrahang-max-results" aria-live="polite">
+                                <div class="abrahang-max-best-grid">
+                                    <section aria-labelledby="abMaxLeftHeading">
+                                        <span id="abMaxLeftHeading" data-i18n="abrahang.maxLeftBest">왼손 최고 1초 평균 힘</span>
+                                        <strong id="abMaxLeftBest">--</strong>
+                                        <dl class="abrahang-max-hand-metrics">
+                                            <div><dt data-i18n="abrahang.maxBestForce200">최고 200ms 힘</dt><dd id="abMaxLeftForce200">--</dd></div>
+                                            <div><dt data-i18n="abrahang.maxBestMaintain90">최장 90% 유지</dt><dd id="abMaxLeftMaintain90">--</dd></div>
+                                            <div><dt data-i18n="abrahang.maxOutputDecline">3회 출력 감소율</dt><dd id="abMaxLeftDecline">--</dd></div>
+                                        </dl>
+                                        <div class="abrahang-max-attempts">
+                                            <span class="abrahang-max-attempt" data-ab-max-result="0"><b>1</b><strong data-ab-max-metric="peak1s">--</strong><em data-ab-max-metric="force200">--</em><em data-ab-max-metric="maintain90">--</em></span>
+                                            <span class="abrahang-max-attempt" data-ab-max-result="1"><b>2</b><strong data-ab-max-metric="peak1s">--</strong><em data-ab-max-metric="force200">--</em><em data-ab-max-metric="maintain90">--</em></span>
+                                            <span class="abrahang-max-attempt" data-ab-max-result="2"><b>3</b><strong data-ab-max-metric="peak1s">--</strong><em data-ab-max-metric="force200">--</em><em data-ab-max-metric="maintain90">--</em></span>
+                                        </div>
+                                    </section>
+                                    <section aria-labelledby="abMaxRightHeading">
+                                        <span id="abMaxRightHeading" data-i18n="abrahang.maxRightBest">오른손 최고 1초 평균 힘</span>
+                                        <strong id="abMaxRightBest">--</strong>
+                                        <dl class="abrahang-max-hand-metrics">
+                                            <div><dt data-i18n="abrahang.maxBestForce200">최고 200ms 힘</dt><dd id="abMaxRightForce200">--</dd></div>
+                                            <div><dt data-i18n="abrahang.maxBestMaintain90">최장 90% 유지</dt><dd id="abMaxRightMaintain90">--</dd></div>
+                                            <div><dt data-i18n="abrahang.maxOutputDecline">3회 출력 감소율</dt><dd id="abMaxRightDecline">--</dd></div>
+                                        </dl>
+                                        <div class="abrahang-max-attempts">
+                                            <span class="abrahang-max-attempt" data-ab-max-result="3"><b>1</b><strong data-ab-max-metric="peak1s">--</strong><em data-ab-max-metric="force200">--</em><em data-ab-max-metric="maintain90">--</em></span>
+                                            <span class="abrahang-max-attempt" data-ab-max-result="4"><b>2</b><strong data-ab-max-metric="peak1s">--</strong><em data-ab-max-metric="force200">--</em><em data-ab-max-metric="maintain90">--</em></span>
+                                            <span class="abrahang-max-attempt" data-ab-max-result="5"><b>3</b><strong data-ab-max-metric="peak1s">--</strong><em data-ab-max-metric="force200">--</em><em data-ab-max-metric="maintain90">--</em></span>
+                                        </div>
+                                    </section>
+                                </div>
+                                <p data-i18n="abrahang.maxResultMethod">1초 피크는 시간가중 이동평균입니다. 200ms 힘과 90% 유지시간은 샘플 간격이 충분할 때만 계산하며, 90% 유지는 같은 손의 세 시도 중 최고 1초 힘을 기준으로 합니다. 출력 감소율은 세 시도가 그 손의 최고 시도보다 평균적으로 낮은 비율입니다. 저울만으로 자세 자체는 판별하지 않습니다.</p>
+                            </div>
+                            <h4 data-i18n="abrahang.maxHistoryTitle">맥스행 히스토리</h4>
+                            <div class="abrahang-max-history-list" id="abMaxHistoryList">
+                                <div class="abrahang-history-empty" data-i18n="abrahang.maxHistoryEmpty">맥스행 측정 기록이 없습니다.</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1212,7 +1313,7 @@
 
     <div id="share-toast" class="share-toast" role="status" aria-live="polite"></div>
 
-    <script src="i18n.js?v=20260714-1"></script>
+    <script src="i18n.js?v=20260715-1"></script>
     <script src="main.js?v=20260714-1"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -1224,7 +1325,7 @@
                 foot: 'foot-analysis.js?v=20260714-1',
                 sequence: 'sequence-generator.js?v=20260714-1',
                 lottery: 'lottery-generator.js?v=20260714-1',
-                abrahang: 'abrahang-timer.js?v=20260708-1'
+                abrahang: 'abrahang-timer.js?v=20260715-1'
             };
             const loadedToolScripts = new Set();
             const loadingToolScripts = new Set();

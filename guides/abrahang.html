@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>아브라행 행보드 타이머 가이드 | 연마</title>
-    <meta name="description" content="아브라행 행보드 타이머의 목표 하중, 한손 모드, 휴식 간격, WH-C06 크레인 저울 기록 방식을 설명합니다.">
+    <meta name="description" content="아브라행 행보드 타이머와 맥스행 측정의 그립·깊이 설정, 1초 피크 힘, 200ms 힘, 90% 유지시간, 휴식 간격, 저울 기록 방식을 설명합니다.">
     <meta name="robots" content="index,follow">
     <link rel="canonical" href="https://www.hpmplab.com/guides/abrahang.html">
-    <link rel="stylesheet" href="../style.css?v=20260714-1">
+    <link rel="stylesheet" href="../style.css?v=20260715-1">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -30,12 +30,12 @@
         <section class="content-page-hero">
             <p class="section-kicker">Hangboard loading</p>
             <h1>아브라행 행보드 타이머 가이드</h1>
-            <p>아브라행은 최대 힘을 시험하는 데드행이 아니라, 발을 바닥에 둔 상태에서 손가락에 낮은 강도의 반복 자극을 주는 방식입니다. 연마의 타이머는 로딩 시간, 휴식, 목표 하중, 한손 교대, 측정 기록을 한 화면에서 관리하도록 만든 도구입니다.</p>
-            <p class="content-page-meta">최종 업데이트: 2026-07-08</p>
+            <p>연마의 아브라행 앱은 발을 바닥에 둔 저강도 반복 루틴과, 같은 조건의 좌우 최대 힘을 비교하는 맥스행 측정을 한 화면에서 제공합니다. 로딩 시간, 휴식, 수행 손, 그립 조건과 저울 기록을 분리해 같은 목적의 기록끼리 비교하도록 만든 도구입니다.</p>
+            <p class="content-page-meta">최종 업데이트: 2026-07-15</p>
         </section>
         <section class="content-page-section">
             <h2>누구에게 필요한가</h2>
-            <p>손가락 힘을 늘리고 싶지만 매번 고강도 맥스행을 하기 부담스러운 클라이머에게 맞습니다. 특히 훈련 강도를 숫자로 낮게 제한하고, 강한 클라이밍 세션과 충분히 분리하려는 사용자를 기준으로 설계했습니다. 손가락, 손목, 팔꿈치 통증이 있는 상태에서 통증을 참고 진행하는 용도는 아닙니다.</p>
+            <p>Abrahangs와 Emil 루틴은 손가락 힘을 늘리고 싶지만 매번 고강도 맥스행을 하기 부담스러운 클라이머에게 맞습니다. 맥스행 측정은 이미 행보드 경험이 있고 충분히 워밍업한 사용자가 같은 그립과 엣지 깊이에서 좌우 변화를 추적할 때 사용합니다. 손가락, 손목, 팔꿈치 통증이 있는 상태에서 통증을 참고 진행하는 용도는 아닙니다.</p>
             <p>초보자는 행보드 자체보다 기본 클라이밍 양과 회복 관리가 먼저입니다. 이 타이머는 몸 상태를 평가해 주지 않으므로, 통증이 있거나 부상 이력이 있으면 전문가의 조언을 우선해야 합니다.</p>
         </section>
         <section class="content-page-section">
@@ -43,10 +43,17 @@
             <ul>
                 <li><strong>Abrahangs 모드:</strong> 10초 로딩과 20초 휴식을 20회 반복합니다.</li>
                 <li><strong>Emil 10분 모드:</strong> 10초 로딩과 50초 휴식을 10회 반복합니다.</li>
+                <li><strong>맥스행 측정:</strong> 선택한 그립과 엣지 깊이로 왼손 3회 후 오른손 3회를 각각 5초 측정합니다. 기본 휴식은 시도 사이 180초입니다.</li>
                 <li><strong>강도 목표:</strong> 체중의 30~80% 범위에서 설정하며, 기본값은 Abrahangs 50%, Emil 70%입니다.</li>
                 <li><strong>한손 모드:</strong> 표시 목표 하중을 절반으로 나누고, 라운드마다 수행 손을 바꿔 기록합니다.</li>
             </ul>
             <p>목표 하중은 “이 정도를 반드시 당겨야 한다”는 명령이 아니라, 너무 세게 당기지 않기 위한 상한선 역할에 가깝습니다. 하중이 들쭉날쭉하거나 통제가 어렵다면 시작하지 않는 것이 낫습니다.</p>
+        </section>
+        <section class="content-page-section">
+            <h2>맥스행 결과를 읽는 법</h2>
+            <p>각 시도의 <strong>1초 피크 힘</strong>은 불규칙한 저울 샘플을 실제 수신 시각으로 시간가중한 1초 이동평균의 최고값입니다. <strong>200ms 힘</strong>은 시작 전 1초 기준선에서 힘이 뚜렷하게 상승한 시점을 찾은 뒤 200ms 지점의 힘입니다. 이 값은 짧은 구간의 샘플이 충분히 촘촘할 때만 표시됩니다.</p>
+            <p><strong>90% 유지시간</strong>은 같은 손의 세 시도 중 최고 1초 힘을 기준값으로 고정하고, 그 90% 이상을 연속 유지한 가장 긴 시간입니다. 따라서 약한 시도 자체의 90%를 기준으로 삼아 결과가 좋아 보이는 문제를 피합니다. 다만 저울은 힘만 측정하므로 손가락이나 어깨 자세가 실제로 유지됐는지는 판별할 수 없습니다.</p>
+            <p><strong>3회 출력 감소율</strong>은 세 시도가 해당 손의 최고 시도보다 평균적으로 낮은 비율입니다. 0%에 가까우면 세 번의 출력이 비슷하고, 값이 클수록 시도 사이 편차가 큽니다. 앱은 샘플 밀도가 부족한 값에 물결표(~)를 붙이거나 ‘샘플 부족’으로 남기며, 순간 피크를 1초 평균의 대체값으로 사용하지 않습니다.</p>
         </section>
         <section class="content-page-section">
             <h2>앱에서 세션을 시작하는 순서</h2>
@@ -80,7 +87,7 @@
                 <li>발은 항상 바닥에 두고, 하중을 쉽게 통제 가능한 상태에서만 시작합니다.</li>
                 <li>가벼운 워밍업 후에 수행합니다.</li>
                 <li>활차가 찌릿하거나 날카로운 통증, 저림, 팔꿈치 통증이 있으면 즉시 중단합니다.</li>
-                <li>강한 클라이밍, 맥스행, 다음 손가락 로딩과는 최소 6시간 이상 간격을 둡니다.</li>
+                <li>저강도 반복 루틴은 강한 클라이밍·맥스행·다음 손가락 로딩과 최소 6시간 이상 간격을 둡니다. 맥스행 측정 전에는 24~48시간 강한 클라이밍과 행보드를 피합니다.</li>
                 <li>숫자 달성보다 반복 가능한 느낌과 다음날 반응을 우선합니다.</li>
             </ol>
         </section>
@@ -88,7 +95,7 @@
             <h2>근거와 한계</h2>
             <p>이 도구는 2024년 Sports Medicine - Open에 실린 Abrahangs 연구와 결합조직 로딩에 관한 Keith Baar의 설명을 참고해 만들었습니다. 다만 연구는 완벽한 무작위 대조 실험이 아니며, 앱 기록 기반 후향 분석이라는 한계가 있습니다. 그래서 연마는 논문 내용을 과장하지 않고, 낮은 강도와 긴 회복 간격을 지키기 위한 타이머로만 제공합니다.</p>
             <p>Abrahangs 연구는 Crimpd 앱에 기록된 반복 행보드 데이터를 분석해, 낮은 강도의 빈번한 손가락 로딩이 손가락 힘 향상과 관련될 수 있음을 보여줍니다. 하지만 개인의 부상 이력, 등반량, 회복 상태, 수면, 영양 같은 변수를 앱이 모두 통제할 수는 없습니다. 따라서 이 타이머는 연구 아이디어를 실전에서 안전하게 적용하기 위한 구조화 도구이지, 의학적 처방이나 부상 치료법이 아닙니다.</p>
-            <p>관련 읽을거리: <a href="https://link.springer.com/article/10.1186/s40798-024-00793-7" target="_blank" rel="noopener">Gilmore et al. 2024</a>, <a href="https://link.springer.com/article/10.1007/s40279-017-0719-x" target="_blank" rel="noopener">Baar 2017</a>.</p>
+            <p>관련 읽을거리: <a href="https://link.springer.com/article/10.1186/s40798-024-00793-7" target="_blank" rel="noopener">Gilmore et al. 2024</a>, <a href="https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2024.1461820/full" target="_blank" rel="noopener">최대 힘 5초·3분 휴식 프로토콜</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7997018/" target="_blank" rel="noopener">Stien et al. 2021의 200ms 힘 발현 측정</a>, <a href="https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2022.902521/full" target="_blank" rel="noopener">최대 힘 대비 90% 목표 하중 프로토콜</a>, <a href="https://link.springer.com/article/10.1007/s40279-017-0719-x" target="_blank" rel="noopener">Baar 2017</a>.</p>
         </section>
     </main>
     <footer class="container">

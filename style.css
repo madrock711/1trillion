@@ -2094,14 +2094,14 @@ button.tab-link {
 
 .abrahang-mode-switch {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
   margin-bottom: 16px;
 }
 
 .abrahang-mode,
 .abrahang-btn {
-  min-height: 40px;
+  min-height: 44px;
   border: 1px solid var(--ab-line);
   border-radius: 8px;
   background: #242424;
@@ -3141,6 +3141,478 @@ button.tab-link {
   font-weight: 800;
 }
 
+.abrahang-mode-section[hidden],
+.abrahang-max-settings[hidden],
+.abrahang-max-results[hidden],
+.abrahang-max-history[hidden] {
+  display: none !important;
+}
+
+.abrahang-max-settings,
+.abrahang-max-results,
+.abrahang-max-history,
+.abrahang-max-config,
+.abrahang-max-best-grid,
+.abrahang-max-attempts,
+.abrahang-max-history-list,
+.abrahang-max-history-item {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.abrahang-max-settings {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(245, 158, 11, 0.09), rgba(255, 255, 255, 0.025));
+}
+
+.abrahang-max-settings > h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.abrahang-max-config {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  align-items: end;
+}
+
+.abrahang-max-config label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.abrahang-max-config input,
+.abrahang-max-config select,
+.abrahang-max-settings button,
+.abrahang-max-results button,
+.abrahang-max-history button {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  box-sizing: border-box;
+  border: 1px solid var(--ab-line);
+  border-radius: 8px;
+  background: #101010;
+  color: var(--text-primary);
+  padding: 9px 10px;
+  font: inherit;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.abrahang-max-config input {
+  font-variant-numeric: tabular-nums;
+}
+
+.abrahang-max-config select {
+  color-scheme: dark;
+  text-overflow: ellipsis;
+}
+
+.abrahang-max-input-unit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  min-width: 0;
+  border: 1px solid var(--ab-line);
+  border-radius: 8px;
+  background: #101010;
+  overflow: hidden;
+}
+
+.abrahang-max-input-unit input {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.abrahang-max-input-unit:focus-within {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.abrahang-max-input-unit input:focus-visible {
+  outline: none;
+}
+
+.abrahang-max-input-unit em {
+  padding: 0 10px 0 4px;
+  color: var(--ab-muted);
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.abrahang-max-settings button,
+.abrahang-max-results button,
+.abrahang-max-history button {
+  background: #242424;
+  cursor: pointer;
+  white-space: normal;
+}
+
+.abrahang-max-settings .abrahang-btn,
+.abrahang-max-results .abrahang-btn,
+.abrahang-max-history .abrahang-btn {
+  min-height: 44px;
+}
+
+.abrahang-max-history .abrahang-history-head .abrahang-btn,
+.abrahang-max-history-item .abrahang-btn {
+  width: auto;
+  margin-left: auto;
+}
+
+.abrahang-max-config input:disabled,
+.abrahang-max-config select:disabled,
+.abrahang-max-settings button:disabled,
+.abrahang-max-results button:disabled,
+.abrahang-max-history button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.abrahang-max-protocol-note {
+  margin: 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--ab-rest);
+  border-radius: 0 8px 8px 0;
+  background: rgba(56, 189, 248, 0.07);
+  color: var(--ab-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.abrahang-max-protocol-note strong {
+  display: block;
+  color: #e0f2fe;
+  font-size: 0.84rem;
+}
+
+.abrahang-max-protocol-note p {
+  margin: 5px 0 0;
+}
+
+.abrahang-max-protocol-note a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 3px;
+  color: #7dd3fc;
+  font-weight: 850;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.abrahang-max-settings .abrahang-max-safety {
+  margin-top: 0;
+}
+
+.abrahang-max-results {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: 8px;
+  background: rgba(34, 197, 94, 0.055);
+}
+
+.abrahang-max-results h3,
+.abrahang-max-results h4,
+.abrahang-max-history h3,
+.abrahang-max-history h4 {
+  margin: 0;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.abrahang-max-results h3,
+.abrahang-max-history h3 {
+  font-size: 1rem;
+}
+
+.abrahang-max-results h4,
+.abrahang-max-history h4 {
+  font-size: 0.88rem;
+}
+
+.abrahang-max-results > p {
+  margin: 0;
+  color: var(--ab-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.abrahang-max-best-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.abrahang-max-best-grid > article,
+.abrahang-max-best-grid > div,
+.abrahang-max-best-grid > section {
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: #101010;
+}
+
+.abrahang-max-best-grid > article > span,
+.abrahang-max-best-grid > div > span,
+.abrahang-max-best-grid > section > span,
+.abrahang-max-attempt span,
+.abrahang-max-history-item span,
+.abrahang-max-history-item time {
+  color: var(--ab-muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.abrahang-max-best-grid > article > strong,
+.abrahang-max-best-grid > div > strong,
+.abrahang-max-best-grid > section > strong {
+  display: block;
+  margin-top: 4px;
+  color: #bbf7d0;
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.abrahang-max-hand-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin: 9px 0 0;
+}
+
+.abrahang-max-hand-metrics > div {
+  min-width: 0;
+  padding: 6px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.abrahang-max-hand-metrics dt {
+  color: var(--ab-muted);
+  font-size: 0.66rem;
+  font-weight: 800;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.abrahang-max-hand-metrics dd {
+  margin: 4px 0 0;
+  color: #e0f2fe;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.abrahang-max-attempts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.abrahang-max-attempt {
+  display: grid;
+  align-content: center;
+  gap: 3px;
+  min-height: 104px;
+  padding: 7px 5px;
+  border: 1px solid rgba(56, 189, 248, 0.16);
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.055);
+  text-align: center;
+}
+
+.abrahang-max-attempt strong {
+  display: block;
+  margin: 0;
+  color: #e0f2fe;
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.abrahang-max-attempt.is-current {
+  border-color: rgba(245, 158, 11, 0.82);
+  background: rgba(245, 158, 11, 0.11);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.1);
+}
+
+.abrahang-max-attempt.is-complete {
+  border-color: rgba(34, 197, 94, 0.38);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.abrahang-max-attempt b {
+  color: var(--ab-muted);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.abrahang-max-attempt em {
+  color: rgba(229, 231, 235, 0.58);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  font-weight: 750;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.abrahang-max-attempt em + em {
+  padding-top: 3px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.abrahang-max-history {
+  grid-area: history;
+  display: grid;
+  gap: 10px;
+  margin-top: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.abrahang-max-history-list {
+  display: grid;
+  gap: 8px;
+}
+
+.abrahang-max-history-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 11px;
+  border: 1px solid var(--ab-line);
+  border-radius: 8px;
+  background: #101010;
+  overflow-wrap: anywhere;
+}
+
+.abrahang-max-history-item > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.abrahang-max-history-item > div > strong {
+  color: var(--text-primary);
+  font-size: 0.84rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.abrahang-max-history-item > div > em {
+  color: #e0f2fe;
+  font-size: 0.76rem;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  font-weight: 850;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.abrahang-max-history-item .danger {
+  border-color: rgba(248, 113, 113, 0.5);
+  color: #fecaca;
+}
+
+.abrahang-max-history-item > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 10px;
+  min-width: 0;
+  grid-column: 1 / -1;
+}
+
+.abrahang-max-history-item > header > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.abrahang-max-history-item > header strong {
+  color: var(--text-primary);
+  font-size: 0.84rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.abrahang-max-history-item > header span {
+  color: var(--ab-muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.abrahang-max-history-item dl {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin: 0;
+  grid-column: 1 / -1;
+}
+
+.abrahang-max-history-item dl > div {
+  min-width: 0;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.abrahang-max-history-item dt {
+  color: var(--ab-muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.abrahang-max-history-item dd {
+  margin: 3px 0 0;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
 .abrahang-safety {
   padding: 12px;
   border: 1px solid rgba(245, 158, 11, 0.25);
@@ -3178,7 +3650,8 @@ button.tab-link {
 
   .abrahang-timer-panel,
   .abrahang-settings-panel,
-  .abrahang-history {
+  .abrahang-history,
+  .abrahang-max-history {
     box-sizing: border-box;
     width: 100%;
     min-width: 0;
@@ -3197,6 +3670,47 @@ button.tab-link {
 @media (max-width: 560px) {
   .abrahang-app {
     padding: 16px;
+  }
+
+  .abrahang-mode-switch {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.95fr) minmax(0, 1.1fr);
+  }
+
+  .abrahang-mode {
+    min-width: 0;
+    padding: 7px 2px;
+    font-size: 0.72rem;
+    line-height: 1.2;
+    white-space: normal;
+    overflow-wrap: normal;
+    word-break: keep-all;
+  }
+
+  .abrahang-max-config,
+  .abrahang-max-best-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .abrahang-max-settings,
+  .abrahang-max-results {
+    padding: 10px;
+  }
+
+  .abrahang-max-history-item > header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .abrahang-max-history-item {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .abrahang-max-history-item dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .abrahang-max-history-item .abrahang-btn {
+    justify-self: end;
   }
 
   .abrahang-summary {
@@ -3306,9 +3820,73 @@ button.tab-link {
   }
 }
 
+@media (max-width: 420px) {
+  .abrahang-max-hand-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .abrahang-max-hand-metrics > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .abrahang-max-hand-metrics dd {
+    flex: 0 0 auto;
+    margin: 0;
+    text-align: right;
+  }
+
+  .abrahang-max-attempts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 5px;
+  }
+
+  .abrahang-max-attempt {
+    grid-template-columns: 24px minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    align-content: center;
+    gap: 4px;
+    min-height: 56px;
+    padding: 6px;
+    text-align: left;
+  }
+
+  .abrahang-max-attempt b {
+    text-align: center;
+  }
+
+  .abrahang-max-attempt strong,
+  .abrahang-max-attempt em {
+    font-size: 0.68rem;
+  }
+
+  .abrahang-max-attempt em + em {
+    padding-top: 0;
+    padding-left: 4px;
+    border-top: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.07);
+  }
+}
+
 @media (max-width: 340px) {
   .abrahang-app {
     padding: 12px;
+  }
+
+  .abrahang-mode-switch {
+    gap: 4px;
+  }
+
+  .abrahang-mode {
+    padding-inline: 3px;
+    font-size: 0.72rem;
+  }
+
+  .abrahang-max-attempt {
+    grid-template-columns: 22px minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr);
+    padding-inline: 4px;
   }
 
   .abrahang-timer-panel {
