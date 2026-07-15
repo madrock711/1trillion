@@ -2166,19 +2166,19 @@ button.tab-link {
 
 .abrahang-dial-load span {
   color: var(--ab-muted);
-  font-size: 0.68rem;
+  font-size: clamp(0.76rem, 0.72rem + 0.18vw, 0.84rem);
   font-weight: 850;
-  line-height: 1.15;
+  line-height: 1.2;
   white-space: nowrap;
 }
 
 .abrahang-dial-load strong {
   margin-top: 3px;
   color: var(--text-primary);
-  font-size: 0.95rem;
+  font-size: clamp(1.04rem, 0.98rem + 0.28vw, 1.2rem);
   font-variant-numeric: tabular-nums;
   font-weight: 900;
-  line-height: 1;
+  line-height: 1.05;
   white-space: nowrap;
 }
 
