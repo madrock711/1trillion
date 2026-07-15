@@ -15,7 +15,10 @@
   var HISTORY_LIMIT = 100;
   var MAX_HANG_HISTORY_LIMIT = 50;
   var MAX_HANG_MEASURE_MS = 5000;
-  var MAX_HANG_DEFAULT_REST_SECONDS = 180;
+  var MAX_HANG_DEFAULT_REST_SECONDS = 75;
+  var MAX_HANG_MIN_REST_SECONDS = 60;
+  var MAX_HANG_MAX_REST_SECONDS = 75;
+  var MAX_HANG_REST_STEP_SECONDS = 15;
   var MAX_HANG_STABLE_WINDOW_MS = 3000;
   var MAX_HANG_PEAK_WINDOW_MS = 1000;
   var MAX_HANG_FORCE_200_MS = 200;
@@ -236,11 +239,11 @@
     var gripKey = validGrips.indexOf(source.gripKey) !== -1 ? source.gripKey : 'base';
     var gripForm = source.gripForm === 'open' ? 'open' : 'half';
     var depthMm = Math.round(Number(source.depthMm));
-    var restSeconds = Math.round(Number(source.restSeconds) / 30) * 30;
+    var restSeconds = Math.round(Number(source.restSeconds) / MAX_HANG_REST_STEP_SECONDS) * MAX_HANG_REST_STEP_SECONDS;
     if(!isFinite(depthMm)) depthMm = 20;
     if(!isFinite(restSeconds)) restSeconds = MAX_HANG_DEFAULT_REST_SECONDS;
     depthMm = Math.min(50, Math.max(10, depthMm));
-    restSeconds = Math.min(300, Math.max(120, restSeconds));
+    restSeconds = Math.min(MAX_HANG_MAX_REST_SECONDS, Math.max(MAX_HANG_MIN_REST_SECONDS, restSeconds));
     return { gripKey: gripKey, gripForm: gripForm, depthMm: depthMm, restSeconds: restSeconds };
   }
 
@@ -253,8 +256,8 @@
 
   function makeMaxHangSteps(options){
     var out = [];
-    ['left', 'right'].forEach(function(handSide){
-      for(var attempt = 1; attempt <= 3; attempt++){
+    for(var attempt = 1; attempt <= 3; attempt++){
+      ['left', 'right'].forEach(function(handSide){
         out.push({
           titleKey: maxHangTitleKey(options),
           cueKey: 'maxStepCue',
@@ -267,8 +270,8 @@
           attempt: attempt,
           maxHang: true
         });
-      }
-    });
+      });
+    }
     return out;
   }
 
@@ -797,8 +800,10 @@
     }
 
     function recordMaxHangSample(loadKg){
-      if(state.mode !== 'max' || !state.running || (state.phase !== 'prestart' && state.phase !== 'hang')) return;
-      var index = state.stepIndex;
+      if(state.mode !== 'max' || !state.running) return;
+      var collectingRestPrecount = isRestPrecount();
+      if(state.phase !== 'prestart' && state.phase !== 'hang' && !collectingRestPrecount) return;
+      var index = collectingRestPrecount ? state.stepIndex + 1 : state.stepIndex;
       if(!state.maxHangSamples[index]) state.maxHangSamples[index] = [];
       state.maxHangSamples[index].push({ at: performance.now(), loadKg: loadKg });
     }
@@ -1051,7 +1056,12 @@
     }
 
     function recalculateMaxHangMaintainForHand(handSide){
-      var indices = handSide === 'right' ? [3, 4, 5] : [0, 1, 2];
+      var targetSide = normalizeHandSide(handSide);
+      var indices = [];
+      for(var stepIndex = 0; stepIndex < state.protocol.steps.length; stepIndex++){
+        var step = state.protocol.steps[stepIndex];
+        if(step && normalizeHandSide(step.handSide) === targetSide) indices.push(stepIndex);
+      }
       var bestPeak = null;
       for(var i = 0; i < indices.length; i++){
         var result = state.setResults[indices[i]];
@@ -1182,7 +1192,7 @@
     }
 
     function maxHangTotalMs(protocol){
-      return protocolTotalMs(protocol) + protocol.steps.length * PRECOUNT_MS;
+      return protocolTotalMs(protocol) + PRECOUNT_MS;
     }
 
     function phaseDuration(){
@@ -1273,7 +1283,8 @@
     function currentHandTargetIndex(){
       if(state.phase === 'done') return -1;
       if(state.phase === 'rest' && getNextStep()) return state.stepIndex + 1;
-      if(state.phase === 'ready' || state.phase === 'prestart') return 0;
+      if(state.phase === 'ready') return 0;
+      if(state.phase === 'prestart') return state.stepIndex;
       return state.stepIndex;
     }
 
@@ -1521,7 +1532,7 @@
         }
       }
       var payload = {
-        version: 3,
+        version: 4,
         savedAt: Date.now(),
         mode: state.mode,
         running: !!state.running,
@@ -1552,7 +1563,8 @@
       try { sessionStorage.removeItem(RELOAD_RECOVERY_KEY); } catch(e){ /* ignore */ }
       var payload = null;
       try { payload = JSON.parse(raw); } catch(e){ payload = null; }
-      if(!payload || (payload.version !== 1 && payload.version !== 2 && payload.version !== 3)) return false;
+      if(!payload || (payload.version !== 1 && payload.version !== 2 && payload.version !== 3 && payload.version !== 4)) return false;
+      if(payload.mode === 'max' && payload.version < 4) return false;
       var age = Date.now() - Number(payload.savedAt || 0);
       if(!isFinite(age) || age < 0 || age > RELOAD_RECOVERY_MAX_AGE_MS) return false;
       state.mode = payload.mode === 'max' ? 'max' : (payload.mode === 'video' ? 'video' : 'paper');
@@ -2481,6 +2493,19 @@
       try { localStorage.setItem(HISTORY_KEY, JSON.stringify(items.slice(0, HISTORY_LIMIT))); } catch(e){ /* ignore */ }
     }
 
+    function maxHangCanonicalAttemptIndex(handSide, attempt){
+      var sideOffset = handSide === 'right' ? 3 : 0;
+      var safeAttempt = Math.min(3, Math.max(1, Math.round(Number(attempt) || 1)));
+      return sideOffset + safeAttempt - 1;
+    }
+
+    function normalizeMaxHangHistoryOptions(source){
+      var normalized = normalizeMaxHangOptions(source);
+      var storedRestSeconds = Math.round(Number(source && source.restSeconds));
+      if(source && source.restSeconds != null && isFinite(storedRestSeconds)) normalized.restSeconds = Math.min(300, Math.max(45, storedRestSeconds));
+      return normalized;
+    }
+
     function readMaxHangHistory(){
       var parsed = [];
       try { parsed = JSON.parse(localStorage.getItem(MAX_HANG_HISTORY_KEY) || '[]'); } catch(e){ parsed = []; }
@@ -2490,16 +2515,21 @@
         var item = parsed[i] || {};
         var completedAt = Number(item.completedAt || 0);
         if(!isFinite(completedAt) || completedAt <= 0) continue;
-        var settings = normalizeMaxHangOptions(item);
-        var attempts = [];
+        var settings = normalizeMaxHangHistoryOptions(item);
+        var attempts = new Array(6);
         var sourceAttempts = Array.isArray(item.attempts) ? item.attempts : [];
-        for(var a = 0; a < 6; a++){
+        for(var a = 0; a < sourceAttempts.length && a < 6; a++){
           var source = sourceAttempts[a] || {};
+          var handSide = source.handSide === 'left' || source.handSide === 'right'
+            ? source.handSide
+            : (a < 3 ? 'left' : 'right');
+          var attemptNumber = Math.round(Number(source.attempt));
+          if(!isFinite(attemptNumber) || attemptNumber < 1 || attemptNumber > 3) attemptNumber = (a % 3) + 1;
           var peak1sKg = normalizeNumber(source.peak1sKg);
           if(peak1sKg == null && Number(item.version || 1) < 2) peak1sKg = normalizeNumber(source.stableLoadKg);
-          attempts.push({
-            handSide: a < 3 ? 'left' : 'right',
-            attempt: (a % 3) + 1,
+          attempts[maxHangCanonicalAttemptIndex(handSide, attemptNumber)] = {
+            handSide: handSide,
+            attempt: attemptNumber,
             stableLoadKg: normalizeNumber(source.stableLoadKg),
             rawPeakKg: normalizeNumber(source.rawPeakKg),
             peak1sKg: peak1sKg,
@@ -2512,7 +2542,26 @@
             peak1sQuality: source.peak1sQuality === 'valid' ? 'valid' : (source.peak1sQuality === 'estimated' ? 'estimated' : (peak1sKg == null ? 'insufficient' : 'estimated')),
             force200msQuality: source.force200msQuality === 'valid' ? 'valid' : (source.force200msQuality === 'estimated' ? 'estimated' : 'insufficient'),
             maintain90Quality: source.maintain90Quality === 'valid' ? 'valid' : (source.maintain90Quality === 'estimated' ? 'estimated' : 'insufficient')
-          });
+          };
+        }
+        for(var missingAttemptIndex = 0; missingAttemptIndex < 6; missingAttemptIndex++){
+          if(attempts[missingAttemptIndex]) continue;
+          attempts[missingAttemptIndex] = {
+            handSide: missingAttemptIndex < 3 ? 'left' : 'right',
+            attempt: (missingAttemptIndex % 3) + 1,
+            stableLoadKg: null,
+            rawPeakKg: null,
+            peak1sKg: null,
+            force200msKg: null,
+            maintain90Ms: null,
+            onsetMs: null,
+            sampleIntervalMs: null,
+            sampleCount: 0,
+            usedStableWindow: false,
+            peak1sQuality: 'insufficient',
+            force200msQuality: 'insufficient',
+            maintain90Quality: 'insufficient'
+          };
         }
         var id = String(item.id || '');
         if(!/^[A-Za-z0-9_-]+$/.test(id)) id = makeHistoryId();
@@ -3120,13 +3169,38 @@
     }
 
     function currentMaxHangAttempts(){
-      var attempts = [];
-      for(var i = 0; i < 6; i++){
-        var result = state.setResults[i] || {};
-        attempts.push({
-          completed: !!state.setResults[i],
-          handSide: i < 3 ? 'left' : 'right',
-          attempt: (i % 3) + 1,
+      var attempts = new Array(6);
+      for(var slotIndex = 0; slotIndex < 6; slotIndex++){
+        attempts[slotIndex] = {
+          completed: false,
+          protocolIndex: null,
+          handSide: slotIndex < 3 ? 'left' : 'right',
+          attempt: (slotIndex % 3) + 1,
+          stableLoadKg: null,
+          rawPeakKg: null,
+          peak1sKg: null,
+          force200msKg: null,
+          maintain90Ms: null,
+          onsetMs: null,
+          sampleIntervalMs: null,
+          sampleCount: 0,
+          usedStableWindow: false,
+          peak1sQuality: 'insufficient',
+          force200msQuality: 'insufficient',
+          maintain90Quality: 'insufficient'
+        };
+      }
+      for(var protocolIndex = 0; protocolIndex < state.protocol.steps.length; protocolIndex++){
+        var step = state.protocol.steps[protocolIndex];
+        if(!step || !step.maxHang) continue;
+        var handSide = normalizeHandSide(step.handSide);
+        var attemptNumber = Math.min(3, Math.max(1, Math.round(Number(step.attempt) || 1)));
+        var result = state.setResults[protocolIndex] || {};
+        attempts[maxHangCanonicalAttemptIndex(handSide, attemptNumber)] = {
+          completed: !!state.setResults[protocolIndex],
+          protocolIndex: protocolIndex,
+          handSide: handSide,
+          attempt: attemptNumber,
           stableLoadKg: normalizeNumber(result.stableLoadKg),
           rawPeakKg: normalizeNumber(result.rawPeakKg != null ? result.rawPeakKg : result.maxLoadKg),
           peak1sKg: normalizeNumber(result.peak1sKg),
@@ -3139,7 +3213,7 @@
           peak1sQuality: result.peak1sQuality === 'valid' ? 'valid' : (result.peak1sQuality === 'estimated' ? 'estimated' : 'insufficient'),
           force200msQuality: result.force200msQuality === 'valid' ? 'valid' : (result.force200msQuality === 'estimated' ? 'estimated' : 'insufficient'),
           maintain90Quality: result.maintain90Quality === 'valid' ? 'valid' : (result.maintain90Quality === 'estimated' ? 'estimated' : 'insufficient')
-        });
+        };
       }
       return attempts;
     }
@@ -3214,6 +3288,7 @@
 
     function renderMaxHangResults(){
       var attempts = currentMaxHangAttempts();
+      var activeProtocolIndex = state.phase === 'rest' && getNextStep() ? state.stepIndex + 1 : state.stepIndex;
       for(var i = 0; i < maxResultEls.length; i++){
         var element = maxResultEls[i];
         var index = Number(element.getAttribute('data-ab-max-result'));
@@ -3231,7 +3306,7 @@
         setTextIfChanged(maintain90El, attempt.maintain90Ms == null
           ? (lang() === 'en' ? '90% hold ' : '90% 유지 ') + (attempt.completed ? missing : '--')
           : formatSiteText('abrahang.maxAttemptMaintain90', lang() === 'en' ? '90% hold {value}' : '90% 유지 {value}', { value: formatMaxHangDuration(attempt.maintain90Ms, attempt.maintain90Quality) }));
-        element.classList.toggle('is-current', state.mode === 'max' && state.phase !== 'done' && state.stepIndex === index);
+        element.classList.toggle('is-current', state.mode === 'max' && state.phase !== 'done' && attempt.protocolIndex === activeProtocolIndex);
         element.classList.toggle('is-complete', attempt.peak1sKg != null);
       }
       renderMaxHangHandSummary(attempts, 'left', { best: maxLeftBest, force200: maxLeftForce200, maintain90: maxLeftMaintain90, decline: maxLeftDecline });
@@ -3545,16 +3620,49 @@
       return state.protocol.steps[state.stepIndex + 1] || null;
     }
 
-    function isGripChangeStepIndex(index){
+    function physicalSetupKeyForStep(step){
+      if(!step) return '';
+      return [
+        gripKeyForStep(step),
+        step.titleKey || '',
+        step.gripForm || '',
+        step.depthMm == null ? '' : String(step.depthMm),
+        step.edge || ''
+      ].join('|');
+    }
+
+    function isSetupChangeStepIndex(index){
       var steps = state.protocol.steps;
       if(index <= 0 || index >= steps.length) return false;
-      var previousGrip = gripKeyForStep(steps[index - 1]);
-      var nextGrip = gripKeyForStep(steps[index]);
-      return !!previousGrip && !!nextGrip && previousGrip !== nextGrip;
+      var previous = steps[index - 1];
+      var next = steps[index];
+      var previousHand = previous && previous.handSide
+        ? normalizeHandSide(previous.handSide)
+        : (isOneHandMode() ? handSideForStepIndex(index - 1) : '');
+      var nextHand = next && next.handSide
+        ? normalizeHandSide(next.handSide)
+        : (isOneHandMode() ? handSideForStepIndex(index) : '');
+      if(previousHand && nextHand && previousHand !== nextHand) return true;
+      return physicalSetupKeyForStep(previous) !== physicalSetupKeyForStep(next);
+    }
+
+    function isRestPrecount(){
+      return state.phase === 'rest'
+        && state.remainingMs > 0
+        && state.remainingMs <= PRECOUNT_MS
+        && state.stepIndex + 1 < state.protocol.steps.length;
+    }
+
+    function countdownSoundKind(second){
+      if(second !== 3) return 'countdown';
+      var targetIndex = state.phase === 'rest'
+        ? state.stepIndex + 1
+        : (state.phase === 'prestart' ? state.stepIndex : -1);
+      return targetIndex > 0 && isSetupChangeStepIndex(targetIndex) ? 'change-countdown' : 'countdown';
     }
 
     function getHighlightedStepIndex(){
-      if(state.phase === 'prestart') return 0;
+      if(state.phase === 'prestart') return state.stepIndex;
       if(state.phase === 'hang') return state.stepIndex;
       if(state.phase === 'rest') return getNextStep() ? state.stepIndex + 1 : -1;
       return -1;
@@ -3644,12 +3752,12 @@
         var futureSteps = Math.max(0, totalSteps - state.stepIndex - 1);
         if(state.phase === 'prestart'){
           maxRemaining += state.protocol.hangMs;
-          maxRemaining += futureSteps * (state.protocol.restMs + PRECOUNT_MS + state.protocol.hangMs);
+          maxRemaining += futureSteps * (state.protocol.restMs + state.protocol.hangMs);
         }else if(state.phase === 'hang'){
-          maxRemaining += futureSteps * (state.protocol.restMs + PRECOUNT_MS + state.protocol.hangMs);
+          maxRemaining += futureSteps * (state.protocol.restMs + state.protocol.hangMs);
         }else if(state.phase === 'rest'){
           var upcomingSteps = Math.max(0, totalSteps - state.stepIndex - 1);
-          maxRemaining += upcomingSteps * (PRECOUNT_MS + state.protocol.hangMs);
+          maxRemaining += upcomingSteps * state.protocol.hangMs;
           maxRemaining += Math.max(0, upcomingSteps - 1) * state.protocol.restMs;
         }
         return maxRemaining;
@@ -3725,17 +3833,8 @@
           tone(now + 1.8, 1.25);
           return;
         }
-        if(kind === 'grip-change'){
-          tone(now, 0.12, 980, 'triangle');
-          tone(now + 0.18, 0.12, 1240, 'triangle');
-          tone(now + 0.38, 0.28, 1080, 'triangle');
-          return;
-        }
-        if(kind === 'hand-change'){
-          tone(now, 0.16, 620, 'square');
-          tone(now + 0.24, 0.16, 920, 'square');
-          tone(now + 0.48, 0.16, 620, 'square');
-          tone(now + 0.72, 0.42, 1120, 'triangle');
+        if(kind === 'change-countdown'){
+          tone(now, 0.72, 960, 'triangle');
           return;
         }
         tone(now, kind === 'countdown' ? 0.14 : 0.26);
@@ -3768,11 +3867,16 @@
         state.remainingMs = PRECOUNT_MS;
         lastCountdownSecond = -1;
       }
-      if(state.mode === 'max' && state.pausedAt && (state.phase === 'prestart' || state.phase === 'hang')){
+      if(state.mode === 'max' && state.pausedAt){
         var pausedDuration = Math.max(0, performance.now() - state.pausedAt);
-        var pausedSamples = state.maxHangSamples[state.stepIndex] || [];
-        for(var sampleIndex = 0; sampleIndex < pausedSamples.length; sampleIndex++) pausedSamples[sampleIndex].at += pausedDuration;
-        if(state.maxHangStartedAt[state.stepIndex] != null) state.maxHangStartedAt[state.stepIndex] += pausedDuration;
+        var pausedAttemptIndex = state.phase === 'prestart' || state.phase === 'hang'
+          ? state.stepIndex
+          : (isRestPrecount() ? state.stepIndex + 1 : -1);
+        if(pausedAttemptIndex >= 0){
+          var pausedSamples = state.maxHangSamples[pausedAttemptIndex] || [];
+          for(var sampleIndex = 0; sampleIndex < pausedSamples.length; sampleIndex++) pausedSamples[sampleIndex].at += pausedDuration;
+          if(state.maxHangStartedAt[pausedAttemptIndex] != null) state.maxHangStartedAt[pausedAttemptIndex] += pausedDuration;
+        }
       }
       state.pausedAt = 0;
       state.running = true;
@@ -3833,12 +3937,14 @@
           finish();
           return;
         }
-        var nextStepIndexFromHang = state.stepIndex + 1;
-        var gripChanged = state.mode !== 'max' && isGripChangeStepIndex(nextStepIndexFromHang);
-        var handChanged = state.mode === 'max' && state.protocol.steps[state.stepIndex].handSide !== state.protocol.steps[nextStepIndexFromHang].handSide;
         state.phase = 'rest';
         state.remainingMs = state.protocol.restMs;
-        beep(handChanged ? 'hand-change' : (gripChanged ? 'grip-change' : 'phase'));
+        if(state.mode === 'max'){
+          var upcomingAttemptIndex = state.stepIndex + 1;
+          state.maxHangSamples[upcomingAttemptIndex] = [];
+          state.maxHangStartedAt[upcomingAttemptIndex] = null;
+        }
+        beep('phase');
         return;
       }
       if(state.phase === 'rest'){
@@ -3849,10 +3955,11 @@
           return;
         }
         if(state.mode === 'max'){
-          state.phase = 'prestart';
-          state.remainingMs = PRECOUNT_MS;
-          state.maxHangSamples[state.stepIndex] = [];
-          state.maxHangStartedAt[state.stepIndex] = null;
+          state.phase = 'hang';
+          state.remainingMs = state.protocol.hangMs;
+          state.maxHangStartedAt[state.stepIndex] = performance.now();
+          resetScalePeakLoad();
+          beep('phase');
         }else{
           state.phase = 'hang';
           state.remainingMs = state.protocol.hangMs;
@@ -3876,7 +3983,7 @@
         var sec = Math.ceil(state.remainingMs / 1000);
         if(sec > 0 && sec <= 3 && sec !== lastCountdownSecond){
           lastCountdownSecond = sec;
-          beep('countdown');
+          beep(countdownSoundKind(sec));
         }
         renderLive();
         rafId = requestAnimationFrame(tick);
@@ -3921,8 +4028,8 @@
           countEl.textContent = '0 / ' + state.protocol.steps.length;
           moveTitle.textContent = siteT('abrahang.maxReadyTitle', lang() === 'en' ? 'Connect the scale and finish your progressive warm-up' : '저울을 연결하고 점진적 워밍업을 마치세요');
           moveCue.textContent = siteT('abrahang.maxReadyCue', lang() === 'en'
-            ? 'The test runs left hand 3 times, then right hand 3 times. Each pull lasts 5 seconds.'
-            : '왼손 3회 후 오른손 3회를 측정하며, 한 번의 측정은 5초입니다.');
+            ? 'The test runs L1 → R1 → L2 → R2 → L3 → R3. Each pull lasts 5 seconds.'
+            : '왼손1 → 오른손1 → 왼손2 → 오른손2 → 왼손3 → 오른손3 순서이며, 한 번의 측정은 5초입니다.');
         }else if(state.phase === 'prestart'){
           phaseEl.textContent = tt('prestart');
           timeEl.textContent = formatSeconds(state.remainingMs);
@@ -3944,19 +4051,20 @@
             grip: maxGripDescription(next),
             depth: next.depthMm
           } : maxValues;
-          phaseEl.textContent = siteT('abrahang.maxRestPhase', lang() === 'en' ? 'Recover' : '회복');
           timeEl.textContent = formatSeconds(state.remainingMs);
           countEl.textContent = next ? (state.stepIndex + 2) + ' / ' + state.protocol.steps.length : state.protocol.steps.length + ' / ' + state.protocol.steps.length;
-          if(current && next && current.handSide !== next.handSide){
-            moveTitle.textContent = siteT('abrahang.maxHandChangeTitle', lang() === 'en' ? 'Left hand complete — prepare the right hand' : '왼손 완료 — 오른손을 준비하세요');
-            moveCue.textContent = siteT('abrahang.maxHandChangeCue', lang() === 'en'
-              ? 'The separate signal marks the hand change. Rest fully before the first right-hand attempt.'
-              : '별도 신호음은 손 전환을 뜻합니다. 오른손 첫 측정 전까지 충분히 회복하세요.');
+          if(isRestPrecount()){
+            phaseEl.textContent = tt('prestart');
+            moveTitle.textContent = formatSiteText('abrahang.maxPrestartTitle', lang() === 'en' ? '{hand} attempt {attempt}/3 starts after the count' : '{hand} {attempt}/3회 측정을 준비합니다', nextValues);
+            moveCue.textContent = formatSiteText('abrahang.maxTransitionPrestartCue', lang() === 'en'
+              ? 'The longer alert marks the hand change. Set {grip} on the {depth} mm edge and load after the start beep.'
+              : '긴 알람음은 손 전환을 뜻합니다. {grip}을 {depth}mm 엣지에 놓고 시작음 뒤 힘을 올리세요.', nextValues);
           }else{
+            phaseEl.textContent = siteT('abrahang.maxRestPhase', lang() === 'en' ? 'Recover' : '회복');
             moveTitle.textContent = formatSiteText('abrahang.maxRestTitle', lang() === 'en' ? 'Recover before {hand} attempt {attempt}/3' : '{hand} {attempt}/3회 전 회복', nextValues);
             moveCue.textContent = siteT('abrahang.maxRestCue', lang() === 'en'
-              ? 'Relax the fingers and keep the test position unchanged. The next countdown starts when rest ends.'
-              : '손가락을 완전히 이완하고 측정 조건을 유지하세요. 휴식이 끝나면 다음 카운트다운이 시작됩니다.');
+              ? 'Relax both hands. The final 3 seconds of this rest are the only countdown for the next hand.'
+              : '양손을 이완하세요. 이 휴식의 마지막 3초가 다음 손을 위한 유일한 카운트다운입니다.');
           }
         }
       }else if(state.phase === 'done'){
