@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비디오 시퀀스·스프라이트 시트 생성 가이드 | 연마</title>
+    <meta name="description" content="연마 시퀀스 생성기의 프레임 샘플링, 직접 연결·핑퐁·오버랩 크로스페이드 차이, 그리드 계산, 로컬 처리와 실패 조건을 설명합니다.">
+    <meta name="robots" content="index,follow">
+    <meta name="author" content="HPMPLab">
+    <link rel="canonical" href="https://www.hpmplab.com/guides/sequence-generator.html">
+    <link rel="stylesheet" href="../style.css?v=20260726-1">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "비디오 시퀀스·스프라이트 시트 생성 가이드",
+      "description": "연마 시퀀스 생성기의 실제 프레임 추출·루프 처리 방식과 한계를 설명합니다.",
+      "datePublished": "2026-07-26",
+      "dateModified": "2026-07-26",
+      "inLanguage": "ko-KR",
+      "mainEntityOfPage": "https://www.hpmplab.com/guides/sequence-generator.html",
+      "author": {"@type": "Organization", "name": "HPMPLab", "url": "https://www.hpmplab.com/about.html"},
+      "publisher": {"@type": "Organization", "name": "HPMPLab", "url": "https://www.hpmplab.com/"}
+    }
+    </script>
+</head>
+<body>
+    <main class="content-page">
+        <nav class="content-page-nav" aria-label="상단 이동">
+            <a href="../app.html?tab=sequence">시퀀스 생성기 열기</a>
+            <a href="./">가이드 목록</a>
+            <a href="../about.html">작성·검증 정책</a>
+        </nav>
+        <article>
+            <header class="content-page-hero">
+                <p class="section-kicker">Local Canvas workflow</p>
+                <h1>비디오 시퀀스·스프라이트 시트 생성 가이드</h1>
+                <p>연마의 시퀀스 생성기는 짧은 비디오를 브라우저에서 프레임 단위로 읽고, 하나의 PNG 격자 이미지로 배치합니다. 서버에 영상을 올려 변환하는 서비스가 아니라 현재 탭의 HTML 비디오와 Canvas API를 이용하는 로컬 제작 도구입니다.</p>
+                <div class="guide-byline">
+                    <strong>작성·기능 검증: HPMPLab</strong>
+                    <span>도구 구현과 문서를 코드 기준으로 대조 · 최종 검증 2026-07-26 · 자동화된 영상 품질 판정 없음</span>
+                </div>
+            </header>
+
+            <section class="content-page-section">
+                <h2>입력부터 PNG까지 어떤 일이 일어나는가</h2>
+                <ol>
+                    <li>선택한 영상은 <code>URL.createObjectURL()</code>로 현재 브라우저 탭에서만 열립니다. 연마 서버로 업로드하지 않습니다.</li>
+                    <li>트림 시작·끝, FPS, 가로·세로 칸과 프레임 크기를 읽어 필요한 시점을 계산합니다.</li>
+                    <li>각 시점으로 비디오 재생 위치를 옮긴 뒤 <code>drawImage()</code>로 프레임을 Canvas에 복사합니다.</li>
+                    <li>선택한 루프 모드에 따라 시간 순서를 바꾸거나 시작·끝 프레임을 혼합합니다.</li>
+                    <li>완성된 Canvas를 PNG 데이터로 바꿔 사용자의 기기에 다운로드합니다.</li>
+                </ol>
+                <p>이 과정은 영상의 의미나 피사체를 분석하지 않습니다. 카메라 흔들림, 피사체 위치 변화, 조명 점프가 있는지는 사용자가 미리보기로 판단해야 합니다.</p>
+            </section>
+
+            <section class="content-page-section">
+                <h2>세 가지 루프 모드의 실제 차이</h2>
+                <div class="content-table-wrap">
+                    <table class="content-table">
+                        <thead>
+                            <tr><th>모드</th><th>프레임 순서</th><th>적합한 영상</th><th>주의할 점</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>직접 연결</td><td>시작부터 끝까지 순서대로 샘플링</td><td>처음과 끝 자세가 이미 비슷한 루프 소스</td><td>끝→처음의 위치·색 차이가 그대로 튈 수 있음</td></tr>
+                            <tr><td>핑퐁</td><td>정방향 뒤에 역방향 프레임을 배치</td><td>연기 팽창·천 흔들림처럼 되감기가 어색하지 않은 동작</td><td>중간에서 방향이 바뀌며 속도가 꺾여 보일 수 있음</td></tr>
+                            <tr><td>오버랩</td><td>마지막 구간을 첫 구간 쪽으로 점진 혼합</td><td>끝과 시작을 부드럽게 이어야 하는 연속 효과</td><td>피사체 위치가 크게 다르면 잔상·이중상이 생김</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>오버랩 모드는 “없는 중간 동작을 생성”하지 않습니다. 끝 프레임의 RGBA 값과 대응하는 시작 프레임 값을 선택한 곡선으로 섞는 픽셀 크로스페이드입니다. 따라서 형태가 이동하는 영상보다 같은 위치에서 밝기·밀도만 변하는 효과에 더 잘 맞습니다.</p>
+            </section>
+
+            <section class="content-page-section">
+                <h2>그리드와 해상도 계산 예시</h2>
+                <p>스프라이트 시트 전체 크기는 <strong>가로 칸 × 프레임 너비</strong>, <strong>세로 칸 × 프레임 높이</strong>로 계산합니다. 예를 들어 4×4 그리드와 128×128px 프레임을 선택하면 16프레임이 512×512px PNG 한 장에 배치됩니다.</p>
+                <div class="content-table-wrap">
+                    <table class="content-table">
+                        <thead>
+                            <tr><th>설정</th><th>프레임 수</th><th>출력 크기</th><th>RGBA 작업 메모리의 단순 하한</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>4×4, 128px</td><td>16</td><td>512×512px</td><td>약 1MiB</td></tr>
+                            <tr><td>8×8, 128px</td><td>64</td><td>1024×1024px</td><td>약 4MiB</td></tr>
+                            <tr><td>8×8, 256px</td><td>64</td><td>2048×2048px</td><td>약 16MiB</td></tr>
+                            <tr><td>16×16, 512px</td><td>256</td><td>8192×8192px</td><td>약 256MiB</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>표의 메모리는 결과 Canvas 한 장의 가로×세로×4바이트만 계산한 하한입니다. 비디오 디코딩 버퍼, 오버랩용 프레임 배열과 마스크가 더해지므로 실제 사용량은 더 큽니다. 모바일에서는 4×4 또는 8×8과 128px 프레임부터 확인하는 편이 안전합니다.</p>
+            </section>
+
+            <section class="content-page-section">
+                <h2>자동 계산을 정확히 해석하는 법</h2>
+                <p>자동 계산은 <strong>트림 길이 × FPS</strong>를 반올림해 목표 프레임 수를 만들고, 그 수가 들어갈 정사각형에 가까운 가로·세로 격자를 고릅니다. 최대치는 16×16, 즉 256칸입니다. 격자 칸 수가 계산한 목표보다 조금 많으면 생성 단계는 그 격자 전체를 채우므로, 정확한 프레임 수가 중요한 엔진에서는 가로·세로 값을 직접 조정하세요.</p>
+                <p>FPS는 “원본 영상 FPS를 보존한다”는 뜻이 아니라 어느 시간 간격으로 프레임을 읽을지 정하는 샘플링 값입니다. 1초 구간을 16FPS로 읽어 4×4 격자에 담으면 계산과 칸 수가 정확히 16으로 맞습니다.</p>
+            </section>
+
+            <section class="content-page-section">
+                <h2>마스크와 크로스페이드에서 확인할 점</h2>
+                <ul>
+                    <li>업로드 마스크는 알파 채널이 있는 PNG가 가장 예측하기 쉽습니다.</li>
+                    <li>마스크 반전은 남길 영역과 지울 영역을 뒤집습니다. 원본 영상 자체를 수정하지 않습니다.</li>
+                    <li>Linear는 일정한 속도로 혼합하고, Ease 계열은 혼합 비율이 변하는 속도만 바꿉니다.</li>
+                    <li>프레임 인덱스 표시는 디버깅용 글자를 결과 이미지에 직접 그립니다. 최종 배포본을 만들기 전 반드시 끄세요.</li>
+                    <li>출력 PNG에는 FPS·그리드·피벗 같은 엔진 메타데이터가 포함되지 않습니다. 게임 엔진에서 별도로 입력해야 합니다.</li>
+                </ul>
+            </section>
+
+            <section class="content-page-section">
+                <h2>실패 조건과 해결 순서</h2>
+                <h3>영상은 선택했지만 열리지 않음</h3>
+                <p>파일 확장자보다 브라우저가 내부 코덱을 해독할 수 있는지가 중요합니다. MP4 컨테이너라도 지원되지 않는 코덱이면 실패할 수 있습니다. 우선 H.264 영상으로 다시 인코딩하고, 10초 이내·1920×1080 이하의 짧은 파일로 재현하세요.</p>
+                <h3>생성 중 탭이 느려지거나 종료됨</h3>
+                <p>격자, 프레임 크기와 오버랩 프레임을 한 번에 낮춥니다. 16×16·512px처럼 큰 설정은 결과 Canvas만으로도 상당한 메모리를 사용합니다. 모바일에서는 다른 탭을 닫고 작은 프리셋으로 먼저 성공 여부를 확인하세요.</p>
+                <h3>루프 경계에 이중상이 생김</h3>
+                <p>오버랩 프레임을 늘리기 전에 트림 구간부터 다시 잡습니다. 시작·끝의 피사체 위치가 비슷한 구간을 선택한 뒤 작은 오버랩부터 늘려야 원인을 구분할 수 있습니다.</p>
+            </section>
+
+            <section class="content-page-section">
+                <h2>개인정보와 브라우저 한계</h2>
+                <p>영상과 마스크는 연마 서버로 전송하지 않습니다. 다만 사용자가 다운로드한 PNG와 브라우저의 최근 파일 기록은 기기에 남을 수 있습니다. 공용 기기에서는 다운로드 파일을 직접 삭제하세요.</p>
+                <p>브라우저 API 동작은 브라우저·운영체제·코덱에 따라 달라집니다. 연마는 Chrome 계열 최신 버전을 우선 확인하지만 모든 기기에서 같은 디코딩 결과나 최대 Canvas 크기를 보장하지 않습니다.</p>
+                <p class="guide-source">구현 참고: <a href="https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/drawImage" target="_blank" rel="noopener noreferrer">MDN, CanvasRenderingContext2D.drawImage()</a> · <a href="https://developer.mozilla.org/docs/Web/API/URL/createObjectURL_static" target="_blank" rel="noopener noreferrer">MDN, URL.createObjectURL()</a></p>
+            </section>
+        </article>
+    </main>
+    <footer class="container">
+        <nav class="footer-links" aria-label="Footer">
+            <a href="../">홈</a><a href="../app.html?tab=sequence">도구</a><a href="./">가이드</a><a href="../about.html">소개·검증</a><a href="../privacy.html">개인정보처리방침</a><a href="../terms.html">이용 약관</a>
+        </nav>
+        <p>© 2026 HPMPLab. 연마.</p>
+    </footer>
+</body>
+</html>

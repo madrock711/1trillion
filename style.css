@@ -2667,6 +2667,18 @@ button.tab-link {
   background: #0b0b0b;
 }
 
+.abrahang-scale-affiliate-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.045);
+  font-size: 1.55rem;
+}
+
 .abrahang-scale-affiliate span {
   display: grid;
   gap: 3px;
@@ -4079,6 +4091,287 @@ button.tab-link {
 
 .content-page-nav a {
     color: var(--text-secondary);
+}
+
+.header-title {
+    margin-block: 0;
+}
+
+.landing-page {
+    max-width: 1120px;
+}
+
+.landing-hero {
+    padding-block: clamp(2.5rem, 7vw, 5.5rem);
+}
+
+.landing-hero h1 {
+    max-width: 900px;
+    font-size: clamp(2.35rem, 6.4vw, 4.8rem);
+    letter-spacing: -0.045em;
+}
+
+.landing-hero > p:not(.section-kicker) {
+    max-width: 830px;
+    font-size: clamp(1rem, 1.8vw, 1.18rem);
+}
+
+.landing-actions,
+.landing-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.landing-actions {
+    margin-top: 1.4rem;
+}
+
+.landing-actions .button,
+.landing-card-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-weight: 750;
+    text-decoration: none;
+}
+
+.landing-actions .button {
+    padding: 0.65rem 0.95rem;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.landing-actions .landing-primary {
+    border-color: var(--accent-color);
+    background: var(--accent-color);
+    color: #07120b;
+}
+
+.landing-tool-grid,
+.landing-principles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.25rem;
+}
+
+.landing-tool-card,
+.landing-principles article {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: linear-gradient(145deg, rgba(31, 31, 31, 0.95), rgba(21, 21, 21, 0.96));
+}
+
+.landing-tool-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+}
+
+.landing-tool-card h3 {
+    margin: 0.35rem 0 0.5rem;
+    color: var(--text-primary);
+    font-size: 1.28rem;
+}
+
+.landing-tool-card p,
+.landing-tool-card li,
+.landing-principles p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.landing-tool-card ul {
+    margin: 0.2rem 0 1.15rem;
+    padding-left: 1.2rem;
+}
+
+.landing-tool-tag {
+    align-self: flex-start;
+    padding: 0.2rem 0.48rem;
+    border: 1px solid rgba(29, 185, 84, 0.35);
+    border-radius: 999px;
+    color: #8fe0aa;
+    font-size: 0.76rem;
+    font-weight: 800;
+}
+
+.landing-card-actions {
+    margin-top: auto;
+}
+
+.landing-card-actions a {
+    min-height: 38px;
+    padding: 0.5rem 0.72rem;
+    background: rgba(255, 255, 255, 0.035);
+    font-size: 0.9rem;
+}
+
+.landing-card-actions a:first-child {
+    border-color: rgba(29, 185, 84, 0.45);
+    color: #a7f3d0;
+}
+
+.landing-tool-grid-secondary .landing-tool-card {
+    background: linear-gradient(145deg, rgba(27, 31, 36, 0.92), rgba(19, 21, 24, 0.96));
+}
+
+.landing-principles article {
+    padding: 1rem;
+}
+
+.landing-principles strong {
+    display: block;
+    color: var(--text-primary);
+    font-size: 1.05rem;
+}
+
+.landing-principles p {
+    margin-bottom: 0;
+}
+
+.landing-method-link {
+    margin-top: 1.2rem;
+}
+
+.landing-update-list {
+    display: grid;
+    gap: 0.75rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.landing-update-list li {
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.landing-update-list time {
+    color: #8fe0aa;
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+}
+
+.landing-update-list span {
+    color: var(--text-secondary);
+}
+
+.guide-byline {
+    display: grid;
+    gap: 0.25rem;
+    margin-top: 1.1rem;
+    padding: 0.8rem 0.95rem;
+    border-left: 3px solid var(--accent-color);
+    border-radius: 0 8px 8px 0;
+    background: rgba(29, 185, 84, 0.07);
+}
+
+.guide-byline strong {
+    color: var(--text-primary);
+    font-size: 0.92rem;
+}
+
+.guide-byline span {
+    color: var(--text-secondary);
+    font-size: 0.84rem;
+    line-height: 1.55;
+}
+
+.guide-callout {
+    margin: 1.4rem 0 0;
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(250, 204, 21, 0.32);
+    border-radius: 10px;
+    background: rgba(250, 204, 21, 0.065);
+}
+
+.guide-callout strong {
+    color: #fde68a;
+}
+
+.guide-callout p {
+    margin-bottom: 0;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.content-table-wrap {
+    max-width: 100%;
+    margin: 1rem 0;
+    overflow-x: auto;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+}
+
+.content-table {
+    width: 100%;
+    min-width: 620px;
+    border-collapse: collapse;
+    background: rgba(10, 10, 10, 0.28);
+}
+
+.content-table th,
+.content-table td {
+    padding: 0.75rem 0.85rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    line-height: 1.55;
+    text-align: left;
+    vertical-align: top;
+}
+
+.content-table th {
+    background: rgba(255, 255, 255, 0.045);
+    color: var(--text-primary);
+    font-size: 0.88rem;
+}
+
+.content-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.content-page code {
+    padding: 0.12rem 0.3rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #d1fae5;
+    font-size: 0.92em;
+}
+
+@media (max-width: 720px) {
+    .landing-hero h1 br {
+        display: none;
+    }
+
+    .landing-tool-grid,
+    .landing-principles {
+        grid-template-columns: 1fr;
+    }
+
+    .landing-actions .button {
+        flex: 1 1 180px;
+    }
+
+    .landing-update-list li {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+    }
+
+    .content-table {
+        min-width: 560px;
+    }
 }
 
 .guide-graph {

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로또 6/45 조합 생성기 알고리즘·확률 가이드 | 연마</title>
+    <meta name="description" content="연마 로또 6/45 조합 생성기가 회차 데이터, 시드 난수, 구간·홀짝·합계 필터를 사용하는 방식과 예측할 수 없는 이유를 공개합니다.">
+    <meta name="robots" content="index,follow">
+    <meta name="author" content="HPMPLab">
+    <link rel="canonical" href="https://www.hpmplab.com/guides/lottery-generator.html">
+    <link rel="stylesheet" href="../style.css?v=20260726-1">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "로또 6/45 조합 생성기 알고리즘·확률 가이드",
+      "description": "연마 조합 생성기의 데이터 처리와 필터를 공개하고, 과거 통계가 당첨 확률을 높이지 못하는 이유를 설명합니다.",
+      "datePublished": "2026-07-26",
+      "dateModified": "2026-07-26",
+      "inLanguage": "ko-KR",
+      "mainEntityOfPage": "https://www.hpmplab.com/guides/lottery-generator.html",
+      "author": {"@type": "Organization", "name": "HPMPLab", "url": "https://www.hpmplab.com/about.html"},
+      "publisher": {"@type": "Organization", "name": "HPMPLab", "url": "https://www.hpmplab.com/"}
+    }
+    </script>
+</head>
+<body>
+    <main class="content-page">
+        <nav class="content-page-nav" aria-label="상단 이동">
+            <a href="../app.html?tab=lottery">조합 생성기 열기</a>
+            <a href="./">가이드 목록</a>
+            <a href="../about.html">작성·검증 정책</a>
+        </nav>
+        <article>
+            <header class="content-page-hero">
+                <p class="section-kicker">Transparent random combination tool</p>
+                <h1>로또 6/45 조합 생성기<br>알고리즘·확률 가이드</h1>
+                <p>이 도구는 과거 회차를 화면에 요약하고, 정해진 분포 필터를 통과한 6개 번호 조합 5세트를 만듭니다. “통계”라는 말이 예측 능력을 뜻하지 않도록 데이터 출처, 후보 생성 과정과 확률의 한계를 아래에 공개합니다.</p>
+                <div class="guide-byline">
+                    <strong>작성·기능 검증: HPMPLab</strong>
+                    <span>코드와 번들 데이터 구조를 기준으로 검증 · 최종 검증 2026-07-26 · 당첨 예측 모델 아님</span>
+                </div>
+            </header>
+
+            <aside class="guide-callout guide-callout-warning" aria-label="핵심 확률 안내">
+                <strong>핵심: 과거에 자주 또는 드물게 나온 번호도 다음 회차에서는 유리하지 않습니다.</strong>
+                <p>로또 6/45의 1등 확률은 6개 번호가 모두 일치하는 <strong>1 / 8,145,060</strong>입니다. 유효한 6개 조합은 모두 같은 확률을 가지며, 이 앱의 점수·구간·최근 빈도 필터는 그 값을 바꾸지 않습니다.</p>
+            </aside>
+
+            <section class="content-page-section">
+                <h2>데이터는 어디서 오는가</h2>
+                <p>저장소에는 1회부터 1230회(2026-06-27)까지의 회차 스냅샷이 포함되어 있습니다. 앱을 처음 열면 이 번들 파일과 브라우저 로컬 캐시를 합쳐 기본 화면을 준비합니다. 사용자가 “최신 당첨번호 갱신”을 누르면 공식 회차 응답을 먼저 시도하고, 실패할 때 공개 JSON 미러를 보조 경로로 사용합니다.</p>
+                <p>화면의 <strong>저장 회차·최신 회차·갱신 시각·데이터 출처</strong>는 현재 계산에 어떤 데이터가 들어갔는지 확인하기 위한 항목입니다. 갱신 실패 시 앱은 기존 스냅샷으로 계속 작동하지만, 최신 회차가 빠져 있을 수 있음을 상태 문구로 표시합니다.</p>
+            </section>
+
+            <section class="content-page-section">
+                <h2>5개 조합을 만드는 실제 순서</h2>
+                <ol>
+                    <li><strong>요약 통계 계산:</strong> 전체 번호 빈도, 최근 52회 빈도, 마지막 출현 뒤의 간격, 번호 쌍, 10단위 구간 분포, 당첨번호 합계의 10~90백분위 범위를 계산합니다.</li>
+                    <li><strong>시드 생성:</strong> 가능하면 브라우저의 암호학적 난수로 32비트 시드를 만들고, 그 시드에서 재현 가능한 의사난수 흐름을 생성합니다.</li>
+                    <li><strong>후보 반복 조정:</strong> 1~45를 섞은 6개 번호에서 시작해 12단계 동안 번호를 교체하면서 과거에 관찰된 5개 구간 분포에 가까운 조합을 만듭니다.</li>
+                    <li><strong>균형 필터:</strong> 홀짝과 1~22/23~45 비율을 각각 2:4~4:2로 제한하고, 합계 범위·한 구간 최대 3개·연속수 최대 3개 조건을 확인합니다.</li>
+                    <li><strong>후보 점수화:</strong> 빈도·최근 빈도·출현 간격·합계·구간 분포 등을 이용해 1400개까지 후보를 비교합니다.</li>
+                    <li><strong>5세트 선택:</strong> 완전히 같은 조합을 제거하고, 이미 고른 세트와 겹치는 번호가 4개를 넘지 않도록 다양성을 확보합니다.</li>
+                </ol>
+                <p>화면에서 “구간 분포 반복 조정”이라고 부르는 단계는 생성형 AI나 미래 예측 모델이 아닙니다. 현재 6개 번호 중 일부를 정해진 가중치로 교체하는 반복 알고리즘입니다.</p>
+            </section>
+
+            <section class="content-page-section">
+                <h2>각 필터가 하는 일과 하지 못하는 일</h2>
+                <div class="content-table-wrap">
+                    <table class="content-table">
+                        <thead>
+                            <tr><th>표시 항목</th><th>실제 역할</th><th>예측하지 못하는 것</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>빈도 가중</td><td>과거 전체·최근 52회에서 많이 나온 번호의 후보 점수를 조금 높임</td><td>다음 회차에 그 번호가 더 나올 것이라는 확률</td></tr>
+                            <tr><td>출현 간격</td><td>오랫동안 나오지 않은 번호가 후보에서 완전히 배제되지 않게 조정</td><td>“나올 때가 됐다”는 보장</td></tr>
+                            <tr><td>홀짝·저고 균형</td><td>한쪽으로 치우친 모양의 조합을 화면에서 줄임</td><td>균형 잡힌 조합의 당첨 우위</td></tr>
+                            <tr><td>과거 합계 범위</td><td>과거 합계의 중간 80% 범위에 가까운 조합을 남김</td><td>범위 밖 조합의 당첨 가능성 제거</td></tr>
+                            <tr><td>구간 분포</td><td>1~10, 11~20, 21~30, 31~40, 41~45의 모양을 다양화</td><td>다음 회차 구간 패턴 예측</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>필터는 사용자가 보기 좋은 형태로 조합을 정리할 뿐입니다. 예를 들어 1, 2, 3, 4, 5, 6처럼 눈에 띄는 조합도 추첨 확률 자체는 다른 특정 조합과 같습니다. 다만 많은 사람이 같은 조합을 선택하면 당첨 시 상금을 나눌 가능성은 별개의 문제입니다.</p>
+            </section>
+
+            <section class="content-page-section">
+                <h2>시드와 “점수”를 어떻게 읽어야 하나</h2>
+                <p>생성 결과에 표시하는 시드는 같은 실행에서 난수 흐름을 식별하기 위한 정수입니다. 이 값은 행운의 숫자나 회차 예측값이 아닙니다. 앱 내부 점수도 과거 통계와 설정 필터에 얼마나 잘 맞는지 비교하는 상대값일 뿐, 당첨 확률이나 기대 수익률로 바꿔 읽을 수 없습니다.</p>
+                <p>새로 생성하면 새 시드로 다시 후보를 만듭니다. 수동 번호 저장 기능은 사용자의 브라우저 로컬 저장소에만 기록하며 실제 복권을 구매하거나 동행복권 계정으로 전송하지 않습니다.</p>
+            </section>
+
+            <section class="content-page-section">
+                <h2>왜 “추천” 대신 “생성 조합”이라고 표시하는가</h2>
+                <p>과거 통계를 사용하더라도 독립 추첨의 미래 결과를 더 정확히 맞힐 근거는 없습니다. 그래서 연마는 결과 제목을 “추천 번호”가 아닌 “생성 번호 세트”로 표시하고, 과거 빈도가 다음 회차 확률을 높이지 않는다는 문구를 실행 화면에 항상 둡니다.</p>
+                <p>당첨 번호를 맞힐 수 있다고 약속하는 설명, 구매액을 늘리도록 유도하는 설명, 손실을 만회할 수 있다는 표현은 사용하지 않습니다. 이 도구는 번호를 직접 고르는 시간을 줄이는 오락용 조합기입니다.</p>
+            </section>
+
+            <section class="content-page-section">
+                <h2>책임 있게 사용하는 기준</h2>
+                <ul>
+                    <li>생성 결과를 투자·수익 계획이나 손실 회복 수단으로 사용하지 않습니다.</li>
+                    <li>미리 정한 소액 예산과 구매 횟수를 넘기지 않습니다.</li>
+                    <li>과거 데이터가 특정 번호의 “당첨 예정”을 보여 준다고 해석하지 않습니다.</li>
+                    <li>19세 미만은 복권을 구매할 수 없습니다.</li>
+                    <li>구매·당첨 확인·확률 정보는 공식 동행복권 안내를 최종 기준으로 확인합니다.</li>
+                </ul>
+                <p class="guide-source">공식 정보: <a href="https://www.dhlottery.co.kr/lt645/intro" target="_blank" rel="noopener noreferrer">동행복권, 로또6/45 소개·당첨 확률</a> · <a href="https://factcheck.dhlottery.co.kr/" target="_blank" rel="noopener noreferrer">복권의 오해와 진실</a></p>
+            </section>
+
+            <section class="content-page-section">
+                <h2>알려진 한계와 정정 기준</h2>
+                <p>공식 회차 API나 공개 미러의 응답 형식이 바뀌면 최신 갱신이 실패할 수 있습니다. 이때 앱은 저장된 데이터로 동작하므로 화면의 최신 회차와 출처를 먼저 확인해야 합니다. 번들 스냅샷과 코드의 계산 방식이 바뀌면 이 문서의 검증 날짜와 설명도 함께 갱신합니다.</p>
+                <p>회차 누락, 중복 번호, 1~45 범위를 벗어난 값은 정규화 단계에서 제외합니다. 데이터 오류나 설명 불일치를 발견하면 <a href="../contact.html">문의 페이지</a>에서 회차 번호와 화면 상태를 알려주세요.</p>
+            </section>
+        </article>
+    </main>
+    <footer class="container">
+        <nav class="footer-links" aria-label="Footer">
+            <a href="../">홈</a><a href="../app.html?tab=lottery">도구</a><a href="./">가이드</a><a href="../about.html">소개·검증</a><a href="../privacy.html">개인정보처리방침</a><a href="../terms.html">이용 약관</a>
+        </nav>
+        <p>© 2026 HPMPLab. 연마.</p>
+    </footer>
+</body>
+</html>

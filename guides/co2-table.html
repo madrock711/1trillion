@@ -6,25 +6,60 @@
     <title>CO2 테이블 훈련 가이드 | 연마</title>
     <meta name="description" content="CO2 테이블 타이머의 숨참기 시간, 휴식 단축, 기록 그래프, 안전 기준을 설명합니다.">
     <meta name="robots" content="index,follow">
+    <meta name="author" content="HPMPLab">
     <link rel="canonical" href="https://www.hpmplab.com/guides/co2-table.html">
-    <link rel="stylesheet" href="../style.css?v=20260715-3">
+    <link rel="stylesheet" href="../style.css?v=20260726-1">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "CO2 테이블 훈련 가이드",
+      "description": "연마 CO2 타이머의 휴식 감소 계산, 기록 해석과 안전 한계를 설명합니다.",
+      "datePublished": "2026-07-08",
+      "dateModified": "2026-07-26",
+      "inLanguage": "ko-KR",
+      "mainEntityOfPage": "https://www.hpmplab.com/guides/co2-table.html",
+      "author": {"@type": "Organization", "name": "HPMPLab", "url": "https://www.hpmplab.com/about.html"},
+      "publisher": {"@type": "Organization", "name": "HPMPLab", "url": "https://www.hpmplab.com/"}
+    }
+    </script>
 </head>
 <body>
     <main class="content-page">
         <nav class="content-page-nav" aria-label="상단 이동">
-            <a href="../?tab=co2">CO2 타이머 열기</a>
+            <a href="../app.html?tab=co2">CO2 타이머 열기</a>
             <a href="./">가이드 목록</a>
+            <a href="../about.html">작성·검증 정책</a>
         </nav>
         <section class="content-page-hero">
             <p class="section-kicker">Breath-hold training</p>
             <h1>CO2 테이블 훈련 가이드</h1>
             <p>CO2 테이블은 숨참기 시간을 그대로 두고 휴식 시간을 줄이는 반복 패턴입니다. 연마의 타이머는 휴식 시간을 자동으로 줄이고 각 라운드를 기록하지만, 적응이나 기록 향상 또는 안전을 보장하지 않습니다.</p>
-            <p class="content-page-meta">최종 업데이트: 2026-07-14</p>
+            <div class="guide-byline">
+                <strong>작성·기능 검증: HPMPLab</strong>
+                <span>15초 휴식 감소·기록 표·CSV/JSON/PNG 출력을 코드와 브라우저에서 대조 · 최종 검증 2026-07-26 · 의료 전문가 검수 없음</span>
+            </div>
         </section>
         <section class="content-page-section">
             <h2>연마 타이머의 진행 방식</h2>
             <p>사용자는 숨참기 시간과 첫 휴식 시간을 정합니다. 시작 후 타이머는 숨참기 구간과 휴식 구간을 번갈아 진행하고, 휴식은 라운드마다 15초씩 줄어듭니다. 휴식이 15초까지 내려가면 더 줄이지 않고 같은 휴식으로 계속 반복합니다.</p>
             <p>기록표와 그래프는 숨참기 시간이 일정한지, 휴식 감소가 계획대로 진행됐는지 확인하는 용도입니다. 기록이 불규칙하다면 강도를 높이기보다 쉬운 설정으로 돌아가는 것이 좋습니다.</p>
+        </section>
+        <section class="content-page-section">
+            <h2>휴식 감소가 표시되는 예</h2>
+            <p>숨참기 60초, 첫 휴식 120초로 시작하면 숨참기는 매 라운드 60초로 유지되고 휴식만 15초씩 줄어듭니다. 앱은 휴식이 15초에 도달하면 더 줄이지 않습니다.</p>
+            <div class="content-table-wrap">
+                <table class="content-table">
+                    <thead><tr><th>라운드</th><th>숨참기</th><th>휴식</th><th>변경된 값</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>60초</td><td>120초</td><td>시작값</td></tr>
+                        <tr><td>2</td><td>60초</td><td>105초</td><td>휴식 -15초</td></tr>
+                        <tr><td>3</td><td>60초</td><td>90초</td><td>휴식 -15초</td></tr>
+                        <tr><td>4</td><td>60초</td><td>75초</td><td>휴식 -15초</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>이 표는 앱 계산 예시이지 초보자 처방이 아닙니다. 60초 숨참기가 편하지 않다면 더 짧은 값으로 시작해야 하며, 끝까지 완료하는 것을 목표로 삼지 않습니다.</p>
         </section>
         <section class="content-page-section">
             <h2>앱에서 세션을 만드는 순서</h2>
@@ -73,7 +108,7 @@
         <nav class="footer-links" aria-label="Footer">
             <a href="../">홈</a><a href="./">가이드</a><a href="../about.html">소개</a><a href="../privacy.html">개인정보처리방침</a><a href="../terms.html">이용 약관</a>
         </nav>
-        <p>© 2026 Grind.app. 모든 권리 보유.</p>
+        <p>© 2026 HPMPLab. 연마.</p>
     </footer>
 </body>
 </html>
