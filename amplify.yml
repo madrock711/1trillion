@@ -13,6 +13,7 @@ frontend:
       - '*.xml'
       - 'customHttp.yml'
       - 'guides/*.html'
+      - 'articles/*.html'
       - 'assets/data/*.json'
       - 'assets/icons/*'
       - 'assets/images/FootType_*.png'
