@@ -20,7 +20,7 @@
     <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260727-1">
+    <link rel="stylesheet" href="style.css?v=20260727-4">
     <script>
         (function () {
             var allowed = ['breathing', 'co2', 'foot', 'sequence', 'lottery', 'abrahang'];
@@ -98,88 +98,179 @@
             </div>
         </section>
 
-        <section class="content-page-section" aria-labelledby="training-tools-title">
-            <p class="section-kicker">주요 영역</p>
-            <h2 id="training-tools-title">훈련·측정 도구</h2>
-            <p>각 카드는 실행 화면과 설명 문서를 분리해 연결합니다. 실행 화면은 조작에 집중하고, 가이드는 기본값의 근거·실패 조건·안전 범위를 JS 없이도 읽을 수 있게 구성했습니다.</p>
-            <div class="landing-tool-grid">
-                <article class="landing-tool-card">
-                    <span class="landing-tool-tag">클라이밍 측정</span>
-                    <h3>아브라행·맥스행</h3>
-                    <p>WH-C06 크레인 저울과 연결해 좌우 3회 측정을 교대 수행하고, 1초 피크·200ms 힘·90% 유지·출력 감소율을 기록합니다.</p>
-                    <ul>
-                        <li>저강도 아브라행과 최대 힘 측정을 분리</li>
-                        <li>측정 정의와 샘플 부족 조건을 명시</li>
-                        <li>기록은 브라우저 로컬 저장소에 보관</li>
-                    </ul>
-                    <div class="landing-card-actions">
-                        <a href="app.html?tab=abrahang">도구 열기</a>
-                        <a href="guides/abrahang.html">측정 가이드</a>
+        <section class="content-page-section landing-primary-tools" aria-labelledby="training-tools-title">
+            <p class="section-kicker">핵심 훈련 흐름</p>
+            <h2 id="training-tools-title">측정 화면부터 확인하세요</h2>
+            <p>자주 쓰는 두 도구는 실제 화면의 정보 구조를 축약해 보여줍니다. 실행 화면에서는 조작에 집중하고, 가이드에서는 계산 방식·실패 조건·안전 범위를 확인할 수 있습니다.</p>
+
+            <div class="landing-feature-stack">
+                <article class="landing-feature-showcase">
+                    <div class="landing-feature-copy">
+                        <span class="landing-tool-tag">클라이밍 측정</span>
+                        <h3>아브라행·맥스행</h3>
+                        <p>WH-C06 크레인 저울과 연결해 좌우를 교대로 측정합니다. 맥스행은 한 손당 세 번 시도하며 1초 피크 힘, 힘을 내기 시작한 뒤 200ms 시점의 힘, 90% 부하 유지 시간과 시도 사이 출력 감소율을 함께 기록합니다.</p>
+                        <ul>
+                            <li>현재 하중과 좌우 진행 상태를 한 화면에서 확인</li>
+                            <li>샘플이 부족한 값은 결과에서 분명하게 구분</li>
+                            <li>측정 기록은 브라우저 로컬 저장소에 보관</li>
+                        </ul>
+                        <div class="landing-card-actions">
+                            <a href="app.html?tab=abrahang">아브라행 측정 열기</a>
+                            <a href="guides/abrahang.html">측정 가이드</a>
+                        </div>
+                    </div>
+
+                    <div class="landing-feature-preview landing-force-preview" aria-hidden="true">
+                        <div class="landing-preview-topbar">
+                            <span>맥스행</span>
+                            <span class="landing-preview-status">측정 예시</span>
+                        </div>
+                        <div class="landing-force-stage">
+                            <div class="landing-live-load landing-live-load-left">
+                                <span>왼손</span>
+                                <strong>42.8 <small>kg</small></strong>
+                            </div>
+                            <div class="landing-ring-gauge">
+                                <span class="landing-ring-track"></span>
+                                <span class="landing-ring-value">2 / 6</span>
+                                <span class="landing-ring-label">오른손 준비</span>
+                            </div>
+                            <div class="landing-live-load landing-live-load-right">
+                                <span>오른손</span>
+                                <strong>0.0 <small>kg</small></strong>
+                            </div>
+                        </div>
+                        <div class="landing-metric-grid">
+                            <div>
+                                <span>1초 피크</span>
+                                <strong>42.8 kg</strong>
+                            </div>
+                            <div>
+                                <span>200ms 힘</span>
+                                <strong>18.6 kg</strong>
+                            </div>
+                            <div>
+                                <span>90% 유지</span>
+                                <strong>2.4초</strong>
+                            </div>
+                            <div>
+                                <span>출력 감소</span>
+                                <strong>—</strong>
+                            </div>
+                        </div>
+                        <div class="landing-attempt-strip">
+                            <span class="is-complete">L1</span>
+                            <span class="is-active">R1</span>
+                            <span>L2</span>
+                            <span>R2</span>
+                            <span>L3</span>
+                            <span>R3</span>
+                        </div>
                     </div>
                 </article>
-                <article class="landing-tool-card">
-                    <span class="landing-tool-tag">클라이밍 준비</span>
-                    <h3>암벽화 핏 자가 점검</h3>
-                    <p>좌우 발 실측값과 발볼·발등·아치·발가락 형태를 착화 질문으로 정리합니다. 사진 픽셀로 치수나 사이즈를 자동 판정하지 않습니다.</p>
-                    <ul>
-                        <li>양발 실측과 자가 선택을 분리</li>
-                        <li>사진은 기기 안의 비교 기록으로만 처리</li>
-                        <li>제조사 차트와 실제 착화를 최종 기준으로 안내</li>
-                    </ul>
-                    <div class="landing-card-actions">
-                        <a href="app.html?tab=foot">도구 열기</a>
-                        <a href="guides/foot-analysis.html">점검 가이드</a>
+
+                <article class="landing-feature-showcase landing-feature-showcase-reverse">
+                    <div class="landing-feature-copy">
+                        <span class="landing-tool-tag">호흡 리듬</span>
+                        <h3>호흡 타이머</h3>
+                        <p>들숨과 날숨의 길이를 설정하고, 반복할 때마다 더할 작은 증가폭을 선택해 일정한 리듬을 관찰합니다. 치료 효과나 특정 주파수의 의학적 효능을 전제로 하지 않습니다.</p>
+                        <ul>
+                            <li>들숨·날숨 동기화 또는 개별 시간 설정</li>
+                            <li>설정값만 로컬에 보존하고 세션 진행은 저장하지 않음</li>
+                            <li>불편하거나 어지러우면 즉시 중단하도록 안내</li>
+                        </ul>
+                        <div class="landing-card-actions">
+                            <a href="app.html?tab=breathing">호흡 타이머 열기</a>
+                            <a href="guides/breathing.html">사용 가이드</a>
+                        </div>
                     </div>
-                </article>
-                <article class="landing-tool-card">
-                    <span class="landing-tool-tag">호흡 리듬</span>
-                    <h3>호흡 타이머</h3>
-                    <p>들숨·날숨 길이와 작은 자동 증가폭을 설정해 반복 가능한 리듬을 관찰합니다. 치료 효과나 특정 주파수의 의학적 효능을 주장하지 않습니다.</p>
-                    <ul>
-                        <li>들숨·날숨 동기화와 개별 설정</li>
-                        <li>설정값만 로컬에 보존하고 세션은 저장하지 않음</li>
-                        <li>불편·어지러움 발생 시 중단 기준 제공</li>
-                    </ul>
-                    <div class="landing-card-actions">
-                        <a href="app.html?tab=breathing">도구 열기</a>
-                        <a href="guides/breathing.html">사용 가이드</a>
-                    </div>
-                </article>
-                <article class="landing-tool-card">
-                    <span class="landing-tool-tag">숨참기 기록</span>
-                    <h3>CO2 테이블</h3>
-                    <p>숨참기 시간은 고정하고 휴식을 15초씩 줄이는 패턴을 기록·내보냅니다. 수중 단독 훈련이나 최대 기록 시험을 위한 안전 장치가 아닙니다.</p>
-                    <ul>
-                        <li>라운드별 숨참기·휴식 표와 그래프</li>
-                        <li>CSV·JSON·PNG·텍스트 내보내기</li>
-                        <li>과호흡 금지와 버디 원칙을 우선 표시</li>
-                    </ul>
-                    <div class="landing-card-actions">
-                        <a href="app.html?tab=co2">도구 열기</a>
-                        <a href="guides/co2-table.html">안전 가이드</a>
+
+                    <div class="landing-feature-preview landing-breath-preview" aria-hidden="true">
+                        <div class="landing-preview-topbar">
+                            <span>호흡 타이머</span>
+                            <span class="landing-preview-status">리듬 예시</span>
+                        </div>
+                        <div class="landing-breath-stage">
+                            <div class="landing-breath-ring">
+                                <span class="landing-breath-phase">내쉬기</span>
+                                <strong>06</strong>
+                                <span>초</span>
+                            </div>
+                        </div>
+                        <div class="landing-breath-settings">
+                            <div>
+                                <span>들숨</span>
+                                <strong>4.0초</strong>
+                            </div>
+                            <div>
+                                <span>날숨</span>
+                                <strong>6.0초</strong>
+                            </div>
+                            <div>
+                                <span>자동 증가</span>
+                                <strong>+0.2초</strong>
+                            </div>
+                        </div>
+                        <div class="landing-breath-progress">
+                            <span class="is-complete"></span>
+                            <span class="is-complete"></span>
+                            <span class="is-active"></span>
+                            <span></span>
+                            <span></span>
+                        </div>
                     </div>
                 </article>
             </div>
         </section>
 
-        <section class="content-page-section" aria-labelledby="lab-tools-title">
-            <p class="section-kicker">보조 실험 도구</p>
-            <h2 id="lab-tools-title">로컬 제작·선택 도구</h2>
-            <p>훈련 영역과 성격이 다른 두 기능은 별도 가이드로 구분했습니다. 처리 방식과 한계를 공개하고, 통계적 표현이 예측이나 성능 보장으로 읽히지 않도록 설명합니다.</p>
-            <div class="landing-tool-grid landing-tool-grid-secondary">
-                <article class="landing-tool-card">
-                    <span class="landing-tool-tag">Canvas 제작</span>
-                    <h3>비디오 시퀀스 생성기</h3>
-                    <p>짧은 영상을 브라우저 Canvas에서 프레임으로 샘플링해 PNG 스프라이트 시트로 만듭니다. 업로드 서버 없이 직접 연결·핑퐁·오버랩 크로스페이드 방식을 비교할 수 있습니다.</p>
+        <section class="content-page-section landing-utility-tools" aria-labelledby="supporting-tools-title">
+            <p class="section-kicker">함께 쓰는 도구</p>
+            <h2 id="supporting-tools-title">필요한 작업으로 바로 이동하세요</h2>
+            <p>입력과 처리 방식이 다른 기능은 간결한 목록으로 구분했습니다. 각 가이드에서 사용 범위와 결과를 해석할 때의 한계를 확인할 수 있습니다.</p>
+
+            <div class="landing-utility-grid">
+                <article class="landing-utility-row">
+                    <div class="landing-utility-heading">
+                        <span class="landing-tool-tag">클라이밍 준비</span>
+                        <h3>암벽화 핏 자가 점검</h3>
+                    </div>
+                    <p>좌우 발 실측값과 발볼·발등·아치·발가락 형태를 착화 질문으로 정리합니다. 사진 픽셀로 치수나 사이즈를 자동 판정하지 않으며 제조사 차트와 실제 착화를 최종 기준으로 안내합니다.</p>
+                    <div class="landing-card-actions">
+                        <a href="app.html?tab=foot">도구 열기</a>
+                        <a href="guides/foot-analysis.html">점검 가이드</a>
+                    </div>
+                </article>
+
+                <article class="landing-utility-row">
+                    <div class="landing-utility-heading">
+                        <span class="landing-tool-tag">숨참기 기록</span>
+                        <h3>CO2 테이블</h3>
+                    </div>
+                    <p>숨참기 시간은 고정하고 휴식을 15초씩 줄이는 패턴을 기록·내보냅니다. 수중 단독 훈련이나 최대 기록 시험을 위한 안전 장치가 아니며 과호흡 금지와 버디 원칙을 우선합니다.</p>
+                    <div class="landing-card-actions">
+                        <a href="app.html?tab=co2">도구 열기</a>
+                        <a href="guides/co2-table.html">안전 가이드</a>
+                    </div>
+                </article>
+
+                <article class="landing-utility-row">
+                    <div class="landing-utility-heading">
+                        <span class="landing-tool-tag">Canvas 제작</span>
+                        <h3>비디오 시퀀스 생성기</h3>
+                    </div>
+                    <p>짧은 영상을 브라우저 Canvas에서 프레임으로 샘플링해 PNG 스프라이트 시트로 만듭니다. 서버 업로드 없이 직접 연결·핑퐁·오버랩 크로스페이드 방식을 비교합니다.</p>
                     <div class="landing-card-actions">
                         <a href="app.html?tab=sequence">도구 열기</a>
                         <a href="guides/sequence-generator.html">처리 방식 보기</a>
                     </div>
                 </article>
-                <article class="landing-tool-card">
-                    <span class="landing-tool-tag">무작위 조합</span>
-                    <h3>로또 6/45 조합 생성기</h3>
-                    <p>과거 회차의 분포를 화면에 설명하면서 5개 조합을 만듭니다. 과거 빈도는 다음 추첨의 당첨 확률을 높이지 않으며, 모든 6개 조합의 1등 확률은 같습니다.</p>
+
+                <article class="landing-utility-row">
+                    <div class="landing-utility-heading">
+                        <span class="landing-tool-tag">무작위 조합</span>
+                        <h3>로또 6/45 조합 생성기</h3>
+                    </div>
+                    <p>과거 회차 분포를 설명하면서 다섯 개 조합을 만듭니다. 과거 빈도는 다음 추첨의 당첨 확률을 높이지 않으며 모든 여섯 개 번호 조합의 1등 확률은 같습니다.</p>
                     <div class="landing-card-actions">
                         <a href="app.html?tab=lottery">도구 열기</a>
                         <a href="guides/lottery-generator.html">알고리즘·확률 보기</a>

@@ -8,7 +8,7 @@
     <meta name="robots" content="index,follow">
     <meta name="author" content="HPMPLab">
     <link rel="canonical" href="https://www.hpmplab.com/guides/co2-table.html">
-    <link rel="stylesheet" href="../style.css?v=20260726-1">
+    <link rel="stylesheet" href="../style.css?v=20260727-4">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -25,13 +25,33 @@
     </script>
 </head>
 <body>
-    <main class="content-page">
+    <a class="skip-link" href="#main-content">본문으로 건너뛰기</a>
+    <header>
+        <div class="container">
+            <div class="header-left">
+                <a class="home-link" href="../" aria-label="연마 홈으로 이동">
+                    <img class="home-link-icon" src="../assets/icons/favicon-32x32.png" alt="">
+                </a>
+                <p class="header-title" aria-label="연마">연마</p>
+                <nav aria-label="주요 이동">
+                    <a href="../app.html">도구</a>
+                    <a href="../articles/">아티클</a>
+                    <a href="./" aria-current="page">가이드</a>
+                    <a href="../about.html">소개</a>
+                    <a href="../contact.html">문의</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="content-page reading-shell" id="main-content">
         <nav class="content-page-nav" aria-label="상단 이동">
             <a href="../app.html?tab=co2">CO2 타이머 열기</a>
             <a href="../articles/">아티클</a>
             <a href="./">가이드 목록</a>
             <a href="../about.html">소개</a>
         </nav>
+        <article class="reading-article">
         <section class="content-page-hero">
             <p class="section-kicker">Breath-hold training</p>
             <h1>CO2 테이블 훈련 가이드</h1>
@@ -41,13 +61,27 @@
                 <span>15초 휴식 감소·기록 표·CSV/JSON/PNG 출력을 코드와 브라우저에서 대조 · 최종 검증 2026-07-26 · 의료 전문가 검수 없음</span>
             </div>
         </section>
+        <nav class="article-toc reading-toc" aria-label="이 가이드의 목차">
+            <strong>목차</strong>
+            <ol>
+                <li><a href="#timer-flow">타이머 진행 방식</a></li>
+                <li><a href="#rest-example">휴식 감소 예</a></li>
+                <li><a href="#session-setup">세션 만드는 순서</a></li>
+                <li><a href="#buddy-safety">혼자 하지 않는 이유</a></li>
+                <li><a href="#beginner-settings">초보자 설정 예시</a></li>
+                <li><a href="#chart-reading">기록 그래프 해석</a></li>
+                <li><a href="#avoid">피해야 할 사용</a></li>
+                <li><a href="#adjustments">목적별 조정</a></li>
+                <li><a href="#safety-evidence">안전 근거</a></li>
+            </ol>
+        </nav>
         <section class="content-page-section">
-            <h2>연마 타이머의 진행 방식</h2>
+            <h2 id="timer-flow">연마 타이머의 진행 방식</h2>
             <p>사용자는 숨참기 시간과 첫 휴식 시간을 정합니다. 시작 후 타이머는 숨참기 구간과 휴식 구간을 번갈아 진행하고, 휴식은 라운드마다 15초씩 줄어듭니다. 휴식이 15초까지 내려가면 더 줄이지 않고 같은 휴식으로 계속 반복합니다.</p>
             <p>기록표와 그래프는 숨참기 시간이 일정한지, 휴식 감소가 계획대로 진행됐는지 확인하는 용도입니다. 기록이 불규칙하다면 강도를 높이기보다 쉬운 설정으로 돌아가는 것이 좋습니다.</p>
         </section>
         <section class="content-page-section">
-            <h2>휴식 감소가 표시되는 예</h2>
+            <h2 id="rest-example">휴식 감소가 표시되는 예</h2>
             <p>숨참기 60초, 첫 휴식 120초로 시작하면 숨참기는 매 라운드 60초로 유지되고 휴식만 15초씩 줄어듭니다. 앱은 휴식이 15초에 도달하면 더 줄이지 않습니다.</p>
             <div class="content-table-wrap">
                 <table class="content-table">
@@ -63,7 +97,7 @@
             <p>이 표는 앱 계산 예시이지 초보자 처방이 아닙니다. 60초 숨참기가 편하지 않다면 더 짧은 값으로 시작해야 하며, 끝까지 완료하는 것을 목표로 삼지 않습니다.</p>
         </section>
         <section class="content-page-section">
-            <h2>앱에서 세션을 만드는 순서</h2>
+            <h2 id="session-setup">앱에서 세션을 만드는 순서</h2>
             <ol>
                 <li>오늘 무리 없이 중단할 수 있는 짧은 숨참기 시간을 정합니다. 최대 기록을 시험하거나 타이머를 끝까지 채우는 것을 목표로 삼지 않습니다.</li>
                 <li>첫 휴식 시간을 충분히 길게 둡니다. 휴식이 너무 짧으면 CO2 적응 훈련이 아니라 무리한 참기 경쟁이 됩니다.</li>
@@ -72,7 +106,7 @@
             </ol>
         </section>
         <section class="content-page-section">
-            <h2>혼자 하지 말아야 하는 이유</h2>
+            <h2 id="buddy-safety">혼자 하지 말아야 하는 이유</h2>
             <p>숨참기 훈련은 단순한 집중 연습처럼 보이지만, 과호흡이나 무리한 참기는 실신 위험을 만들 수 있습니다. 물속에서 혼자 진행하는 것은 특히 위험합니다. 연마는 훈련 타이머일 뿐 안전 감시자를 대체하지 않습니다.</p>
             <ul>
                 <li>수중 훈련은 반드시 버디와 안전 절차가 있는 환경에서만 진행합니다.</li>
@@ -82,32 +116,33 @@
             </ul>
         </section>
         <section class="content-page-section">
-            <h2>초보자 설정 예시</h2>
+            <h2 id="beginner-settings">초보자 설정 예시</h2>
             <p>처음에는 자신에게 부담이 없는 짧은 숨참기와 충분한 휴식으로 시작하세요. 여러 라운드를 끝내는 것보다 경고 신호가 생기기 전에 중단할 수 있는 설정이 중요합니다. 빈도와 강도는 건강 상태와 경험에 따라 달라지므로 앱이 획일적인 훈련 처방을 제시하지 않습니다.</p>
         </section>
         <section class="content-page-section">
-            <h2>기록 그래프를 해석하는 법</h2>
+            <h2 id="chart-reading">기록 그래프를 해석하는 법</h2>
             <p>좋은 CO2 테이블 기록은 가장 긴 숨참기 시간이 아니라 계획한 숨참기를 일정하게 유지한 기록입니다. 그래프에서 숨참기 막대가 매 라운드 비슷하게 유지되고, 휴식만 단계적으로 줄어들었다면 의도한 세션에 가깝습니다. 중간에 숨참기 시간이 흔들리거나 조기 종료가 반복된다면 시작 설정이 높았다는 신호입니다.</p>
             <p>다음 세션을 조정할 때는 한 가지 변수만 바꾸세요. 숨참기 시간을 늘렸다면 휴식 감소폭은 그대로 두고, 휴식을 줄였다면 숨참기 시간은 그대로 둡니다. 여러 값을 동시에 바꾸면 어떤 변화가 부담을 만든 것인지 알기 어렵습니다.</p>
         </section>
         <section class="content-page-section">
-            <h2>피해야 할 사용 방식</h2>
+            <h2 id="avoid">피해야 할 사용 방식</h2>
             <p>연마의 CO2 타이머는 수중 단독 훈련용 안전 장치가 아닙니다. 욕조, 수영장, 바다에서 혼자 사용하면 안 됩니다. 또한 과호흡으로 시작하거나, 어지러운데도 기록을 채우려고 참는 방식은 훈련 효과보다 위험이 큽니다. 스마트폰 알람이 울린다고 해서 몸 상태를 대신 판단해 주지는 않습니다.</p>
             <p>두통, 흉부 압박감, 시야 흐림, 손발 저림, 비정상적으로 강한 공포감이 생기면 세션을 끝내고 쉬어야 합니다. 호흡기 질환, 심혈관 질환, 실신 이력이 있는 경우에는 일반적인 타이머 사용이라도 전문가의 조언을 먼저 받는 것이 안전합니다.</p>
         </section>
         <section class="content-page-section">
-            <h2>훈련 목적별 조정</h2>
+            <h2 id="adjustments">훈련 목적별 조정</h2>
             <p>프리다이빙을 위한 CO2 적응이 목적이라면, 세션 자체보다 안전 절차와 버디 시스템이 먼저입니다. 육상에서 집중력과 불편감 관리 연습을 하려는 경우에도 무리한 숨참기보다 반복 가능한 리듬이 중요합니다. 운동 전 긴장 완화를 목적으로 한다면 CO2 테이블보다 일반 호흡 타이머의 짧은 세션이 더 적합할 수 있습니다.</p>
         </section>
         <section class="content-page-section">
-            <h2>안전 근거</h2>
+            <h2 id="safety-evidence">안전 근거</h2>
             <p>Divers Alert Network(DAN)은 과호흡이 숨 쉬고 싶은 신호를 늦추면서 의식 소실 위험을 높일 수 있다고 설명하고, 숨참기 다이빙에서 일대일 감시와 즉시 개입할 수 있는 버디를 강조합니다. 타이머·알람·스마트워치는 수중 감시자를 대체하지 못합니다.</p>
             <p class="guide-source">참고: <a href="https://dan.org/alert-diver/article/hypoxia-in-breath-hold-diving/" target="_blank" rel="noopener noreferrer">DAN, Hypoxia in Breath-Hold Diving</a> · <a href="https://dan.org/alert-diver/article/freediving-safety-awareness/" target="_blank" rel="noopener noreferrer">DAN, Freediving Safety Awareness</a></p>
         </section>
+        </article>
     </main>
     <footer class="container">
         <nav class="footer-links" aria-label="Footer">
-            <a href="../">홈</a><a href="../articles/">아티클</a><a href="./">가이드</a><a href="../about.html">소개</a><a href="../privacy.html">개인정보처리방침</a><a href="../terms.html">이용 약관</a>
+            <a href="../">홈</a><a href="../app.html">도구</a><a href="../articles/">아티클</a><a href="./">가이드</a><a href="../about.html">소개</a><a href="../contact.html">문의</a><a href="../privacy.html">개인정보처리방침</a><a href="../terms.html">이용 약관</a><a href="../affiliate-disclosure.html">제휴 고지</a>
         </nav>
         <p>© 2026 HPMPLab. 연마.</p>
     </footer>

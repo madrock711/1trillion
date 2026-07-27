@@ -359,6 +359,7 @@
     var scaleConnectWhc06 = q('#abScaleConnectWhc06');
     var chromeFlagsCopy = q('#abChromeFlagsCopy');
     var scaleStatus = q('#abScaleStatus');
+    var scaleStatusCompact = q('#abScaleStatusCompact');
     var scaleSupport = q('#abScaleSupport');
     var scaleModeButtons = root.querySelectorAll('[data-ab-scale-mode]');
     var scaleMetrics = q('.abrahang-scale-metrics');
@@ -372,6 +373,9 @@
     var scaleTargetReading = q('#abScaleTargetReading');
     var dialCurrentLoad = q('#abDialCurrentLoad');
     var dialPeakLoad = q('#abDialPeakLoad');
+    var observationStrip = q('#abObservationStrip');
+    var currentHandLabel = q('#abCurrentHandLabel');
+    var currentHand = q('#abCurrentHand');
     var sound = q('#abSound');
     var autoLog = q('#abAutoLog');
     var phaseEl = q('#abPhase');
@@ -2223,9 +2227,35 @@
       if(scaleReadingMetric) scaleReadingMetric.classList.toggle('is-wide', isCraneScale);
 
       if(scaleStatus){
-        scaleStatus.textContent = siteT(scaleState.statusKey, scaleState.statusFallback);
+        setTextIfChanged(scaleStatus, siteT(scaleState.statusKey, scaleState.statusFallback));
         scaleStatus.classList.toggle('is-error', scaleState.statusTone === 'error');
         scaleStatus.classList.toggle('is-waiting', scaleState.statusTone === 'waiting' || scaleState.connecting);
+        var scaleStatusState = scaleState.statusTone === 'error'
+          ? 'error'
+          : (scaleState.statusTone === 'ok'
+            ? 'success'
+            : ((scaleState.statusTone === 'waiting' || scaleState.connecting) ? 'waiting' : 'idle'));
+        if(scaleStatus.getAttribute('data-state') !== scaleStatusState){
+          scaleStatus.setAttribute('data-state', scaleStatusState);
+        }
+        if(scaleStatusCompact){
+          var compactStatusKey = 'abrahang.scaleStatusCompactIdle';
+          var compactStatusFallback = lang() === 'en' ? 'Offline' : '미연결';
+          if(scaleStatusState === 'waiting'){
+            compactStatusKey = 'abrahang.scaleStatusCompactWaiting';
+            compactStatusFallback = lang() === 'en' ? 'Connecting' : '연결 중';
+          }else if(scaleStatusState === 'success'){
+            compactStatusKey = 'abrahang.scaleStatusCompactSuccess';
+            compactStatusFallback = lang() === 'en' ? 'Live' : '수신 중';
+          }else if(scaleStatusState === 'error'){
+            compactStatusKey = 'abrahang.scaleStatusCompactError';
+            compactStatusFallback = lang() === 'en' ? 'Check' : '확인 필요';
+          }
+          setTextIfChanged(scaleStatusCompact, siteT(compactStatusKey, compactStatusFallback));
+          if(scaleStatusCompact.getAttribute('data-state') !== scaleStatusState){
+            scaleStatusCompact.setAttribute('data-state', scaleStatusState);
+          }
+        }
       }
       if(scaleConnect){
         scaleConnect.disabled = scaleState.connecting;
@@ -4100,6 +4130,37 @@
             moveTitle.textContent = tt('finalRestTitle');
             moveCue.textContent = tt('finalRestCue');
           }
+        }
+      }
+      if(currentHandLabel){
+        setTextIfChanged(currentHandLabel, siteT('abrahang.currentHandLabel', lang() === 'en' ? 'Current hand' : '현재 손'));
+      }
+      if(observationStrip){
+        var observationLabel = siteT('abrahang.scaleMetricsAria', lang() === 'en' ? 'Live measurement console' : '실시간 측정 콘솔');
+        if(observationStrip.getAttribute('aria-label') !== observationLabel){
+          observationStrip.setAttribute('aria-label', observationLabel);
+        }
+      }
+      if(currentHand){
+        var currentHandSide = 'both';
+        var currentHandText = siteT('abrahang.handBoth', lang() === 'en' ? 'Both' : '양손');
+        if(state.phase === 'done'){
+          currentHandSide = 'none';
+          currentHandText = tt('done');
+        }else if((state.mode === 'max' || isOneHandMode()) && state.phase === 'rest' && !isRestPrecount()){
+          currentHandSide = 'none';
+          currentHandText = siteT('abrahang.handResting', lang() === 'en' ? 'Recover' : '회복');
+        }else if(state.mode === 'max' || isOneHandMode()){
+          var handTargetIndex = currentHandTargetIndex();
+          var handTargetStep = handTargetIndex >= 0 ? state.protocol.steps[handTargetIndex] : null;
+          currentHandSide = handTargetStep && handTargetStep.handSide
+            ? normalizeHandSide(handTargetStep.handSide)
+            : handSideForStepIndex(Math.max(0, handTargetIndex));
+          currentHandText = handLabel(currentHandSide);
+        }
+        setTextIfChanged(currentHand, currentHandText);
+        if(currentHand.getAttribute('data-hand') !== currentHandSide){
+          currentHand.setAttribute('data-hand', currentHandSide);
         }
       }
       renderHandGuides();
