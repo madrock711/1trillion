@@ -177,6 +177,19 @@ body > header .container {
     transform: translateX(-50%);
 }
 
+.header-title > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--control-min-height);
+    color: inherit;
+}
+
+.header-title > a:hover,
+.header-title > a:focus-visible {
+    color: var(--brand);
+}
+
 body > header nav {
     display: flex;
     align-items: center;
