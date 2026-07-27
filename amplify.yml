@@ -19,6 +19,7 @@ frontend:
       - 'assets/images/FootType_*.png'
       - 'assets/images/share_btn.png'
       - 'assets/images/chakra-body-outline-right.png'
+      - 'assets/images/articles/*.webp'
       - 'assets/images/abrahang-grip-candidates/20260706/*-display.webp'
   cache:
     paths: []

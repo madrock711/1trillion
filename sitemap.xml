@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url><loc>https://www.hpmplab.com/</loc><lastmod>2026-07-27</lastmod></url>
   <url><loc>https://www.hpmplab.com/articles/</loc><lastmod>2026-07-27</lastmod></url>
-  <url><loc>https://www.hpmplab.com/articles/market-2026-07-27.html</loc><lastmod>2026-07-27</lastmod></url>
-  <url><loc>https://www.hpmplab.com/articles/gen-z-last-generation.html</loc><lastmod>2026-07-27</lastmod></url>
+  <url>
+    <loc>https://www.hpmplab.com/articles/market-2026-07-27.html</loc>
+    <lastmod>2026-07-27</lastmod>
+    <image:image>
+      <image:loc>https://www.hpmplab.com/assets/images/articles/market-2026-07-27-gap-reversal-1200x630.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.hpmplab.com/assets/images/articles/market-2026-07-27-rotation-1200x800.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.hpmplab.com/articles/gen-z-last-generation.html</loc>
+    <lastmod>2026-07-27</lastmod>
+    <image:image>
+      <image:loc>https://www.hpmplab.com/assets/images/articles/gen-z-disconnected-world-1200x630.webp</image:loc>
+    </image:image>
+  </url>
   <url><loc>https://www.hpmplab.com/guides/</loc><lastmod>2026-07-26</lastmod></url>
   <url><loc>https://www.hpmplab.com/guides/abrahang.html</loc><lastmod>2026-07-26</lastmod></url>
   <url><loc>https://www.hpmplab.com/guides/breathing.html</loc><lastmod>2026-07-26</lastmod></url>
