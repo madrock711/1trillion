@@ -12,7 +12,7 @@
 ## 발행 우선순위
 
 1. **잠재의식 해킹은 가능할까? 자동적 사고와 습관의 과학** — 발행
-2. **명상하는 법: 초보자를 위한 5분 호흡 명상**
+2. **명상하는 법: 초보자를 위한 5분 호흡 명상** — 발행
 3. **명상 효과는 어디까지 입증됐을까? 스트레스·불안·수면 연구 읽기**
 4. **명상 부작용과 중단 신호: 불안·해리·불면이 심해질 때**
 5. **습관은 정말 21일이면 만들어질까? 59~66일 연구의 정확한 의미**
@@ -96,9 +96,21 @@
 | [Wood 외, 2009](https://pubmed.ncbi.nlm.nih.gov/19493324/) | 과장된 긍정 자기진술의 역효과 가능성 | 확언 전체가 해롭다고 확대하지 않는다. |
 | [NIDDK: Changing Your Habits](https://www.niddk.nih.gov/health-information/diet-nutrition/changing-habits-better-health) | 작은 목표·기록·장애물 대비 | 주로 식사·신체활동 안내이며 정신질환 치료 지침이 아니다. |
 
+## 두 번째 글 기초자료
+
+| 자료 | 사용 범위 | 주의 |
+|---|---|---|
+| [VA Passport to Whole Health: Chapter 4](https://www.va.gov/wholehealthlibrary/passport/chapter-4.asp) | 5분 타이머, 편안한 자세, 눈의 선택, 자연스러운 호흡과 주의 복귀 | VA의 일반 자기관리 안내를 모든 사람의 임상 지침으로 확대하지 않는다. |
+| [VA National Center for PTSD: Mindful Breathing](https://www.ptsd.va.gov/gethelp/captions/Track02_MindfulBreathing.pdf) | 호흡을 바꾸지 않고 관찰하며 산만해졌을 때 돌아오는 순서 | 짧은 훈련 스크립트이며 PTSD 치료 프로토콜 전체가 아니다. |
+| [NCCIH: Meditation and Mindfulness](https://www.nccih.nih.gov/health/meditation-and-mindfulness-effectiveness-and-safety) | 명상·마음챙김 정의, 프로그램별 구성 차이, 효과·안전 연구의 범위 | 5분 한 번의 연습에 장기 프로그램 결과를 옮기지 않는다. |
+| [WHO: Doing What Matters in Times of Stress](https://tdr.who.int/home/our-work/global-engagement/9789240003927) | 발바닥·주변 감각을 이용한 짧은 그라운딩 대안 | 심한 증상의 진단이나 치료 절차로 사용하지 않는다. |
+| [MedlinePlus: Hyperventilation](https://medlineplus.gov/ency/article/003071.htm) | 빠르고 깊은 호흡의 증상과 의료 평가 조건 | 호흡 명상의 일반 위험률을 제시하는 자료가 아니다. |
+| [Farias 외, 2020](https://pubmed.ncbi.nlm.nih.gov/32820538/) | 명상 관련 부정적 경험과 중단·상담 안내 | 통합 8.3%를 개인의 고정 위험률로 사용하지 않는다. |
+| [AHRQ: Meditation Programs](https://www.ncbi.nlm.nih.gov/books/NBK180092/) | MBSR·MBCT의 전형적인 8주 수업과 가정 연습 구성 | 5분 입문 연습을 8주 임상 프로그램의 치료 용량으로 표현하지 않는다. |
+
 ## 다음 발행 때의 내부 링크
 
-- 2번 글이 발행되면 첫 글의 연재 목차와 결론에 실제 링크를 추가한다.
+- 발행 우선순위 2편 「명상하는 법: 초보자를 위한 5분 호흡 명상」과 첫 글의 마음챙김 설명·연재 목차를 실제 링크로 왕복 연결했다.
 - 명상 입문·효과·부작용 세 글은 서로 왕복 링크하고 기존 `guides/breathing.html`과 `app.html?tab=breathing`을 보조 도구로 연결한다.
 - 습관·확언·잠재음원 글은 첫 글의 해당 문단에서 심화 글로 연결하고, 심화 글에서 첫 글의 개념 정리로 되돌아간다.
 - 건강정보 글이 4~5개 쌓이면 query 필터만 사용하지 말고 건강정보 전용 정적 허브와 `CollectionPage` 구조화 데이터를 검토한다.
