@@ -14,6 +14,7 @@ frontend:
       - 'customHttp.yml'
       - 'guides/*.html'
       - 'articles/*.html'
+      - 'charts/*.png'
       - 'assets/data/*.json'
       - 'assets/icons/*'
       - 'assets/images/FootType_*.png'
