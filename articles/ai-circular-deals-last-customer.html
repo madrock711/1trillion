@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI 시대, 마지막 고객은 누구인가 | 연마 에세이</title>
-    <meta name="description" content="엔비디아·클라우드·AI 모델 기업이 서로에게 건네는 투자와 계약을 따라가며, AI 시대의 금융이 무엇을 앞당기고 누구에게 위험을 남기는지 살펴보는 연마 에세이입니다.">
+    <meta name="description" content="AI 기업의 투자·용량 계약·유료 매출을 세 장부로 나눠 읽고, 거대한 인프라 투자의 성패가 왜 마지막 고객의 반복 결제에서 갈리는지 살펴봅니다.">
     <meta name="robots" content="index,follow,max-image-preview:large">
     <meta name="author" content="HPMPLab">
     <link rel="canonical" href="https://www.hpmplab.com/articles/ai-circular-deals-last-customer.html">
@@ -22,7 +22,7 @@
     <meta property="og:image:alt" content="어두운 데이터센터를 중심으로 청록색과 자홍색의 흐름이 원을 이루다가 기업과 개인의 작은 도시 쪽으로 열려 있는 일러스트">
     <meta property="article:section" content="에세이">
     <meta property="article:published_time" content="2026-07-29T16:20:00+09:00">
-    <meta property="article:modified_time" content="2026-07-29T16:20:00+09:00">
+    <meta property="article:modified_time" content="2026-07-29T20:24:02+09:00">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="AI 시대, 마지막 고객은 누구인가">
     <meta name="twitter:description" content="돈은 원을 그릴 수 있다. 하지만 AI 인프라의 위험은 마지막 유료 고객에게 닿을 때까지 사라지지 않는다.">
@@ -31,14 +31,14 @@
     <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="../style.css?v=20260729-2">
+    <link rel="stylesheet" href="../style.css?v=20260729-3">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Article",
       "headline": "AI 시대, 마지막 고객은 누구인가",
       "alternativeHeadline": "돈은 원을 그리지만, 위험은 직선으로 쌓인다",
-      "description": "엔비디아·클라우드·AI 모델 기업이 서로에게 건네는 투자와 계약을 따라가며, AI 시대의 금융이 무엇을 앞당기고 누구에게 위험을 남기는지 살펴보는 에세이입니다.",
+      "description": "AI 기업의 투자·용량 계약·유료 매출을 세 장부로 나눠 읽고, 거대한 인프라 투자의 성패가 왜 마지막 고객의 반복 결제에서 갈리는지 살펴보는 에세이입니다.",
       "datePublished": "2026-07-29",
       "dateModified": "2026-07-29",
       "articleSection": "에세이",
@@ -102,11 +102,11 @@
             <header class="article-hero">
                 <a class="article-category-badge" href="./?category=essay">에세이</a>
                 <h1>AI 시대, 마지막 고객은 누구인가</h1>
-                <p class="article-dek">엔비디아, 클라우드, AI 모델 기업이 서로에게 건네는 투자와 계약을 따라가며, AI 시대의 금융이 무엇을 앞당기고 누구에게 위험을 남기는지 살펴봅니다.</p>
+                <p class="article-dek">AI 기업 사이의 거대한 투자와 계약은 어디에서 실제 수요로 바뀔까요. 자본·용량·현금의 세 장부를 나눠 보면, 복잡한 화살표의 끝에 있는 한 사람이 보입니다.</p>
                 <div class="article-meta">
                     <strong>작성·편집: HPMPLab</strong>
                     <time datetime="2026-07-29">2026년 7월 29일</time>
-                    <span>약 9분</span>
+                    <span>약 8분</span>
                     <span>의견 글</span>
                 </div>
                 <p class="article-disclosure">이 글은 공개된 기업 발표와 공시를 바탕으로 한 에세이입니다. 계약·투자·보증은 서로 다른 금융 항목이며, 아래의 해석은 투자 권유가 아닌 필자의 관점입니다.</p>
@@ -118,129 +118,144 @@
             <nav class="article-toc reading-toc" aria-label="글 목차">
                 <strong>목차</strong>
                 <ol>
-                    <li><a href="#map">화살표가 만든 직관</a></li>
-                    <li><a href="#ledgers">돈은 하나가 아니라 세 개의 장부</a></li>
-                    <li><a href="#facts">확정된 돈과 가정된 돈 사이</a></li>
-                    <li><a href="#customer">마지막 고객은 누구인가</a></li>
-                    <li><a href="#risk">거품을 묻는 더 좋은 방법</a></li>
+                    <li><a href="#map">한 장의 지도에서 시작된 질문</a></li>
+                    <li><a href="#ledgers">AI 자본은 세 번 검증된다</a></li>
+                    <li><a href="#facts">큰 숫자를 읽는 순서</a></li>
+                    <li><a href="#customer">산업의 성패는 마지막 결제에서 갈린다</a></li>
+                    <li><a href="#risk">앞으로 무엇을 확인할 것인가</a></li>
                 </ol>
             </nav>
 
             <div class="article-body" id="article-body">
                 <section aria-labelledby="map">
-                    <h2 id="map">화살표가 만든 직관</h2>
-                    <p class="article-lead">검은 배경 위에서 청록색과 자홍색의 선이 얽힌다. 칩을 만드는 기업은 AI 기업에 투자하고, AI 기업은 클라우드와 데이터센터의 용량을 약정하며, 그 데이터센터는 다시 그 칩을 산다. 선을 따라가다 보면 하나의 불편한 문장이 떠오른다. 엔비디아에서 나간 돈이 엔비디아로 돌아오는 것 아닌가.</p>
-                    <p>이 직관에는 진실이 있다. AI 산업은 이제 독립된 공급자와 구매자가 느슨하게 만나는 시장이라기보다, 칩·전력·클라우드·모델·투자자가 장기 약속으로 서로를 묶는 생태계에 가깝다. 공급망을 확보하려는 투자가 곧 수요를 잠그는 계약이 되고, 그 계약이 다시 다음 데이터센터의 금융을 가능하게 만든다.</p>
-                    <p>그러나 이 그림을 곧바로 “같은 돈이 한 바퀴를 돌며 가짜 매출을 만든다”는 증거로 읽으면 중요한 것을 놓친다. 한 장의 지도에는 지분 투자, 실제 서비스 이용료, 장기 용량 계약, 대출, 시설 임대 보증이 같은 화살표처럼 겹친다. 돈이 오가는 방향은 같아 보여도, 회계와 위험의 성격은 전혀 다르다.</p>
-                    <p class="article-pullquote">돈은 원을 그릴 수 있다. 하지만 위험은 원을 그리지 않는다. 아직 오지 않은 고객을 향해, 한 방향으로 쌓인다.</p>
+                    <h2 id="map">한 장의 지도에서 시작된 질문</h2>
+                    <p class="article-lead">검은 배경 위에서 수많은 화살표가 얽힌다. 칩 기업은 AI 기업에 투자하고, AI 기업은 클라우드 용량을 예약한다. 데이터센터는 다시 그 칩을 산다. 지도를 끝까지 따라가면 자연스럽게 이런 의문이 든다. “엔비디아에서 나간 돈이 결국 엔비디아로 돌아오는 것 아닌가?”</p>
+                    <p>이 질문은 AI 산업의 중요한 특징을 짚는다. 지금의 AI는 칩·전력·클라우드·모델·금융이 장기 계약으로 서로를 묶는 산업이다. 한 기업의 투자가 다른 기업의 설비 주문을 만들고, 그 주문이 다시 다음 데이터센터의 자금 조달 근거가 된다.</p>
+                    <p>다만 지도 한 장만으로 거래의 건전성까지 판단할 수는 없다. 같은 화살표처럼 보이는 선 안에는 지분 투자, 대출, 보증, 장기 구매 약정, 실제 서비스 이용료가 섞여 있다. 방향이 같아도 돈의 성격과 손실을 떠안을 주체는 다르다.</p>
+                    <p class="article-pullquote">이 지도의 쟁점은 돈이 원을 그리는가가 아니다. 원 밖에서 새로운 결제가 충분히 들어오는가다.</p>
                 </section>
 
                 <section aria-labelledby="ledgers">
-                    <h2 id="ledgers">돈은 하나가 아니라 세 개의 장부</h2>
-                    <p>AI의 순환 거래를 읽으려면 회사 이름을 먼저 외우기보다, 서로 다른 세 장부를 분리해야 한다. 첫째는 <strong>자본의 장부</strong>다. 지분 투자와 대출, 보증은 미래 성장을 오늘의 자금으로 바꾼다. 둘째는 <strong>용량의 장부</strong>다. 모델 기업과 클라우드는 몇 년 뒤에 쓸 컴퓨팅·전력·데이터센터를 미리 약속한다. 셋째는 <strong>현금의 장부</strong>다. 기업과 개인이 실제 AI 제품에 반복해서 지불하는 돈이 들어온다.</p>
+                    <h2 id="ledgers">AI 자본은 세 번 검증된다</h2>
+                    <p>복잡한 회사 관계를 모두 외울 필요는 없다. 돈이 어떤 역할을 하는지만 세 단계로 나누면 된다. <strong>자본</strong>은 미래의 성장을 오늘로 당긴다. <strong>용량 계약</strong>은 그 기대를 칩·전력·데이터센터로 바꾼다. 마지막으로 <strong>유료 매출</strong>은 기업과 개인이 그 설비의 비용을 실제로 감당할 만큼 AI를 쓰는지 보여 준다.</p>
 
                     <figure class="article-inline-media ai-capital-diagram">
-                        <svg viewBox="0 0 1200 700" role="img" aria-labelledby="capital-flow-title capital-flow-desc" xmlns="http://www.w3.org/2000/svg">
-                            <title id="capital-flow-title">AI 자본, 용량, 최종 수요의 흐름</title>
-                            <desc id="capital-flow-desc">투자자와 공급자가 자본을 AI 모델 기업 및 데이터센터에 공급하고, 데이터센터가 칩과 전력을 조달하며, 최종 고객의 유료 사용이 현금흐름으로 돌아오는 구조를 보여 준다. 최종 수요가 약하면 손실 위험은 금융 제공자와 인프라 보유자 쪽에 남는다.</desc>
-                            <defs>
-                                <linearGradient id="diagram-background" x1="0" x2="1" y1="0" y2="1">
-                                    <stop offset="0" stop-color="#11171b"/>
-                                    <stop offset="1" stop-color="#0b0d12"/>
-                                </linearGradient>
-                                <linearGradient id="capital-gradient" x1="0" x2="1">
-                                    <stop offset="0" stop-color="#4bd5df"/>
-                                    <stop offset="1" stop-color="#8aebd6"/>
-                                </linearGradient>
-                                <linearGradient id="capacity-gradient" x1="0" x2="1">
-                                    <stop offset="0" stop-color="#f37bb7"/>
-                                    <stop offset="1" stop-color="#c66bff"/>
-                                </linearGradient>
-                                <marker id="arrow-teal" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#69dfdf"/></marker>
-                                <marker id="arrow-pink" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#ee80bf"/></marker>
-                                <marker id="arrow-warm" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#f6cf86"/></marker>
-                                <filter id="soft-shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="10" stdDeviation="15" flood-color="#000" flood-opacity="0.45"/></filter>
-                            </defs>
-                            <rect width="1200" height="700" rx="30" fill="url(#diagram-background)"/>
-                            <g opacity="0.22" stroke="#69808a" stroke-width="1">
-                                <path d="M70 100H1130M70 200H1130M70 300H1130M70 400H1130M70 500H1130M70 600H1130"/>
-                                <path d="M100 60V640M260 60V640M420 60V640M580 60V640M740 60V640M900 60V640M1060 60V640"/>
-                            </g>
-                            <text x="72" y="85" fill="#eef6f6" font-size="28" font-weight="700">AI 자본의 흐름은 ‘순환’보다 ‘종착점’으로 읽어야 한다</text>
-                            <text x="72" y="119" fill="#aab8be" font-size="18">개별 회사 거래도가 아니라, 투자·용량·현금흐름의 역할을 나눈 개념도</text>
-
-                            <g filter="url(#soft-shadow)">
-                                <rect x="74" y="230" width="235" height="150" rx="20" fill="#173138" stroke="#54d8dc" stroke-width="2"/>
-                                <rect x="75" y="231" width="7" height="148" rx="3" fill="#62e0db"/>
-                                <text x="107" y="282" fill="#e8ffff" font-size="25" font-weight="700">자본 제공자</text>
-                                <text x="107" y="318" fill="#bed0d3" font-size="18">투자자 · 공급자</text>
-                                <text x="107" y="347" fill="#bed0d3" font-size="18">대출 · 지분 · 보증</text>
-
-                                <rect x="452" y="190" width="296" height="196" rx="22" fill="#30213a" stroke="#e17ac2" stroke-width="2"/>
-                                <rect x="453" y="191" width="7" height="194" rx="3" fill="#ea80bf"/>
-                                <text x="488" y="247" fill="#fff1fc" font-size="25" font-weight="700">AI 모델 기업 · 클라우드</text>
-                                <text x="488" y="284" fill="#dac7df" font-size="18">학습 · 추론 서비스</text>
-                                <text x="488" y="313" fill="#dac7df" font-size="18">장기 용량 계약 · 제품 판매</text>
-                                <text x="488" y="348" fill="#efc2df" font-size="16">미래 수요를 먼저 약속하는 곳</text>
-
-                                <rect x="452" y="468" width="296" height="145" rx="22" fill="#1a252d" stroke="#6b9fd2" stroke-width="2"/>
-                                <rect x="453" y="469" width="7" height="143" rx="3" fill="#7db0e8"/>
-                                <text x="488" y="521" fill="#eef6ff" font-size="25" font-weight="700">칩 · 전력 · 데이터센터</text>
-                                <text x="488" y="557" fill="#c6d5e2" font-size="18">고정비와 감가상각이 생기는 곳</text>
-                                <text x="488" y="586" fill="#c6d5e2" font-size="18">실물 인프라 · 장기 부채</text>
-
-                                <rect x="890" y="292" width="235" height="150" rx="20" fill="#3c3020" stroke="#f1c878" stroke-width="2"/>
-                                <rect x="1117" y="293" width="7" height="148" rx="3" fill="#f2c777"/>
-                                <text x="922" y="344" fill="#fff7e8" font-size="25" font-weight="700">최종 고객</text>
-                                <text x="922" y="380" fill="#e4d1ae" font-size="18">기업 · 개발자 · 개인</text>
-                                <text x="922" y="409" fill="#e4d1ae" font-size="18">반복 유료 사용</text>
-                            </g>
-
-                            <path d="M310 285 C360 230 390 230 448 252" fill="none" stroke="url(#capital-gradient)" stroke-width="10" stroke-linecap="round" marker-end="url(#arrow-teal)"/>
-                            <text x="323" y="214" fill="#92ebeb" font-size="18" font-weight="700">자본 · 지분 · 보증</text>
-                            <path d="M594 391 L594 458" fill="none" stroke="url(#capacity-gradient)" stroke-width="10" stroke-linecap="round" marker-end="url(#arrow-pink)"/>
-                            <text x="622" y="431" fill="#f3a0ce" font-size="18" font-weight="700">용량 약정</text>
-                            <path d="M750 520 C825 520 833 430 884 391" fill="none" stroke="#7eb6ed" stroke-width="10" stroke-linecap="round" marker-end="url(#arrow-teal)"/>
-                            <text x="770" y="486" fill="#9dc9f1" font-size="18" font-weight="700">컴퓨팅 제공</text>
-                            <path d="M886 343 C835 200 800 157 754 184" fill="none" stroke="#f6cf86" stroke-width="10" stroke-linecap="round" marker-end="url(#arrow-warm)"/>
-                            <text x="790" y="176" fill="#ffdc9d" font-size="18" font-weight="700">유료 사용료</text>
-                            <path d="M450 586 C350 655 180 602 173 385" fill="none" stroke="#f2bf7a" stroke-width="4" stroke-dasharray="9 11" stroke-linecap="round" marker-end="url(#arrow-warm)"/>
-                            <text x="187" y="627" fill="#d4b782" font-size="17">상환 · 수익 배분 · 손실 부담</text>
-
-                            <g transform="translate(860 535)">
-                                <circle cx="0" cy="0" r="10" fill="#f19ac7"/><circle cx="34" cy="-18" r="10" fill="#69dfdf"/><circle cx="72" cy="4" r="10" fill="#f3cc7e"/>
-                                <text x="96" y="7" fill="#c5cdd1" font-size="16">최종 수요가 약하면</text>
-                                <text x="96" y="32" fill="#f0b4ce" font-size="16">위험은 사라지지 않는다</text>
-                            </g>
-                        </svg>
-                        <figcaption>이 도식은 한 거래의 금액이나 법적 책임을 표시하지 않습니다. 자본·용량·현금흐름을 구분해, AI 인프라의 경제성이 마지막 유료 수요에서 검증된다는 점을 보여 주기 위한 자체 기획입니다.</figcaption>
+                        <div class="ai-flow-diagram" role="group" aria-labelledby="capital-flow-title" aria-describedby="capital-flow-desc">
+                            <header class="ai-flow-header">
+                                <p class="ai-flow-kicker">세 개의 장부</p>
+                                <h3 id="capital-flow-title">AI 자본은 세 번 검증된다</h3>
+                                <p id="capital-flow-desc">투자와 계약이 실제 수요로 바뀌는 과정을 단계별로 나눈 개념도입니다.</p>
+                            </header>
+                            <ol class="ai-flow-stages">
+                                <li class="ai-flow-stage ai-flow-stage--capital">
+                                    <div class="ai-flow-stage-heading">
+                                        <span>01</span>
+                                        <div>
+                                            <strong>자본 조달</strong>
+                                            <small>미래를 오늘로 당긴다</small>
+                                        </div>
+                                    </div>
+                                    <div class="ai-flow-relation">
+                                        <div class="ai-flow-node">
+                                            <strong>자본 제공자</strong>
+                                            <span>투자자 · 공급자 · 금융사</span>
+                                        </div>
+                                        <div class="ai-flow-connector" aria-label="지분, 대출, 보증을 제공">
+                                            <span>지분 · 대출 · 보증</span>
+                                            <b aria-hidden="true">→</b>
+                                        </div>
+                                        <div class="ai-flow-node">
+                                            <strong>AI 모델 기업 · 클라우드</strong>
+                                            <span>연구 · 서비스 · 배포</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="ai-flow-stage ai-flow-stage--capacity">
+                                    <div class="ai-flow-stage-heading">
+                                        <span>02</span>
+                                        <div>
+                                            <strong>용량 확보</strong>
+                                            <small>기대를 실물 설비로 바꾼다</small>
+                                        </div>
+                                    </div>
+                                    <div class="ai-flow-relation">
+                                        <div class="ai-flow-node">
+                                            <strong>AI 모델 기업 · 클라우드</strong>
+                                            <span>미래 사용량을 약정</span>
+                                        </div>
+                                        <div class="ai-flow-connector" aria-label="용량을 약정하고 컴퓨팅을 제공">
+                                            <span>용량 약정 · 컴퓨팅 제공</span>
+                                            <b aria-hidden="true">⇄</b>
+                                        </div>
+                                        <div class="ai-flow-node">
+                                            <strong>칩 · 전력 · 데이터센터</strong>
+                                            <span>고정비 · 감가상각 · 장기 부채</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="ai-flow-stage ai-flow-stage--demand">
+                                    <div class="ai-flow-stage-heading">
+                                        <span>03</span>
+                                        <div>
+                                            <strong>수요 검증</strong>
+                                            <small>약속을 반복 매출로 바꾼다</small>
+                                        </div>
+                                    </div>
+                                    <div class="ai-flow-relation">
+                                        <div class="ai-flow-node">
+                                            <strong>AI 제품 · 서비스</strong>
+                                            <span>업무 도구 · API · 구독</span>
+                                        </div>
+                                        <div class="ai-flow-connector" aria-label="제품과 서비스를 제공하고 사용료를 받음">
+                                            <span>제품 제공 · 유료 사용료</span>
+                                            <b aria-hidden="true">⇄</b>
+                                        </div>
+                                        <div class="ai-flow-node ai-flow-node--customer">
+                                            <strong>최종 고객</strong>
+                                            <span>기업 · 개발자 · 개인</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ol>
+                            <p class="ai-flow-risk">
+                                <strong>마지막 결제가 약하면</strong>
+                                <span>앞서 쌓인 설비 비용과 금융 위험은 인프라 보유자와 자본 제공자에게 남습니다.</span>
+                            </p>
+                        </div>
+                        <figcaption>금액이나 개별 계약의 법적 책임을 표시한 거래 지도가 아닙니다. 자본·용량·유료 수요의 역할을 구분하기 위한 자체 개념도입니다.</figcaption>
                     </figure>
 
-                    <p>투자자는 지금의 연구비와 장비값을 대고, 모델 기업은 몇 년 뒤의 컴퓨팅을 예약한다. 데이터센터는 그 약속을 근거로 칩과 전력을 조달한다. 하지만 이 세 장부가 건강하게 이어지는 것은 마지막 장부, 즉 유료 사용자의 현금이 앞선 두 장부를 감당할 때뿐이다. 그때만 약속은 수요가 된다.</p>
+                    <p>첫 번째와 두 번째 장부는 산업의 건설 속도를 높인다. 그러나 둘 다 수요의 최종 증거는 아니다. 앞서 투입한 연구비와 설비비를 감당할 만큼 세 번째 장부가 커질 때, 미래에 대한 약속은 비로소 지속 가능한 사업이 된다.</p>
                 </section>
 
                 <section aria-labelledby="facts">
-                    <h2 id="facts">확정된 돈과 가정된 돈 사이</h2>
-                    <p>이 구분은 말장난이 아니다. 2025년 9월 엔비디아와 OpenAI는 최소 10GW의 시스템 구축을 위한 의향서를 발표하며, 시스템이 배치되는 단계에 맞춰 엔비디아가 최대 1,000억 달러를 투자할 의향이 있다고 밝혔다. 그러나 엔비디아의 2026년 1월 10-K는 OpenAI와의 투자·파트너십 계약을 아직 최종화 중이며 거래 완료를 보장할 수 없다고 적었다. ‘최대 1,000억 달러’는 이미 한 번에 이동한 현금이라는 뜻이 아니다.</p>
-                    <p>다른 연결선도 마찬가지다. 엔비디아·마이크로소프트·Anthropic의 2025년 발표에는 Anthropic의 300억 달러 Azure 컴퓨팅 구매 약정과 추가 최대 1GW 계약, 엔비디아의 최대 100억 달러 및 마이크로소프트의 최대 50억 달러 투자 의향이 함께 있다. 한 장의 화살표로는 모두 ‘돈’처럼 보이지만, 어느 것은 구매 약정이고 어느 것은 지분 투자다.</p>
-                    <p>CoreWeave 사례는 이 생태계가 추상이 아니라는 점을 보여 준다. CoreWeave의 2026년 1분기 공시에 따르면 엔비디아는 20억 달러를 현금으로 출자했고, 엔비디아는 동시에 CoreWeave의 인프라·플랫폼 서비스 구매자이자 GPU 공급자다. 같은 공시는 2025년 CoreWeave의 공급자 구매 중 엔비디아 비중이 17%였고, 엔비디아가 2025년 서비스 이용 대가로 약 3억 2,630만 달러를 냈다고 밝힌다.</p>
-                    <p>그래서 이 연결망을 부정할 필요는 없다. 다만 계약 보도자료의 가장 큰 숫자를 당기의 매출이나 현금으로 바꾸어 읽지 않는 절제가 필요하다. 엔비디아는 2026년 4월 26일 기준 투자 약정 총액을 270억 달러라고 공시했는데, 이 역시 조건부 약정의 총액이며 OpenAI 한 건의 실제 집행액을 뜻하지 않는다.</p>
+                    <h2 id="facts">큰 숫자를 읽는 순서</h2>
+                    <p>기업 발표의 숫자는 먼저 성격부터 확인해야 한다. 이미 지급한 돈인지, 조건을 충족할 때 나갈 돈인지, 몇 년에 걸친 구매 약정인지에 따라 의미가 크게 달라진다.</p>
+                    <p><strong>OpenAI와 엔비디아의 ‘최대 1,000억 달러’는 단계적 투자 의향이다.</strong> 두 회사는 2025년 9월 최소 10GW 시스템 구축을 위한 의향서를 발표했다. 엔비디아는 시스템 배치 단계에 맞춰 최대 1,000억 달러를 투자할 의향을 밝혔다. 이후 엔비디아의 2026년 1월 10-K는 관련 계약을 아직 최종화 중이며, 거래 완료를 보장할 수 없다고 적었다. 이 숫자를 이미 한 번에 이동한 현금으로 읽어서는 안 되는 이유다.</p>
+                    <p><strong>Anthropic 관련 발표에는 구매와 투자가 함께 들어 있다.</strong> 2025년 엔비디아·마이크로소프트·Anthropic의 발표에는 Anthropic의 300억 달러 Azure 컴퓨팅 구매 약정과 추가 최대 1GW 계약이 담겼다. 같은 발표에 엔비디아의 최대 100억 달러, 마이크로소프트의 최대 50억 달러 투자 의향도 나왔다. 앞의 숫자는 컴퓨팅 구매 약정이고, 뒤의 숫자는 투자 의향이다.</p>
+                    <p><strong>CoreWeave에서는 여러 역할이 실제로 한 회사에 겹친다.</strong> CoreWeave의 2026년 1분기 공시에 따르면 엔비디아는 20억 달러를 현금으로 출자했다. 동시에 엔비디아는 CoreWeave의 GPU 공급자이자 인프라·플랫폼 서비스 구매자다. 같은 공시는 2025년 CoreWeave의 공급자 구매 중 엔비디아 비중이 17%였고, 엔비디아가 그해 서비스 이용 대가로 약 3억 2,630만 달러를 지급했다고 밝힌다.</p>
+                    <p>이 연결을 감출 필요도, 하나의 숫자로 뭉칠 필요도 없다. 투자, 구매, 매출을 각각 제자리에 놓으면 된다. 엔비디아가 2026년 4월 26일 기준 공시한 270억 달러의 투자 약정 총액 역시 조건부 약정의 합계다. 특정 한 건의 실제 집행액과는 다른 숫자다.</p>
                 </section>
 
                 <section aria-labelledby="customer">
-                    <h2 id="customer">마지막 고객은 누구인가</h2>
-                    <p>AI 산업을 바라보는 가장 중요한 시선은 칩을 누가 몇 장 샀는지가 아니다. 그 칩이 만든 서비스에 누가 다음 달에도 돈을 낼 것인가다. 기업 고객이 업무 시간을 얼마나 줄였는지, 개발자가 얼마나 오래 API를 쓰는지, 소비자가 무료 사용을 유료 구독으로 바꾸는지가 데이터센터의 감가상각과 전력비, 이자비용을 대신 갚는다.</p>
-                    <p>바로 이 지점에서 AI 금융은 기술의 바깥이 아니라 기술의 일부가 된다. 좋은 모델이라도 전력과 서버를 제때 확보하지 못하면 배포할 수 없다. 반대로 자금과 장기 계약으로 먼저 인프라를 만들었다고 해서, 그 모델이 장기적으로 유료 사용자를 확보한다는 보장은 없다. 성능, 가격, 신뢰성, 보안, 실제 업무 적합성이 그 빈칸을 채워야 한다.</p>
-                    <p>Amazon과 Anthropic의 관계도 이 점을 드러낸다. Anthropic은 AWS를 주력 클라우드·학습 파트너로 정한 뒤, 2026년 AWS 기술에 10년간 1,000억 달러 이상을 약정했다고 발표했다. 같은 발표에서 Anthropic은 연간 환산 매출이 300억 달러를 넘었다고 밝혔지만, 이 역시 회사가 제시한 수치다. 약속된 지출과 회사가 주장하는 수요 사이의 간격은 시간이 지나 실제 현금흐름으로만 확인된다.</p>
+                    <h2 id="customer">산업의 성패는 마지막 결제에서 갈린다</h2>
+                    <p>칩이 몇 장 팔렸는지는 공급망의 현재를 보여 준다. 산업의 미래는 그 칩으로 만든 서비스에 누가 다음 달에도 돈을 내는지가 결정한다. 기업이 AI로 줄인 업무 시간이 이용료보다 가치 있는지, 개발자가 API를 계속 호출하는지, 무료 사용자가 유료 구독으로 옮겨가는지가 결국 전력비·감가상각·이자를 갚는다.</p>
+                    <p>그래서 금융은 AI 기술의 바깥에 있는 부수적 장치가 아니다. 좋은 모델도 서버와 전력을 확보하지 못하면 서비스할 수 없다. 금융은 아직 생기지 않은 매출을 기다리는 대신, 인프라를 먼저 짓게 해 준다. 다만 그 시간을 벌어 줄 뿐, 유료 수요 자체를 만들어 주지는 않는다. 성능·가격·신뢰성·보안·업무 적합성이 마지막 간격을 채워야 한다.</p>
+                    <p>Amazon과 Anthropic의 관계에서도 같은 간격이 보인다. Anthropic은 AWS를 주력 클라우드·학습 파트너로 정한 뒤, 2026년 AWS 기술에 10년간 1,000억 달러 이상을 약정했다고 발표했다. 같은 발표에서 연간 환산 매출이 300억 달러를 넘었다고 밝혔지만, 이는 회사가 제시한 수치다. 장기 지출 약정과 실제 고객 수요가 함께 커지는지는 앞으로의 현금흐름에서 확인해야 한다.</p>
                     <p class="article-pullquote">AI의 마지막 고객은 데이터센터가 아니다. 모델을 잘 썼다고 느껴 다음 달에도 결제하는 사람과 기업이다.</p>
                 </section>
 
                 <section aria-labelledby="risk">
-                    <h2 id="risk">거품을 묻는 더 좋은 방법</h2>
-                    <p>이 구조를 보고 곧장 ‘AI는 거품’이라고 선언하는 것은 쉽다. 반대로 거대한 계약을 보고 ‘수요는 이미 증명됐다’고 선언하는 것도 쉽다. 둘 다 지도를 너무 빨리 읽는 방법이다. 순환 거래는 그 자체로 부정의 증거가 아니며, 장기 인프라를 만드는 산업에서 공급자와 고객의 공동 투자는 충분히 가능한 전략이다.</p>
-                    <p>대신 네 가지를 묻는 편이 낫다. 첫째, 발표된 약정 중 실제 가동된 용량은 얼마인가. 둘째, 그 용량을 쓰는 고객은 몇 곳이며 얼마나 집중돼 있는가. 셋째, 매출이 아니라 영업현금흐름이 전력비·감가상각·이자를 감당하는가. 넷째, 수요가 예상보다 약할 때 계약 취소와 손실을 누가 떠안는가.</p>
-                    <p>CoreWeave가 2025년 매출의 약 67%를 최대 고객 한 곳에서 얻었다고 공시한 사실은, 이 질문이 왜 필요한지 보여 준다. 고객 집중은 빠른 성장의 발판이 될 수 있지만, 한쪽의 투자 축소가 다른 쪽의 장비 주문·데이터센터 부채·공급자의 매출 전망을 함께 흔들 수 있다는 뜻이기도 하다.</p>
-                    <p>앞으로 AI를 읽을 때, 화려한 화살표의 닫힌 원보다 오른쪽 끝의 열린 틈을 보자. 그 틈은 아직 오지 않은 수요다. 돈은 여러 회사를 거쳐 원점에 가까이 돌아올 수 있다. 하지만 그 돈이 진짜 수익이 되려면, 마지막에는 누군가가 AI를 쓰고 그 대가를 내야 한다. AI 시대의 금융은 그 미래를 믿는 방식이면서, 동시에 그 미래가 틀렸을 때의 비용을 미리 배분하는 방식이다.</p>
+                    <h2 id="risk">앞으로 무엇을 확인할 것인가</h2>
+                    <p>순환 구조만 보고 거품이라고 단정하거나, 큰 계약만 보고 수요가 증명됐다고 결론 내리면 같은 실수를 하게 된다. 공급자와 고객이 함께 투자하는 일은 거대한 인프라 산업에서 낯설지 않다. 중요한 것은 그 관계가 시간이 지나 독립적인 유료 수요로 이어지는지다.</p>
+                    <ol class="article-question-list">
+                        <li><strong>가동:</strong> 발표된 용량 가운데 실제 서비스를 시작한 규모는 얼마인가?</li>
+                        <li><strong>고객:</strong> 그 용량을 쓰는 최종 고객은 얼마나 많고, 특정 기업에 얼마나 집중돼 있는가?</li>
+                        <li><strong>현금:</strong> 영업현금흐름이 전력비·감가상각·이자를 감당하고 있는가?</li>
+                        <li><strong>손실:</strong> 수요가 기대에 못 미칠 때 계약 취소와 남은 설비의 비용을 누가 부담하는가?</li>
+                    </ol>
+                    <p>CoreWeave가 2025년 매출의 약 67%를 최대 고객 한 곳에서 얻었다고 공시한 사실은 두 번째 질문의 중요성을 보여 준다. 고객 집중은 빠른 성장의 발판이지만, 핵심 고객의 투자 축소가 장비 주문·데이터센터 부채·공급자의 매출 전망을 함께 흔들 수 있다.</p>
+                    <p>AI 시대의 금융은 미래 매출을 기다리지 않고 산업의 기반을 먼저 짓는 기술이다. 성공하면 시간과 공급망을 선점한다. 기대가 빗나가면 그 비용은 계약 구조에 따라 투자자, 인프라 보유자, 공급자에게 나뉜다. 그러므로 우리가 봐야 할 것은 화살표가 만든 원의 모양이 아니라, 그 원 바깥에서 들어오는 반복 결제의 두께다.</p>
                 </section>
 
                 <section class="article-sources" aria-labelledby="article-sources-title">
