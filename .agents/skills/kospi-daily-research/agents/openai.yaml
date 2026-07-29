@@ -1,0 +1,4 @@
+interface:
+  display_name: "KOSPI·KODEX 일일 리서치"
+  short_description: "최신 수급·메모리·매크로로 KOSPI와 KODEX 분석"
+  default_prompt: "$kospi-daily-research로 오늘의 검증된 KOSPI·KODEX 리서치와 장단기 금리차 차트를 작성해."
