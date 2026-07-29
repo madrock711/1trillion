@@ -5137,7 +5137,6 @@ button.tab-link {
 }
 
 .article-feed .article-card:first-child {
-    grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
     padding: clamp(1.3rem, 3.5vw, 2rem);
     border-color: rgba(68, 209, 122, 0.2);
     background:
