@@ -5137,7 +5137,6 @@ button.tab-link {
 }
 
 .article-feed .article-card:first-child {
-    padding: clamp(1.3rem, 3.5vw, 2rem);
     border-color: rgba(68, 209, 122, 0.2);
     background:
         radial-gradient(circle at 12% 10%, rgba(68, 209, 122, 0.1), transparent 24rem),
