@@ -106,13 +106,14 @@ def select_window(
 
 
 def load_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    windows_font = (
-        Path("C:/Windows/Fonts/segoeuib.ttf")
+    font_candidates = (
+        [Path("C:/Windows/Fonts/malgunbd.ttf"), Path("C:/Windows/Fonts/NotoSansKR-VF.ttf")]
         if bold
-        else Path("C:/Windows/Fonts/segoeui.ttf")
+        else [Path("C:/Windows/Fonts/malgun.ttf"), Path("C:/Windows/Fonts/NotoSansKR-VF.ttf")]
     )
-    if windows_font.exists():
-        return ImageFont.truetype(str(windows_font), size)
+    for font_path in font_candidates:
+        if font_path.exists():
+            return ImageFont.truetype(str(font_path), size)
     return ImageFont.load_default(size=size)
 
 
@@ -336,15 +337,15 @@ def main() -> int:
     create_chart(
         long_data,
         long_path,
-        "U.S. Treasury Yield Spreads — 2-Year Trend",
-        f"Daily observations through {latest_day.isoformat()} · zero line marks inversion",
+        "미국 국채 장단기 금리차 — 2년 추세",
+        f"{latest_day.isoformat()}까지의 일별 관측치 · 0%p 아래는 장단기 금리 역전 구간",
         recent=False,
     )
     create_chart(
         recent_data,
         recent_path,
-        "U.S. Treasury Yield Spreads — Recent 90 Days",
-        "Latest points only are marked; labels have dedicated right-side space",
+        "미국 국채 장단기 금리차 — 최근 90일",
+        "단기금리와 장기금리의 간극이 보여주는 정책·경기 기대의 변화",
         recent=True,
     )
 

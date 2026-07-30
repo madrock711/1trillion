@@ -2,7 +2,17 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url><loc>https://www.hpmplab.com/</loc><lastmod>2026-07-27</lastmod></url>
-  <url><loc>https://www.hpmplab.com/articles/</loc><lastmod>2026-07-29</lastmod></url>
+  <url><loc>https://www.hpmplab.com/articles/</loc><lastmod>2026-07-30</lastmod></url>
+  <url>
+    <loc>https://www.hpmplab.com/articles/market-2026-07-30.html</loc>
+    <lastmod>2026-07-30</lastmod>
+    <image:image>
+      <image:loc>https://www.hpmplab.com/assets/images/articles/market-2026-07-30-ai-demand-rate-tension-1200x630.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.hpmplab.com/charts/us_yield_spreads_90d_2026-07-30.png</image:loc>
+    </image:image>
+  </url>
   <url>
     <loc>https://www.hpmplab.com/articles/ai-circular-deals-last-customer.html</loc>
     <lastmod>2026-07-29</lastmod>
