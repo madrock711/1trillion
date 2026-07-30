@@ -8,6 +8,28 @@
 4. Reuters·AP 등 통신사는 사건의 맥락과 시장 반응을 교차 확인할 때 사용한다.
 5. 검색 결과 요약만으로 핵심 수치를 확정하지 않고 가능한 한 원문을 연다.
 6. 출처마다 갱신 시각과 시장 상태를 기록한다.
+7. 고정 소스만 순회하지 말고 발행 전 최신 헤드라인과 가격 이상 움직임에서 새 사건을 역추적한다.
+
+출처가 충돌하면 `정부·거래소·공시·기업 원문 > 직접 시세 원천 > Reuters·AP 등 통신사 > 경제 캘린더·검색 요약 > 소셜·커뮤니티` 순으로 판단한다. 확정 공시가 아닌 핵심 사건은 가능하면 서로 독립적인 신뢰 출처 두 곳으로 교차 확인한다.
+
+## 개방형 이슈 발견 소스
+
+| 발견 경로 | 우선 소스 | 사용 목적 | 확정 규칙 |
+|---|---|---|---|
+| 공시·규제 | DART·KIND·SEC EDGAR·거래소·정부기관 | 계약, 증자, 조사, 제재, 지분·포트폴리오 변화 | 원문 문구와 법적 형식을 그대로 구분 |
+| 기업 원문 | IR, 실적콜, 뉴스룸, 프레젠테이션 | 공급계약, CAPEX, 고객 수요, 가이던스 | 고객명·금액·기간 비공개 여부까지 기록 |
+| 주요 속보 | Reuters, AP, Axios, Bloomberg, FT, WSJ, CNBC | 강제청산, 블록딜, 정책·지정학, 시장 반응 | 가능하면 원문 1개와 독립 출처 1개 교차 확인 |
+| 가격 이상 | KRX, Nasdaq·NYSE, CME, 공식 ETF·지수 시세 | 급등락, 거래량 급증, 장중 급반전의 원인 탐색 | 가격은 사건의 증거가 아니라 검증 신호로 사용 |
+| 소셜·커뮤니티 | 공식 계정, 업계 게시물, 포럼 | 아직 색인되지 않은 사건의 탐색 단서 | 단독 근거로 공개하지 않고 원문을 찾지 못하면 제외 |
+
+### 매일 확인할 비정형 검색군
+
+- 강제청산·자금: `liquidation`, `forced selling`, `margin call`, `block trade`, `redemption`, `portfolio sale`
+- 공급 부족: `long-term supply agreement`, `prepayment`, `capacity reservation`, `sold out`, `allocation`
+- 정책·운영: `export control`, `sanction`, `investigation`, `outage`, `recall`, `strike`, `shipping disruption`
+- 실적 변화: `guidance cut`, `capital raise`, `downgrade`, `order cancellation`, `customer concentration`
+
+발견 후보는 `.agents/skills/kospi-daily-research/references/issue-radar.md`의 기준으로 순위를 매긴다. 검색량이나 소셜 반응만으로 중요도를 높이지 않는다.
 
 ## 소스 매트릭스
 
@@ -55,3 +77,6 @@
 - 경제 일정의 날짜가 KST 변환 후 하루 바뀌는지 확인했는가
 - ADR·EWY가 한국장의 기존 움직임을 후행 반영했는지 확인했는가
 - 기사 속 전망과 기업·기관의 확정 발표를 구분했는가
+- 공개주식 매각을 펀드 폐쇄·파산으로 확대 해석하지 않았는가
+- MOU·협상·장기공급계약·공시 매출액을 정확히 구분했는가
+- 오늘의 제목과 첫 분석이 이슈 레이더 최상위 사건을 반영하는가
