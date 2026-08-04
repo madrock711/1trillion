@@ -191,6 +191,27 @@
         };
     }
 
+    function normalizeExchange(payload, now) {
+        var result = payload && payload.isSuccess && payload.result;
+        if (!result || result.reutersCode !== 'FX_USDKRW') throw new Error('달러/원 응답이 올바르지 않습니다.');
+        var timestamp = Date.parse(result.localTradedAt);
+        var value = parseNumber(result.closePrice);
+        var ratio = signedValue(result.fluctuationsRatio, result.fluctuationsType);
+        if (!Number.isFinite(timestamp) || timestamp > now + 10 * 60 * 1000 || !Number.isFinite(value) || !Number.isFinite(ratio)) {
+            throw new Error('달러/원 시세가 올바르지 않습니다.');
+        }
+        return {
+            id: 'USDKRW',
+            label: '달러/원',
+            value: value,
+            changePercent: ratio,
+            asOf: new Date(timestamp).toISOString(),
+            asOfLabel: formatAsOfLabel(timestamp),
+            shortTimeLabel: formatShortTime(timestamp),
+            stateLabel: '하나은행 고시'
+        };
+    }
+
     function withCacheBust(url, nonce) {
         var separator = url.indexOf('?') === -1 ? '?' : '&';
         return url + separator + '_=' + encodeURIComponent(nonce);
@@ -230,10 +251,19 @@
                 return normalizeStock(stock, parts[0], parts[1], now);
             });
         });
+        var exchangeRequest = fetchJson(
+            fetchImpl,
+            new URL('exchange/usdkrw', baseUrl).href,
+            signal,
+            nonce
+        ).then(function (payload) {
+            return normalizeExchange(payload, now);
+        });
 
-        return Promise.all(indexRequests.concat(stockRequests)).then(function (items) {
+        return Promise.all(indexRequests.concat(stockRequests).concat([exchangeRequest])).then(function (items) {
             var markets = items.slice(0, INDEX_CODES.length);
-            var instruments = items.slice(INDEX_CODES.length);
+            var instruments = items.slice(INDEX_CODES.length, INDEX_CODES.length + STOCKS.length);
+            var exchange = items[items.length - 1];
             var timestamps = items.map(function (item) { return Date.parse(item.asOf); });
             var newest = Math.max.apply(Math, timestamps);
             var statuses = markets.map(function (market) { return market.marketStatus; });
@@ -249,6 +279,7 @@
                 marketState: marketState,
                 markets: markets,
                 instruments: instruments,
+                exchange: exchange,
                 program: markets[0].program,
                 sourceLabel: 'Naver Finance의 KRX 공개 시세·수급'
             };
@@ -259,6 +290,7 @@
         fetchLatest: fetchLatest,
         normalizeIndex: normalizeIndex,
         normalizeStock: normalizeStock,
+        normalizeExchange: normalizeExchange,
         parseNumber: parseNumber,
         formatAsOfDisplay: formatAsOfDisplay
     };

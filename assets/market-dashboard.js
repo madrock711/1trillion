@@ -628,6 +628,16 @@
         checkpoint.tone = institution.value > 0 ? 'positive' : institution.value < 0 ? 'danger' : 'info';
     }
 
+    function updateExchangeCheckpoint(data, exchange) {
+        var checkpoint = (data.checkpoints || []).filter(function (item) {
+            return item.label === '달러/원';
+        })[0];
+        if (!exchange || !checkpoint) return;
+        checkpoint.value = formatNumber(exchange.value, 2) + '원';
+        checkpoint.detail = exchange.shortTimeLabel + ' 하나은행 고시환율';
+        checkpoint.tone = exchange.changePercent <= 0 ? 'positive' : 'warning';
+    }
+
     function applyLiveMarketData(data, liveData) {
         if (!liveData || !Number.isFinite(Date.parse(liveData.asOf))) return false;
         if (Date.parse(liveData.asOf) <= Date.parse(data.asOf)) return false;
@@ -642,6 +652,7 @@
 
         var liveKospi = findById(liveData.markets, 'KOSPI');
         updateInstitutionCheckpoint(data, liveKospi);
+        updateExchangeCheckpoint(data, liveData.exchange);
         if (data.flows && liveData.program) data.flows.program = liveData.program;
         if (liveKospi) {
             data.technical.note = liveKospi.asOfLabel + ' 기준 당일 OHLC·현재가와 리서치 기준선을 항목별로 비교합니다. 점의 좌우 순서는 실제 장중 경로를 뜻하지 않습니다.';
@@ -651,7 +662,7 @@
         renderCheckpoints(data);
         renderAnalysis(data);
         renderTechnical(data);
-        document.getElementById('dashboard-source-summary').textContent = '지수·국내 수급은 ' + liveData.asOfDisplay + ' 기준이며, 메모리·금리·전망은 ' + data.asOfDisplay + ' 리서치 기준입니다.';
+        document.getElementById('dashboard-source-summary').textContent = '지수·국내 수급·환율은 ' + liveData.asOfDisplay + ' 기준이며, 메모리·금리·전망은 ' + data.asOfDisplay + ' 리서치 기준입니다.';
         loadState.textContent = '시세 기준 ' + liveData.asOfDisplay + ' · ' + liveData.marketState + ' / 분석 기준 ' + data.asOfDisplay;
         loadState.setAttribute('data-state', 'ready');
         return true;
