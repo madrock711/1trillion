@@ -1,0 +1,7 @@
+interface:
+  display_name: "완성 원고 쓰기"
+  short_description: "취재 노트를 자연스러운 공개 원고로 완성하고 메타 문장을 제거합니다"
+  default_prompt: "$write-finished-manuscript를 사용해 이 취재 노트를 독자에게 바로 공개할 수 있는 완성 원고로 써 줘."
+
+policy:
+  allow_implicit_invocation: true
