@@ -1,0 +1,62 @@
+[
+  {
+    "source": "https://hpmplab.com",
+    "target": "https://www.hpmplab.com",
+    "status": "301"
+  },
+  {
+    "source": "/market-data/index/KOSPI/basic",
+    "target": "https://m.stock.naver.com/api/index/KOSPI/basic",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/integration",
+    "target": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSDAQ/basic",
+    "target": "https://m.stock.naver.com/api/index/KOSDAQ/basic",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSDAQ/integration",
+    "target": "https://m.stock.naver.com/api/index/KOSDAQ/integration",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/stock/122630/basic",
+    "target": "https://m.stock.naver.com/api/stock/122630/basic",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/stock/122630/integration",
+    "target": "https://m.stock.naver.com/api/stock/122630/integration",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/stock/005930/basic",
+    "target": "https://m.stock.naver.com/api/stock/005930/basic",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/stock/005930/integration",
+    "target": "https://m.stock.naver.com/api/stock/005930/integration",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/stock/000660/basic",
+    "target": "https://m.stock.naver.com/api/stock/000660/basic",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/stock/000660/integration",
+    "target": "https://m.stock.naver.com/api/stock/000660/integration",
+    "status": "200"
+  },
+  {
+    "source": "/<*>",
+    "target": "/404.html",
+    "status": "404-200"
+  }
+]

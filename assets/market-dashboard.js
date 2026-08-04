@@ -11,6 +11,8 @@
     var viewPanels = Array.prototype.slice.call(document.querySelectorAll('[data-view-panel]'));
     var loadState = document.getElementById('dashboard-load-state');
     var dashboardData = null;
+    var liveMarketSource = root.getAttribute('data-live-market-source');
+    var selectedInstrumentId = null;
 
     function clear(node) {
         while (node && node.firstChild) node.removeChild(node.firstChild);
@@ -496,12 +498,17 @@
     function renderTechnical(data) {
         document.getElementById('market-technical-note').textContent = data.technical.note;
         var switcher = document.getElementById('market-instrument-switch');
+        var selectedInstrument = data.technical.instruments.filter(function (instrument) {
+            return instrument.id === selectedInstrumentId;
+        })[0] || data.technical.instruments[0];
+        selectedInstrumentId = selectedInstrument.id;
         clear(switcher);
-        data.technical.instruments.forEach(function (instrument, index) {
+        data.technical.instruments.forEach(function (instrument) {
             var button = make('button', '', instrument.label);
             button.type = 'button';
-            button.setAttribute('aria-pressed', index === 0 ? 'true' : 'false');
+            button.setAttribute('aria-pressed', instrument.id === selectedInstrumentId ? 'true' : 'false');
             button.addEventListener('click', function () {
+                selectedInstrumentId = instrument.id;
                 Array.prototype.forEach.call(switcher.querySelectorAll('button'), function (candidate) {
                     candidate.setAttribute('aria-pressed', candidate === button ? 'true' : 'false');
                 });
@@ -509,7 +516,7 @@
             });
             switcher.appendChild(button);
         });
-        renderTechnicalInstrument(data.technical.instruments[0]);
+        renderTechnicalInstrument(selectedInstrument);
     }
 
     function renderSources(data) {
@@ -577,12 +584,115 @@
         renderTechnical(data);
         renderSources(data);
         renderLatestArticle(data);
-        loadState.textContent = (stale ? '마지막 업데이트 · ' : '') + data.asOfDisplay + ' · ' + data.marketState;
+        loadState.textContent = '분석 기준 ' + data.asOfDisplay + ' · ' + data.marketState;
         loadState.setAttribute('data-state', stale ? 'stale' : 'ready');
     }
 
+    function findById(items, id) {
+        return (items || []).filter(function (item) { return item.id === id; })[0];
+    }
+
+    function replaceMarketValues(market, liveMarket) {
+        if (!market || !liveMarket) return;
+        ['value', 'previousClose', 'open', 'high', 'low', 'changePercent', 'asOf', 'asOfLabel', 'stateLabel'].forEach(function (key) {
+            market[key] = liveMarket[key];
+        });
+        if (Array.isArray(market.flows)) market.flows = liveMarket.flows;
+        if (market.breadth) market.breadth = liveMarket.breadth;
+    }
+
+    function replaceTechnicalObservation(instrument, liveInstrument) {
+        if (!instrument || !liveInstrument) return;
+        instrument.points = [
+            { label: '전일 종가', value: liveInstrument.previousClose },
+            { label: '시가', value: liveInstrument.open },
+            { label: '고가', value: liveInstrument.high },
+            { label: '저가', value: liveInstrument.low },
+            { label: liveInstrument.shortTimeLabel, value: liveInstrument.value }
+        ];
+        instrument.levels.forEach(function (level) {
+            if (level.label === '현재') level.value = liveInstrument.value;
+        });
+    }
+
+    function updateInstitutionCheckpoint(data, liveMarket) {
+        var institution = (liveMarket.flows || []).filter(function (flow) {
+            return flow.label === '기관';
+        })[0];
+        var checkpoint = (data.checkpoints || []).filter(function (item) {
+            return item.label === '기관 현물';
+        })[0];
+        if (!institution || !checkpoint) return;
+        checkpoint.value = formatSigned(institution.value, institution.unit);
+        checkpoint.detail = liveMarket.marketStatus === 'CLOSE' ? '정규장 누적 순매매' : '장중 누적 순매매';
+        checkpoint.tone = institution.value > 0 ? 'positive' : institution.value < 0 ? 'danger' : 'info';
+    }
+
+    function applyLiveMarketData(data, liveData) {
+        if (!liveData || !Number.isFinite(Date.parse(liveData.asOf))) return false;
+        if (Date.parse(liveData.asOf) <= Date.parse(data.asOf)) return false;
+
+        liveData.markets.forEach(function (liveMarket) {
+            replaceMarketValues(findById(data.markets, liveMarket.id), liveMarket);
+            replaceTechnicalObservation(findById(data.technical.instruments, liveMarket.id), liveMarket);
+        });
+        liveData.instruments.forEach(function (liveInstrument) {
+            replaceTechnicalObservation(findById(data.technical.instruments, liveInstrument.id), liveInstrument);
+        });
+
+        var liveKospi = findById(liveData.markets, 'KOSPI');
+        updateInstitutionCheckpoint(data, liveKospi);
+        if (data.flows && liveData.program) data.flows.program = liveData.program;
+        if (liveKospi) {
+            data.technical.note = liveKospi.asOfLabel + ' 기준 당일 OHLC·현재가와 리서치 기준선을 항목별로 비교합니다. 점의 좌우 순서는 실제 장중 경로를 뜻하지 않습니다.';
+        }
+
+        renderMarketCards(data, false);
+        renderCheckpoints(data);
+        renderAnalysis(data);
+        renderTechnical(data);
+        document.getElementById('dashboard-source-summary').textContent = '지수·국내 수급은 ' + liveData.asOfDisplay + ' 기준이며, 메모리·금리·전망은 ' + data.asOfDisplay + ' 리서치 기준입니다.';
+        loadState.textContent = '시세 기준 ' + liveData.asOfDisplay + ' · ' + liveData.marketState + ' / 분석 기준 ' + data.asOfDisplay;
+        loadState.setAttribute('data-state', 'ready');
+        return true;
+    }
+
+    function refreshLiveMarketData(data) {
+        if (!liveMarketSource || !window.MarketDashboardLive) return Promise.resolve(false);
+        var controller = typeof AbortController === 'function' ? new AbortController() : null;
+        var timeoutId = window.setTimeout(function () {
+            if (controller) controller.abort();
+        }, 9000);
+        var absoluteBase = new URL(liveMarketSource, window.location.href).href;
+        loadState.textContent = '최신 시세를 확인하고 있습니다. 분석 기준 ' + data.asOfDisplay;
+        loadState.setAttribute('data-state', 'loading');
+
+        return window.MarketDashboardLive.fetchLatest(
+            absoluteBase,
+            window.fetch.bind(window),
+            { signal: controller ? controller.signal : undefined }
+        ).then(function (liveData) {
+            window.clearTimeout(timeoutId);
+            if (applyLiveMarketData(data, liveData)) return true;
+            loadState.textContent = '분석 기준 ' + data.asOfDisplay + ' · ' + data.marketState;
+            loadState.setAttribute('data-state', isStaleSnapshot(data) ? 'stale' : 'ready');
+            return false;
+        }).catch(function () {
+            window.clearTimeout(timeoutId);
+            loadState.textContent = '분석 기준 ' + data.asOfDisplay + ' · ' + data.marketState;
+            loadState.setAttribute('data-state', isStaleSnapshot(data) ? 'stale' : 'ready');
+            return false;
+        });
+    }
+
+    function cacheBustedUrl(url) {
+        var resolved = new URL(url, window.location.href);
+        resolved.searchParams.set('_', String(Date.now()));
+        return resolved.href;
+    }
+
     function fetchJson(url) {
-        return fetch(url, { cache: 'no-store' }).then(function (response) {
+        return fetch(cacheBustedUrl(url), { cache: 'no-store' }).then(function (response) {
             if (!response.ok) throw new Error('시장 스냅샷을 불러오지 못했습니다.');
             return response.json().then(function (data) {
                 return { data: data, responseUrl: response.url };
@@ -598,7 +708,10 @@
             });
         })
         .then(validateData)
-        .then(render)
+        .then(function (data) {
+            render(data);
+            return refreshLiveMarketData(data);
+        })
         .catch(function () {
             clear(loadState);
             loadState.appendChild(document.createTextNode('시장 스냅샷을 불러오지 못했습니다. '));
