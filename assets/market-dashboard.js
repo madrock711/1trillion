@@ -13,6 +13,10 @@
     var dashboardData = null;
     var liveMarketSource = root.getAttribute('data-live-market-source');
     var selectedInstrumentId = null;
+    var latestLiveData = null;
+    var liveRefreshTimer = null;
+    var liveRefreshPromise = null;
+    var lastLiveRefreshAt = 0;
 
     function clear(node) {
         while (node && node.firstChild) node.removeChild(node.firstChild);
@@ -53,6 +57,67 @@
     function formatPrice(value, unit) {
         var digits = unit === '원' ? 0 : 2;
         return formatNumber(value, digits) + (unit === '원' ? '원' : '');
+    }
+
+    function formatKstDateTime(value) {
+        var timestamp = Date.parse(value);
+        if (!Number.isFinite(timestamp)) return '시각 확인 불가';
+        if (window.MarketDashboardLive && typeof window.MarketDashboardLive.formatAsOfDisplay === 'function') {
+            return window.MarketDashboardLive.formatAsOfDisplay(timestamp);
+        }
+        return new Intl.DateTimeFormat('ko-KR', {
+            timeZone: 'Asia/Seoul',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hourCycle: 'h23'
+        }).format(new Date(timestamp)) + ' KST';
+    }
+
+    function kstTimestampFromLabel(label, fallback) {
+        var reference = formatKstDateTime(fallback);
+        var referenceMatch = /^(\d{4})년\s+(\d{1,2})월\s+(\d{1,2})일/.exec(reference);
+        var fullMatch = /^(?:(\d{4})년\s+)?(\d{1,2})월\s+(\d{1,2})일\s+(\d{1,2}):(\d{2})/.exec(label || '');
+        var shortMatch = /^(\d{1,2}):(\d{2})$/.exec(label || '');
+        if (!referenceMatch || (!fullMatch && !shortMatch)) return fallback;
+        var year = fullMatch && fullMatch[1] ? fullMatch[1] : referenceMatch[1];
+        var month = fullMatch ? fullMatch[2] : referenceMatch[2];
+        var day = fullMatch ? fullMatch[3] : referenceMatch[3];
+        var hour = fullMatch ? fullMatch[4] : shortMatch[1];
+        var minute = fullMatch ? fullMatch[5] : shortMatch[2];
+        function pad(value) { return String(value).padStart(2, '0'); }
+        var timestamp = Date.parse(year + '-' + pad(month) + '-' + pad(day) + 'T' + pad(hour) + ':' + pad(minute) + ':00+09:00');
+        return Number.isFinite(timestamp) ? new Date(timestamp).toISOString() : fallback;
+    }
+
+    function marketById(data, id) {
+        return findById(data && data.markets, id);
+    }
+
+    function renderLoadState(data, liveData, state, checking, silent) {
+        clear(loadState);
+        var liveKospi = marketById(liveData, 'KOSPI');
+        var savedKospi = marketById(data, 'KOSPI');
+        var displayMarket = liveKospi || savedKospi;
+        var displayTime = displayMarket && displayMarket.asOfLabel ? displayMarket.asOfLabel : data.asOfDisplay;
+        var displayState = liveData
+            ? liveData.marketState + (liveData.partial ? ' · 일부 항목 지연' : '')
+            : '최근 기록';
+        var marketText = checking
+            ? '시장 시세 확인 중'
+            : liveData
+                ? '시장 시세 ' + displayTime + ' · ' + displayState
+                : '시장 시세 ' + displayTime + ' · ' + displayState;
+        loadState.appendChild(make('span', 'market-dashboard-time market-dashboard-time--market', marketText));
+        loadState.appendChild(make(
+            'span',
+            'market-dashboard-time market-dashboard-time--analysis',
+            '시황분석 작성 ' + formatKstDateTime(data.generatedAt)
+        ));
+        loadState.setAttribute('data-state', state);
+        loadState.setAttribute('aria-live', silent ? 'off' : 'polite');
     }
 
     function toneClass(tone) {
@@ -108,8 +173,12 @@
     setView(currentViewFromUrl());
 
     function isStaleSnapshot(data) {
-        var timestamp = Date.parse(data.asOf);
-        return !Number.isFinite(timestamp) || Date.now() - timestamp > 4 * 60 * 60 * 1000;
+        var kospi = marketById(data, 'KOSPI');
+        var timestamp = Date.parse(kospi && kospi.asOf ? kospi.asOf : data.asOf);
+        if (!Number.isFinite(timestamp)) return true;
+        var age = Date.now() - timestamp;
+        if (/장중/.test(data.marketState || '') && age > 10 * 60 * 1000) return true;
+        return age > 4 * 24 * 60 * 60 * 1000;
     }
 
     function renderMarketCards(data, stale) {
@@ -123,7 +192,10 @@
 
             var name = make('div', 'market-index-name');
             name.appendChild(make('strong', '', market.label));
-            name.appendChild(make('small', '', (stale ? '지난 스냅샷' : market.stateLabel) + ' · ' + market.asOfLabel));
+            var marketStateText = stale || market.delayed || !market.liveUpdated
+                ? '최근 기록'
+                : String(market.stateLabel || '최근 시세').replace('스냅샷', '시세');
+            name.appendChild(make('small', '', marketStateText + ' · ' + market.asOfLabel));
             head.appendChild(name);
 
             var quote = make('div', 'market-index-quote');
@@ -212,17 +284,34 @@
         data.checkpoints.forEach(function (checkpoint) {
             var item = make('li');
             var content = make('div');
+            var detail = checkpoint.detail;
+            if (checkpoint.label === '외국인 선물' && data.flows && data.flows.futuresAsOfLabel) {
+                detail = data.flows.futuresAsOfLabel.replace('지연값', '지연 시세');
+            }
             content.appendChild(make('strong', '', checkpoint.label));
             content.appendChild(make('span', toneClass(checkpoint.tone), checkpoint.value));
-            content.appendChild(make('small', '', checkpoint.detail));
+            content.appendChild(make('small', '', detail));
             item.appendChild(content);
             list.appendChild(item);
         });
     }
 
-    function renderAnalysis(data) {
+    function renderAnalysis(data, liveData) {
         document.getElementById('market-headline').textContent = data.headline;
         document.getElementById('market-summary').textContent = data.summary;
+        var writtenAt = document.getElementById('market-analysis-written-at');
+        var writtenAtDisplay = formatKstDateTime(data.generatedAt);
+        writtenAt.textContent = '작성 ' + writtenAtDisplay;
+        writtenAt.setAttribute('datetime', data.generatedAt);
+        var strategyWrittenAt = document.getElementById('market-strategy-written-at');
+        if (strategyWrittenAt) strategyWrittenAt.textContent = writtenAtDisplay + ' 작성본 기준';
+
+        var liveKospi = liveData ? findById(liveData.markets, 'KOSPI') : null;
+        var savedKospi = findById(data.markets, 'KOSPI');
+        var factsAsOf = document.getElementById('market-facts-as-of');
+        factsAsOf.textContent = liveKospi
+            ? '국내 시장 · ' + liveKospi.asOfLabel + ' ' + liveKospi.stateLabel
+            : '국내 시장 · ' + (savedKospi && savedKospi.asOfLabel ? savedKospi.asOfLabel : data.asOfDisplay) + ' 최근 기록';
 
         var changeList = document.getElementById('market-change-list');
         clear(changeList);
@@ -249,6 +338,20 @@
             factorGrid.appendChild(item);
         });
 
+        var dataNote = document.getElementById('market-analysis-data-note');
+        if (liveKospi) {
+            var exchangeLabel = liveData.exchange ? liveData.exchange.asOfLabel : null;
+            dataNote.textContent = '국내 지수·현물 수급·시장 폭·프로그램은 ' + liveKospi.asOfLabel
+                + (exchangeLabel ? ', 원/달러는 ' + exchangeLabel + ' 기준입니다. ' : ' 기준입니다. 원/달러는 ' + data.asOfDisplay + ' 기록입니다. ')
+                + (liveData.partial ? '일부 항목은 표시된 마지막 확인 시각 기준입니다. ' : '')
+                + '메모리·미 국채·일정은 '
+                + writtenAtDisplay + ' 작성 당시 공개자료를 반영했습니다.';
+        } else {
+            dataNote.textContent = '국내 시장 수치는 ' + (savedKospi && savedKospi.asOfLabel ? savedKospi.asOfLabel : data.asOfDisplay)
+                + ' 최근 기록입니다. 메모리·미 국채·일정은 '
+                + writtenAtDisplay + ' 작성 당시 공개자료를 반영했습니다.';
+        }
+
         var flowSummary = document.getElementById('market-flow-summary');
         clear(flowSummary);
         [
@@ -256,7 +359,7 @@
             ['비차익 프로그램', formatSigned(data.flows.program.nonArbitrage, data.flows.program.unit)],
             ['전체 프로그램', formatSigned(data.flows.program.total, data.flows.program.unit)],
             [
-                '외국인 KOSPI200 선물' + (data.flows.futuresAsOfLabel ? ' · ' + data.flows.futuresAsOfLabel : ''),
+                '외국인 KOSPI200 선물' + (data.flows.futuresAsOfLabel ? ' · ' + data.flows.futuresAsOfLabel.replace('지연값', '지연 시세') : ''),
                 formatSigned(data.flows.kospi200FuturesForeign, data.flows.futuresUnit)
             ]
         ].forEach(function (row) {
@@ -276,6 +379,9 @@
             item.appendChild(value);
             memoryGrid.appendChild(item);
         });
+        document.getElementById('market-memory-as-of').textContent = data.memoryAsOfLabel
+            ? data.memoryAsOfLabel + ' 공개가격입니다.'
+            : '시황분석 작성 당시 공개된 최근 가격입니다.';
     }
 
     function renderAllocation(data) {
@@ -411,7 +517,14 @@
 
     function renderTechnicalInstrument(instrument) {
         document.getElementById('technical-chart-title').textContent = instrument.label + ' 당일 OHLC·현재가 비교';
-        document.getElementById('market-technical-interpretation').textContent = instrument.interpretation;
+        document.getElementById('market-technical-interpretation').textContent = formatKstDateTime(dashboardData.generatedAt)
+            + ' 작성 분석 · ' + instrument.interpretation;
+        var technicalTime = instrument.asOfLabel || (dashboardData && dashboardData.asOfDisplay) || '작성 시점';
+        var technicalState = instrument.delayed
+            ? '마지막 확인 시세'
+            : instrument.liveUpdated ? '최근 시세' : '시황분석 작성 당시 시세';
+        document.getElementById('market-technical-note').textContent = technicalTime + ' ' + technicalState
+            + '와 작성 당시 기준선을 비교합니다. 점의 좌우 순서는 실제 장중 경로를 뜻하지 않습니다.';
 
         var svg = document.getElementById('market-technical-chart');
         clear(svg);
@@ -502,19 +615,28 @@
             return instrument.id === selectedInstrumentId;
         })[0] || data.technical.instruments[0];
         selectedInstrumentId = selectedInstrument.id;
-        clear(switcher);
-        data.technical.instruments.forEach(function (instrument) {
-            var button = make('button', '', instrument.label);
-            button.type = 'button';
-            button.setAttribute('aria-pressed', instrument.id === selectedInstrumentId ? 'true' : 'false');
-            button.addEventListener('click', function () {
-                selectedInstrumentId = instrument.id;
-                Array.prototype.forEach.call(switcher.querySelectorAll('button'), function (candidate) {
-                    candidate.setAttribute('aria-pressed', candidate === button ? 'true' : 'false');
+        var expectedIds = data.technical.instruments.map(function (instrument) { return instrument.id; }).join('|');
+        var currentIds = Array.prototype.map.call(switcher.querySelectorAll('button[data-instrument-id]'), function (button) {
+            return button.getAttribute('data-instrument-id');
+        }).join('|');
+        if (expectedIds !== currentIds) {
+            clear(switcher);
+            data.technical.instruments.forEach(function (instrument) {
+                var button = make('button', '', instrument.label);
+                button.type = 'button';
+                button.setAttribute('data-instrument-id', instrument.id);
+                button.addEventListener('click', function () {
+                    selectedInstrumentId = button.getAttribute('data-instrument-id');
+                    Array.prototype.forEach.call(switcher.querySelectorAll('button'), function (candidate) {
+                        candidate.setAttribute('aria-pressed', candidate === button ? 'true' : 'false');
+                    });
+                    renderTechnicalInstrument(findById(dashboardData.technical.instruments, selectedInstrumentId));
                 });
-                renderTechnicalInstrument(instrument);
+                switcher.appendChild(button);
             });
-            switcher.appendChild(button);
+        }
+        Array.prototype.forEach.call(switcher.querySelectorAll('button[data-instrument-id]'), function (button) {
+            button.setAttribute('aria-pressed', button.getAttribute('data-instrument-id') === selectedInstrumentId ? 'true' : 'false');
         });
         renderTechnicalInstrument(selectedInstrument);
     }
@@ -541,6 +663,7 @@
 
     function validateData(data) {
         if (!data || data.schemaVersion !== 1) throw new Error('지원하지 않는 대시보드 데이터입니다.');
+        if (!data.generatedAt || !Number.isFinite(Date.parse(data.generatedAt))) throw new Error('시황분석 작성 시각이 올바르지 않습니다.');
         if (!data.asOf || !Number.isFinite(Date.parse(data.asOf))) throw new Error('대시보드 기준 시각이 올바르지 않습니다.');
         if (!Array.isArray(data.markets) || data.markets.length < 2) throw new Error('시장 지수 데이터가 부족합니다.');
         if (!data.stance || data.stance.attack + data.stance.wait + data.stance.defense !== 100) throw new Error('대응 점수 합계가 올바르지 않습니다.');
@@ -572,6 +695,19 @@
     function render(data) {
         dashboardData = data;
         var stale = isStaleSnapshot(data);
+        data.markets.forEach(function (market) {
+            if (!market.asOf) market.asOf = kstTimestampFromLabel(market.asOfLabel, data.asOf);
+        });
+        data.technical.instruments.forEach(function (instrument) {
+            var matchingMarket = findById(data.markets, instrument.id);
+            var lastPoint = instrument.points[instrument.points.length - 1];
+            if (!instrument.asOf) instrument.asOf = matchingMarket && matchingMarket.asOf
+                ? matchingMarket.asOf
+                : kstTimestampFromLabel(lastPoint && lastPoint.label, data.asOf);
+            if (!instrument.asOfLabel) instrument.asOfLabel = matchingMarket && matchingMarket.asOfLabel
+                ? matchingMarket.asOfLabel
+                : formatKstDateTime(instrument.asOf);
+        });
         renderMarketCards(data, stale);
         renderStance(data);
         renderCheckpoints(data);
@@ -584,8 +720,7 @@
         renderTechnical(data);
         renderSources(data);
         renderLatestArticle(data);
-        loadState.textContent = '분석 기준 ' + data.asOfDisplay + ' · ' + data.marketState;
-        loadState.setAttribute('data-state', stale ? 'stale' : 'ready');
+        renderLoadState(data, null, stale ? 'stale' : 'ready', false, false);
     }
 
     function findById(items, id) {
@@ -593,16 +728,21 @@
     }
 
     function replaceMarketValues(market, liveMarket) {
-        if (!market || !liveMarket) return;
-        ['value', 'previousClose', 'open', 'high', 'low', 'changePercent', 'asOf', 'asOfLabel', 'stateLabel'].forEach(function (key) {
+        if (!market || !liveMarket) return false;
+        if (Number.isFinite(Date.parse(market.asOf)) && Date.parse(liveMarket.asOf) < Date.parse(market.asOf)) return false;
+        ['value', 'previousClose', 'open', 'high', 'low', 'changePercent', 'asOf', 'asOfLabel', 'shortTimeLabel', 'stateLabel', 'marketStatus', 'delayed'].forEach(function (key) {
             market[key] = liveMarket[key];
         });
         if (Array.isArray(market.flows)) market.flows = liveMarket.flows;
         if (market.breadth) market.breadth = liveMarket.breadth;
+        if (liveMarket.program) market.program = liveMarket.program;
+        market.liveUpdated = true;
+        return true;
     }
 
     function replaceTechnicalObservation(instrument, liveInstrument) {
-        if (!instrument || !liveInstrument) return;
+        if (!instrument || !liveInstrument) return false;
+        if (Number.isFinite(Date.parse(instrument.asOf)) && Date.parse(liveInstrument.asOf) < Date.parse(instrument.asOf)) return false;
         instrument.points = [
             { label: '전일 종가', value: liveInstrument.previousClose },
             { label: '시가', value: liveInstrument.open },
@@ -613,6 +753,11 @@
         instrument.levels.forEach(function (level) {
             if (level.label === '현재') level.value = liveInstrument.value;
         });
+        instrument.asOf = liveInstrument.asOf;
+        instrument.asOfLabel = liveInstrument.asOfLabel;
+        instrument.liveUpdated = true;
+        instrument.delayed = Boolean(liveInstrument.delayed);
+        return true;
     }
 
     function updateInstitutionCheckpoint(data, liveMarket) {
@@ -638,62 +783,259 @@
         checkpoint.tone = exchange.changePercent <= 0 ? 'positive' : 'warning';
     }
 
-    function applyLiveMarketData(data, liveData) {
-        if (!liveData || !Number.isFinite(Date.parse(liveData.asOf))) return false;
-        if (Date.parse(liveData.asOf) <= Date.parse(data.asOf)) return false;
+    function updateProgramCheckpoint(data, program, liveMarket) {
+        var checkpoint = (data.checkpoints || []).filter(function (item) {
+            return item.label === '외국인 선물' || item.label === '전체 프로그램';
+        })[0];
+        if (!program || !checkpoint || !Number.isFinite(program.total)) return;
+        checkpoint.label = '전체 프로그램';
+        checkpoint.value = formatSigned(program.total, program.unit);
+        checkpoint.detail = liveMarket && liveMarket.marketStatus === 'CLOSE'
+            ? '정규장 누적 프로그램 순매매'
+            : '장중 누적 프로그램 순매매';
+        checkpoint.tone = program.total > 0 ? 'positive' : program.total < 0 ? 'warning' : 'info';
+    }
+
+    function flowByLabel(market, label) {
+        return (market && market.flows || []).filter(function (flow) {
+            return flow.label === label;
+        })[0];
+    }
+
+    function updateLiveChange(data, label, after, meaning) {
+        var change = (data.changes || []).filter(function (item) {
+            return item.label === label;
+        })[0];
+        if (!change) return;
+        change.after = after;
+        change.meaning = meaning;
+    }
+
+    function updateLiveFactor(data, label, metric, detail, tone) {
+        var factor = (data.factors || []).filter(function (item) {
+            return item.label === label;
+        })[0];
+        if (!factor) return;
+        factor.metric = metric;
+        factor.detail = detail;
+        factor.tone = tone;
+    }
+
+    function flowMeaning(value, marketStatus) {
+        var session = marketStatus === 'CLOSE' ? '정규장 누적' : '장중 누적';
+        if (value > 0) return session + ' 순매수입니다.';
+        if (value < 0) return session + ' 순매도입니다.';
+        return session + ' 순매매가 보합입니다.';
+    }
+
+    function updateLiveAnalysisFacts(data, liveMarket, exchange) {
+        if (!liveMarket) return;
+        var foreign = flowByLabel(liveMarket, '외국인');
+        var institution = flowByLabel(liveMarket, '기관');
+        var personal = flowByLabel(liveMarket, '개인');
+        var session = liveMarket.marketStatus === 'CLOSE' ? '정규장' : '장중';
+        var direction = liveMarket.changePercent > 0 ? '상승' : liveMarket.changePercent < 0 ? '하락' : '보합';
+
+        updateLiveChange(
+            data,
+            'KOSPI',
+            liveMarket.asOfLabel + ' ' + formatSigned(liveMarket.changePercent, '%', 2),
+            session + ' 기준 전일 대비 ' + formatSigned(liveMarket.changePercent, '%', 2) + ' ' + direction + '입니다.'
+        );
+        if (foreign) {
+            updateLiveChange(data, '외국인 현물', formatSigned(foreign.value, foreign.unit), flowMeaning(foreign.value, liveMarket.marketStatus));
+        }
+        if (institution) {
+            updateLiveChange(data, '기관 현물', formatSigned(institution.value, institution.unit), flowMeaning(institution.value, liveMarket.marketStatus));
+        }
+
+        if (institution && foreign && personal) {
+            updateLiveFactor(
+                data,
+                '수급',
+                '기관 ' + formatSigned(institution.value, institution.unit),
+                '외국인 ' + formatSigned(foreign.value, foreign.unit) + ', 개인 ' + formatSigned(personal.value, personal.unit) + ' · ' + liveMarket.asOfLabel,
+                institution.value > 0 ? 'positive' : institution.value < 0 ? 'warning' : 'info'
+            );
+        }
+
+        if (liveMarket.breadth) {
+            var directionalTotal = liveMarket.breadth.advance + liveMarket.breadth.decline;
+            var advanceRatio = directionalTotal > 0 ? liveMarket.breadth.advance / directionalTotal * 100 : 0;
+            updateLiveFactor(
+                data,
+                '시장 폭',
+                '상승·하락 종목 중 ' + formatNumber(advanceRatio, 1) + '% 상승',
+                '상승 ' + formatNumber(liveMarket.breadth.advance, 0) + '개, 보합 ' + formatNumber(liveMarket.breadth.flat, 0)
+                    + '개, 하락 ' + formatNumber(liveMarket.breadth.decline, 0) + '개 · ' + liveMarket.asOfLabel,
+                advanceRatio >= 60 ? 'positive' : advanceRatio <= 40 ? 'danger' : 'info'
+            );
+        }
+
+        if (exchange) {
+            updateLiveFactor(
+                data,
+                '매크로',
+                '원/달러 ' + formatNumber(exchange.value, 2) + '원',
+                exchange.asOfLabel + ' 하나은행 고시환율 · 전일 대비 ' + formatSigned(exchange.changePercent, '%', 2),
+                exchange.changePercent <= 0 ? 'positive' : 'warning'
+            );
+        }
+    }
+
+    function newestById(previousItems, incomingItems, rejectedSources) {
+        var byId = {};
+        (previousItems || []).forEach(function (item) { byId[item.id] = item; });
+        (incomingItems || []).forEach(function (item) {
+            var previous = byId[item.id];
+            if (previous && Number.isFinite(Date.parse(previous.asOf)) && Date.parse(item.asOf) < Date.parse(previous.asOf)) {
+                rejectedSources.push(item.label || item.id);
+                return;
+            }
+            byId[item.id] = item;
+        });
+        return Object.keys(byId).map(function (id) { return byId[id]; });
+    }
+
+    function mergeLiveResponse(previous, incoming) {
+        if (!previous) return incoming;
+        var rejectedSources = [];
+        var markets = newestById(previous.markets, incoming.markets, rejectedSources);
+        var instruments = newestById(previous.instruments, incoming.instruments, rejectedSources);
+        var exchange = incoming.exchange || previous.exchange || null;
+        if (incoming.exchange && previous.exchange && Date.parse(incoming.exchange.asOf) < Date.parse(previous.exchange.asOf)) {
+            rejectedSources.push(incoming.exchange.label);
+            exchange = previous.exchange;
+        }
+        var primaryMarket = findById(markets, 'KOSPI') || markets[0];
+        var statuses = markets.map(function (market) { return market.marketStatus; });
+        var marketState = statuses.length && statuses.every(function (status) { return status === 'CLOSE'; })
+            ? '한국 정규장 마감'
+            : statuses.some(function (status) { return status === 'OPEN'; })
+                ? '한국 정규장 장중'
+                : '최근 거래일 시세';
+        var missingSources = (incoming.missingSources || []).slice();
+        var delayedSources = (incoming.delayedSources || []).concat(rejectedSources).filter(function (label, index, labels) {
+            return labels.indexOf(label) === index;
+        });
+        return {
+            asOf: primaryMarket.asOf,
+            asOfDisplay: formatKstDateTime(primaryMarket.asOf),
+            marketState: marketState,
+            markets: markets,
+            instruments: instruments,
+            exchange: exchange,
+            program: (findById(markets, 'KOSPI') || {}).program || incoming.program || previous.program || null,
+            partial: Boolean(incoming.partial || rejectedSources.length),
+            missingSources: missingSources,
+            delayedSources: delayedSources,
+            retrievedAt: incoming.retrievedAt,
+            sourceLabel: incoming.sourceLabel
+        };
+    }
+
+    function applyLiveMarketData(data, liveData, silent) {
+        if (!liveData || !Array.isArray(liveData.markets) || !liveData.markets.length) return false;
+        var applied = false;
 
         liveData.markets.forEach(function (liveMarket) {
-            replaceMarketValues(findById(data.markets, liveMarket.id), liveMarket);
-            replaceTechnicalObservation(findById(data.technical.instruments, liveMarket.id), liveMarket);
+            if (replaceMarketValues(findById(data.markets, liveMarket.id), liveMarket)) applied = true;
+            if (replaceTechnicalObservation(findById(data.technical.instruments, liveMarket.id), liveMarket)) applied = true;
         });
         liveData.instruments.forEach(function (liveInstrument) {
-            replaceTechnicalObservation(findById(data.technical.instruments, liveInstrument.id), liveInstrument);
+            if (replaceTechnicalObservation(findById(data.technical.instruments, liveInstrument.id), liveInstrument)) applied = true;
         });
 
-        var liveKospi = findById(liveData.markets, 'KOSPI');
-        updateInstitutionCheckpoint(data, liveKospi);
-        updateExchangeCheckpoint(data, liveData.exchange);
-        if (data.flows && liveData.program) data.flows.program = liveData.program;
-        if (liveKospi) {
-            data.technical.note = liveKospi.asOfLabel + ' 기준 당일 OHLC·현재가와 리서치 기준선을 항목별로 비교합니다. 점의 좌우 순서는 실제 장중 경로를 뜻하지 않습니다.';
+        var incomingKospi = findById(liveData.markets, 'KOSPI');
+        var displayKospi = findById(data.markets, 'KOSPI');
+        if (incomingKospi) {
+            updateInstitutionCheckpoint(data, incomingKospi);
+            updateProgramCheckpoint(data, incomingKospi.program || liveData.program, incomingKospi);
+            updateLiveAnalysisFacts(data, incomingKospi, liveData.exchange);
+            if (data.flows && incomingKospi.program) data.flows.program = incomingKospi.program;
+            data.technical.note = incomingKospi.asOfLabel + ' 기준 당일 OHLC·현재가와 리서치 기준선을 항목별로 비교합니다. 점의 좌우 순서는 실제 장중 경로를 뜻하지 않습니다.';
         }
+        updateExchangeCheckpoint(data, liveData.exchange);
 
         renderMarketCards(data, false);
         renderCheckpoints(data);
-        renderAnalysis(data);
+        renderAnalysis(data, liveData);
         renderTechnical(data);
-        document.getElementById('dashboard-source-summary').textContent = '지수·국내 수급·환율은 ' + liveData.asOfDisplay + ' 기준이며, 메모리·금리·전망은 ' + data.asOfDisplay + ' 리서치 기준입니다.';
-        loadState.textContent = '시세 기준 ' + liveData.asOfDisplay + ' · ' + liveData.marketState + ' / 분석 기준 ' + data.asOfDisplay;
-        loadState.setAttribute('data-state', 'ready');
-        return true;
+        var exchangeText = liveData.exchange
+            ? ', 원/달러는 ' + liveData.exchange.asOfLabel + ' 기준입니다. '
+            : ' 기준입니다. 원/달러는 ' + data.asOfDisplay + ' 기록입니다. ';
+        document.getElementById('dashboard-source-summary').textContent = '국내 지수·현물 수급·시장 폭·프로그램은 '
+            + displayKospi.asOfLabel + exchangeText
+            + (liveData.partial ? '일부 항목은 화면에 표시된 마지막 확인 시각 기준입니다. ' : '')
+            + '메모리·미 국채·전망은 '
+            + formatKstDateTime(data.generatedAt) + ' 작성 당시 공개자료를 반영했습니다.';
+        renderLoadState(data, liveData, liveData.partial ? 'partial' : 'ready', false, Boolean(silent));
+        return applied;
     }
 
-    function refreshLiveMarketData(data) {
+    function clearLiveRefreshTimer() {
+        if (!liveRefreshTimer) return;
+        window.clearTimeout(liveRefreshTimer);
+        liveRefreshTimer = null;
+    }
+
+    function shouldPollLiveData(liveData) {
+        if (!liveData) return true;
+        var markets = liveData.markets || [];
+        if (markets.some(function (market) {
+            return market.marketStatus === 'OPEN' || market.marketStatus === 'PREOPEN';
+        })) return true;
+        return Boolean(liveData.partial && !markets.every(function (market) { return market.marketStatus === 'CLOSE'; }));
+    }
+
+    function scheduleLiveRefresh(data, retrySoon) {
+        clearLiveRefreshTimer();
+        if (document.hidden) return;
+        var delay = retrySoon || shouldPollLiveData(latestLiveData) ? 60 * 1000 : 5 * 60 * 1000;
+        liveRefreshTimer = window.setTimeout(function () {
+            refreshLiveMarketData(data, { silent: true });
+        }, delay);
+    }
+
+    function refreshLiveMarketData(data, options) {
         if (!liveMarketSource || !window.MarketDashboardLive) return Promise.resolve(false);
+        if (liveRefreshPromise) return liveRefreshPromise;
+        var settings = options || {};
         var controller = typeof AbortController === 'function' ? new AbortController() : null;
         var timeoutId = window.setTimeout(function () {
             if (controller) controller.abort();
         }, 9000);
         var absoluteBase = new URL(liveMarketSource, window.location.href).href;
-        loadState.textContent = '최신 시세를 확인하고 있습니다. 분석 기준 ' + data.asOfDisplay;
-        loadState.setAttribute('data-state', 'loading');
+        if (!settings.silent) renderLoadState(data, latestLiveData, 'loading', true, false);
+        lastLiveRefreshAt = Date.now();
 
-        return window.MarketDashboardLive.fetchLatest(
+        liveRefreshPromise = window.MarketDashboardLive.fetchLatest(
             absoluteBase,
             window.fetch.bind(window),
             { signal: controller ? controller.signal : undefined }
         ).then(function (liveData) {
             window.clearTimeout(timeoutId);
-            if (applyLiveMarketData(data, liveData)) return true;
-            loadState.textContent = '분석 기준 ' + data.asOfDisplay + ' · ' + data.marketState;
-            loadState.setAttribute('data-state', isStaleSnapshot(data) ? 'stale' : 'ready');
-            return false;
+            latestLiveData = mergeLiveResponse(latestLiveData, liveData);
+            var applied = applyLiveMarketData(data, latestLiveData, settings.silent);
+            if (!applied) renderLoadState(data, latestLiveData, latestLiveData.partial ? 'partial' : 'ready', false, settings.silent);
+            scheduleLiveRefresh(data);
+            return applied;
         }).catch(function () {
             window.clearTimeout(timeoutId);
-            loadState.textContent = '분석 기준 ' + data.asOfDisplay + ' · ' + data.marketState;
-            loadState.setAttribute('data-state', isStaleSnapshot(data) ? 'stale' : 'ready');
+            renderLoadState(
+                data,
+                latestLiveData,
+                latestLiveData ? 'partial' : isStaleSnapshot(data) ? 'stale' : 'partial',
+                false,
+                settings.silent
+            );
+            scheduleLiveRefresh(data, true);
             return false;
+        }).then(function (result) {
+            liveRefreshPromise = null;
+            return result;
         });
+        return liveRefreshPromise;
     }
 
     function cacheBustedUrl(url) {
@@ -704,7 +1046,7 @@
 
     function fetchJson(url) {
         return fetch(cacheBustedUrl(url), { cache: 'no-store' }).then(function (response) {
-            if (!response.ok) throw new Error('시장 스냅샷을 불러오지 못했습니다.');
+            if (!response.ok) throw new Error('시장 데이터를 불러오지 못했습니다.');
             return response.json().then(function (data) {
                 return { data: data, responseUrl: response.url };
             });
@@ -725,10 +1067,25 @@
         })
         .catch(function () {
             clear(loadState);
-            loadState.appendChild(document.createTextNode('시장 스냅샷을 불러오지 못했습니다. '));
+            loadState.appendChild(document.createTextNode('시장 데이터를 불러오지 못했습니다. '));
             var archiveLink = make('a', '', '최근 시황 리서치 보기');
             archiveLink.href = '?view=analysis#research-archive';
             loadState.appendChild(archiveLink);
             loadState.setAttribute('data-state', 'error');
         });
+
+    document.addEventListener('visibilitychange', function () {
+        if (!dashboardData) return;
+        if (document.hidden) {
+            clearLiveRefreshTimer();
+            return;
+        }
+        if (Date.now() - lastLiveRefreshAt >= 60 * 1000) refreshLiveMarketData(dashboardData, { silent: true });
+        else scheduleLiveRefresh(dashboardData);
+    });
+
+    window.addEventListener('focus', function () {
+        if (!dashboardData || Date.now() - lastLiveRefreshAt < 60 * 1000) return;
+        refreshLiveMarketData(dashboardData, { silent: true });
+    });
 }());

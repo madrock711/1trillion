@@ -22,14 +22,32 @@
 }
 
 .market-dashboard-load {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    align-items: center;
     min-height: 1.5rem;
     margin: var(--space-4) 0;
     color: var(--text-muted);
     font-size: 0.86rem;
 }
 
+.market-dashboard-time {
+    display: inline-flex;
+    align-items: center;
+}
+
+.market-dashboard-time--analysis {
+    color: #9cc6ff;
+}
+
 .market-dashboard-load[data-state="ready"] {
     color: #8cdcab;
+}
+
+.market-dashboard-load[data-state="partial"],
+.market-dashboard-load[data-state="stale"] {
+    color: #f4c75f;
 }
 
 .market-dashboard-load[data-state="stale"] {
@@ -595,6 +613,15 @@
 
 .market-card-heading-row h3 {
     margin-bottom: 0;
+}
+
+.market-card-heading-row--compact {
+    align-items: center;
+    margin-bottom: var(--space-2);
+}
+
+.market-card-heading-row--compact .market-card-label {
+    margin: 0;
 }
 
 .market-method-badge {
@@ -1318,6 +1345,10 @@
 
     .market-card-heading-row .market-method-badge,
     .market-card-heading-row .market-check-count {
+        margin-top: var(--space-2);
+    }
+
+    .market-card-heading-row--compact .market-method-badge {
         margin-top: var(--space-2);
     }
 

@@ -129,6 +129,35 @@
         var trend = integration.dealTrendInfo || {};
         var breadth = integration.upDownStockInfo || {};
         var program = integration.programTrendInfo || {};
+        var normalizedFlows = [
+            { label: '외국인', value: parseNumber(trend.foreignValue), unit: '억원' },
+            { label: '기관', value: parseNumber(trend.institutionalValue), unit: '억원' },
+            { label: '개인', value: parseNumber(trend.personalValue), unit: '억원' }
+        ];
+        var normalizedBreadth = {
+            advance: parseNumber(breadth.upperCount) + parseNumber(breadth.riseCount),
+            flat: parseNumber(breadth.steadyCount),
+            decline: parseNumber(breadth.lowerCount) + parseNumber(breadth.fallCount)
+        };
+        var normalizedProgram = {
+            arbitrage: parseNumber(program.indexDifferenceReal),
+            nonArbitrage: parseNumber(program.indexBiDifferenceReal),
+            total: parseNumber(program.indexTotalReal),
+            unit: '억원'
+        };
+        var requiredValues = [
+            ratio,
+            normalizedBreadth.advance,
+            normalizedBreadth.flat,
+            normalizedBreadth.decline
+        ];
+        if (code === 'KOSPI') {
+            requiredValues = requiredValues.concat(
+                normalizedFlows.map(function (flow) { return flow.value; }),
+                [normalizedProgram.arbitrage, normalizedProgram.nonArbitrage, normalizedProgram.total]
+            );
+        }
+        if (!requiredValues.every(Number.isFinite)) throw new Error(code + ' 핵심 수치가 부족합니다.');
 
         return {
             id: code,
@@ -145,22 +174,10 @@
             shortTimeLabel: formatShortTime(timestamp),
             stateLabel: stateLabel(basic.marketStatus),
             marketStatus: basic.marketStatus,
-            flows: [
-                { label: '외국인', value: parseNumber(trend.foreignValue), unit: '억원' },
-                { label: '기관', value: parseNumber(trend.institutionalValue), unit: '억원' },
-                { label: '개인', value: parseNumber(trend.personalValue), unit: '억원' }
-            ],
-            breadth: {
-                advance: parseNumber(breadth.upperCount) + parseNumber(breadth.riseCount),
-                flat: parseNumber(breadth.steadyCount),
-                decline: parseNumber(breadth.lowerCount) + parseNumber(breadth.fallCount)
-            },
-            program: {
-                arbitrage: parseNumber(program.indexDifferenceReal),
-                nonArbitrage: parseNumber(program.indexBiDifferenceReal),
-                total: parseNumber(program.indexTotalReal),
-                unit: '억원'
-            }
+            delayed: basic.marketStatus === 'OPEN' && now - timestamp > 10 * 60 * 1000,
+            flows: normalizedFlows,
+            breadth: normalizedBreadth,
+            program: normalizedProgram
         };
     }
 
@@ -173,6 +190,8 @@
             throw new Error(definition.label + ' 시각이 올바르지 않습니다.');
         }
         var prices = validatedPrices(basic, integration);
+        var ratio = signedValue(basic.fluctuationsRatio, basic.compareToPreviousPrice);
+        if (!Number.isFinite(ratio)) throw new Error(definition.label + ' 등락률이 올바르지 않습니다.');
         return {
             id: definition.id,
             label: definition.label,
@@ -182,12 +201,13 @@
             open: prices.open,
             high: prices.high,
             low: prices.low,
-            changePercent: signedValue(basic.fluctuationsRatio, basic.compareToPreviousPrice),
+            changePercent: ratio,
             asOf: new Date(timestamp).toISOString(),
             asOfLabel: formatAsOfLabel(timestamp),
             shortTimeLabel: formatShortTime(timestamp),
             stateLabel: stateLabel(basic.marketStatus),
-            marketStatus: basic.marketStatus
+            marketStatus: basic.marketStatus,
+            delayed: basic.marketStatus === 'OPEN' && now - timestamp > 10 * 60 * 1000
         };
     }
 
@@ -208,7 +228,9 @@
             asOf: new Date(timestamp).toISOString(),
             asOfLabel: formatAsOfLabel(timestamp),
             shortTimeLabel: formatShortTime(timestamp),
-            stateLabel: '하나은행 고시'
+            stateLabel: '하나은행 고시',
+            marketStatus: result.marketStatus,
+            delayed: result.marketStatus === 'OPEN' && now - timestamp > 30 * 60 * 1000
         };
     }
 
@@ -260,27 +282,56 @@
             return normalizeExchange(payload, now);
         });
 
-        return Promise.all(indexRequests.concat(stockRequests).concat([exchangeRequest])).then(function (items) {
-            var markets = items.slice(0, INDEX_CODES.length);
-            var instruments = items.slice(INDEX_CODES.length, INDEX_CODES.length + STOCKS.length);
+        var optionalIndexRequests = indexRequests.map(function (request) {
+            return request.catch(function () { return null; });
+        });
+        var optionalStockRequests = stockRequests.map(function (request) {
+            return request.catch(function () { return null; });
+        });
+        var optionalExchangeRequest = exchangeRequest.catch(function () { return null; });
+
+        return Promise.all(optionalIndexRequests.concat(optionalStockRequests).concat([optionalExchangeRequest])).then(function (items) {
+            var markets = items.slice(0, INDEX_CODES.length).filter(Boolean);
+            var instruments = items.slice(INDEX_CODES.length, INDEX_CODES.length + STOCKS.length).filter(Boolean);
             var exchange = items[items.length - 1];
-            var timestamps = items.map(function (item) { return Date.parse(item.asOf); });
-            var newest = Math.max.apply(Math, timestamps);
+            if (!markets.length) throw new Error('국내 지수 시세를 불러오지 못했습니다.');
+            var primaryMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || markets[0];
+            var kospiMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || null;
+            var marketTimestamp = Date.parse(primaryMarket.asOf);
             var statuses = markets.map(function (market) { return market.marketStatus; });
             var marketState = statuses.every(function (status) { return status === 'CLOSE'; })
                 ? '한국 정규장 마감'
                 : statuses.some(function (status) { return status === 'OPEN'; })
                     ? '한국 정규장 장중'
                     : '최근 거래일 시세';
+            var missingSources = [];
+            INDEX_CODES.forEach(function (code) {
+                if (!markets.some(function (market) { return market.id === code; })) missingSources.push(code);
+            });
+            STOCKS.forEach(function (stock) {
+                if (!instruments.some(function (instrument) { return instrument.id === stock.id; })) missingSources.push(stock.label);
+            });
+            if (!exchange) missingSources.push('달러/원');
+            var delayedSources = markets.concat(instruments).filter(function (item) { return item.delayed; }).map(function (item) {
+                return item.label;
+            });
+            if (exchange && exchange.delayed) delayedSources.push(exchange.label);
+            delayedSources = delayedSources.filter(function (label, index, labels) {
+                return labels.indexOf(label) === index;
+            });
 
             return {
-                asOf: new Date(newest).toISOString(),
-                asOfDisplay: formatAsOfDisplay(newest),
+                asOf: new Date(marketTimestamp).toISOString(),
+                asOfDisplay: formatAsOfDisplay(marketTimestamp),
                 marketState: marketState,
                 markets: markets,
                 instruments: instruments,
                 exchange: exchange,
-                program: markets[0].program,
+                program: kospiMarket ? kospiMarket.program : null,
+                partial: missingSources.length > 0 || delayedSources.length > 0,
+                missingSources: missingSources,
+                delayedSources: delayedSources,
+                retrievedAt: new Date(now).toISOString(),
                 sourceLabel: 'Naver Finance의 KRX 공개 시세·수급'
             };
         });
