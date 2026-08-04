@@ -16,6 +16,8 @@ frontend:
       - 'articles/*.html'
       - 'charts/*.png'
       - 'assets/data/*.json'
+      - 'assets/*.js'
+      - 'assets/*.css'
       - 'assets/icons/*'
       - 'assets/images/FootType_*.png'
       - 'assets/images/share_btn.png'

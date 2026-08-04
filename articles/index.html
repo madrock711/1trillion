@@ -319,7 +319,7 @@
             <nav class="article-category-nav" aria-label="아티클 카테고리">
                 <a href="./" data-article-category="all" aria-current="page">전체 <span class="article-category-count" data-category-count="all">14</span></a>
                 <a href="?category=essay" data-article-category="essay">에세이 <span class="article-category-count" data-category-count="essay">3</span></a>
-                <a href="?category=market" data-article-category="market">시황분석 <span class="article-category-count" data-category-count="market">7</span></a>
+                <a href="market.html" data-article-category="market">시황분석 <span class="article-category-count" data-category-count="market">7</span></a>
                 <a href="?category=health" data-article-category="health">건강정보 <span class="article-category-count" data-category-count="health">4</span></a>
             </nav>
         </section>
@@ -509,6 +509,10 @@
         (function () {
             var validCategories = ['all', 'essay', 'market', 'health'];
             var requested = new URLSearchParams(window.location.search).get('category') || 'all';
+            if (requested === 'market') {
+                window.location.replace('market.html?view=analysis');
+                return;
+            }
             var activeCategory = validCategories.indexOf(requested) === -1 ? 'all' : requested;
             var feed = document.getElementById('article-feed');
             var cards = Array.prototype.slice.call(feed.querySelectorAll('.article-card'));

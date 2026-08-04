@@ -1,0 +1,342 @@
+{
+  "schemaVersion": 1,
+  "snapshotId": "20260804-1051",
+  "generatedAt": "2026-08-04T11:05:00+09:00",
+  "asOf": "2026-08-04T10:51:00+09:00",
+  "asOfDisplay": "2026년 8월 4일 10:51 KST",
+  "marketState": "한국 정규장 오전 장중",
+  "sourceLabel": "8월 4일 오전 10:49~10:51 KST 기준이며, Naver Finance의 KRX 장중 시세·수급과 공개된 공식 자료를 반영했습니다.",
+  "latestArticle": {
+    "title": "2026년 8월 4일 코스피 오전 시황: 6,080 찍고 보합, 코스닥 5% 급등",
+    "href": "market-2026-08-04.html"
+  },
+  "headline": "갭상승은 기관 매도에 소진됐지만, 원화 안정과 강한 시장 폭이 오전 저점을 되돌렸습니다.",
+  "summary": "KOSPI는 미국 기술주 반등과 유가·장기금리 하락을 반영해 1.50% 높게 출발했지만 기관 매도에 6,080.25까지 밀렸습니다. 이후 외국인 현물 매수와 원화 강세, 압도적인 상승 종목 수에 힘입어 보합권을 회복했습니다. 삼성전자·SK하이닉스가 약한 사이 KOSDAQ은 5% 넘게 올라, 전면적 위험회피보다 초대형 반도체에서 중소형 성장주로 이동하는 순환매 성격이 강했습니다.",
+  "markets": [
+    {
+      "id": "KOSPI",
+      "label": "KOSPI",
+      "symbol": "K",
+      "value": 6268.28,
+      "changePercent": 0.17,
+      "asOfLabel": "8월 4일 10:49 KST",
+      "stateLabel": "장중 스냅샷",
+      "open": 6351.38,
+      "high": 6389.40,
+      "low": 6080.25,
+      "previousClose": 6257.45,
+      "flows": [
+        { "label": "외국인", "value": 1554, "unit": "억원" },
+        { "label": "기관", "value": -6717, "unit": "억원" },
+        { "label": "개인", "value": 4531, "unit": "억원" }
+      ],
+      "breadth": { "advance": 712, "flat": 31, "decline": 172 }
+    },
+    {
+      "id": "KOSDAQ",
+      "label": "KOSDAQ",
+      "symbol": "Q",
+      "value": 775.77,
+      "changePercent": 5.21,
+      "asOfLabel": "8월 4일 10:49 KST",
+      "stateLabel": "장중 스냅샷",
+      "open": 748.19,
+      "high": 776.69,
+      "low": 748.19,
+      "breadth": { "advance": 1357, "flat": 75, "decline": 292 }
+    }
+  ],
+  "stance": {
+    "label": "관망 우세",
+    "attack": 30,
+    "wait": 55,
+    "defense": 15,
+    "note": "외국인 선물 순매수 전환, 기관 매도 둔화, 비차익 매수 확대 중 두 가지 이상이 확인돼야 공격 점수를 높일 수 있습니다."
+  },
+  "checkpoints": [
+    {
+      "label": "기관 현물",
+      "value": "-6,717억원",
+      "detail": "갭상승을 소진한 핵심 매도 주체",
+      "tone": "danger"
+    },
+    {
+      "label": "외국인 선물",
+      "value": "-572억원",
+      "detail": "현물 매수와 지수 헤지가 동시에 진행",
+      "tone": "warning"
+    },
+    {
+      "label": "KOSPI 기준선",
+      "value": "6,080 / 6,330",
+      "detail": "오전 저점 지지와 반등 복원선",
+      "tone": "info"
+    },
+    {
+      "label": "달러/원",
+      "value": "1,424원대",
+      "detail": "원화 강세가 지수 하단을 완충",
+      "tone": "positive"
+    }
+  ],
+  "changes": [
+    {
+      "label": "KOSPI",
+      "before": "8월 3일 14:30 -4.76%",
+      "after": "8월 4일 10:49 +0.17%",
+      "meaning": "전날 급락 뒤 보합권을 되찾았지만 갭상승은 지키지 못했습니다."
+    },
+    {
+      "label": "외국인 현물",
+      "before": "-2조5,489억원",
+      "after": "+1,554억원",
+      "meaning": "대규모 순매도에서 저가매수로 전환했습니다."
+    },
+    {
+      "label": "기관 현물",
+      "before": "-1조5,188억원",
+      "after": "-6,717억원",
+      "meaning": "매도 규모는 줄었지만 오전 방향을 누르기에는 충분했습니다."
+    }
+  ],
+  "factors": [
+    {
+      "label": "수급",
+      "metric": "기관 -6,717억",
+      "detail": "외국인 현물은 매수했지만 선물 헤지가 남았습니다.",
+      "tone": "warning"
+    },
+    {
+      "label": "시장 폭",
+      "metric": "상승·하락 종목 중 80.5% 상승",
+      "detail": "상승 712개, 하락 172개로 지수보다 종목 흐름이 강했습니다.",
+      "tone": "positive"
+    },
+    {
+      "label": "매크로",
+      "metric": "원/달러 1,424원대",
+      "detail": "원화 강세와 유가 하락이 외부 충격을 완충했습니다.",
+      "tone": "positive"
+    },
+    {
+      "label": "메모리",
+      "metric": "DDR5 +0.72%",
+      "detail": "DDR4도 0.57% 올라 실물 공급 부족이 이어졌습니다.",
+      "tone": "positive"
+    },
+    {
+      "label": "미국 금리",
+      "metric": "10년물 4.70%",
+      "detail": "전일보다 낮아졌지만 성장주 할인율 부담은 남았습니다.",
+      "tone": "warning"
+    },
+    {
+      "label": "오늘 일정",
+      "metric": "JOLTS 23:00 KST",
+      "detail": "고용 수요가 금리와 달러 방향을 다시 흔들 수 있습니다.",
+      "tone": "info"
+    }
+  ],
+  "flows": {
+    "program": {
+      "arbitrage": -1107,
+      "nonArbitrage": 877,
+      "total": -230,
+      "unit": "억원"
+    },
+    "kospi200FuturesForeign": -572,
+    "futuresUnit": "억원",
+    "futuresAsOfLabel": "10:32 KST 지연값"
+  },
+  "memory": [
+    { "label": "DDR5 16Gb", "value": "$51.333", "change": "+0.72%" },
+    { "label": "DDR4 16Gb", "value": "$85.707", "change": "+0.57%" },
+    { "label": "메모리 공급 부족", "value": "7개월 연속", "change": "ISM" }
+  ],
+  "scenarios": [
+    {
+      "id": "base",
+      "label": "기본",
+      "range": "KOSPI 6,180~6,330",
+      "summary": "강한 시장 폭과 원화 안정이 하단을 받치지만 기관 매도와 외국인 선물 헤지가 상단을 제한하는 경우입니다.",
+      "conditions": [
+        "외국인 KOSPI 현물 순매수 유지",
+        "KOSPI 6,180 위에서 거래",
+        "프로그램 비차익 매수 유지"
+      ],
+      "invalidation": "KOSPI가 6,080을 다시 이탈하고 비차익 프로그램이 순매도로 바뀌면 약세 시나리오의 비중이 커집니다."
+    },
+    {
+      "id": "bull",
+      "label": "강세",
+      "range": "KOSPI 6,330~6,450",
+      "summary": "외국인 선물이 순매수로 전환하고 반도체 대형주가 시가를 회복해 갭상승 실패를 되돌리는 경우입니다.",
+      "conditions": [
+        "KOSPI 6,330 회복·유지",
+        "삼성전자 239,000원 이상",
+        "SK하이닉스 1,580,000원 이상"
+      ],
+      "invalidation": "KOSPI가 6,330을 회복하지 못하거나 외국인 선물 매도가 확대되면 강세 시나리오는 성립하지 않습니다."
+    },
+    {
+      "id": "bear",
+      "label": "약세",
+      "range": "KOSPI 6,000~6,180",
+      "summary": "오전 저점과 반도체 저점이 함께 무너지고 프로그램 매도가 재개되는 경우입니다.",
+      "conditions": [
+        "KOSPI 6,080 이탈",
+        "삼성전자 227,500원 이탈",
+        "USD/KRW 1,435원 상향 돌파"
+      ],
+      "invalidation": "KOSPI가 6,180 위를 회복하고 외국인 현물 매수가 유지되면 약세 시나리오는 약해집니다."
+    }
+  ],
+  "strategyLevels": [
+    { "asset": "KOSPI", "support": "6,080 / 6,000", "pivot": "6,180", "resistance": "6,330 / 6,389" },
+    { "asset": "KODEX 레버리지", "support": "86,650 / 90,000원", "pivot": "93,670원", "resistance": "96,090 / 96,680원" },
+    { "asset": "삼성전자", "support": "227,500원", "pivot": "237,500원", "resistance": "239,000 / 246,500원" },
+    { "asset": "SK하이닉스", "support": "1,483,000원", "pivot": "1,550,000원", "resistance": "1,580,000 / 1,630,000원" },
+    { "asset": "USD/KRW", "support": "1,420원대", "pivot": "1,424원대", "resistance": "1,435원" }
+  ],
+  "events": [
+    {
+      "time": "8월 4일 21:30 KST",
+      "name": "미국 6월 무역수지",
+      "path": "달러와 장기금리를 통해 한국 대형주 수급에 반영"
+    },
+    {
+      "time": "8월 4일 23:00 KST",
+      "name": "미국 6월 JOLTS",
+      "path": "고용 과열 여부가 금리와 Nasdaq 방향을 결정"
+    },
+    {
+      "time": "8월 5일 23:00 KST",
+      "name": "미국 7월 ISM 서비스업",
+      "path": "경기 체력과 서비스 물가를 함께 확인"
+    },
+    {
+      "time": "8월 6일 06:00 KST",
+      "name": "AMD 2분기 실적 콜",
+      "path": "AI 가속기와 HBM 수요 가이던스 확인"
+    },
+    {
+      "time": "8월 7일 21:30 KST",
+      "name": "미국 7월 고용보고서",
+      "path": "주간 금리·달러 방향의 핵심 분기점"
+    }
+  ],
+  "checklist": [
+    { "id": "foreign-futures", "label": "외국인 KOSPI200 선물이 순매수로 전환했다" },
+    { "id": "institution-slowdown", "label": "기관 현물 매도가 오전보다 뚜렷하게 둔화했다" },
+    { "id": "non-arbitrage", "label": "프로그램 비차익 순매수가 다시 확대됐다" }
+  ],
+  "technical": {
+    "note": "8월 4일 10:49 KST 기준 당일 OHLC·현재가와 리서치 기준선을 항목별로 비교합니다. 점의 좌우 순서는 실제 장중 경로를 뜻하지 않습니다.",
+    "instruments": [
+      {
+        "id": "KOSPI",
+        "label": "KOSPI",
+        "unit": "pt",
+        "points": [
+          { "label": "전일 종가", "value": 6257.45 },
+          { "label": "시가", "value": 6351.38 },
+          { "label": "고가", "value": 6389.40 },
+          { "label": "저가", "value": 6080.25 },
+          { "label": "10:49", "value": 6268.28 }
+        ],
+        "levels": [
+          { "label": "2차 지지", "value": 6000 },
+          { "label": "1차 지지", "value": 6080.25 },
+          { "label": "반등 기준", "value": 6330 },
+          { "label": "장중 고점", "value": 6389.40 }
+        ],
+        "interpretation": "6,080 저점에서 반등했지만 6,330을 회복하기 전까지는 갭상승 실패의 영향이 남습니다."
+      },
+      {
+        "id": "KOSDAQ",
+        "label": "KOSDAQ",
+        "unit": "pt",
+        "points": [
+          { "label": "시가·저가", "value": 748.19 },
+          { "label": "고가", "value": 776.69 },
+          { "label": "10:49", "value": 775.77 }
+        ],
+        "levels": [
+          { "label": "장중 지지", "value": 748.19 },
+          { "label": "현재", "value": 775.77 },
+          { "label": "장중 고점", "value": 776.69 }
+        ],
+        "interpretation": "시가가 저가였고 현재가가 고점 부근에 있어 대형주보다 중소형 성장주의 모멘텀이 강합니다."
+      },
+      {
+        "id": "KODEX",
+        "label": "KODEX 레버리지",
+        "unit": "원",
+        "points": [
+          { "label": "전일 종가", "value": 93670 },
+          { "label": "시가", "value": 96090 },
+          { "label": "고가", "value": 96680 },
+          { "label": "저가", "value": 86650 },
+          { "label": "10:49", "value": 93210 }
+        ],
+        "levels": [
+          { "label": "최우선 지지", "value": 86650 },
+          { "label": "심리선", "value": 90000 },
+          { "label": "전일 종가", "value": 93670 },
+          { "label": "흐름 복원", "value": 96090 }
+        ],
+        "interpretation": "장중 변동폭이 10%를 넘었습니다. 96,090원을 회복하기 전에는 저점 반등과 추세 복원을 구분해야 합니다."
+      },
+      {
+        "id": "SAMSUNG",
+        "label": "삼성전자",
+        "unit": "원",
+        "points": [
+          { "label": "시가", "value": 239000 },
+          { "label": "고가", "value": 246500 },
+          { "label": "저가", "value": 227500 },
+          { "label": "10:49", "value": 237500 }
+        ],
+        "levels": [
+          { "label": "장중 지지", "value": 227500 },
+          { "label": "현재", "value": 237500 },
+          { "label": "시가 복원", "value": 239000 },
+          { "label": "장중 고점", "value": 246500 }
+        ],
+        "interpretation": "시가 239,000원을 되찾아야 기관 매도에 눌린 오전 흐름이 완화됩니다."
+      },
+      {
+        "id": "HYNIX",
+        "label": "SK하이닉스",
+        "unit": "원",
+        "points": [
+          { "label": "시가", "value": 1580000 },
+          { "label": "고가", "value": 1630000 },
+          { "label": "저가", "value": 1483000 },
+          { "label": "10:49", "value": 1550000 }
+        ],
+        "levels": [
+          { "label": "장중 지지", "value": 1483000 },
+          { "label": "현재", "value": 1550000 },
+          { "label": "시가 복원", "value": 1580000 },
+          { "label": "장중 고점", "value": 1630000 }
+        ],
+        "interpretation": "1,580,000원 시가 회복 여부가 반도체 대형주의 반등 신뢰도를 가릅니다."
+      }
+    ]
+  },
+  "sources": [
+    { "label": "KOSPI", "href": "https://m.stock.naver.com/domestic/index/KOSPI/total" },
+    { "label": "KOSDAQ", "href": "https://m.stock.naver.com/domestic/index/KOSDAQ/total" },
+    { "label": "투자자별 매매", "href": "https://finance.naver.com/sise/investorDealTrendTime.naver?bizdate=20260804&sosok=01" },
+    { "label": "KODEX 레버리지", "href": "https://finance.naver.com/item/main.naver?code=122630" },
+    { "label": "삼성전자", "href": "https://finance.naver.com/item/main.naver?code=005930" },
+    { "label": "SK하이닉스", "href": "https://finance.naver.com/item/main.naver?code=000660" },
+    { "label": "USD/KRW", "href": "https://m.stock.naver.com/marketindex/exchange/FX_USDKRW" },
+    { "label": "KRX 정보데이터시스템", "href": "https://data.krx.co.kr/" },
+    { "label": "TrendForce DRAM spot", "href": "https://www.trendforce.com/price/dram/dram_spot" },
+    { "label": "미국 7월 ISM 제조업", "href": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/july/" },
+    { "label": "미 재무부 국채금리", "href": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value=2026" },
+    { "label": "미국 JOLTS", "href": "https://www.bls.gov/jlt/" }
+  ]
+}

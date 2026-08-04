@@ -7,6 +7,9 @@
 - 시장 상태: 한국 정규장 오전 장중, 미국 8월 3일 정규장·한국 7월 CPI 반영
 - 최신 보고서: `reports/2026-08-04-1051.md`
 - 최신 공개 글: `articles/market-2026-08-04.html`
+- 시황 대시보드: `articles/market.html`
+- 최신 대시보드 스냅샷: `assets/data/market-dashboard-20260804-1051.json`
+- 최신 대시보드 포인터: `assets/data/market-dashboard-latest.json`
 - 최신 장기 차트: `charts/us_yield_spreads_long_term_2026-08-04.png`
 - 최신 90일 차트: `charts/us_yield_spreads_90d_2026-08-04.png`
 
