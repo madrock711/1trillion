@@ -113,7 +113,12 @@
             .slice(0, 5);
     }
 
-    function validatedPrices(basic, integration) {
+    function cleanDisplayText(value) {
+        var text = value == null ? '' : String(value).trim();
+        return !text || /^[-—]+$/.test(text) ? '' : text;
+    }
+
+    function validatedPrices(basic, integration, allowMissingSessionPrices) {
         var totals = totalInfoMap(integration);
         var value = parseNumber(basic.closePrice);
         var previousClose = totals.lastClosePrice;
@@ -129,10 +134,14 @@
             previousClose = value - change;
         }
 
-        if (![value, previousClose, open, high, low].every(Number.isFinite)) {
+        if (![value, previousClose].every(Number.isFinite)) {
             throw new Error('가격 데이터가 부족합니다.');
         }
-        if (high < low || value < low || value > high || open < low || open > high) {
+        var sessionPricesComplete = [open, high, low].every(Number.isFinite);
+        if (!sessionPricesComplete && !allowMissingSessionPrices) {
+            throw new Error('가격 데이터가 부족합니다.');
+        }
+        if (sessionPricesComplete && (high < low || value < low || value > high || open < low || open > high)) {
             throw new Error('가격 범위가 올바르지 않습니다.');
         }
 
@@ -141,7 +150,8 @@
             previousClose: previousClose,
             open: open,
             high: high,
-            low: low
+            low: low,
+            sessionPricesComplete: sessionPricesComplete
         };
     }
 
@@ -224,7 +234,7 @@
         if (!Number.isFinite(timestamp) || timestamp > now + 10 * 60 * 1000) {
             throw new Error(definition.label + ' 시각이 올바르지 않습니다.');
         }
-        var prices = validatedPrices(basic, integration);
+        var prices = validatedPrices(basic, integration, true);
         var ratio = signedValue(basic.fluctuationsRatio, basic.compareToPreviousPrice);
         if (!Number.isFinite(ratio)) throw new Error(definition.label + ' 등락률이 올바르지 않습니다.');
         var normalized = {
@@ -242,13 +252,17 @@
             shortTimeLabel: formatShortTime(timestamp),
             stateLabel: stateLabel(basic.marketStatus),
             marketStatus: basic.marketStatus,
+            sessionPricesComplete: prices.sessionPricesComplete,
             delayed: basic.marketStatus === 'OPEN' && now - timestamp > 10 * 60 * 1000
         };
         if (definition.id === 'KODEX') {
             var totals = totalInfoMap(integration);
             var rawTotals = totalInfoTextMap(integration);
-            normalized.volume = totals.accumulatedTradingVolume;
-            normalized.tradingValueLabel = rawTotals.accumulatedTradingValue || '';
+            var investorTrends = normalizeInvestorTrends(integration);
+            normalized.volume = Number.isFinite(totals.accumulatedTradingVolume)
+                ? totals.accumulatedTradingVolume
+                : investorTrends.length ? investorTrends[0].volume : NaN;
+            normalized.tradingValueLabel = cleanDisplayText(rawTotals.accumulatedTradingValue);
             normalized.periodReturns = {
                 oneMonth: totals.oneMonthEarnRate,
                 threeMonth: totals.threeMonthEarnRate,
@@ -256,11 +270,11 @@
                 oneYear: totals.oneYearEarnRate
             };
             normalized.etf = {
-                baseIndex: rawTotals.etfBaseIdx || '',
-                issuer: rawTotals.issueName || '',
-                fee: rawTotals.fundPay || ''
+                baseIndex: cleanDisplayText(rawTotals.etfBaseIdx),
+                issuer: cleanDisplayText(rawTotals.issueName),
+                fee: cleanDisplayText(rawTotals.fundPay)
             };
-            normalized.investorTrends = normalizeInvestorTrends(integration);
+            normalized.investorTrends = investorTrends;
         }
         return normalized;
     }
