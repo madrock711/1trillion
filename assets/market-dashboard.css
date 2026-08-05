@@ -732,6 +732,178 @@
     border-top: 1px solid var(--border-subtle);
 }
 
+.kodex-history-card {
+    margin-bottom: var(--space-4);
+    background:
+        linear-gradient(155deg, rgba(105, 169, 255, 0.045), transparent 35%),
+        #111713;
+}
+
+.kodex-history-heading {
+    align-items: flex-end;
+}
+
+.kodex-period-switcher {
+    display: inline-flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-control);
+    background: rgba(0, 0, 0, 0.16);
+}
+
+.kodex-period-switcher button {
+    min-height: 34px;
+    padding: 0.4rem 0.75rem;
+    border: 0;
+    border-radius: calc(var(--radius-control) - 4px);
+    background: transparent;
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.kodex-period-switcher button[aria-pressed="true"] {
+    background: rgba(68, 209, 122, 0.16);
+    color: #75e8a7;
+}
+
+.kodex-history-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.9rem;
+    margin: var(--space-4) 0 var(--space-2);
+    color: var(--text-muted);
+    font-size: 0.72rem;
+}
+
+.kodex-history-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38rem;
+}
+
+.kodex-history-legend span::before {
+    width: 16px;
+    height: 3px;
+    border-radius: var(--radius-pill);
+    background: currentColor;
+    content: '';
+}
+
+.kodex-history-legend .is-up { color: #ff737b; }
+.kodex-history-legend .is-down { color: #69a9ff; }
+.kodex-history-legend .is-ma5 { color: #ffd166; }
+.kodex-history-legend .is-ma20 { color: #66d2ff; }
+.kodex-history-legend .is-ma60 { color: #59dda0; }
+
+.kodex-history-readout {
+    min-height: 1.4rem;
+    margin: 0 0 var(--space-3);
+    color: var(--text-secondary);
+    font-size: 0.76rem;
+    line-height: 1.55;
+}
+
+.kodex-history-shell {
+    overflow-x: auto;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-control);
+    background: #0c1217;
+    scrollbar-color: rgba(105, 169, 255, 0.48) transparent;
+}
+
+.kodex-history-chart {
+    display: block;
+    width: 100%;
+    min-width: 920px;
+    height: auto;
+    min-height: 440px;
+}
+
+.kodex-history-grid {
+    stroke: rgba(143, 164, 180, 0.16);
+    stroke-width: 1;
+}
+
+.kodex-history-axis-label,
+.kodex-history-date-label,
+.kodex-history-section-label,
+.kodex-history-empty {
+    fill: #83949f;
+    font-family: inherit;
+    font-size: 12px;
+}
+
+.kodex-history-section-label {
+    fill: #b9c8d0;
+    font-size: 11px;
+    font-weight: 750;
+}
+
+.kodex-history-empty {
+    font-size: 15px;
+}
+
+.kodex-history-wick {
+    stroke: currentColor;
+    stroke-width: 1.2;
+}
+
+.kodex-history-candle {
+    fill: currentColor;
+}
+
+.kodex-history-candle-group.is-up,
+.kodex-history-volume.is-up {
+    color: #ff737b;
+    fill: #ff737b;
+}
+
+.kodex-history-candle-group.is-down,
+.kodex-history-volume.is-down {
+    color: #5f9cff;
+    fill: #5f9cff;
+}
+
+.kodex-history-candle-group.is-flat,
+.kodex-history-volume.is-flat {
+    color: #a8b3ba;
+    fill: #a8b3ba;
+}
+
+.kodex-history-candle-group {
+    cursor: crosshair;
+}
+
+.kodex-history-volume {
+    opacity: 0.56;
+}
+
+.kodex-history-line {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+}
+
+.kodex-history-line {
+    stroke-width: 1.7;
+}
+
+.kodex-history-line.is-ma5 { stroke: #ffd166; }
+.kodex-history-line.is-ma20 { stroke: #66d2ff; }
+.kodex-history-line.is-ma60 { stroke: #59dda0; }
+
+.kodex-history-summary {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.7rem;
+    margin-top: var(--space-4);
+}
+
 .kodex-investor-card {
     margin-bottom: var(--space-4);
 }
@@ -1461,6 +1633,10 @@
     .market-technical-levels {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .kodex-history-summary {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 720px) {
@@ -1530,8 +1706,17 @@
 
     .kodex-return-grid,
     .kodex-reference-levels,
-    .kodex-market-context {
+    .kodex-market-context,
+    .kodex-history-summary {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .kodex-history-heading {
+        align-items: flex-start;
+    }
+
+    .kodex-period-switcher {
+        margin-top: var(--space-2);
     }
 
     .market-article-item {
@@ -1604,7 +1789,8 @@
 
     .kodex-return-grid,
     .kodex-reference-levels,
-    .kodex-market-context {
+    .kodex-market-context,
+    .kodex-history-summary {
         grid-template-columns: minmax(0, 1fr);
     }
 

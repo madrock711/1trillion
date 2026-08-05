@@ -17,6 +17,7 @@
     var liveRefreshTimer = null;
     var liveRefreshPromise = null;
     var lastLiveRefreshAt = 0;
+    var selectedKodexPeriod = '3m';
 
     function clear(node) {
         while (node && node.firstChild) node.removeChild(node.firstChild);
@@ -664,6 +665,232 @@
         container.appendChild(item);
     }
 
+    function parseHistoryDate(value) {
+        var timestamp = Date.parse(String(value || '') + 'T00:00:00+09:00');
+        return Number.isFinite(timestamp) ? timestamp : NaN;
+    }
+
+    function formatHistoryDate(value) {
+        var match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || '');
+        if (!match) return value || '날짜 확인 불가';
+        return Number(match[2]) + '월 ' + Number(match[3]) + '일';
+    }
+
+    function formatCompactShares(value) {
+        if (!Number.isFinite(value)) return '수급 미제공';
+        var absolute = Math.abs(value);
+        if (absolute >= 100000000) return formatSigned(value / 100000000, '억주', 2);
+        if (absolute >= 10000) return formatSigned(value / 10000, '만주', 1);
+        return formatSigned(value, '주', 0);
+    }
+
+    function simpleMovingAverage(rows, period) {
+        var result = new Array(rows.length).fill(null);
+        var sum = 0;
+        rows.forEach(function (row, index) {
+            sum += row.close;
+            if (index >= period) sum -= rows[index - period].close;
+            if (index >= period - 1) result[index] = sum / period;
+        });
+        return result;
+    }
+
+    function svgPathForSeries(values, startIndex, xFor, yFor) {
+        var path = '';
+        values.slice(startIndex).forEach(function (value, index) {
+            if (!Number.isFinite(value)) return;
+            path += (path ? ' L ' : 'M ') + xFor(index).toFixed(2) + ' ' + yFor(value).toFixed(2);
+        });
+        return path;
+    }
+
+    function renderKodexHistoryChart(instrument) {
+        var svg = document.getElementById('kodex-history-chart');
+        var summary = document.getElementById('kodex-history-summary');
+        var readout = document.getElementById('kodex-history-readout');
+        if (!svg || !summary || !readout) return;
+        clear(svg);
+        clear(summary);
+
+        var liveInstrument = instrument && instrument.liveSnapshot || {};
+        var history = (liveInstrument.priceHistory || instrument && instrument.priceHistory || []).filter(function (row) {
+            return row && Number.isFinite(parseHistoryDate(row.date))
+                && [row.open, row.high, row.low, row.close, row.volume].every(Number.isFinite);
+        }).sort(function (left, right) {
+            return parseHistoryDate(left.date) - parseHistoryDate(right.date);
+        });
+
+        Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-period]'), function (button) {
+            button.setAttribute('aria-pressed', button.getAttribute('data-kodex-period') === selectedKodexPeriod ? 'true' : 'false');
+            if (button.getAttribute('data-chart-bound') === 'true') return;
+            button.setAttribute('data-chart-bound', 'true');
+            button.addEventListener('click', function () {
+                selectedKodexPeriod = button.getAttribute('data-kodex-period') === '1m' ? '1m' : '3m';
+                var currentInstrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
+                if (currentInstrument) renderKodexHistoryChart(currentInstrument);
+            });
+        });
+
+        if (history.length < 5) {
+            readout.textContent = '3개월 일봉·거래량 차트를 불러오지 못했습니다. 최근 거래일 수급표는 아래에서 확인할 수 있습니다.';
+            var empty = makeSvg('text', { x: 500, y: 250, 'class': 'kodex-history-empty', 'text-anchor': 'middle' });
+            empty.textContent = '3개월 일봉·거래량 데이터를 확인하고 있습니다.';
+            svg.appendChild(empty);
+            return;
+        }
+
+        var latestTimestamp = parseHistoryDate(history[history.length - 1].date);
+        var threshold = new Date(latestTimestamp);
+        threshold.setMonth(threshold.getMonth() - (selectedKodexPeriod === '1m' ? 1 : 3));
+        var startIndex = history.findIndex(function (row) { return parseHistoryDate(row.date) >= threshold.getTime(); });
+        if (startIndex < 0) startIndex = 0;
+        var rows = history.slice(startIndex);
+        var ma5 = simpleMovingAverage(history, 5);
+        var ma20 = simpleMovingAverage(history, 20);
+        var ma60 = simpleMovingAverage(history, 60);
+
+        var width = 1000;
+        var margin = { left: 24, right: 88 };
+        var innerWidth = width - margin.left - margin.right;
+        var priceTop = 34;
+        var priceBottom = 338;
+        var volumeTop = 374;
+        var volumeBottom = 454;
+        var xStep = innerWidth / rows.length;
+        var candleWidth = Math.max(2.5, Math.min(9, xStep * 0.58));
+
+        function xFor(index) { return margin.left + xStep * index + xStep / 2; }
+
+        var priceValues = [];
+        rows.forEach(function (row) { priceValues.push(row.high, row.low); });
+        [ma5, ma20, ma60].forEach(function (series) {
+            series.slice(startIndex).forEach(function (value) {
+                if (Number.isFinite(value)) priceValues.push(value);
+            });
+        });
+        var minPrice = Math.min.apply(Math, priceValues);
+        var maxPrice = Math.max.apply(Math, priceValues);
+        var priceSpread = Math.max(maxPrice - minPrice, Math.abs(maxPrice || 1) * 0.01);
+        minPrice -= priceSpread * 0.05;
+        maxPrice += priceSpread * 0.05;
+        function priceY(value) {
+            return priceTop + (maxPrice - value) / (maxPrice - minPrice) * (priceBottom - priceTop);
+        }
+
+        for (var gridIndex = 0; gridIndex <= 4; gridIndex += 1) {
+            var gridY = priceTop + (priceBottom - priceTop) * gridIndex / 4;
+            svg.appendChild(makeSvg('line', {
+                x1: margin.left,
+                y1: gridY,
+                x2: width - margin.right,
+                y2: gridY,
+                'class': 'kodex-history-grid'
+            }));
+            var gridPrice = maxPrice - (maxPrice - minPrice) * gridIndex / 4;
+            var priceLabel = makeSvg('text', {
+                x: width - margin.right + 10,
+                y: gridY + 4,
+                'class': 'kodex-history-axis-label'
+            });
+            priceLabel.textContent = formatNumber(gridPrice, 0);
+            svg.appendChild(priceLabel);
+        }
+
+        [['일봉', priceTop + 12], ['거래량', volumeTop + 12]].forEach(function (item) {
+            var label = makeSvg('text', { x: margin.left, y: item[1], 'class': 'kodex-history-section-label' });
+            label.textContent = item[0];
+            svg.appendChild(label);
+        });
+
+        var maxVolume = Math.max.apply(Math, rows.map(function (row) { return row.volume; }));
+        function volumeY(value) {
+            return volumeBottom - value / Math.max(maxVolume, 1) * (volumeBottom - volumeTop);
+        }
+
+        function updateReadout(row) {
+            var parts = [
+                formatHistoryDate(row.date),
+                '종가 ' + formatPrice(row.close, '원'),
+                '시가 ' + formatPrice(row.open, '원'),
+                '고가 ' + formatPrice(row.high, '원'),
+                '저가 ' + formatPrice(row.low, '원'),
+                '거래량 ' + formatNumber(row.volume, 0) + '주'
+            ];
+            readout.textContent = parts.join(' · ');
+        }
+
+        rows.forEach(function (row, index) {
+            var x = xFor(index);
+            var rising = row.close > row.open;
+            var falling = row.close < row.open;
+            var tone = rising ? 'is-up' : falling ? 'is-down' : 'is-flat';
+            var group = makeSvg('g', { 'class': 'kodex-history-candle-group ' + tone });
+            group.appendChild(makeSvg('line', {
+                x1: x,
+                y1: priceY(row.high),
+                x2: x,
+                y2: priceY(row.low),
+                'class': 'kodex-history-wick'
+            }));
+            var bodyTop = Math.min(priceY(row.open), priceY(row.close));
+            var bodyHeight = Math.max(1.8, Math.abs(priceY(row.open) - priceY(row.close)));
+            group.appendChild(makeSvg('rect', {
+                x: x - candleWidth / 2,
+                y: bodyTop,
+                width: candleWidth,
+                height: bodyHeight,
+                rx: 0.8,
+                'class': 'kodex-history-candle'
+            }));
+            group.addEventListener('pointerenter', function () { updateReadout(row); });
+            var title = makeSvg('title');
+            title.textContent = formatHistoryDate(row.date) + ' 종가 ' + formatPrice(row.close, '원');
+            group.appendChild(title);
+            svg.appendChild(group);
+
+            svg.appendChild(makeSvg('rect', {
+                x: x - candleWidth / 2,
+                y: volumeY(row.volume),
+                width: candleWidth,
+                height: Math.max(1, volumeBottom - volumeY(row.volume)),
+                rx: 0.7,
+                'class': 'kodex-history-volume ' + tone
+            }));
+        });
+
+        [
+            { values: ma5, className: 'is-ma5' },
+            { values: ma20, className: 'is-ma20' },
+            { values: ma60, className: 'is-ma60' }
+        ].forEach(function (series) {
+            var path = svgPathForSeries(series.values, startIndex, xFor, priceY);
+            if (path) svg.appendChild(makeSvg('path', { d: path, 'class': 'kodex-history-line ' + series.className }));
+        });
+
+        var tickIndexes = [0, Math.floor((rows.length - 1) / 4), Math.floor((rows.length - 1) / 2), Math.floor((rows.length - 1) * 3 / 4), rows.length - 1]
+            .filter(function (value, index, values) { return values.indexOf(value) === index; });
+        tickIndexes.forEach(function (index) {
+            var tick = makeSvg('text', {
+                x: xFor(index),
+                y: 488,
+                'class': 'kodex-history-date-label',
+                'text-anchor': index === 0 ? 'start' : index === rows.length - 1 ? 'end' : 'middle'
+            });
+            tick.textContent = formatHistoryDate(rows[index].date).replace('월 ', '/').replace('일', '');
+            svg.appendChild(tick);
+        });
+
+        var latest = rows[rows.length - 1];
+        updateReadout(latest);
+        var periodReturn = rows[0].close ? (latest.close / rows[0].close - 1) * 100 : NaN;
+        var periodVolume = rows.reduce(function (total, row) { return total + row.volume; }, 0);
+        appendKodexMetric(summary, selectedKodexPeriod === '1m' ? '1개월 수익률' : '3개월 수익률', formatSigned(periodReturn, '%', 2));
+        appendKodexMetric(summary, '기간 최고', formatPrice(Math.max.apply(Math, rows.map(function (row) { return row.high; })), '원'));
+        appendKodexMetric(summary, '기간 최저', formatPrice(Math.min.apply(Math, rows.map(function (row) { return row.low; })), '원'));
+        appendKodexMetric(summary, '누적 거래량', formatCompactShares(periodVolume));
+        appendKodexMetric(summary, '일평균 거래량', formatCompactShares(periodVolume / rows.length));
+    }
+
     function renderKodex(data) {
         var instrument = findById(data.technical.instruments, 'KODEX');
         if (!instrument) return;
@@ -751,6 +978,8 @@
         var etf = liveInstrument.etf || instrument.etf || {};
         var etfMeta = [etf.baseIndex, etf.issuer, etf.fee ? '총보수 ' + etf.fee : ''].filter(Boolean);
         document.getElementById('kodex-etf-meta').textContent = etfMeta.join(' · ');
+
+        renderKodexHistoryChart(instrument);
 
         var trends = liveInstrument.investorTrends || instrument.investorTrends || [];
         var trendBody = document.getElementById('kodex-investor-trends');
@@ -924,7 +1153,7 @@
             instrument.asOfLabel = liveInstrument.asOfLabel;
             instrument.liveUpdated = true;
             instrument.delayed = Boolean(liveInstrument.delayed);
-            ['changePercent', 'marketStatus', 'stateLabel', 'volume', 'tradingValueLabel', 'periodReturns', 'etf', 'investorTrends'].forEach(function (key) {
+            ['changePercent', 'marketStatus', 'stateLabel', 'volume', 'tradingValueLabel', 'periodReturns', 'etf', 'investorTrends', 'priceHistory'].forEach(function (key) {
                 if (liveInstrument[key] !== undefined) instrument[key] = liveInstrument[key];
             });
         }
@@ -1062,6 +1291,9 @@
             if (previous && Number.isFinite(Date.parse(previous.asOf)) && Date.parse(item.asOf) < Date.parse(previous.asOf)) {
                 rejectedSources.push(item.label || item.id);
                 return;
+            }
+            if (previous && Array.isArray(previous.priceHistory) && !Array.isArray(item.priceHistory)) {
+                item.priceHistory = previous.priceHistory;
             }
             byId[item.id] = item;
         });

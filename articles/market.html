@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260806-1">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260806-3">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -62,8 +62,8 @@
     }
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
-    <script defer src="../assets/market-live-data.js?v=20260806-2"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260806-2"></script>
+    <script defer src="../assets/market-live-data.js?v=20260806-3"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260806-3"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -426,11 +426,36 @@
                     </article>
                 </div>
 
+                <section class="market-dashboard-card kodex-history-card" aria-labelledby="kodex-history-title">
+                    <div class="market-card-heading-row kodex-history-heading">
+                        <div>
+                            <p class="market-card-label">일봉·거래량·이동평균</p>
+                            <h3 id="kodex-history-title">KODEX 레버리지 3개월 가격 흐름</h3>
+                        </div>
+                        <div class="kodex-period-switcher" aria-label="차트 조회 기간">
+                            <button type="button" data-kodex-period="1m" aria-pressed="false">1개월</button>
+                            <button type="button" data-kodex-period="3m" aria-pressed="true">3개월</button>
+                        </div>
+                    </div>
+                    <div class="kodex-history-legend" aria-label="차트 범례">
+                        <span class="is-up">상승</span>
+                        <span class="is-down">하락</span>
+                        <span class="is-ma5">5일선</span>
+                        <span class="is-ma20">20일선</span>
+                        <span class="is-ma60">60일선</span>
+                    </div>
+                    <p class="kodex-history-readout" id="kodex-history-readout" aria-live="polite">3개월 일봉과 거래량을 불러오는 중입니다.</p>
+                    <div class="kodex-history-shell" tabindex="0" role="region" aria-label="KODEX 레버리지 3개월 일봉, 이동평균, 거래량 차트">
+                        <svg id="kodex-history-chart" class="kodex-history-chart" viewBox="0 0 1000 500" role="img" aria-labelledby="kodex-history-title kodex-history-readout"></svg>
+                    </div>
+                    <div class="kodex-history-summary" id="kodex-history-summary"></div>
+                </section>
+
                 <section class="market-dashboard-card kodex-investor-card" aria-labelledby="kodex-investor-title">
                     <div class="market-card-heading-row">
                         <div>
                             <p class="market-card-label">투자자별 순매매</p>
-                            <h3 id="kodex-investor-title">최근 5거래일 수급</h3>
+                            <h3 id="kodex-investor-title">최근 5거래일 수급표</h3>
                         </div>
                         <span class="market-method-badge" id="kodex-investor-date">거래일별 순매매 수량</span>
                     </div>

@@ -13,6 +13,11 @@
         { id: 'SAMSUNG', code: '005930', label: '삼성전자', unit: '원' },
         { id: 'HYNIX', code: '000660', label: 'SK하이닉스', unit: '원' }
     ];
+    var kodexHistoryCache = {
+        value: null,
+        expiresAt: 0,
+        pending: null
+    };
 
     function parseNumber(value) {
         if (typeof value === 'number' && Number.isFinite(value)) return value;
@@ -20,6 +25,17 @@
         var normalized = value.replace(/,/g, '').replace(/[^0-9+\-.]/g, '');
         if (!normalized) return NaN;
         return Number(normalized);
+    }
+
+    function parseSourceTimestamp(value) {
+        var direct = Date.parse(value);
+        if (Number.isFinite(direct)) return direct;
+        var match = /^(\d{4}-\d{2}-\d{2})\s+(오전|오후)\s+(\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec(String(value || '').trim());
+        if (!match) return NaN;
+        var hour = Number(match[3]);
+        if (match[2] === '오후' && hour < 12) hour += 12;
+        if (match[2] === '오전' && hour === 12) hour = 0;
+        return Date.parse(match[1] + 'T' + String(hour).padStart(2, '0') + ':' + match[4] + ':' + (match[5] || '00') + '+09:00');
     }
 
     function kstParts(value) {
@@ -113,6 +129,32 @@
             .slice(0, 5);
     }
 
+    function normalizeKodexPriceHistory(payloads) {
+        var rowsByDate = {};
+        (payloads || []).forEach(function (payload) {
+            var rows = payload && payload.isSuccess && Array.isArray(payload.result) ? payload.result : [];
+            rows.forEach(function (row) {
+                var date = row && String(row.localTradedAt || '');
+                var normalized = {
+                    date: date,
+                    open: parseNumber(row && row.openPrice),
+                    high: parseNumber(row && row.highPrice),
+                    low: parseNumber(row && row.lowPrice),
+                    close: parseNumber(row && row.closePrice),
+                    volume: parseNumber(row && row.accumulatedTradingVolume)
+                };
+                if (!/^\d{4}-\d{2}-\d{2}$/.test(date)
+                    || ![normalized.open, normalized.high, normalized.low, normalized.close, normalized.volume].every(Number.isFinite)
+                    || normalized.volume <= 0
+                    || normalized.high < Math.max(normalized.open, normalized.close)
+                    || normalized.low > Math.min(normalized.open, normalized.close)) return;
+                var previous = rowsByDate[date];
+                if (!previous || normalized.volume >= previous.volume) rowsByDate[date] = normalized;
+            });
+        });
+        return Object.keys(rowsByDate).sort().map(function (date) { return rowsByDate[date]; });
+    }
+
     function cleanDisplayText(value) {
         var text = value == null ? '' : String(value).trim();
         return !text || /^[-—]+$/.test(text) ? '' : text;
@@ -164,12 +206,12 @@
 
     function normalizeIndex(code, basic, integration, now) {
         if (!basic || basic.itemCode !== code || !integration) throw new Error(code + ' 응답이 올바르지 않습니다.');
-        var timestamp = Date.parse(basic.localTradedAt);
+        var timestamp = parseSourceTimestamp(basic.localTradedAt);
         if (!Number.isFinite(timestamp) || timestamp > now + 10 * 60 * 1000) throw new Error(code + ' 시각이 올바르지 않습니다.');
         var bizdate = integration.dealTrendInfo && String(integration.dealTrendInfo.bizdate || '');
         if (bizdate && bizdate !== marketDateKey(timestamp)) throw new Error(code + ' 수급 거래일이 일치하지 않습니다.');
 
-        var prices = validatedPrices(basic, integration);
+        var prices = validatedPrices(basic, integration, true);
         var ratio = signedValue(basic.fluctuationsRatio, basic.compareToPreviousPrice);
         var trend = integration.dealTrendInfo || {};
         var breadth = integration.upDownStockInfo || {};
@@ -213,6 +255,7 @@
             open: prices.open,
             high: prices.high,
             low: prices.low,
+            sessionPricesComplete: prices.sessionPricesComplete,
             changePercent: ratio,
             asOf: new Date(timestamp).toISOString(),
             asOfLabel: formatAsOfLabel(timestamp),
@@ -230,7 +273,7 @@
         if (!basic || String(basic.itemCode) !== definition.code || !integration) {
             throw new Error(definition.label + ' 응답이 올바르지 않습니다.');
         }
-        var timestamp = Date.parse(basic.localTradedAt);
+        var timestamp = parseSourceTimestamp(basic.localTradedAt);
         if (!Number.isFinite(timestamp) || timestamp > now + 10 * 60 * 1000) {
             throw new Error(definition.label + ' 시각이 올바르지 않습니다.');
         }
@@ -282,7 +325,7 @@
     function normalizeExchange(payload, now) {
         var result = payload && payload.isSuccess && payload.result;
         if (!result || result.reutersCode !== 'FX_USDKRW') throw new Error('달러/원 응답이 올바르지 않습니다.');
-        var timestamp = Date.parse(result.localTradedAt);
+        var timestamp = parseSourceTimestamp(result.localTradedAt);
         var value = parseNumber(result.closePrice);
         var ratio = signedValue(result.fluctuationsRatio, result.fluctuationsType);
         if (!Number.isFinite(timestamp) || timestamp > now + 10 * 60 * 1000 || !Number.isFinite(value) || !Number.isFinite(ratio)) {
@@ -326,6 +369,29 @@
         ]);
     }
 
+    function fetchKodexHistory(fetchImpl, baseUrl, signal, nonce, now, ttlMs) {
+        if (kodexHistoryCache.value && kodexHistoryCache.expiresAt > now) {
+            return Promise.resolve(kodexHistoryCache.value);
+        }
+        if (kodexHistoryCache.pending) return kodexHistoryCache.pending;
+
+        var historyPrefix = new URL('stock/122630/history/', baseUrl).href;
+        kodexHistoryCache.pending = Promise.all([
+            fetchJson(fetchImpl, historyPrefix + 'price-1', signal, nonce),
+            fetchJson(fetchImpl, historyPrefix + 'price-2', signal, nonce),
+            fetchJson(fetchImpl, historyPrefix + 'price-3', signal, nonce)
+        ]).then(function (parts) {
+            var history = normalizeKodexPriceHistory(parts);
+            if (history.length < 55) throw new Error('KODEX 3개월 가격 이력이 부족합니다.');
+            kodexHistoryCache.value = history;
+            kodexHistoryCache.expiresAt = now + ttlMs;
+            return history;
+        }).finally(function () {
+            kodexHistoryCache.pending = null;
+        });
+        return kodexHistoryCache.pending;
+    }
+
     function fetchLatest(baseUrl, fetchImpl, options) {
         var settings = options || {};
         var now = Number.isFinite(settings.now) ? settings.now : Date.now();
@@ -357,11 +423,23 @@
             return request.catch(function () { return null; });
         });
         var optionalExchangeRequest = exchangeRequest.catch(function () { return null; });
+        var optionalKodexHistoryRequest = fetchKodexHistory(
+            fetchImpl,
+            baseUrl,
+            signal,
+            nonce,
+            now,
+            Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000
+        ).catch(function () { return null; });
 
-        return Promise.all(optionalIndexRequests.concat(optionalStockRequests).concat([optionalExchangeRequest])).then(function (items) {
+        return Promise.all(optionalIndexRequests.concat(optionalStockRequests).concat([
+            optionalExchangeRequest,
+            optionalKodexHistoryRequest
+        ])).then(function (items) {
             var markets = items.slice(0, INDEX_CODES.length).filter(Boolean);
             var instruments = items.slice(INDEX_CODES.length, INDEX_CODES.length + STOCKS.length).filter(Boolean);
-            var exchange = items[items.length - 1];
+            var exchange = items[INDEX_CODES.length + STOCKS.length];
+            var kodexHistory = items[INDEX_CODES.length + STOCKS.length + 1];
             if (!markets.length) throw new Error('국내 지수 시세를 불러오지 못했습니다.');
             var primaryMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || markets[0];
             var kospiMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || null;
@@ -380,6 +458,12 @@
                 if (!instruments.some(function (instrument) { return instrument.id === stock.id; })) missingSources.push(stock.label);
             });
             if (!exchange) missingSources.push('달러/원');
+            var kodexInstrument = instruments.filter(function (instrument) { return instrument.id === 'KODEX'; })[0];
+            if (kodexInstrument && kodexHistory) {
+                kodexInstrument.priceHistory = kodexHistory;
+            } else if (kodexInstrument) {
+                missingSources.push('KODEX 3개월 가격·수급');
+            }
             var delayedSources = markets.concat(instruments).filter(function (item) { return item.delayed; }).map(function (item) {
                 return item.label;
             });
@@ -410,6 +494,7 @@
         normalizeIndex: normalizeIndex,
         normalizeStock: normalizeStock,
         normalizeExchange: normalizeExchange,
+        normalizeKodexPriceHistory: normalizeKodexPriceHistory,
         parseNumber: parseNumber,
         formatAsOfDisplay: formatAsOfDisplay
     };

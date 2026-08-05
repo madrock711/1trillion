@@ -35,6 +35,21 @@
     "status": "200"
   },
   {
+    "source": "/market-data/stock/122630/history/price-1",
+    "target": "https://m.stock.naver.com/front-api/stock/domestic/price/list?code=122630&page=1&pageSize=50",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/stock/122630/history/price-2",
+    "target": "https://m.stock.naver.com/front-api/stock/domestic/price/list?code=122630&page=2&pageSize=50",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/stock/122630/history/price-3",
+    "target": "https://m.stock.naver.com/front-api/stock/domestic/price/list?code=122630&page=3&pageSize=50",
+    "status": "200"
+  },
+  {
     "source": "/market-data/stock/005930/basic",
     "target": "https://m.stock.naver.com/api/stock/005930/basic",
     "status": "200"
