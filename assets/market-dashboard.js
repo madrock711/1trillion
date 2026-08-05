@@ -676,12 +676,11 @@
         return Number(match[2]) + '월 ' + Number(match[3]) + '일';
     }
 
-    function formatCompactShares(value) {
-        if (!Number.isFinite(value)) return '수급 미제공';
-        var absolute = Math.abs(value);
-        if (absolute >= 100000000) return formatSigned(value / 100000000, '억주', 2);
-        if (absolute >= 10000) return formatSigned(value / 10000, '만주', 1);
-        return formatSigned(value, '주', 0);
+    function formatCompactVolume(value) {
+        if (!Number.isFinite(value)) return '데이터 없음';
+        if (value >= 100000000) return formatNumber(value / 100000000, 2) + '억주';
+        if (value >= 10000) return formatNumber(value / 10000, 1) + '만주';
+        return formatNumber(value, 0) + '주';
     }
 
     function simpleMovingAverage(rows, period) {
@@ -887,8 +886,8 @@
         appendKodexMetric(summary, selectedKodexPeriod === '1m' ? '1개월 수익률' : '3개월 수익률', formatSigned(periodReturn, '%', 2));
         appendKodexMetric(summary, '기간 최고', formatPrice(Math.max.apply(Math, rows.map(function (row) { return row.high; })), '원'));
         appendKodexMetric(summary, '기간 최저', formatPrice(Math.min.apply(Math, rows.map(function (row) { return row.low; })), '원'));
-        appendKodexMetric(summary, '누적 거래량', formatCompactShares(periodVolume));
-        appendKodexMetric(summary, '일평균 거래량', formatCompactShares(periodVolume / rows.length));
+        appendKodexMetric(summary, '누적 거래량', formatCompactVolume(periodVolume));
+        appendKodexMetric(summary, '일평균 거래량', formatCompactVolume(periodVolume / rows.length));
     }
 
     function renderKodex(data) {
