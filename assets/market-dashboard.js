@@ -6,7 +6,7 @@
 
     document.documentElement.classList.add('market-dashboard-enhanced');
 
-    var validViews = ['analysis', 'strategy', 'technical'];
+    var validViews = ['analysis', 'strategy', 'technical', 'kodex'];
     var viewLinks = Array.prototype.slice.call(document.querySelectorAll('[data-market-view]'));
     var viewPanels = Array.prototype.slice.call(document.querySelectorAll('[data-view-panel]'));
     var loadState = document.getElementById('dashboard-load-state');
@@ -55,6 +55,7 @@
     }
 
     function formatPrice(value, unit) {
+        if (typeof value !== 'number' || !Number.isFinite(value)) return '데이터 없음';
         var digits = unit === '원' ? 0 : 2;
         return formatNumber(value, digits) + (unit === '원' ? '원' : '');
     }
@@ -134,6 +135,8 @@
 
     function setView(view, historyMode) {
         var selected = validViews.indexOf(view) === -1 ? 'analysis' : view;
+
+        root.classList.toggle('market-dashboard-page--kodex-focus', selected === 'kodex');
 
         viewLinks.forEach(function (link) {
             var active = link.getAttribute('data-market-view') === selected;
@@ -641,6 +644,146 @@
         renderTechnicalInstrument(selectedInstrument);
     }
 
+    function pointValue(instrument, matcher) {
+        var point = (instrument && instrument.points || []).filter(function (item) {
+            return matcher.test(item.label || '');
+        })[0];
+        return point && Number.isFinite(point.value) ? point.value : NaN;
+    }
+
+    function formatTradingDate(value) {
+        var match = /^(\d{4})(\d{2})(\d{2})$/.exec(value || '');
+        if (!match) return value || '날짜 확인 불가';
+        return Number(match[2]) + '월 ' + Number(match[3]) + '일';
+    }
+
+    function appendKodexMetric(container, label, value) {
+        var item = make('div', 'kodex-metric-item');
+        item.appendChild(make('span', '', label));
+        item.appendChild(make('strong', '', value));
+        container.appendChild(item);
+    }
+
+    function renderKodex(data) {
+        var instrument = findById(data.technical.instruments, 'KODEX');
+        if (!instrument) return;
+
+        var points = instrument.points || [];
+        var currentPoint = points[points.length - 1];
+        var current = currentPoint && Number.isFinite(currentPoint.value) ? currentPoint.value : NaN;
+        var previousClose = pointValue(instrument, /전일/);
+        var open = pointValue(instrument, /^시가/);
+        var high = pointValue(instrument, /고가/);
+        var low = pointValue(instrument, /저가/);
+        if (!Number.isFinite(low)) low = Math.min.apply(Math, points.map(function (point) { return point.value; }));
+        if (!Number.isFinite(high)) high = Math.max.apply(Math, points.map(function (point) { return point.value; }));
+        var changePercent = Number.isFinite(instrument.changePercent)
+            ? instrument.changePercent
+            : Number.isFinite(current) && Number.isFinite(previousClose) && previousClose !== 0
+                ? (current / previousClose - 1) * 100
+                : NaN;
+        var range = high - low;
+        var rangePosition = Number.isFinite(current) && Number.isFinite(range) && range > 0
+            ? Math.max(0, Math.min(100, (current - low) / range * 100))
+            : 50;
+
+        document.getElementById('kodex-current-price').textContent = formatPrice(current, '원');
+        var changeNode = document.getElementById('kodex-change');
+        changeNode.textContent = formatSigned(changePercent, '%', 2);
+        changeNode.className = 'kodex-change ' + (changePercent > 0 ? 'is-positive' : changePercent < 0 ? 'is-negative' : 'is-flat');
+        document.getElementById('kodex-as-of').textContent = (instrument.asOfLabel || data.asOfDisplay)
+            + ' · ' + (instrument.stateLabel || '최근 시세');
+
+        var metrics = document.getElementById('kodex-metrics');
+        clear(metrics);
+        appendKodexMetric(metrics, '전일 종가', formatPrice(previousClose, '원'));
+        appendKodexMetric(metrics, '시가', formatPrice(open, '원'));
+        appendKodexMetric(metrics, '고가', formatPrice(high, '원'));
+        appendKodexMetric(metrics, '저가', formatPrice(low, '원'));
+        appendKodexMetric(metrics, '누적 거래량', Number.isFinite(instrument.volume) ? formatNumber(instrument.volume, 0) + '주' : '확인 중');
+        appendKodexMetric(metrics, '누적 거래대금', instrument.tradingValueLabel || '확인 중');
+
+        document.getElementById('kodex-range-fill').style.width = rangePosition + '%';
+        document.getElementById('kodex-range-marker').style.left = rangePosition + '%';
+        document.getElementById('kodex-range-low').textContent = formatPrice(low, '원');
+        document.getElementById('kodex-range-current').textContent = formatPrice(current, '원');
+        document.getElementById('kodex-range-high').textContent = formatPrice(high, '원');
+        document.getElementById('kodex-range-summary').textContent = '당일 저가에서 고가까지의 범위 중 '
+            + formatNumber(rangePosition, 1) + '% 지점입니다. 시가 대비 '
+            + formatSigned(Number.isFinite(current) && Number.isFinite(open) && open !== 0 ? (current / open - 1) * 100 : NaN, '%', 2)
+            + '입니다.';
+
+        var returnGrid = document.getElementById('kodex-return-grid');
+        clear(returnGrid);
+        var returns = instrument.periodReturns || {};
+        [
+            ['1개월', returns.oneMonth],
+            ['3개월', returns.threeMonth],
+            ['6개월', returns.sixMonth],
+            ['1년', returns.oneYear]
+        ].forEach(function (item) {
+            if (!Number.isFinite(item[1])) return;
+            appendKodexMetric(returnGrid, item[0], formatSigned(item[1], '%', 2));
+        });
+        returnGrid.hidden = !returnGrid.childElementCount;
+
+        var etf = instrument.etf || {};
+        var etfMeta = [etf.baseIndex, etf.issuer, etf.fee ? '총보수 ' + etf.fee : ''].filter(Boolean);
+        document.getElementById('kodex-etf-meta').textContent = etfMeta.join(' · ');
+
+        var trends = instrument.investorTrends || [];
+        var trendBody = document.getElementById('kodex-investor-trends');
+        clear(trendBody);
+        if (!trends.length) {
+            var emptyRow = make('tr');
+            var emptyCell = make('td', '', '최근 거래일 수급을 확인하고 있습니다.');
+            emptyCell.colSpan = 6;
+            emptyRow.appendChild(emptyCell);
+            trendBody.appendChild(emptyRow);
+            document.getElementById('kodex-investor-date').textContent = '거래일별 순매매 수량';
+        } else {
+            trends.forEach(function (trend) {
+                var row = make('tr');
+                row.appendChild(make('td', '', formatTradingDate(trend.date)));
+                row.appendChild(make('td', '', formatPrice(trend.close, '원')));
+                row.appendChild(make('td', trend.foreign > 0 ? 'is-positive' : trend.foreign < 0 ? 'is-negative' : '', formatSigned(trend.foreign, '주')));
+                row.appendChild(make('td', trend.institution > 0 ? 'is-positive' : trend.institution < 0 ? 'is-negative' : '', formatSigned(trend.institution, '주')));
+                row.appendChild(make('td', trend.individual > 0 ? 'is-positive' : trend.individual < 0 ? 'is-negative' : '', formatSigned(trend.individual, '주')));
+                row.appendChild(make('td', '', formatNumber(trend.volume, 0) + '주'));
+                trendBody.appendChild(row);
+            });
+            document.getElementById('kodex-investor-date').textContent = formatTradingDate(trends[0].date) + '까지';
+        }
+
+        var level = (data.strategyLevels || []).filter(function (item) {
+            return item.asset === 'KODEX 레버리지';
+        })[0];
+        var levelContainer = document.getElementById('kodex-reference-levels');
+        clear(levelContainer);
+        if (level) {
+            appendKodexMetric(levelContainer, '지지', level.support);
+            appendKodexMetric(levelContainer, '중심', level.pivot);
+            appendKodexMetric(levelContainer, '저항', level.resistance);
+        }
+        document.getElementById('kodex-level-written-at').textContent = formatKstDateTime(data.generatedAt) + ' 작성 기준';
+
+        var kospi = marketById(data, 'KOSPI');
+        var foreign = flowByLabel(kospi, '외국인');
+        var institution = flowByLabel(kospi, '기관');
+        var program = kospi && kospi.program ? kospi.program : data.flows && data.flows.program;
+        var context = document.getElementById('kodex-market-context');
+        clear(context);
+        appendKodexMetric(context, 'KOSPI', Number.isFinite(kospi && kospi.value)
+            ? formatNumber(kospi.value, 2) + ' · ' + formatSigned(kospi.changePercent, '%', 2)
+            : '데이터 없음');
+        appendKodexMetric(context, '외국인 현물', foreign ? formatSigned(foreign.value, foreign.unit) : '데이터 없음');
+        appendKodexMetric(context, '기관 현물', institution ? formatSigned(institution.value, institution.unit) : '데이터 없음');
+        appendKodexMetric(context, '프로그램', program && Number.isFinite(program.total) ? formatSigned(program.total, program.unit) : '데이터 없음');
+
+        document.getElementById('kodex-data-note').textContent = '가격·거래량은 ' + (instrument.asOfLabel || data.asOfDisplay)
+            + ' 기준입니다. 투자자별 수치는 거래일별 순매매 수량이며 체결 주도 방향을 뜻하지 않습니다.';
+    }
+
     function renderSources(data) {
         document.getElementById('dashboard-source-summary').textContent = data.sourceLabel;
         var links = document.getElementById('market-source-links');
@@ -718,6 +861,7 @@
         renderChecklist(data);
         renderEvents(data);
         renderTechnical(data);
+        renderKodex(data);
         renderSources(data);
         renderLatestArticle(data);
         renderLoadState(data, null, stale ? 'stale' : 'ready', false, false);
@@ -757,6 +901,9 @@
         instrument.asOfLabel = liveInstrument.asOfLabel;
         instrument.liveUpdated = true;
         instrument.delayed = Boolean(liveInstrument.delayed);
+        ['changePercent', 'marketStatus', 'stateLabel', 'volume', 'tradingValueLabel', 'periodReturns', 'etf', 'investorTrends'].forEach(function (key) {
+            if (liveInstrument[key] !== undefined) instrument[key] = liveInstrument[key];
+        });
         return true;
     }
 
@@ -961,6 +1108,7 @@
         renderCheckpoints(data);
         renderAnalysis(data, liveData);
         renderTechnical(data);
+        renderKodex(data);
         var exchangeText = liveData.exchange
             ? ', 원/달러는 ' + liveData.exchange.asOfLabel + ' 기준입니다. '
             : ' 기준입니다. 원/달러는 ' + data.asOfDisplay + ' 기록입니다. ';

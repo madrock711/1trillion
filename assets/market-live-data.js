@@ -78,6 +78,41 @@
         return result;
     }
 
+    function totalInfoTextMap(integration) {
+        var result = {};
+        (integration && Array.isArray(integration.totalInfos) ? integration.totalInfos : []).forEach(function (item) {
+            if (item && item.code) result[item.code] = item.value == null ? '' : String(item.value);
+        });
+        return result;
+    }
+
+    function normalizeInvestorTrends(integration) {
+        return (integration && Array.isArray(integration.dealTrendInfos) ? integration.dealTrendInfos : [])
+            .map(function (trend) {
+                var dateKey = trend && String(trend.bizdate || '');
+                var values = {
+                    foreign: parseNumber(trend && trend.foreignerPureBuyQuant),
+                    institution: parseNumber(trend && trend.organPureBuyQuant),
+                    individual: parseNumber(trend && trend.individualPureBuyQuant),
+                    close: parseNumber(trend && trend.closePrice),
+                    volume: parseNumber(trend && trend.accumulatedTradingVolume)
+                };
+                if (!/^\d{8}$/.test(dateKey) || !Object.keys(values).every(function (key) {
+                    return Number.isFinite(values[key]);
+                })) return null;
+                return {
+                    date: dateKey,
+                    foreign: values.foreign,
+                    institution: values.institution,
+                    individual: values.individual,
+                    close: values.close,
+                    volume: values.volume
+                };
+            })
+            .filter(Boolean)
+            .slice(0, 5);
+    }
+
     function validatedPrices(basic, integration) {
         var totals = totalInfoMap(integration);
         var value = parseNumber(basic.closePrice);
@@ -192,7 +227,7 @@
         var prices = validatedPrices(basic, integration);
         var ratio = signedValue(basic.fluctuationsRatio, basic.compareToPreviousPrice);
         if (!Number.isFinite(ratio)) throw new Error(definition.label + ' 등락률이 올바르지 않습니다.');
-        return {
+        var normalized = {
             id: definition.id,
             label: definition.label,
             unit: definition.unit,
@@ -209,6 +244,25 @@
             marketStatus: basic.marketStatus,
             delayed: basic.marketStatus === 'OPEN' && now - timestamp > 10 * 60 * 1000
         };
+        if (definition.id === 'KODEX') {
+            var totals = totalInfoMap(integration);
+            var rawTotals = totalInfoTextMap(integration);
+            normalized.volume = totals.accumulatedTradingVolume;
+            normalized.tradingValueLabel = rawTotals.accumulatedTradingValue || '';
+            normalized.periodReturns = {
+                oneMonth: totals.oneMonthEarnRate,
+                threeMonth: totals.threeMonthEarnRate,
+                sixMonth: totals.sixMonthEarnRate,
+                oneYear: totals.oneYearEarnRate
+            };
+            normalized.etf = {
+                baseIndex: rawTotals.etfBaseIdx || '',
+                issuer: rawTotals.issueName || '',
+                fee: rawTotals.fundPay || ''
+            };
+            normalized.investorTrends = normalizeInvestorTrends(integration);
+        }
+        return normalized;
     }
 
     function normalizeExchange(payload, now) {

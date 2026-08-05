@@ -455,9 +455,15 @@
     color: #a9caff;
 }
 
+.market-dashboard-cta--kodex {
+    border-color: rgba(92, 224, 168, 0.52);
+    background: linear-gradient(135deg, rgba(68, 209, 122, 0.14), rgba(47, 207, 158, 0.08));
+    color: #9ff1c0;
+}
+
 .market-view-tabs {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 2px;
     margin: 0 0 var(--space-4);
     padding: 3px;
@@ -496,6 +502,10 @@
 
 .market-view-panel[hidden] {
     display: none !important;
+}
+
+.market-dashboard-page--kodex-focus .market-dashboard-overview {
+    display: none;
 }
 
 .market-panel-heading--section {
@@ -558,6 +568,190 @@
     border-top: 1px solid var(--border-subtle);
     color: var(--text-muted) !important;
     font-size: 0.78rem;
+}
+
+.kodex-focus-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.kodex-focus-grid--secondary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.kodex-quote-card {
+    background:
+        radial-gradient(circle at 90% 0%, rgba(68, 209, 122, 0.16), transparent 22rem),
+        #121814;
+}
+
+.kodex-quote-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.55rem 1rem;
+    margin: 0.35rem 0 var(--space-5);
+}
+
+.kodex-quote-row > strong {
+    color: var(--text-primary);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+.kodex-change {
+    font-size: 1rem;
+    font-weight: 850;
+}
+
+.kodex-change.is-positive,
+.kodex-investor-table td.is-positive {
+    color: #55e6a0;
+}
+
+.kodex-change.is-negative,
+.kodex-investor-table td.is-negative {
+    color: #ff7f86;
+}
+
+.kodex-change.is-flat {
+    color: var(--text-secondary);
+}
+
+.kodex-metric-grid,
+.kodex-return-grid,
+.kodex-reference-levels,
+.kodex-market-context {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.7rem;
+}
+
+.kodex-metric-item {
+    min-width: 0;
+    padding: 0.8rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-control);
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.kodex-metric-item span,
+.kodex-metric-item strong {
+    display: block;
+}
+
+.kodex-metric-item span {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+}
+
+.kodex-metric-item strong {
+    margin-top: 0.3rem;
+    color: var(--text-primary);
+    font-size: 0.92rem;
+    overflow-wrap: anywhere;
+}
+
+.kodex-range-card {
+    background: linear-gradient(150deg, rgba(105, 169, 255, 0.06), rgba(68, 209, 122, 0.045));
+}
+
+.kodex-range-track {
+    position: relative;
+    height: 12px;
+    margin: var(--space-6) 0 var(--space-3);
+    border-radius: var(--radius-pill);
+    background: rgba(255, 127, 134, 0.18);
+}
+
+.kodex-range-fill {
+    display: block;
+    width: 50%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #69a9ff, #49d99a);
+}
+
+.kodex-range-marker {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    border: 3px solid #eafff1;
+    border-radius: 50%;
+    background: #35d58d;
+    box-shadow: 0 0 0 4px rgba(53, 213, 141, 0.18);
+    transform: translate(-50%, -50%);
+}
+
+.kodex-range-labels {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-2);
+}
+
+.kodex-range-labels span {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.kodex-range-labels span:nth-child(2) {
+    text-align: center;
+}
+
+.kodex-range-labels span:last-child {
+    text-align: right;
+}
+
+.kodex-range-labels small {
+    color: var(--text-muted);
+}
+
+.kodex-range-labels strong {
+    color: var(--text-primary);
+    font-size: 0.86rem;
+}
+
+.kodex-range-labels .is-current strong {
+    color: #76e9a7;
+}
+
+.kodex-range-summary {
+    margin: var(--space-5) 0 0;
+    line-height: 1.65;
+}
+
+.kodex-return-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.kodex-investor-card {
+    margin-bottom: var(--space-4);
+}
+
+.kodex-investor-table td:nth-child(n + 3) {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.kodex-reference-levels,
+.kodex-market-context {
+    margin-top: var(--space-4);
+}
+
+.kodex-market-context {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.kodex-data-notice {
+    margin-top: var(--space-4);
 }
 
 .market-change-list {
@@ -1254,7 +1448,9 @@
 @media (max-width: 900px) {
     .market-analysis-grid,
     .market-strategy-layout,
-    .market-article-list {
+    .market-article-list,
+    .kodex-focus-grid,
+    .kodex-focus-grid--secondary {
         grid-template-columns: minmax(0, 1fr);
     }
 
@@ -1281,7 +1477,9 @@
         top: 112px;
         z-index: 30;
         order: 3;
+        grid-template-columns: repeat(4, minmax(112px, 1fr));
         box-shadow: 0 10px 28px rgba(0, 0, 0, 0.34);
+        overflow-x: auto;
     }
     .market-dashboard-overview { order: 4; }
     .market-view-panels { order: 5; }
@@ -1319,14 +1517,21 @@
     }
 
     .market-view-tabs a {
-        min-width: 0;
+        min-width: 112px;
         padding-inline: 0.35rem;
         font-size: 0.78rem;
     }
 
     .market-factor-grid,
-    .market-technical-levels {
+    .market-technical-levels,
+    .kodex-metric-grid {
         grid-template-columns: minmax(0, 1fr);
+    }
+
+    .kodex-return-grid,
+    .kodex-reference-levels,
+    .kodex-market-context {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .market-article-item {
@@ -1395,6 +1600,12 @@
 
     .market-change-item p {
         grid-column: 1;
+    }
+
+    .kodex-return-grid,
+    .kodex-reference-levels,
+    .kodex-market-context {
+        grid-template-columns: minmax(0, 1fr);
     }
 
 }

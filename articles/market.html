@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260804-5">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260806-1">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -62,8 +62,8 @@
     }
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
-    <script defer src="../assets/market-live-data.js?v=20260804-4"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260804-8"></script>
+    <script defer src="../assets/market-live-data.js?v=20260806-1"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260806-1"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -119,6 +119,7 @@
                 <ol class="market-checkpoint-list" id="market-checkpoint-list"></ol>
                 <div class="market-dashboard-actions">
                     <a class="market-dashboard-cta" id="market-latest-article-link" href="market-2026-08-05.html">오늘 시황 전문 읽기 <span aria-hidden="true">→</span></a>
+                    <a class="market-dashboard-cta market-dashboard-cta--kodex" href="?view=kodex">KODEX 레버리지 전용 화면 <span aria-hidden="true">→</span></a>
                     <a class="market-dashboard-cta market-dashboard-cta--secondary" href="?view=analysis#research-archive">최근 시황 8편 보기 <span aria-hidden="true">↓</span></a>
                 </div>
             </aside>
@@ -136,6 +137,10 @@
             <a href="?view=technical" data-market-view="technical">
                 <span aria-hidden="true">⌗</span>
                 기술적 분석
+            </a>
+            <a href="?view=kodex" data-market-view="kodex">
+                <span aria-hidden="true">◆</span>
+                KODEX 전용
             </a>
         </nav>
 
@@ -380,6 +385,86 @@
                 <aside class="market-dashboard-notice">
                     <strong>차트 읽는 법</strong>
                     <p>당일 시가·고가·저가·현재가와 주요 지지·저항을 비교합니다. 항목의 좌우 순서는 실제 체결 순서를 뜻하지 않습니다.</p>
+                </aside>
+            </section>
+
+            <section class="market-view-panel" id="market-view-kodex" data-view-panel="kodex" aria-labelledby="kodex-title">
+                <div class="market-panel-heading market-panel-heading--section">
+                    <p class="market-panel-kicker">KODEX leverage · 122630</p>
+                    <h2 id="kodex-title">KODEX 레버리지 전용</h2>
+                    <p>현재가와 당일 가격 위치, 거래량, 투자자별 순매매와 시황 기준선을 한 화면에서 확인합니다.</p>
+                </div>
+
+                <div class="kodex-focus-grid">
+                    <article class="market-dashboard-card kodex-quote-card">
+                        <div class="market-card-heading-row market-card-heading-row--compact">
+                            <p class="market-card-label">KODEX 레버리지 · 122630</p>
+                            <span class="market-method-badge" id="kodex-as-of">시세 불러오는 중</span>
+                        </div>
+                        <div class="kodex-quote-row">
+                            <strong id="kodex-current-price">—</strong>
+                            <span class="kodex-change is-flat" id="kodex-change">—</span>
+                        </div>
+                        <div class="kodex-metric-grid" id="kodex-metrics"></div>
+                        <p class="market-source-note" id="kodex-etf-meta"></p>
+                    </article>
+
+                    <article class="market-dashboard-card kodex-range-card">
+                        <p class="market-card-label">당일 가격 위치</p>
+                        <h3>저가·현재가·고가 비교</h3>
+                        <div class="kodex-range-track" aria-hidden="true">
+                            <span class="kodex-range-fill" id="kodex-range-fill"></span>
+                            <span class="kodex-range-marker" id="kodex-range-marker"></span>
+                        </div>
+                        <div class="kodex-range-labels">
+                            <span><small>저가</small><strong id="kodex-range-low">—</strong></span>
+                            <span class="is-current"><small>현재</small><strong id="kodex-range-current">—</strong></span>
+                            <span><small>고가</small><strong id="kodex-range-high">—</strong></span>
+                        </div>
+                        <p class="kodex-range-summary" id="kodex-range-summary"></p>
+                        <div class="kodex-return-grid" id="kodex-return-grid" hidden></div>
+                    </article>
+                </div>
+
+                <section class="market-dashboard-card kodex-investor-card" aria-labelledby="kodex-investor-title">
+                    <div class="market-card-heading-row">
+                        <div>
+                            <p class="market-card-label">투자자별 순매매</p>
+                            <h3 id="kodex-investor-title">최근 5거래일 수급</h3>
+                        </div>
+                        <span class="market-method-badge" id="kodex-investor-date">거래일별 순매매 수량</span>
+                    </div>
+                    <div class="market-table-wrap" tabindex="0" role="region" aria-label="KODEX 레버리지 최근 5거래일 투자자별 순매매 수량">
+                        <table class="market-data-table kodex-investor-table">
+                            <thead>
+                                <tr><th>거래일</th><th>종가</th><th>외국인</th><th>기관</th><th>개인</th><th>거래량</th></tr>
+                            </thead>
+                            <tbody id="kodex-investor-trends"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <div class="kodex-focus-grid kodex-focus-grid--secondary">
+                    <article class="market-dashboard-card">
+                        <div class="market-card-heading-row">
+                            <div>
+                                <p class="market-card-label">시황 기준선</p>
+                                <h3>지지·중심·저항</h3>
+                            </div>
+                            <span class="market-method-badge" id="kodex-level-written-at">작성 기준</span>
+                        </div>
+                        <div class="kodex-reference-levels" id="kodex-reference-levels"></div>
+                    </article>
+                    <article class="market-dashboard-card">
+                        <p class="market-card-label">기초시장 수급</p>
+                        <h3>KOSPI와 프로그램 흐름</h3>
+                        <div class="kodex-market-context" id="kodex-market-context"></div>
+                    </article>
+                </div>
+
+                <aside class="market-dashboard-notice kodex-data-notice">
+                    <strong>수급을 읽을 때</strong>
+                    <p id="kodex-data-note">가격과 최근 거래일 수급을 불러오는 중입니다.</p>
                 </aside>
             </section>
         </div>
