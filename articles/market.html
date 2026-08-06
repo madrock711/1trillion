@@ -64,7 +64,7 @@
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
     <script defer src="../assets/market-live-data.js?v=20260806-6"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260806-12"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260807-01"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -469,7 +469,7 @@
                 <section class="market-dashboard-card kodex-history-card tqqq-history-card" aria-labelledby="tqqq-history-title">
                     <div class="market-card-heading-row kodex-history-heading">
                         <div>
-                            <p class="market-card-label">미국 정규장 일봉·거래량</p>
+                            <p class="market-card-label">미국 정규장 일봉·거래량 X-ray·CVD</p>
                             <h3 id="tqqq-history-title">TQQQ 3개월 가격 흐름</h3>
                         </div>
                         <div class="kodex-period-switcher" aria-label="TQQQ 일봉 조회 기간">
@@ -480,16 +480,20 @@
                     <div class="kodex-history-legend" aria-label="TQQQ 차트 범례">
                         <span class="is-up">상승 봉</span>
                         <span class="is-down">하락 봉</span>
+                        <span class="is-estimated-buy">매수 우위 채움</span>
+                        <span class="is-estimated-sell">매도 우위 채움</span>
+                        <span class="is-cvd">누적 순압력 CVD</span>
                         <span class="is-ma5">5일선</span>
                         <span class="is-ma20">20일선</span>
                         <span class="is-ma60">60일선</span>
                     </div>
+                    <p class="kodex-history-method">막대 높이는 거래량, 빨강·파랑 채움은 일봉 가격 범위와 종가 위치로 추정한 매수·매도 우위입니다.</p>
                     <p class="kodex-history-readout" id="tqqq-history-readout" aria-live="polite">TQQQ 일봉과 거래량을 불러오는 중입니다.</p>
-                    <div class="kodex-history-shell" tabindex="0" role="region" aria-label="TQQQ 일봉과 거래량 차트">
+                    <div class="kodex-history-shell" tabindex="0" role="region" aria-label="TQQQ 일봉, 거래량 X-ray와 누적 CVD 차트">
                         <svg id="tqqq-history-chart" class="kodex-history-chart tqqq-history-chart" viewBox="0 0 800 460" role="img" aria-labelledby="tqqq-history-title tqqq-history-readout"></svg>
                     </div>
                     <div class="kodex-history-summary" id="tqqq-history-summary"></div>
-                    <p class="market-source-note">미국 정규장 기준 일봉입니다.</p>
+                    <p class="market-source-note">미국 정규장 일봉 기준이며, 순압력은 체결 Bid/Ask가 아닌 일중 가격 범위와 종가 위치를 거래량에 반영한 추정치입니다.</p>
                 </section>
                 </div>
 
