@@ -928,6 +928,7 @@
 
 .kodex-history-candle-group {
     cursor: crosshair;
+    outline: none;
 }
 
 .kodex-history-volume {
@@ -941,6 +942,21 @@
 
 .kodex-history-volume-group {
     cursor: crosshair;
+    outline: none;
+}
+
+.kodex-history-candle-group.is-linked-selected .kodex-history-candle,
+.kodex-history-candle-group.is-linked-selected .kodex-history-wick {
+    stroke: #ffe27a;
+    stroke-width: 2.2;
+    filter: drop-shadow(0 0 3px rgba(255, 226, 122, 0.72));
+}
+
+.kodex-history-volume-group.is-linked-selected .kodex-history-volume,
+.kodex-history-volume-group.is-linked-selected .kodex-history-volume-force {
+    stroke: #ffe27a;
+    stroke-width: 2;
+    filter: drop-shadow(0 0 3px rgba(255, 226, 122, 0.7));
 }
 
 .kodex-history-volume-segment {

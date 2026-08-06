@@ -892,6 +892,25 @@
         svg.appendChild(label);
     }
 
+    function selectLinkedKodexBar(svg, index, row, updateReadout) {
+        var selectedIndex = String(index);
+        Array.prototype.forEach.call(svg.querySelectorAll('[data-kodex-bar-index]'), function (element) {
+            var selected = element.getAttribute('data-kodex-bar-index') === selectedIndex;
+            element.classList.toggle('is-linked-selected', selected);
+            element.setAttribute('aria-selected', selected ? 'true' : 'false');
+        });
+        updateReadout(row);
+    }
+
+    function bindLinkedKodexBar(svg, element, index, row, updateReadout) {
+        element.setAttribute('data-kodex-bar-index', String(index));
+        element.setAttribute('aria-selected', 'false');
+        var select = function () { selectLinkedKodexBar(svg, index, row, updateReadout); };
+        element.addEventListener('pointerenter', select);
+        element.addEventListener('focus', select);
+        element.addEventListener('click', select);
+    }
+
     function renderKodexDailyChart(instrument, svg, summary, readout) {
         var svg = document.getElementById('kodex-history-chart');
         var liveInstrument = instrument && instrument.liveSnapshot || {};
@@ -927,6 +946,7 @@
         var priceTop = 34;
         var priceBottom = 300;
         var volumeTop = 336;
+        var volumePlotTop = volumeTop + 30;
         var volumeBottom = 476;
         var xStep = innerWidth / rows.length;
         var candleWidth = Math.max(2.5, Math.min(9, xStep * 0.58));
@@ -957,7 +977,7 @@
 
         var maxVolume = Math.max.apply(Math, rows.map(function (row) { return row.volume; }));
         function volumeY(value) {
-            return volumeBottom - value / Math.max(maxVolume, 1) * (volumeBottom - volumeTop);
+            return volumeBottom - value / Math.max(maxVolume, 1) * (volumeBottom - volumePlotTop);
         }
 
         var dailyPressure = {};
@@ -984,7 +1004,7 @@
         var minCvd = Math.min.apply(Math, [0].concat(cvdValues));
         var maxCvd = Math.max.apply(Math, [0].concat(cvdValues));
         var cvdSpread = Math.max(maxCvd - minCvd, 1);
-        function cvdY(value) { return volumeTop + 16 + (maxCvd - value) / cvdSpread * (volumeBottom - volumeTop - 24); }
+        function cvdY(value) { return volumePlotTop + 3 + (maxCvd - value) / cvdSpread * (volumeBottom - volumePlotTop - 10); }
 
         function updateReadout(row) {
             var parts = [
@@ -1009,7 +1029,7 @@
             var rising = row.close > row.open;
             var falling = row.close < row.open;
             var tone = rising ? 'is-up' : falling ? 'is-down' : 'is-flat';
-            var group = makeSvg('g', { 'class': 'kodex-history-candle-group ' + tone });
+            var group = makeSvg('g', { 'class': 'kodex-history-candle-group ' + tone, tabindex: '0', role: 'img' });
             group.appendChild(makeSvg('line', {
                 x1: x,
                 y1: priceY(row.high),
@@ -1027,14 +1047,16 @@
                 rx: 0.8,
                 'class': 'kodex-history-candle'
             }));
-            group.addEventListener('pointerenter', function () { updateReadout(row); });
+            bindLinkedKodexBar(svg, group, index, row, updateReadout);
+            group.setAttribute('aria-label', formatHistoryDate(row.date) + ', 종가 ' + formatPrice(row.close, '원')
+                + (dailyPressure[row.date] ? ', 추정 순압력 ' + formatSigned(dailyPressure[row.date].imbalance, '%', 2) : ''));
             var title = makeSvg('title');
             title.textContent = formatHistoryDate(row.date) + ' 종가 ' + formatPrice(row.close, '원');
             group.appendChild(title);
             svg.appendChild(group);
 
             var pressure = dailyPressure[row.date];
-            var volumeGroup = makeSvg('g', { 'class': 'kodex-history-volume-group' });
+            var volumeGroup = makeSvg('g', { 'class': 'kodex-history-volume-group', tabindex: '0', role: 'img' });
             volumeGroup.appendChild(makeSvg('rect', {
                 x: x - candleWidth / 2,
                 y: volumeY(row.volume),
@@ -1055,7 +1077,9 @@
                     'class': 'kodex-history-volume-force ' + (pressure.delta >= 0 ? 'is-buy' : 'is-sell')
                 }));
             }
-            volumeGroup.addEventListener('pointerenter', function () { updateReadout(row); });
+            bindLinkedKodexBar(svg, volumeGroup, index, row, updateReadout);
+            volumeGroup.setAttribute('aria-label', formatHistoryDate(row.date) + ', 거래량 ' + formatNumber(row.volume, 0) + '주'
+                + (pressure ? ', 추정 순압력 ' + formatSigned(pressure.imbalance, '%', 2) : ''));
             var volumeTitle = makeSvg('title');
             volumeTitle.textContent = formatHistoryDate(row.date) + ' 거래량 ' + formatNumber(row.volume, 0) + '주'
                 + (pressure ? ', 추정 순압력 ' + formatSigned(pressure.imbalance, '%', 2) : '');
@@ -1114,6 +1138,7 @@
         var priceTop = 34;
         var priceBottom = 305;
         var volumeTop = 345;
+        var volumePlotTop = volumeTop + 32;
         var volumeBottom = 530;
         var xStep = innerWidth / rows.length;
         var candleWidth = Math.max(2.5, Math.min(14, xStep * 0.62));
@@ -1134,8 +1159,8 @@
         var minCvd = Math.min.apply(Math, [0].concat(rows.map(function (row) { return row.cumulativeDelta; })));
         var maxCvd = Math.max.apply(Math, [0].concat(rows.map(function (row) { return row.cumulativeDelta; })));
         var cvdSpread = Math.max(maxCvd - minCvd, 1);
-        function volumeY(value) { return volumeBottom - value / Math.max(maxVolume, 1) * (volumeBottom - volumeTop); }
-        function cvdY(value) { return volumeTop + 18 + (maxCvd - value) / cvdSpread * (volumeBottom - volumeTop - 28); }
+        function volumeY(value) { return volumeBottom - value / Math.max(maxVolume, 1) * (volumeBottom - volumePlotTop); }
+        function cvdY(value) { return volumePlotTop + 3 + (maxCvd - value) / cvdSpread * (volumeBottom - volumePlotTop - 11); }
 
         function updateReadout(row) {
             readout.textContent = formatHistoryDate(day.date) + ' ' + row.time + (row.endTime !== row.time ? '–' + row.endTime : '')
@@ -1161,8 +1186,7 @@
                 rx: 0.8,
                 'class': 'kodex-history-candle'
             }));
-            group.addEventListener('pointerenter', function () { updateReadout(row); });
-            group.addEventListener('focus', function () { updateReadout(row); });
+            bindLinkedKodexBar(svg, group, index, row, updateReadout);
             group.setAttribute('aria-label', row.time + ', 종가 ' + formatPrice(row.close, '원') + ', 추정 순압력 ' + formatSigned(row.delta, '주', 0));
             svg.appendChild(group);
             var volumeGroup = makeSvg('g', { 'class': 'kodex-history-volume-group', tabindex: '0', role: 'img' });
@@ -1184,8 +1208,7 @@
                 rx: 0.7,
                 'class': 'kodex-history-volume-force ' + (row.delta >= 0 ? 'is-buy' : 'is-sell')
             }));
-            volumeGroup.addEventListener('pointerenter', function () { updateReadout(row); });
-            volumeGroup.addEventListener('focus', function () { updateReadout(row); });
+            bindLinkedKodexBar(svg, volumeGroup, index, row, updateReadout);
             volumeGroup.setAttribute('aria-label', row.time + ', 거래량 ' + formatNumber(row.volume, 0) + '주, 추정 순압력 ' + formatPressurePercent(row.delta, row.volume));
             svg.appendChild(volumeGroup);
             cvdPath += (cvdPath ? ' L ' : 'M ') + x.toFixed(2) + ' ' + cvdY(row.cumulativeDelta).toFixed(2);
