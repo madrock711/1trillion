@@ -886,7 +886,7 @@
 .kodex-history-chart {
     display: block;
     width: 100%;
-    min-width: 620px;
+    min-width: 500px;
     height: auto;
     min-height: 440px;
 }
