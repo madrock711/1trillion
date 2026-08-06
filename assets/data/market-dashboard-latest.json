@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "snapshotId": "20260805-0929",
-  "snapshot": "market-dashboard-20260805-0929.json",
-  "asOf": "2026-08-05T09:29:00+09:00",
-  "marketState": "한국 정규장 개장 초반"
+  "snapshotId": "20260806-1005",
+  "snapshot": "market-dashboard-20260806-1005.json",
+  "asOf": "2026-08-06T10:05:00+09:00",
+  "marketState": "한국 정규장 오전 장중 스냅샷"
 }
