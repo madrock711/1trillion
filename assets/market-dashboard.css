@@ -846,6 +846,13 @@
     line-height: 1.55;
 }
 
+.kodex-history-method {
+    margin: 0 0 var(--space-2);
+    color: #94a9b5;
+    font-size: 0.74rem;
+    line-height: 1.5;
+}
+
 .kodex-history-shell {
     overflow-x: auto;
     border: 1px solid var(--border-subtle);
@@ -927,6 +934,11 @@
     opacity: 0.42;
 }
 
+.kodex-history-volume.is-xray-base {
+    fill: #60717c;
+    opacity: 0.34;
+}
+
 .kodex-history-volume-group {
     cursor: crosshair;
 }
@@ -940,6 +952,18 @@
 }
 
 .kodex-history-volume-segment.is-estimated-sell {
+    fill: #4f8dff;
+}
+
+.kodex-history-volume-force {
+    opacity: 0.92;
+}
+
+.kodex-history-volume-force.is-buy {
+    fill: #ff4f5e;
+}
+
+.kodex-history-volume-force.is-sell {
     fill: #4f8dff;
 }
 
@@ -958,6 +982,7 @@
     stroke-linecap: round;
     stroke-linejoin: round;
     vector-effect: non-scaling-stroke;
+    pointer-events: none;
 }
 
 .kodex-history-line {

@@ -859,6 +859,23 @@
         return formatSigned(percent, '%', 2);
     }
 
+    function pressureStrengthScale(rows, deltaFor, volumeFor) {
+        var ratios = rows.map(function (row) {
+            return Math.abs(deltaFor(row)) / Math.max(volumeFor(row), 1);
+        }).filter(function (value) {
+            return Number.isFinite(value) && value > 0;
+        }).sort(function (left, right) {
+            return left - right;
+        });
+        if (!ratios.length) return 1;
+        var percentileIndex = Math.min(ratios.length - 1, Math.floor((ratios.length - 1) * 0.9));
+        return Math.max(ratios[percentileIndex], 0.01);
+    }
+
+    function pressureFillRatio(delta, volume, scale) {
+        return Math.min(1, Math.abs(delta) / Math.max(volume, 1) / Math.max(scale, 0.01));
+    }
+
     function addChartGrid(svg, left, right, top, bottom, minValue, maxValue, formatter) {
         for (var index = 0; index <= 4; index += 1) {
             var y = top + (bottom - top) * index / 4;
@@ -903,17 +920,14 @@
         var ma20 = simpleMovingAverage(history, 20);
         var ma60 = simpleMovingAverage(history, 60);
 
-        svg.setAttribute('viewBox', '0 0 1000 550');
+        svg.setAttribute('viewBox', '0 0 1000 530');
         var width = 1000;
         var margin = { left: 24, right: 88 };
         var innerWidth = width - margin.left - margin.right;
         var priceTop = 34;
         var priceBottom = 300;
-        var volumeTop = 330;
-        var volumeBottom = 400;
-        var pressureTop = 430;
-        var pressureBottom = 486;
-        var pressureMid = (pressureTop + pressureBottom) / 2;
+        var volumeTop = 336;
+        var volumeBottom = 476;
         var xStep = innerWidth / rows.length;
         var candleWidth = Math.max(2.5, Math.min(9, xStep * 0.58));
 
@@ -938,10 +952,8 @@
         addChartGrid(svg, margin.left, width - margin.right, priceTop, priceBottom, minPrice, maxPrice, function (value) {
             return formatNumber(value, 0);
         });
-        svg.appendChild(makeSvg('line', { x1: margin.left, y1: pressureMid, x2: width - margin.right, y2: pressureMid, 'class': 'kodex-history-zero-line' }));
         addChartSectionLabel(svg, '일봉', margin.left, priceTop + 12);
-        addChartSectionLabel(svg, '거래량', margin.left, volumeTop + 12);
-        addChartSectionLabel(svg, '순압력·CVD', margin.left, pressureTop + 12);
+        addChartSectionLabel(svg, '거래량 X-ray · CVD', margin.left, volumeTop + 12);
 
         var maxVolume = Math.max.apply(Math, rows.map(function (row) { return row.volume; }));
         function volumeY(value) {
@@ -961,13 +973,18 @@
                 coverageRatio: pressure.coverageRatio
             };
         });
+        rows.forEach(function (row) {
+            if (dailyPressure[row.date]) dailyPressure[row.date].volume = row.volume;
+        });
         var pressureRows = Object.keys(dailyPressure).map(function (date) { return dailyPressure[date]; });
-        var maxAbsDelta = Math.max.apply(Math, [1].concat(pressureRows.map(function (row) { return Math.abs(row.delta); })));
+        var forceScale = pressureStrengthScale(pressureRows, function (row) { return row.delta; }, function (row) {
+            return row.volume || 1;
+        });
         var cvdValues = pressureRows.map(function (row) { return row.cvd; });
         var minCvd = Math.min.apply(Math, [0].concat(cvdValues));
         var maxCvd = Math.max.apply(Math, [0].concat(cvdValues));
         var cvdSpread = Math.max(maxCvd - minCvd, 1);
-        function cvdY(value) { return pressureTop + (maxCvd - value) / cvdSpread * (pressureBottom - pressureTop); }
+        function cvdY(value) { return volumeTop + 16 + (maxCvd - value) / cvdSpread * (volumeBottom - volumeTop - 24); }
 
         function updateReadout(row) {
             var parts = [
@@ -1016,26 +1033,34 @@
             group.appendChild(title);
             svg.appendChild(group);
 
-            svg.appendChild(makeSvg('rect', {
+            var pressure = dailyPressure[row.date];
+            var volumeGroup = makeSvg('g', { 'class': 'kodex-history-volume-group' });
+            volumeGroup.appendChild(makeSvg('rect', {
                 x: x - candleWidth / 2,
                 y: volumeY(row.volume),
                 width: candleWidth,
                 height: Math.max(1, volumeBottom - volumeY(row.volume)),
                 rx: 0.7,
-                'class': 'kodex-history-volume ' + tone
+                'class': 'kodex-history-volume ' + (pressure ? 'is-xray-base' : tone)
             }));
-            var pressure = dailyPressure[row.date];
             if (pressure) {
-                var pressureHeight = Math.max(1.5, Math.abs(pressure.delta) / maxAbsDelta * (pressureBottom - pressureTop) / 2);
-                svg.appendChild(makeSvg('rect', {
+                var totalHeight = Math.max(1, volumeBottom - volumeY(row.volume));
+                var forceHeight = Math.max(1.5, totalHeight * pressureFillRatio(pressure.delta, row.volume, forceScale));
+                volumeGroup.appendChild(makeSvg('rect', {
                     x: x - candleWidth / 2,
-                    y: pressure.delta >= 0 ? pressureMid - pressureHeight : pressureMid,
+                    y: volumeBottom - forceHeight,
                     width: candleWidth,
-                    height: pressureHeight,
+                    height: forceHeight,
                     rx: 0.7,
-                    'class': 'kodex-history-pressure ' + (pressure.delta >= 0 ? 'is-buy' : 'is-sell')
+                    'class': 'kodex-history-volume-force ' + (pressure.delta >= 0 ? 'is-buy' : 'is-sell')
                 }));
             }
+            volumeGroup.addEventListener('pointerenter', function () { updateReadout(row); });
+            var volumeTitle = makeSvg('title');
+            volumeTitle.textContent = formatHistoryDate(row.date) + ' 거래량 ' + formatNumber(row.volume, 0) + '주'
+                + (pressure ? ', 추정 순압력 ' + formatSigned(pressure.imbalance, '%', 2) : '');
+            volumeGroup.appendChild(volumeTitle);
+            svg.appendChild(volumeGroup);
         });
 
         var cvdPath = '';
@@ -1060,7 +1085,7 @@
         tickIndexes.forEach(function (index) {
             var tick = makeSvg('text', {
                 x: xFor(index),
-                y: 532,
+                y: 512,
                 'class': 'kodex-history-date-label',
                 'text-anchor': index === 0 ? 'start' : index === rows.length - 1 ? 'end' : 'middle'
             });
@@ -1081,18 +1106,15 @@
 
     function renderKodexIntradayRows(day, interval, svg, summary, readout) {
         var rows = aggregateIntradayBars(day.bars, interval);
-        svg.setAttribute('viewBox', '0 0 1000 620');
+        svg.setAttribute('viewBox', '0 0 1000 590');
         var width = 1000;
         var margin = { left: 24, right: 88 };
         var right = width - margin.right;
         var innerWidth = right - margin.left;
         var priceTop = 34;
         var priceBottom = 305;
-        var volumeTop = 335;
-        var volumeBottom = 410;
-        var pressureTop = 455;
-        var pressureBottom = 555;
-        var pressureMid = (pressureTop + pressureBottom) / 2;
+        var volumeTop = 345;
+        var volumeBottom = 530;
         var xStep = innerWidth / rows.length;
         var candleWidth = Math.max(2.5, Math.min(14, xStep * 0.62));
         function xFor(index) { return margin.left + xStep * index + xStep / 2; }
@@ -1105,17 +1127,15 @@
         function priceY(value) { return priceTop + (maxPrice - value) / (maxPrice - minPrice) * (priceBottom - priceTop); }
         addChartGrid(svg, margin.left, right, priceTop, priceBottom, minPrice, maxPrice, function (value) { return formatNumber(value, 0); });
         addChartSectionLabel(svg, interval + '분봉', margin.left, priceTop + 12);
-        addChartSectionLabel(svg, '거래량', margin.left, volumeTop + 12);
-        addChartSectionLabel(svg, '순압력·CVD', margin.left, pressureTop + 12);
-        svg.appendChild(makeSvg('line', { x1: margin.left, y1: pressureMid, x2: right, y2: pressureMid, 'class': 'kodex-history-zero-line' }));
+        addChartSectionLabel(svg, '거래량 X-ray · CVD', margin.left, volumeTop + 12);
 
         var maxVolume = Math.max.apply(Math, rows.map(function (row) { return row.volume; }));
-        var maxAbsDelta = Math.max.apply(Math, [1].concat(rows.map(function (row) { return Math.abs(row.delta); })));
+        var forceScale = pressureStrengthScale(rows, function (row) { return row.delta; }, function (row) { return row.volume; });
         var minCvd = Math.min.apply(Math, [0].concat(rows.map(function (row) { return row.cumulativeDelta; })));
         var maxCvd = Math.max.apply(Math, [0].concat(rows.map(function (row) { return row.cumulativeDelta; })));
         var cvdSpread = Math.max(maxCvd - minCvd, 1);
         function volumeY(value) { return volumeBottom - value / Math.max(maxVolume, 1) * (volumeBottom - volumeTop); }
-        function cvdY(value) { return pressureTop + (maxCvd - value) / cvdSpread * (pressureBottom - pressureTop); }
+        function cvdY(value) { return volumeTop + 18 + (maxCvd - value) / cvdSpread * (volumeBottom - volumeTop - 28); }
 
         function updateReadout(row) {
             readout.textContent = formatHistoryDate(day.date) + ' ' + row.time + (row.endTime !== row.time ? '–' + row.endTime : '')
@@ -1145,23 +1165,29 @@
             group.addEventListener('focus', function () { updateReadout(row); });
             group.setAttribute('aria-label', row.time + ', 종가 ' + formatPrice(row.close, '원') + ', 추정 순압력 ' + formatSigned(row.delta, '주', 0));
             svg.appendChild(group);
-            svg.appendChild(makeSvg('rect', {
+            var volumeGroup = makeSvg('g', { 'class': 'kodex-history-volume-group', tabindex: '0', role: 'img' });
+            volumeGroup.appendChild(makeSvg('rect', {
                 x: x - candleWidth / 2,
                 y: volumeY(row.volume),
                 width: candleWidth,
                 height: Math.max(1, volumeBottom - volumeY(row.volume)),
                 rx: 0.7,
-                'class': 'kodex-history-volume ' + tone
+                'class': 'kodex-history-volume is-xray-base'
             }));
-            var deltaHeight = Math.max(1.5, Math.abs(row.delta) / maxAbsDelta * (pressureBottom - pressureTop) / 2);
-            svg.appendChild(makeSvg('rect', {
+            var totalHeight = Math.max(1, volumeBottom - volumeY(row.volume));
+            var forceHeight = Math.max(1.5, totalHeight * pressureFillRatio(row.delta, row.volume, forceScale));
+            volumeGroup.appendChild(makeSvg('rect', {
                 x: x - candleWidth / 2,
-                y: row.delta >= 0 ? pressureMid - deltaHeight : pressureMid,
+                y: volumeBottom - forceHeight,
                 width: candleWidth,
-                height: deltaHeight,
+                height: forceHeight,
                 rx: 0.7,
-                'class': 'kodex-history-pressure ' + (row.delta >= 0 ? 'is-buy' : 'is-sell')
+                'class': 'kodex-history-volume-force ' + (row.delta >= 0 ? 'is-buy' : 'is-sell')
             }));
+            volumeGroup.addEventListener('pointerenter', function () { updateReadout(row); });
+            volumeGroup.addEventListener('focus', function () { updateReadout(row); });
+            volumeGroup.setAttribute('aria-label', row.time + ', 거래량 ' + formatNumber(row.volume, 0) + '주, 추정 순압력 ' + formatPressurePercent(row.delta, row.volume));
+            svg.appendChild(volumeGroup);
             cvdPath += (cvdPath ? ' L ' : 'M ') + x.toFixed(2) + ' ' + cvdY(row.cumulativeDelta).toFixed(2);
         });
         if (cvdPath) svg.appendChild(makeSvg('path', { d: cvdPath, 'class': 'kodex-history-cvd' }));
@@ -1170,7 +1196,7 @@
             .filter(function (value, index, values) { return values.indexOf(value) === index; });
         tickIndexes.forEach(function (index) {
             var tick = makeSvg('text', {
-                x: xFor(index), y: 595, 'class': 'kodex-history-date-label',
+                x: xFor(index), y: 572, 'class': 'kodex-history-date-label',
                 'text-anchor': index === 0 ? 'start' : index === rows.length - 1 ? 'end' : 'middle'
             });
             tick.textContent = rows[index].time;
@@ -1235,10 +1261,10 @@
         var eyebrow = document.getElementById('kodex-history-eyebrow');
         if (title) title.textContent = selectedKodexChartMode === 'daily'
             ? 'KODEX 레버리지 3개월 가격 흐름'
-            : 'KODEX 레버리지 분봉 순압력';
+            : 'KODEX 레버리지 분봉 거래량 X-ray';
         if (eyebrow) eyebrow.textContent = selectedKodexChartMode === 'daily'
-            ? '일봉·거래량·순압력'
-            : '분봉·거래량·CVD';
+            ? '일봉·거래량 X-ray·CVD'
+            : '분봉·거래량 X-ray·CVD';
         if (selectedKodexChartMode === 'intraday') {
             renderKodexIntradayChart(instrument, svg, summary, readout, indexRows);
             return;
