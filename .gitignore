@@ -1,3 +1,7 @@
 
 # Firebase
 firebase-debug.log
+
+# Python local caches
+__pycache__/
+*.py[cod]

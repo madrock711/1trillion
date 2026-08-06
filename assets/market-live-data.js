@@ -18,6 +18,11 @@
         expiresAt: 0,
         pending: null
     };
+    var kodexVolumePressureCache = {
+        value: null,
+        expiresAt: 0,
+        pending: null
+    };
 
     function parseNumber(value) {
         if (typeof value === 'number' && Number.isFinite(value)) return value;
@@ -153,6 +158,67 @@
             });
         });
         return Object.keys(rowsByDate).sort().map(function (date) { return rowsByDate[date]; });
+    }
+
+    function normalizeKodexVolumePressure(payload) {
+        if (!payload || payload.schemaVersion !== 1 || String(payload.symbol) !== '122630' || !Array.isArray(payload.days)) {
+            throw new Error('KODEX 거래 압력 데이터가 올바르지 않습니다.');
+        }
+        var rowsByDate = {};
+        var invalidRows = false;
+        payload.days.forEach(function (row) {
+            var date = row && String(row.date || '');
+            var normalized = {
+                date: date,
+                dailyVolume: parseNumber(row && row.dailyVolume),
+                minuteVolume: parseNumber(row && row.minuteVolume),
+                estimatedBuyVolume: parseNumber(row && row.estimatedBuyVolume),
+                estimatedSellVolume: parseNumber(row && row.estimatedSellVolume),
+                buyShare: parseNumber(row && row.buyShare),
+                sellShare: parseNumber(row && row.sellShare),
+                coverageRatio: parseNumber(row && row.coverageRatio),
+                minuteBars: parseNumber(row && row.minuteBars),
+                method: row && String(row.method || '')
+            };
+            var estimatedTotal = normalized.estimatedBuyVolume + normalized.estimatedSellVolume;
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(date)
+                || !Object.keys(normalized).filter(function (key) { return key !== 'date' && key !== 'method'; }).every(function (key) {
+                    return Number.isFinite(normalized[key]);
+                })
+                || normalized.dailyVolume <= 0
+                || normalized.minuteVolume <= 0
+                || normalized.estimatedBuyVolume < 0
+                || normalized.estimatedSellVolume < 0
+                || Math.abs(estimatedTotal - normalized.dailyVolume) > 1
+                || Math.abs(normalized.buyShare + normalized.sellShare - 1) > 0.00001
+                || Math.abs(normalized.buyShare - normalized.estimatedBuyVolume / normalized.dailyVolume) > 0.000002
+                || Math.abs(normalized.sellShare - normalized.estimatedSellVolume / normalized.dailyVolume) > 0.000002
+                || Math.abs(normalized.coverageRatio - normalized.minuteVolume / normalized.dailyVolume) > 0.000002
+                || normalized.coverageRatio < 0.95
+                || normalized.coverageRatio > 1.005
+                || normalized.minuteBars < 300
+                || normalized.method !== 'bvc-normal-1m-v1'
+                || rowsByDate[date]) {
+                invalidRows = true;
+                return;
+            }
+            rowsByDate[date] = normalized;
+        });
+        if (invalidRows) throw new Error('KODEX 거래 압력 이력에 유효하지 않거나 중복된 행이 있습니다.');
+        return Object.keys(rowsByDate).sort().map(function (date) { return rowsByDate[date]; });
+    }
+
+    function mergeKodexVolumePressure(history, pressureRows) {
+        var pressureByDate = {};
+        (pressureRows || []).forEach(function (row) { pressureByDate[row.date] = row; });
+        return (history || []).map(function (row) {
+            var pressure = pressureByDate[row.date];
+            if (!pressure || Math.abs(pressure.dailyVolume - row.volume) / Math.max(row.volume, 1) > 0.005) return row;
+            var enriched = {};
+            Object.keys(row).forEach(function (key) { enriched[key] = row[key]; });
+            enriched.volumePressure = pressure;
+            return enriched;
+        });
     }
 
     function cleanDisplayText(value) {
@@ -392,6 +458,23 @@
         return kodexHistoryCache.pending;
     }
 
+    function fetchKodexVolumePressure(fetchImpl, url, signal, nonce, now, ttlMs) {
+        if (kodexVolumePressureCache.value && kodexVolumePressureCache.expiresAt > now) {
+            return Promise.resolve(kodexVolumePressureCache.value);
+        }
+        if (kodexVolumePressureCache.pending) return kodexVolumePressureCache.pending;
+        kodexVolumePressureCache.pending = fetchJson(fetchImpl, url, signal, nonce).then(function (payload) {
+            var rows = normalizeKodexVolumePressure(payload);
+            if (!rows.length) throw new Error('KODEX 거래 압력 이력이 비어 있습니다.');
+            kodexVolumePressureCache.value = rows;
+            kodexVolumePressureCache.expiresAt = now + ttlMs;
+            return rows;
+        }).finally(function () {
+            kodexVolumePressureCache.pending = null;
+        });
+        return kodexVolumePressureCache.pending;
+    }
+
     function fetchLatest(baseUrl, fetchImpl, options) {
         var settings = options || {};
         var now = Number.isFinite(settings.now) ? settings.now : Date.now();
@@ -431,15 +514,27 @@
             now,
             Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000
         ).catch(function () { return null; });
+        var volumePressureUrl = settings.volumePressureUrl
+            || new URL('../assets/data/kodex-volume-pressure.json', baseUrl).href;
+        var optionalKodexVolumePressureRequest = fetchKodexVolumePressure(
+            fetchImpl,
+            volumePressureUrl,
+            signal,
+            nonce,
+            now,
+            Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000
+        ).catch(function () { return null; });
 
         return Promise.all(optionalIndexRequests.concat(optionalStockRequests).concat([
             optionalExchangeRequest,
-            optionalKodexHistoryRequest
+            optionalKodexHistoryRequest,
+            optionalKodexVolumePressureRequest
         ])).then(function (items) {
             var markets = items.slice(0, INDEX_CODES.length).filter(Boolean);
             var instruments = items.slice(INDEX_CODES.length, INDEX_CODES.length + STOCKS.length).filter(Boolean);
             var exchange = items[INDEX_CODES.length + STOCKS.length];
             var kodexHistory = items[INDEX_CODES.length + STOCKS.length + 1];
+            var kodexVolumePressure = items[INDEX_CODES.length + STOCKS.length + 2];
             if (!markets.length) throw new Error('국내 지수 시세를 불러오지 못했습니다.');
             var primaryMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || markets[0];
             var kospiMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || null;
@@ -460,10 +555,11 @@
             if (!exchange) missingSources.push('달러/원');
             var kodexInstrument = instruments.filter(function (instrument) { return instrument.id === 'KODEX'; })[0];
             if (kodexInstrument && kodexHistory) {
-                kodexInstrument.priceHistory = kodexHistory;
+                kodexInstrument.priceHistory = mergeKodexVolumePressure(kodexHistory, kodexVolumePressure);
             } else if (kodexInstrument) {
                 missingSources.push('KODEX 3개월 가격·수급');
             }
+            if (kodexInstrument && !kodexVolumePressure) missingSources.push('KODEX 분봉 기반 거래 압력');
             var delayedSources = markets.concat(instruments).filter(function (item) { return item.delayed; }).map(function (item) {
                 return item.label;
             });
@@ -495,6 +591,8 @@
         normalizeStock: normalizeStock,
         normalizeExchange: normalizeExchange,
         normalizeKodexPriceHistory: normalizeKodexPriceHistory,
+        normalizeKodexVolumePressure: normalizeKodexVolumePressure,
+        mergeKodexVolumePressure: mergeKodexVolumePressure,
         parseNumber: parseNumber,
         formatAsOfDisplay: formatAsOfDisplay
     };

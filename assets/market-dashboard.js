@@ -12,6 +12,7 @@
     var loadState = document.getElementById('dashboard-load-state');
     var dashboardData = null;
     var liveMarketSource = root.getAttribute('data-live-market-source');
+    var kodexVolumeSource = root.getAttribute('data-kodex-volume-source');
     var selectedInstrumentId = null;
     var latestLiveData = null;
     var liveRefreshTimer = null;
@@ -703,6 +704,23 @@
         return path;
     }
 
+    function validVolumePressure(row) {
+        var pressure = row && row.volumePressure;
+        if (!pressure) return null;
+        var estimatedTotal = pressure.estimatedBuyVolume + pressure.estimatedSellVolume;
+        if (![pressure.estimatedBuyVolume, pressure.estimatedSellVolume, pressure.coverageRatio].every(Number.isFinite)
+            || pressure.estimatedBuyVolume < 0
+            || pressure.estimatedSellVolume < 0
+            || estimatedTotal <= 0
+            || pressure.coverageRatio < 0.95
+            || pressure.coverageRatio > 1.005) return null;
+        return {
+            buyShare: pressure.estimatedBuyVolume / estimatedTotal,
+            sellShare: pressure.estimatedSellVolume / estimatedTotal,
+            coverageRatio: pressure.coverageRatio
+        };
+    }
+
     function renderKodexHistoryChart(instrument) {
         var svg = document.getElementById('kodex-history-chart');
         var summary = document.getElementById('kodex-history-summary');
@@ -815,6 +833,12 @@
                 '저가 ' + formatPrice(row.low, '원'),
                 '거래량 ' + formatNumber(row.volume, 0) + '주'
             ];
+            var pressure = validVolumePressure(row);
+            if (pressure) {
+                parts.push('추정 매수 ' + formatNumber(pressure.buyShare * 100, 1) + '%');
+                parts.push('추정 매도 ' + formatNumber(pressure.sellShare * 100, 1) + '%');
+                parts.push('분봉 포착률 ' + formatNumber(pressure.coverageRatio * 100, 1) + '%');
+            }
             readout.textContent = parts.join(' · ');
         }
 
@@ -847,14 +871,52 @@
             group.appendChild(title);
             svg.appendChild(group);
 
-            svg.appendChild(makeSvg('rect', {
-                x: x - candleWidth / 2,
-                y: volumeY(row.volume),
-                width: candleWidth,
-                height: Math.max(1, volumeBottom - volumeY(row.volume)),
-                rx: 0.7,
-                'class': 'kodex-history-volume ' + tone
-            }));
+            var pressure = validVolumePressure(row);
+            if (pressure) {
+                var volumeGroup = makeSvg('g', { 'class': 'kodex-history-volume-group is-estimated' });
+                var totalHeight = Math.max(1, volumeBottom - volumeY(row.volume));
+                var sellHeight = totalHeight * pressure.sellShare;
+                volumeGroup.appendChild(makeSvg('rect', {
+                    x: x - candleWidth / 2,
+                    y: volumeY(row.volume),
+                    width: candleWidth,
+                    height: totalHeight,
+                    rx: 0.7,
+                    'class': 'kodex-history-volume-segment is-estimated-buy'
+                }));
+                volumeGroup.appendChild(makeSvg('rect', {
+                    x: x - candleWidth / 2,
+                    y: volumeBottom - sellHeight,
+                    width: candleWidth,
+                    height: sellHeight,
+                    rx: 0.7,
+                    'class': 'kodex-history-volume-segment is-estimated-sell'
+                }));
+                volumeGroup.addEventListener('pointerenter', function () { updateReadout(row); });
+                volumeGroup.addEventListener('focus', function () { updateReadout(row); });
+                volumeGroup.setAttribute('tabindex', '0');
+                volumeGroup.setAttribute('role', 'img');
+                volumeGroup.setAttribute('aria-label', formatHistoryDate(row.date)
+                    + ', 거래량 ' + formatNumber(row.volume, 0) + '주'
+                    + ', 추정 매수 ' + formatNumber(pressure.buyShare * 100, 1) + '%'
+                    + ', 추정 매도 ' + formatNumber(pressure.sellShare * 100, 1) + '%'
+                    + ', 분봉 포착률 ' + formatNumber(pressure.coverageRatio * 100, 1) + '%');
+                var volumeTitle = makeSvg('title');
+                volumeTitle.textContent = formatHistoryDate(row.date)
+                    + ' 추정 매수 ' + formatNumber(pressure.buyShare * 100, 1) + '%'
+                    + ' · 추정 매도 ' + formatNumber(pressure.sellShare * 100, 1) + '%';
+                volumeGroup.appendChild(volumeTitle);
+                svg.appendChild(volumeGroup);
+            } else {
+                svg.appendChild(makeSvg('rect', {
+                    x: x - candleWidth / 2,
+                    y: volumeY(row.volume),
+                    width: candleWidth,
+                    height: Math.max(1, volumeBottom - volumeY(row.volume)),
+                    rx: 0.7,
+                    'class': 'kodex-history-volume ' + tone
+                }));
+            }
         });
 
         [
@@ -1029,8 +1091,11 @@
         appendKodexMetric(context, '기관 현물', institution ? formatSigned(institution.value, institution.unit) : '데이터 없음');
         appendKodexMetric(context, '프로그램', program && Number.isFinite(program.total) ? formatSigned(program.total, program.unit) : '데이터 없음');
 
+        var estimatedDays = (liveInstrument.priceHistory || instrument.priceHistory || []).filter(function (row) {
+            return Boolean(validVolumePressure(row));
+        }).length;
         document.getElementById('kodex-data-note').textContent = '가격·거래량은 ' + (liveInstrument.asOfLabel || instrument.asOfLabel || data.asOfDisplay)
-            + ' 기준입니다. 투자자별 수치는 거래일별 순매매 수량이며 체결 주도 방향을 뜻하지 않습니다.';
+            + ' 기준입니다. 추정치가 축적된 ' + estimatedDays + '거래일은 1분봉 가격 변화로 계산한 매수·매도 압력이며, 이전 구간은 종가 방향별 총거래량입니다.';
     }
 
     function renderSources(data) {
@@ -1415,7 +1480,10 @@
         liveRefreshPromise = window.MarketDashboardLive.fetchLatest(
             absoluteBase,
             window.fetch.bind(window),
-            { signal: controller ? controller.signal : undefined }
+            {
+                signal: controller ? controller.signal : undefined,
+                volumePressureUrl: kodexVolumeSource ? new URL(kodexVolumeSource, window.location.href).href : undefined
+            }
         ).then(function (liveData) {
             window.clearTimeout(timeoutId);
             latestLiveData = mergeLiveResponse(latestLiveData, liveData);

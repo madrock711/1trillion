@@ -1,0 +1,43 @@
+'use strict';
+
+var assert = require('assert');
+var fs = require('fs');
+var path = require('path');
+var live = require('../assets/market-live-data.js');
+
+var archivePath = path.join(__dirname, '..', 'assets', 'data', 'kodex-volume-pressure.json');
+var archive = JSON.parse(fs.readFileSync(archivePath, 'utf8'));
+var normalized = live.normalizeKodexVolumePressure(archive);
+
+assert.ok(normalized.length >= 6, 'archive should retain at least the initial six validated sessions');
+var dates = normalized.map(function (row) { return row.date; });
+var rawDates = archive.days.map(function (row) { return row.date; });
+assert.strictEqual(normalized.length, archive.days.length, 'every archived row should normalize successfully');
+assert.strictEqual(new Set(rawDates).size, rawDates.length, 'archive dates should be unique');
+assert.deepStrictEqual(rawDates, rawDates.slice().sort(), 'archive dates should remain ascending');
+['2026-07-29', '2026-07-30', '2026-07-31', '2026-08-03', '2026-08-04', '2026-08-05'].forEach(function (date) {
+    assert.ok(dates.indexOf(date) !== -1, 'initial session is missing: ' + date);
+});
+normalized.forEach(function (row) {
+    assert.strictEqual(row.estimatedBuyVolume + row.estimatedSellVolume, row.dailyVolume);
+    assert.ok(Math.abs(row.buyShare + row.sellShare - 1) <= 0.00001);
+    assert.ok(Math.abs(row.buyShare - row.estimatedBuyVolume / row.dailyVolume) <= 0.000002);
+    assert.ok(Math.abs(row.sellShare - row.estimatedSellVolume / row.dailyVolume) <= 0.000002);
+    assert.ok(Math.abs(row.coverageRatio - row.minuteVolume / row.dailyVolume) <= 0.000002);
+});
+
+var history = [
+    { date: '2026-07-28', open: 1, high: 2, low: 1, close: 2, volume: 500 },
+    { date: normalized[0].date, open: 1, high: 2, low: 1, close: 2, volume: normalized[0].dailyVolume }
+];
+var merged = live.mergeKodexVolumePressure(history, normalized);
+assert.strictEqual(merged[0].volumePressure, undefined, 'older history should retain the legacy bar');
+assert.strictEqual(merged[1].volumePressure.date, normalized[0].date, 'matching day should receive the estimate');
+assert.strictEqual(history[1].volumePressure, undefined, 'merge should not mutate source history');
+
+var mismatched = live.mergeKodexVolumePressure([
+    { date: normalized[0].date, open: 1, high: 2, low: 1, close: 2, volume: 1 }
+], normalized);
+assert.strictEqual(mismatched[0].volumePressure, undefined, 'large daily-volume mismatch should fall back to legacy');
+
+console.log('KODEX volume-pressure browser data tests passed.');

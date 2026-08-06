@@ -795,6 +795,8 @@
 
 .kodex-history-legend .is-up { color: #ff737b; }
 .kodex-history-legend .is-down { color: #69a9ff; }
+.kodex-history-legend .is-estimated-buy { color: #ff4f5e; }
+.kodex-history-legend .is-estimated-sell { color: #4f8dff; }
 .kodex-history-legend .is-ma5 { color: #ffd166; }
 .kodex-history-legend .is-ma20 { color: #66d2ff; }
 .kodex-history-legend .is-ma60 { color: #59dda0; }
@@ -880,6 +882,22 @@
 
 .kodex-history-volume {
     opacity: 0.56;
+}
+
+.kodex-history-volume-group {
+    cursor: crosshair;
+}
+
+.kodex-history-volume-segment {
+    opacity: 1;
+}
+
+.kodex-history-volume-segment.is-estimated-buy {
+    fill: #ff4f5e;
+}
+
+.kodex-history-volume-segment.is-estimated-sell {
+    fill: #4f8dff;
 }
 
 .kodex-history-line {

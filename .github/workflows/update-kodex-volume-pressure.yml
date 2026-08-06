@@ -1,0 +1,54 @@
+name: Update KODEX volume pressure
+
+on:
+  schedule:
+    - cron: "20 7 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kodex-volume-pressure
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Synchronize main before calculation
+        run: git pull --rebase origin main
+
+      - name: Run volume-pressure tests
+        run: python -m unittest discover -s tests -p "test_kodex_volume_pressure.py"
+
+      - name: Accumulate completed sessions
+        run: python scripts/update_kodex_volume_pressure.py --recent 6
+
+      - name: Validate updated archive and browser merge
+        run: node tests/test_kodex_volume_pressure.js
+
+      - name: Commit a new trading day
+        shell: bash
+        run: |
+          if git diff --quiet -- assets/data/kodex-volume-pressure.json; then
+            echo "No new completed trading day."
+            exit 0
+          fi
+          git config user.name "hpmplab-market-data"
+          git config user.email "actions@users.noreply.github.com"
+          git add assets/data/kodex-volume-pressure.json
+          git commit -m "Update KODEX volume pressure archive"
+          git push origin HEAD:main
