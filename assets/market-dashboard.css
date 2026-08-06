@@ -504,10 +504,6 @@
     display: none !important;
 }
 
-.market-dashboard-page--kodex-focus .market-dashboard-overview {
-    display: none;
-}
-
 .market-panel-heading--section {
     margin-bottom: var(--space-4);
 }
@@ -739,6 +735,32 @@
         #111713;
 }
 
+.technical-kodex-analysis {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.technical-comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+}
+
+.technical-comparison-grid .kodex-history-card {
+    min-width: 0;
+    margin-bottom: 0;
+}
+
+.tqqq-history-card {
+    background:
+        linear-gradient(155deg, rgba(247, 200, 92, 0.045), transparent 35%),
+        #111713;
+}
+
+.tqqq-history-card .market-source-note {
+    margin: var(--space-3) 0 0;
+}
+
 .kodex-history-heading {
     align-items: flex-end;
 }
@@ -864,9 +886,13 @@
 .kodex-history-chart {
     display: block;
     width: 100%;
-    min-width: 920px;
+    min-width: 620px;
     height: auto;
     min-height: 440px;
+}
+
+.kodex-history-chart.is-intraday {
+    min-width: 920px;
 }
 
 .kodex-history-grid {
@@ -1745,6 +1771,10 @@
         grid-template-columns: minmax(0, 1fr);
     }
 
+    .technical-comparison-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
     .market-factor-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -1772,7 +1802,7 @@
         top: 112px;
         z-index: 30;
         order: 3;
-        grid-template-columns: repeat(4, minmax(112px, 1fr));
+        grid-template-columns: repeat(3, minmax(112px, 1fr));
         box-shadow: 0 10px 28px rgba(0, 0, 0, 0.34);
         overflow-x: auto;
     }

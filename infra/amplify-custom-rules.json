@@ -75,6 +75,11 @@
     "status": "200"
   },
   {
+    "source": "/market-data/us/TQQQ/history",
+    "target": "https://query1.finance.yahoo.com/v8/finance/chart/TQQQ?range=3mo&interval=1d",
+    "status": "200"
+  },
+  {
     "source": "/<*>",
     "target": "/404.html",
     "status": "404-200"

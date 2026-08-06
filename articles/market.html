@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260806-8">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260806-12">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -63,8 +63,8 @@
     }
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
-    <script defer src="../assets/market-live-data.js?v=20260806-5"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260806-11"></script>
+    <script defer src="../assets/market-live-data.js?v=20260806-6"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260806-12"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -120,7 +120,7 @@
                 <ol class="market-checkpoint-list" id="market-checkpoint-list"></ol>
                 <div class="market-dashboard-actions">
                     <a class="market-dashboard-cta" id="market-latest-article-link" href="market-2026-08-06.html">오늘 시황 전문 읽기 <span aria-hidden="true">→</span></a>
-                    <a class="market-dashboard-cta market-dashboard-cta--kodex" href="?view=kodex">KODEX 레버리지 전용 화면 <span aria-hidden="true">→</span></a>
+                    <a class="market-dashboard-cta market-dashboard-cta--kodex" href="?view=technical#kodex-analysis">기술적 분석 보기 <span aria-hidden="true">→</span></a>
                     <a class="market-dashboard-cta market-dashboard-cta--secondary" href="?view=analysis#research-archive">최근 시황 9편 보기 <span aria-hidden="true">↓</span></a>
                 </div>
             </aside>
@@ -138,10 +138,6 @@
             <a href="?view=technical" data-market-view="technical">
                 <span aria-hidden="true">⌗</span>
                 기술적 분석
-            </a>
-            <a href="?view=kodex" data-market-view="kodex">
-                <span aria-hidden="true">◆</span>
-                KODEX 전용
             </a>
         </nav>
 
@@ -362,23 +358,23 @@
 
             <section class="market-view-panel" id="market-view-technical" data-view-panel="technical" aria-labelledby="technical-title">
                 <div class="market-panel-heading market-panel-heading--section">
-                    <p class="market-panel-kicker">Technical levels</p>
+                    <p class="market-panel-kicker">KODEX leverage · TQQQ</p>
                     <h2 id="technical-title">기술적 분석</h2>
-                    <p>당일 고가·저가·시가·현재가와 리서치 기준선을 비교합니다.</p>
+                    <p>KODEX 레버리지의 당일 가격 범위와 기준선, KODEX·TQQQ의 3개월 가격 흐름을 함께 봅니다.</p>
                 </div>
 
+                <div id="kodex-analysis" class="technical-kodex-analysis">
                 <section class="market-dashboard-card market-technical-card" aria-labelledby="technical-chart-title">
                     <div class="market-card-heading-row market-card-heading-row--technical">
                         <div>
-                            <p class="market-card-label">당일 가격 범위</p>
-                            <h3 id="technical-chart-title">KOSPI 당일 OHLC·현재가 비교</h3>
+                            <p class="market-card-label">KODEX 레버리지 당일 가격 범위</p>
+                            <h3 id="technical-chart-title">KODEX 레버리지 당일 OHLC·현재가 비교</h3>
                         </div>
-                        <div class="market-instrument-switch" id="market-instrument-switch" aria-label="분석 대상 선택"></div>
                     </div>
                     <p class="market-technical-note" id="market-technical-note"></p>
                     <div class="market-chart-shell">
                         <svg id="market-technical-chart" class="market-technical-chart" viewBox="0 0 760 320" role="img" aria-labelledby="technical-chart-title technical-chart-description"></svg>
-                        <p class="sr-only" id="technical-chart-description">선택한 자산의 전일 종가, 시가, 고가, 저가와 현재가를 항목별로 비교합니다. 점의 좌우 순서는 실제 발생 순서를 뜻하지 않으며 같은 데이터는 아래 표에서도 확인할 수 있습니다.</p>
+                        <p class="sr-only" id="technical-chart-description">KODEX 레버리지의 전일 종가, 시가, 고가, 저가와 현재가를 항목별로 비교합니다. 같은 데이터는 아래 표에서도 확인할 수 있습니다.</p>
                     </div>
                     <p class="market-technical-interpretation" id="market-technical-interpretation" aria-live="polite"></p>
                     <div class="market-technical-levels" id="market-technical-levels"></div>
@@ -392,19 +388,6 @@
                         </div>
                     </details>
                 </section>
-
-                <aside class="market-dashboard-notice">
-                    <strong>차트 읽는 법</strong>
-                    <p>당일 시가·고가·저가·현재가와 주요 지지·저항을 비교합니다. 항목의 좌우 순서는 실제 체결 순서를 뜻하지 않습니다.</p>
-                </aside>
-            </section>
-
-            <section class="market-view-panel" id="market-view-kodex" data-view-panel="kodex" aria-labelledby="kodex-title">
-                <div class="market-panel-heading market-panel-heading--section">
-                    <p class="market-panel-kicker">KODEX leverage · 122630</p>
-                    <h2 id="kodex-title">KODEX 레버리지 전용</h2>
-                    <p>현재가와 당일 가격 위치, 거래량, 투자자별 순매매와 시황 기준선을 한 화면에서 확인합니다.</p>
-                </div>
 
                 <div class="kodex-focus-grid">
                     <article class="market-dashboard-card kodex-quote-card">
@@ -437,6 +420,7 @@
                     </article>
                 </div>
 
+                <div class="technical-comparison-grid" aria-label="KODEX 레버리지와 TQQQ 가격 차트 비교">
                 <section class="market-dashboard-card kodex-history-card" aria-labelledby="kodex-history-title">
                     <div class="market-card-heading-row kodex-history-heading">
                         <div>
@@ -483,6 +467,33 @@
                     <div class="kodex-history-summary" id="kodex-history-summary"></div>
                 </section>
 
+                <section class="market-dashboard-card kodex-history-card tqqq-history-card" aria-labelledby="tqqq-history-title">
+                    <div class="market-card-heading-row kodex-history-heading">
+                        <div>
+                            <p class="market-card-label">미국 정규장 일봉·거래량</p>
+                            <h3 id="tqqq-history-title">TQQQ 3개월 가격 흐름</h3>
+                        </div>
+                        <div class="kodex-period-switcher" aria-label="TQQQ 일봉 조회 기간">
+                            <button type="button" data-tqqq-period="1m" aria-pressed="false">1개월</button>
+                            <button type="button" data-tqqq-period="3m" aria-pressed="true">3개월</button>
+                        </div>
+                    </div>
+                    <div class="kodex-history-legend" aria-label="TQQQ 차트 범례">
+                        <span class="is-up">상승 봉</span>
+                        <span class="is-down">하락 봉</span>
+                        <span class="is-ma5">5일선</span>
+                        <span class="is-ma20">20일선</span>
+                        <span class="is-ma60">60일선</span>
+                    </div>
+                    <p class="kodex-history-readout" id="tqqq-history-readout" aria-live="polite">TQQQ 일봉과 거래량을 불러오는 중입니다.</p>
+                    <div class="kodex-history-shell" tabindex="0" role="region" aria-label="TQQQ 일봉과 거래량 차트">
+                        <svg id="tqqq-history-chart" class="kodex-history-chart tqqq-history-chart" viewBox="0 0 800 460" role="img" aria-labelledby="tqqq-history-title tqqq-history-readout"></svg>
+                    </div>
+                    <div class="kodex-history-summary" id="tqqq-history-summary"></div>
+                    <p class="market-source-note">미국 정규장 기준 일봉입니다.</p>
+                </section>
+                </div>
+
                 <section class="market-dashboard-card kodex-investor-card" aria-labelledby="kodex-investor-title">
                     <div class="market-card-heading-row">
                         <div>
@@ -523,6 +534,7 @@
                     <strong>수급을 읽을 때</strong>
                     <p id="kodex-data-note">가격과 최근 거래일 수급을 불러오는 중입니다.</p>
                 </aside>
+                </div>
             </section>
         </div>
 

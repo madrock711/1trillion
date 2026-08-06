@@ -18,6 +18,11 @@
         expiresAt: 0,
         pending: null
     };
+    var tqqqHistoryCache = {
+        value: null,
+        expiresAt: 0,
+        pending: null
+    };
     var kodexVolumePressureCache = {
         value: null,
         expiresAt: 0,
@@ -162,6 +167,57 @@
                 var previous = rowsByDate[date];
                 if (!previous || normalized.volume >= previous.volume) rowsByDate[date] = normalized;
             });
+        });
+        return Object.keys(rowsByDate).sort().map(function (date) { return rowsByDate[date]; });
+    }
+
+    function normalizeTqqqPriceHistory(payload) {
+        var raw = String(payload || '').trim();
+        if (raw.charAt(0) === '{') {
+            try {
+                var chart = JSON.parse(raw).chart;
+                var result = chart && chart.result && chart.result[0];
+                var quote = result && result.indicators && result.indicators.quote && result.indicators.quote[0];
+                var jsonRows = [];
+                (result && result.timestamp || []).forEach(function (timestamp, index) {
+                    var open = quote && Number(quote.open[index]);
+                    var high = quote && Number(quote.high[index]);
+                    var low = quote && Number(quote.low[index]);
+                    var close = quote && Number(quote.close[index]);
+                    var volume = quote && Number(quote.volume[index]);
+                    if (![open, high, low, close, volume].every(Number.isFinite)) return;
+                    jsonRows.push({
+                        date: new Date(Number(timestamp) * 1000).toISOString().slice(0, 10),
+                        open: open,
+                        high: high,
+                        low: low,
+                        close: close,
+                        volume: volume
+                    });
+                });
+                return jsonRows;
+            } catch (error) {
+                return [];
+            }
+        }
+
+        var rowsByDate = {};
+        raw.split(/\r?\n/).slice(1).forEach(function (line) {
+            var fields = line.split(',');
+            var row = {
+                date: String(fields[0] || ''),
+                open: parseNumber(fields[1]),
+                high: parseNumber(fields[2]),
+                low: parseNumber(fields[3]),
+                close: parseNumber(fields[4]),
+                volume: parseNumber(fields[5])
+            };
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(row.date)
+                || ![row.open, row.high, row.low, row.close, row.volume].every(Number.isFinite)
+                || row.volume <= 0
+                || row.high < Math.max(row.open, row.close)
+                || row.low > Math.min(row.open, row.close)) return;
+            rowsByDate[row.date] = row;
         });
         return Object.keys(rowsByDate).sort().map(function (date) { return rowsByDate[date]; });
     }
@@ -512,6 +568,17 @@
         });
     }
 
+    function fetchText(fetchImpl, url, signal, nonce) {
+        return fetchImpl(withCacheBust(url, nonce), {
+            cache: 'no-store',
+            credentials: 'same-origin',
+            signal: signal
+        }).then(function (response) {
+            if (!response.ok) throw new Error('최신 가격 이력을 불러오지 못했습니다.');
+            return response.text();
+        });
+    }
+
     function fetchPair(fetchImpl, baseUrl, category, code, signal, nonce) {
         var prefix = new URL(category + '/' + code + '/', baseUrl).href;
         return Promise.all([
@@ -541,6 +608,25 @@
             kodexHistoryCache.pending = null;
         });
         return kodexHistoryCache.pending;
+    }
+
+    function fetchTqqqHistory(fetchImpl, baseUrl, signal, nonce, now, ttlMs) {
+        if (tqqqHistoryCache.value && tqqqHistoryCache.expiresAt > now) {
+            return Promise.resolve(tqqqHistoryCache.value);
+        }
+        if (tqqqHistoryCache.pending) return tqqqHistoryCache.pending;
+
+        var historyUrl = new URL('us/TQQQ/history', baseUrl).href;
+        tqqqHistoryCache.pending = fetchText(fetchImpl, historyUrl, signal, nonce).then(function (csv) {
+            var history = normalizeTqqqPriceHistory(csv);
+            if (history.length < 55) throw new Error('TQQQ 3개월 가격 이력이 부족합니다.');
+            tqqqHistoryCache.value = history;
+            tqqqHistoryCache.expiresAt = now + ttlMs;
+            return history;
+        }).finally(function () {
+            tqqqHistoryCache.pending = null;
+        });
+        return tqqqHistoryCache.pending;
     }
 
     function fetchKodexVolumePressure(fetchImpl, url, signal, nonce, now, ttlMs) {
@@ -646,6 +732,14 @@
             now,
             Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000
         ).catch(function () { return null; });
+        var optionalTqqqHistoryRequest = fetchTqqqHistory(
+            fetchImpl,
+            baseUrl,
+            signal,
+            nonce,
+            now,
+            Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000
+        ).catch(function () { return null; });
         var volumePressureUrl = settings.volumePressureUrl
             || new URL('../assets/data/kodex-volume-pressure.json', baseUrl).href;
         var optionalKodexVolumePressureRequest = fetchKodexVolumePressure(
@@ -670,6 +764,7 @@
         return Promise.all(optionalIndexRequests.concat(optionalStockRequests).concat([
             optionalExchangeRequest,
             optionalKodexHistoryRequest,
+            optionalTqqqHistoryRequest,
             optionalKodexVolumePressureRequest,
             optionalKodexIntradayIndexRequest
         ])).then(function (items) {
@@ -677,8 +772,9 @@
             var instruments = items.slice(INDEX_CODES.length, INDEX_CODES.length + STOCKS.length).filter(Boolean);
             var exchange = items[INDEX_CODES.length + STOCKS.length];
             var kodexHistory = items[INDEX_CODES.length + STOCKS.length + 1];
-            var kodexVolumePressure = items[INDEX_CODES.length + STOCKS.length + 2];
-            var kodexIntradayIndex = items[INDEX_CODES.length + STOCKS.length + 3];
+            var tqqqHistory = items[INDEX_CODES.length + STOCKS.length + 2];
+            var kodexVolumePressure = items[INDEX_CODES.length + STOCKS.length + 3];
+            var kodexIntradayIndex = items[INDEX_CODES.length + STOCKS.length + 4];
             if (!markets.length) throw new Error('국내 지수 시세를 불러오지 못했습니다.');
             var primaryMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || markets[0];
             var kospiMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || null;
@@ -710,6 +806,7 @@
             } else if (kodexInstrument) {
                 missingSources.push('KODEX 분봉 이력');
             }
+            if (!tqqqHistory) missingSources.push('TQQQ 3개월 가격');
             var delayedSources = markets.concat(instruments).filter(function (item) { return item.delayed; }).map(function (item) {
                 return item.label;
             });
@@ -724,6 +821,7 @@
                 marketState: marketState,
                 markets: markets,
                 instruments: instruments,
+                tqqqHistory: tqqqHistory,
                 exchange: exchange,
                 program: kospiMarket ? kospiMarket.program : null,
                 partial: missingSources.length > 0 || delayedSources.length > 0,
@@ -741,6 +839,7 @@
         normalizeStock: normalizeStock,
         normalizeExchange: normalizeExchange,
         normalizeKodexPriceHistory: normalizeKodexPriceHistory,
+        normalizeTqqqPriceHistory: normalizeTqqqPriceHistory,
         normalizeKodexVolumePressure: normalizeKodexVolumePressure,
         normalizeKodexIntradayIndex: normalizeKodexIntradayIndex,
         normalizeKodexIntradayDay: normalizeKodexIntradayDay,
