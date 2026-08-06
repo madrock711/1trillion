@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260807-01">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260807-02">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -63,8 +63,8 @@
     }
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
-    <script defer src="../assets/market-live-data.js?v=20260806-6"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260807-01"></script>
+    <script defer src="../assets/market-live-data.js?v=20260807-01"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260807-02"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -427,9 +427,16 @@
                             <h3 id="kodex-history-title">KODEX 레버리지 3개월 가격 흐름</h3>
                         </div>
                         <div class="kodex-history-controls">
-                            <div class="kodex-period-switcher" aria-label="차트 종류">
-                                <button type="button" data-kodex-chart-mode="daily" aria-pressed="true">일봉</button>
-                                <button type="button" data-kodex-chart-mode="intraday" aria-pressed="false">분봉</button>
+                            <div class="kodex-primary-chart-controls">
+                                <div class="kodex-period-switcher" aria-label="차트 종류">
+                                    <button type="button" data-kodex-chart-mode="daily" aria-pressed="true">일봉</button>
+                                    <button type="button" data-kodex-chart-mode="intraday" aria-pressed="false">분봉</button>
+                                </div>
+                                <button class="kodex-chart-refresh" id="kodex-chart-refresh" type="button" aria-describedby="kodex-chart-refresh-status">
+                                    <span aria-hidden="true">↻</span>
+                                    <span>새로고침</span>
+                                </button>
+                                <span class="kodex-chart-refresh-status" id="kodex-chart-refresh-status" aria-live="polite"></span>
                             </div>
                             <div class="kodex-period-switcher" id="kodex-daily-controls" aria-label="일봉 조회 기간">
                                 <button type="button" data-kodex-period="1m" aria-pressed="false">1개월</button>

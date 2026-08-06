@@ -768,6 +768,55 @@
     gap: 0.5rem;
 }
 
+.kodex-primary-chart-controls {
+    display: grid;
+    justify-items: end;
+    gap: 0.35rem;
+}
+
+.kodex-chart-refresh {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-height: 28px;
+    padding: 0.25rem 0.62rem;
+    border: 1px solid rgba(117, 232, 167, 0.28);
+    border-radius: var(--radius-pill);
+    background: rgba(68, 209, 122, 0.08);
+    color: #75e8a7;
+    font: inherit;
+    font-size: 0.7rem;
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.kodex-chart-refresh:hover,
+.kodex-chart-refresh:focus-visible {
+    border-color: rgba(117, 232, 167, 0.62);
+    background: rgba(68, 209, 122, 0.15);
+}
+
+.kodex-chart-refresh:disabled {
+    cursor: wait;
+    opacity: 0.62;
+}
+
+.kodex-chart-refresh.is-loading > span:first-child {
+    animation: kodex-refresh-spin 0.8s linear infinite;
+}
+
+.kodex-chart-refresh-status {
+    min-height: 0.9rem;
+    color: var(--text-muted);
+    font-size: 0.64rem;
+    line-height: 1.2;
+}
+
+@keyframes kodex-refresh-spin {
+    to { transform: rotate(360deg); }
+}
+
 .kodex-history-controls [hidden],
 .kodex-intraday-controls[hidden] {
     display: none;

@@ -744,6 +744,44 @@
                 if (currentInstrument) renderKodexHistoryChart(currentInstrument);
             });
         }
+        var refreshButton = document.getElementById('kodex-chart-refresh');
+        if (refreshButton && refreshButton.getAttribute('data-chart-bound') !== 'true') {
+            refreshButton.setAttribute('data-chart-bound', 'true');
+            refreshButton.addEventListener('click', function () {
+                refreshTimeSensitiveData();
+            });
+        }
+    }
+
+    function setChartRefreshState(state, message) {
+        var button = document.getElementById('kodex-chart-refresh');
+        var status = document.getElementById('kodex-chart-refresh-status');
+        if (!button || !status) return;
+        var loading = state === 'loading';
+        button.disabled = loading;
+        button.classList.toggle('is-loading', loading);
+        button.setAttribute('aria-busy', loading ? 'true' : 'false');
+        status.textContent = message || '';
+    }
+
+    function refreshTimeSensitiveData() {
+        if (!dashboardData) return Promise.resolve(false);
+        setChartRefreshState('loading', '최신 데이터 확인 중');
+        return refreshLiveMarketData(dashboardData, { silent: true, force: true }).then(function (applied) {
+            var now = new Date();
+            var time = new Intl.DateTimeFormat('ko-KR', {
+                timeZone: 'Asia/Seoul',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hourCycle: 'h23'
+            }).format(now);
+            setChartRefreshState('ready', applied ? time + ' 갱신' : time + ' 일부 데이터 유지');
+            return applied;
+        }).catch(function () {
+            setChartRefreshState('error', '갱신 실패 · 다시 시도');
+            return false;
+        });
     }
 
     function setKodexChartControls(instrument) {
@@ -2001,8 +2039,15 @@
 
     function refreshLiveMarketData(data, options) {
         if (!liveMarketSource || !window.MarketDashboardLive) return Promise.resolve(false);
-        if (liveRefreshPromise) return liveRefreshPromise;
         var settings = options || {};
+        if (liveRefreshPromise) {
+            if (settings.force) {
+                return liveRefreshPromise.then(function () {
+                    return refreshLiveMarketData(data, settings);
+                });
+            }
+            return liveRefreshPromise;
+        }
         var controller = typeof AbortController === 'function' ? new AbortController() : null;
         var timeoutId = window.setTimeout(function () {
             if (controller) controller.abort();
@@ -2017,7 +2062,8 @@
             {
                 signal: controller ? controller.signal : undefined,
                 volumePressureUrl: kodexVolumeSource ? new URL(kodexVolumeSource, window.location.href).href : undefined,
-                intradayIndexUrl: kodexIntradaySource ? new URL(kodexIntradaySource, window.location.href).href : undefined
+                intradayIndexUrl: kodexIntradaySource ? new URL(kodexIntradaySource, window.location.href).href : undefined,
+                forceRefresh: Boolean(settings.force)
             }
         ).then(function (liveData) {
             window.clearTimeout(timeoutId);

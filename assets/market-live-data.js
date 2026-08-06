@@ -698,6 +698,13 @@
         var now = Number.isFinite(settings.now) ? settings.now : Date.now();
         var nonce = settings.nonce || String(now);
         var signal = settings.signal;
+        if (settings.forceRefresh) {
+            kodexHistoryCache.expiresAt = 0;
+            tqqqHistoryCache.expiresAt = 0;
+            kodexVolumePressureCache.expiresAt = 0;
+            kodexIntradayIndexCache.expiresAt = 0;
+            kodexIntradayDayCache = {};
+        }
         var indexRequests = INDEX_CODES.map(function (code) {
             return fetchPair(fetchImpl, baseUrl, 'index', code, signal, nonce).then(function (parts) {
                 return normalizeIndex(code, parts[0], parts[1], now);
