@@ -43,12 +43,12 @@ jobs:
       - name: Commit a new trading day
         shell: bash
         run: |
-          if git diff --quiet -- assets/data/kodex-volume-pressure.json; then
+          if git diff --quiet -- assets/data/kodex-volume-pressure.json assets/data/kodex-intraday-index.json assets/data/kodex-intraday/; then
             echo "No new completed trading day."
             exit 0
           fi
           git config user.name "hpmplab-market-data"
           git config user.email "actions@users.noreply.github.com"
-          git add assets/data/kodex-volume-pressure.json
-          git commit -m "Update KODEX volume pressure archive"
+          git add assets/data/kodex-volume-pressure.json assets/data/kodex-intraday-index.json assets/data/kodex-intraday/
+          git commit -m "Update KODEX intraday pressure archive"
           git push origin HEAD:main

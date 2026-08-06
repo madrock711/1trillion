@@ -18,6 +18,9 @@ SPEC.loader.exec_module(MODULE)
 def bar(date, time, close, volume):
     return MODULE.MinuteBar(
         timestamp=datetime.strptime(date + time, "%Y-%m-%d%H%M").replace(tzinfo=MODULE.SEOUL),
+        open=close,
+        high=close,
+        low=close,
         close=close,
         volume=volume,
     )
@@ -101,6 +104,27 @@ class KodexVolumePressureTests(unittest.TestCase):
             self.assertEqual(output.read_text(encoding="utf-8"), content)
             decoded = json.loads(content)
             self.assertEqual([row["date"] for row in decoded["days"]], ["2026-08-04", "2026-08-05"])
+
+    def test_intraday_rows_conserve_each_minute_and_build_cvd(self):
+        bars = self.complete_bars(second_close=110.0)
+        rows = MODULE.estimate_minute_rows(bars, sigma=1.0)
+        self.assertEqual(len(rows), len(bars))
+        for source, row in zip(bars, rows):
+            self.assertEqual(row["estimatedBuyVolume"] + row["estimatedSellVolume"], source.volume)
+            self.assertEqual(row["delta"], row["estimatedBuyVolume"] - row["estimatedSellVolume"])
+        self.assertEqual(rows[-1]["cumulativeDelta"], sum(row["delta"] for row in rows))
+        self.assertTrue(rows[0]["neutral"])
+        self.assertTrue(rows[-1]["neutral"])
+
+    def test_intraday_index_is_sorted_and_keeps_existing_days(self):
+        index = MODULE.empty_intraday_index()
+        index["days"] = [{"date": "2026-08-04", "path": "kodex-intraday/2026-08-04.json"}]
+        merged = MODULE.merge_intraday_index(
+            index,
+            [{"date": "2026-08-05", "path": "kodex-intraday/2026-08-05.json"}],
+            self.collected_at,
+        )
+        self.assertEqual([row["date"] for row in merged["days"]], ["2026-08-04", "2026-08-05"])
 
 
 if __name__ == "__main__":

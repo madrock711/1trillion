@@ -23,6 +23,12 @@
         expiresAt: 0,
         pending: null
     };
+    var kodexIntradayIndexCache = {
+        value: null,
+        expiresAt: 0,
+        pending: null
+    };
+    var kodexIntradayDayCache = {};
 
     function parseNumber(value) {
         if (typeof value === 'number' && Number.isFinite(value)) return value;
@@ -219,6 +225,85 @@
             enriched.volumePressure = pressure;
             return enriched;
         });
+    }
+
+    function normalizeKodexIntradayIndex(payload) {
+        if (!payload || payload.schemaVersion !== 1 || String(payload.symbol) !== '122630' || !Array.isArray(payload.days)) {
+            throw new Error('KODEX 분봉 색인이 올바르지 않습니다.');
+        }
+        var rowsByDate = {};
+        payload.days.forEach(function (row) {
+            var date = row && String(row.date || '');
+            var path = row && String(row.path || '');
+            var normalized = {
+                date: date,
+                path: path,
+                minuteBars: parseNumber(row && row.minuteBars),
+                coverageRatio: parseNumber(row && row.coverageRatio),
+                sourceLastAt: row && String(row.sourceLastAt || ''),
+                collectedAt: row && String(row.collectedAt || '')
+            };
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(date)
+                || !/^kodex-intraday\/\d{4}-\d{2}-\d{2}\.json$/.test(path)
+                || !Number.isFinite(normalized.minuteBars)
+                || normalized.minuteBars < 300
+                || !Number.isFinite(normalized.coverageRatio)
+                || normalized.coverageRatio < 0.95
+                || normalized.coverageRatio > 1.005
+                || !Number.isFinite(Date.parse(normalized.sourceLastAt))
+                || rowsByDate[date]) {
+                throw new Error('KODEX 분봉 색인에 유효하지 않은 행이 있습니다.');
+            }
+            rowsByDate[date] = normalized;
+        });
+        return Object.keys(rowsByDate).sort().map(function (date) { return rowsByDate[date]; });
+    }
+
+    function normalizeKodexIntradayDay(payload) {
+        if (!payload || payload.schemaVersion !== 1 || String(payload.symbol) !== '122630'
+            || !/^\d{4}-\d{2}-\d{2}$/.test(String(payload.date || ''))
+            || payload.interval !== '1m' || payload.method !== 'bvc-normal-1m-v1'
+            || !Array.isArray(payload.bars) || payload.bars.length < 300) {
+            throw new Error('KODEX 분봉 데이터가 올바르지 않습니다.');
+        }
+        var cumulativeDelta = 0;
+        var rows = payload.bars.map(function (row) {
+            var normalized = {
+                time: row && String(row.time || ''),
+                open: parseNumber(row && row.open),
+                high: parseNumber(row && row.high),
+                low: parseNumber(row && row.low),
+                close: parseNumber(row && row.close),
+                volume: parseNumber(row && row.volume),
+                estimatedBuyVolume: parseNumber(row && row.estimatedBuyVolume),
+                estimatedSellVolume: parseNumber(row && row.estimatedSellVolume),
+                delta: parseNumber(row && row.delta),
+                cumulativeDelta: parseNumber(row && row.cumulativeDelta),
+                neutral: Boolean(row && row.neutral)
+            };
+            cumulativeDelta += normalized.delta;
+            if (!/^\d{2}:\d{2}$/.test(normalized.time)
+                || ![normalized.open, normalized.high, normalized.low, normalized.close, normalized.volume,
+                    normalized.estimatedBuyVolume, normalized.estimatedSellVolume, normalized.delta,
+                    normalized.cumulativeDelta].every(Number.isFinite)
+                || normalized.volume < 0
+                || normalized.high < Math.max(normalized.open, normalized.close)
+                || normalized.low > Math.min(normalized.open, normalized.close)
+                || Math.abs(normalized.estimatedBuyVolume + normalized.estimatedSellVolume - normalized.volume) > 1
+                || Math.abs(normalized.estimatedBuyVolume - normalized.estimatedSellVolume - normalized.delta) > 1
+                || Math.abs(normalized.cumulativeDelta - cumulativeDelta) > 1) {
+                throw new Error('KODEX 분봉에 유효하지 않은 값이 있습니다.');
+            }
+            return normalized;
+        });
+        return {
+            date: String(payload.date),
+            dailyVolume: parseNumber(payload.dailyVolume),
+            minuteVolume: parseNumber(payload.minuteVolume),
+            coverageRatio: parseNumber(payload.coverageRatio),
+            sourceLastAt: String(payload.sourceLastAt || ''),
+            bars: rows
+        };
     }
 
     function cleanDisplayText(value) {
@@ -475,6 +560,53 @@
         return kodexVolumePressureCache.pending;
     }
 
+    function fetchKodexIntradayIndex(fetchImpl, url, signal, nonce, now, ttlMs) {
+        if (kodexIntradayIndexCache.value && kodexIntradayIndexCache.expiresAt > now) {
+            return Promise.resolve(kodexIntradayIndexCache.value);
+        }
+        if (kodexIntradayIndexCache.pending) return kodexIntradayIndexCache.pending;
+        kodexIntradayIndexCache.pending = fetchJson(fetchImpl, url, signal, nonce).then(function (payload) {
+            var rows = normalizeKodexIntradayIndex(payload);
+            if (!rows.length) throw new Error('KODEX 분봉 이력이 비어 있습니다.');
+            kodexIntradayIndexCache.value = rows;
+            kodexIntradayIndexCache.expiresAt = now + ttlMs;
+            return rows;
+        }).finally(function () {
+            kodexIntradayIndexCache.pending = null;
+        });
+        return kodexIntradayIndexCache.pending;
+    }
+
+    function fetchKodexIntradayDay(indexUrl, date, fetchImpl, options) {
+        var settings = options || {};
+        var day = String(date || '');
+        var now = Number.isFinite(settings.now) ? settings.now : Date.now();
+        var ttlMs = Number.isFinite(settings.ttlMs) ? settings.ttlMs : 30 * 60 * 1000;
+        var cache = kodexIntradayDayCache[day];
+        if (cache && cache.value && cache.expiresAt > now) return Promise.resolve(cache.value);
+        if (cache && cache.pending) return cache.pending;
+        var indexRows = settings.indexRows || kodexIntradayIndexCache.value || [];
+        var entry = indexRows.filter(function (row) { return row.date === day; })[0];
+        if (!entry) return Promise.reject(new Error('선택한 거래일의 분봉이 없습니다.'));
+        var state = cache || { value: null, expiresAt: 0, pending: null };
+        kodexIntradayDayCache[day] = state;
+        state.pending = fetchJson(
+            fetchImpl,
+            new URL(entry.path, indexUrl).href,
+            settings.signal,
+            settings.nonce || String(now)
+        ).then(function (payload) {
+            var normalized = normalizeKodexIntradayDay(payload);
+            if (normalized.date !== day) throw new Error('선택한 거래일과 분봉 날짜가 다릅니다.');
+            state.value = normalized;
+            state.expiresAt = now + ttlMs;
+            return normalized;
+        }).finally(function () {
+            state.pending = null;
+        });
+        return state.pending;
+    }
+
     function fetchLatest(baseUrl, fetchImpl, options) {
         var settings = options || {};
         var now = Number.isFinite(settings.now) ? settings.now : Date.now();
@@ -524,17 +656,29 @@
             now,
             Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000
         ).catch(function () { return null; });
+        var intradayIndexUrl = settings.intradayIndexUrl
+            || new URL('../assets/data/kodex-intraday-index.json', baseUrl).href;
+        var optionalKodexIntradayIndexRequest = fetchKodexIntradayIndex(
+            fetchImpl,
+            intradayIndexUrl,
+            signal,
+            nonce,
+            now,
+            Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000
+        ).catch(function () { return null; });
 
         return Promise.all(optionalIndexRequests.concat(optionalStockRequests).concat([
             optionalExchangeRequest,
             optionalKodexHistoryRequest,
-            optionalKodexVolumePressureRequest
+            optionalKodexVolumePressureRequest,
+            optionalKodexIntradayIndexRequest
         ])).then(function (items) {
             var markets = items.slice(0, INDEX_CODES.length).filter(Boolean);
             var instruments = items.slice(INDEX_CODES.length, INDEX_CODES.length + STOCKS.length).filter(Boolean);
             var exchange = items[INDEX_CODES.length + STOCKS.length];
             var kodexHistory = items[INDEX_CODES.length + STOCKS.length + 1];
             var kodexVolumePressure = items[INDEX_CODES.length + STOCKS.length + 2];
+            var kodexIntradayIndex = items[INDEX_CODES.length + STOCKS.length + 3];
             if (!markets.length) throw new Error('국내 지수 시세를 불러오지 못했습니다.');
             var primaryMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || markets[0];
             var kospiMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || null;
@@ -560,6 +704,12 @@
                 missingSources.push('KODEX 3개월 가격·수급');
             }
             if (kodexInstrument && !kodexVolumePressure) missingSources.push('KODEX 분봉 기반 거래 압력');
+            if (kodexInstrument && kodexIntradayIndex) {
+                kodexInstrument.intradayIndex = kodexIntradayIndex;
+                kodexInstrument.intradayIndexUrl = intradayIndexUrl;
+            } else if (kodexInstrument) {
+                missingSources.push('KODEX 분봉 이력');
+            }
             var delayedSources = markets.concat(instruments).filter(function (item) { return item.delayed; }).map(function (item) {
                 return item.label;
             });
@@ -592,7 +742,10 @@
         normalizeExchange: normalizeExchange,
         normalizeKodexPriceHistory: normalizeKodexPriceHistory,
         normalizeKodexVolumePressure: normalizeKodexVolumePressure,
+        normalizeKodexIntradayIndex: normalizeKodexIntradayIndex,
+        normalizeKodexIntradayDay: normalizeKodexIntradayDay,
         mergeKodexVolumePressure: mergeKodexVolumePressure,
+        fetchKodexIntradayDay: fetchKodexIntradayDay,
         parseNumber: parseNumber,
         formatAsOfDisplay: formatAsOfDisplay
     };

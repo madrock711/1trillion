@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Accumulate daily KODEX Leveraged volume-pressure estimates.
+"""Accumulate KODEX Leveraged daily and one-minute volume-pressure estimates.
 
-Only derived daily aggregates are stored. Raw minute bars are fetched for the
-recent retention window, validated, converted with a one-minute BVC estimate,
-and then discarded.
+The public minute feed has a short retention window. Each completed session is
+therefore archived once in a date-scoped JSON file, while the compact daily
+aggregate remains available for the three-month chart.
 """
 
 from __future__ import annotations
@@ -17,18 +17,23 @@ import tempfile
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Iterable, Sequence
-from zoneinfo import ZoneInfo
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 
 SYMBOL = "122630"
 DISPLAY_NAME = "KODEX 레버리지"
 METHOD_ID = "bvc-normal-1m-v1"
-SEOUL = ZoneInfo("Asia/Seoul")
+try:
+    SEOUL = ZoneInfo("Asia/Seoul")
+except ZoneInfoNotFoundError:
+    SEOUL = timezone(timedelta(hours=9), name="KST")
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = ROOT / "assets" / "data" / "kodex-volume-pressure.json"
+DEFAULT_INTRADAY_DIR = ROOT / "assets" / "data" / "kodex-intraday"
+DEFAULT_INTRADAY_INDEX = ROOT / "assets" / "data" / "kodex-intraday-index.json"
 DAILY_URL = (
     "https://m.stock.naver.com/front-api/stock/domestic/price/list"
     "?code=122630&page=1&pageSize=50"
@@ -42,6 +47,9 @@ MAXIMUM_COVERAGE = 1.005
 @dataclass(frozen=True)
 class MinuteBar:
     timestamp: datetime
+    open: float
+    high: float
+    low: float
     close: float
     volume: int
 
@@ -121,16 +129,33 @@ def normalize_minute_bars(payload: object, expected_date: str) -> list[MinuteBar
         raw_timestamp = str(row.get("localDateTime") or "")
         try:
             timestamp = datetime.strptime(raw_timestamp, "%Y%m%d%H%M%S").replace(tzinfo=SEOUL)
+            open_price = parse_number(row.get("openPrice"))
+            high = parse_number(row.get("highPrice"))
+            low = parse_number(row.get("lowPrice"))
             close = parse_number(row.get("currentPrice"))
             volume = int(parse_number(row.get("accumulatedTradingVolume")))
         except (TypeError, ValueError) as error:
             raise ValueError(f"{expected_date}: malformed minute row") from error
         if timestamp.strftime("%Y-%m-%d") != expected_date:
             raise ValueError(f"{expected_date}: mixed trading dates")
-        if timestamp in seen or volume < 0:
+        if (
+            timestamp in seen
+            or volume < 0
+            or high < max(open_price, close)
+            or low > min(open_price, close)
+        ):
             raise ValueError(f"{expected_date}: duplicate time or negative volume")
         seen.add(timestamp)
-        bars.append(MinuteBar(timestamp=timestamp, close=close, volume=volume))
+        bars.append(
+            MinuteBar(
+                timestamp=timestamp,
+                open=open_price,
+                high=high,
+                low=low,
+                close=close,
+                volume=volume,
+            )
+        )
     bars.sort(key=lambda bar: bar.timestamp)
     if any(left.timestamp >= right.timestamp for left, right in zip(bars, bars[1:])):
         raise ValueError(f"{expected_date}: timestamps are not increasing")
@@ -138,9 +163,10 @@ def normalize_minute_bars(payload: object, expected_date: str) -> list[MinuteBar
 
 
 def is_complete_session(bars: Sequence[MinuteBar]) -> bool:
+    first_time = bars[0].timestamp.strftime("%H%M") if bars else ""
     return (
         len(bars) >= MINIMUM_BARS
-        and bars[0].timestamp.strftime("%H%M") == "0900"
+        and "0900" <= first_time <= "0905"
         and bars[-1].timestamp.strftime("%H%M") == "1530"
     )
 
@@ -159,6 +185,38 @@ def estimate_sigma(sessions: Iterable[Sequence[MinuteBar]]) -> tuple[float, int]
 
 def normal_cdf(value: float) -> float:
     return 0.5 * (1.0 + math.erf(value / math.sqrt(2.0)))
+
+
+def estimate_minute_rows(bars: Sequence[MinuteBar], sigma: float) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    cumulative_delta = 0
+    for index, bar in enumerate(bars):
+        neutral = index == 0 or bar.timestamp.strftime("%H%M") >= "1520"
+        if neutral:
+            buy_share = 0.5
+        else:
+            change = bar.close - bars[index - 1].close
+            buy_share = normal_cdf(change / sigma)
+        estimated_buy = max(0, min(bar.volume, int(round(bar.volume * buy_share))))
+        estimated_sell = bar.volume - estimated_buy
+        delta = estimated_buy - estimated_sell
+        cumulative_delta += delta
+        rows.append(
+            {
+                "time": bar.timestamp.strftime("%H:%M"),
+                "open": bar.open,
+                "high": bar.high,
+                "low": bar.low,
+                "close": bar.close,
+                "volume": bar.volume,
+                "estimatedBuyVolume": estimated_buy,
+                "estimatedSellVolume": estimated_sell,
+                "delta": delta,
+                "cumulativeDelta": cumulative_delta,
+                "neutral": neutral,
+            }
+        )
+    return rows
 
 
 def estimate_day(
@@ -221,6 +279,39 @@ def estimate_day(
         "sigma": round(sigma, 6),
         "sigmaSampleSize": sigma_sample_size,
         "collectedAt": collected_at.astimezone(SEOUL).isoformat(timespec="seconds"),
+    }
+
+
+def build_intraday_day(
+    date: str,
+    bars: Sequence[MinuteBar],
+    daily_volume: int,
+    sigma: float,
+    sigma_sample_size: int,
+    collected_at: datetime,
+) -> dict[str, object]:
+    if not is_complete_session(bars):
+        raise ValueError(f"{date}: session is incomplete")
+    minute_volume = sum(bar.volume for bar in bars)
+    coverage = minute_volume / daily_volume
+    if coverage < MINIMUM_COVERAGE or coverage > MAXIMUM_COVERAGE:
+        raise ValueError(f"{date}: minute coverage {coverage:.4f} is outside the accepted range")
+    return {
+        "schemaVersion": 1,
+        "symbol": SYMBOL,
+        "displayName": DISPLAY_NAME,
+        "date": date,
+        "interval": "1m",
+        "method": METHOD_ID,
+        "dailyVolume": daily_volume,
+        "minuteVolume": minute_volume,
+        "coverageRatio": round(coverage, 6),
+        "minuteBars": len(bars),
+        "sourceLastAt": bars[-1].timestamp.isoformat(),
+        "sigma": round(sigma, 6),
+        "sigmaSampleSize": sigma_sample_size,
+        "collectedAt": collected_at.astimezone(SEOUL).isoformat(timespec="seconds"),
+        "bars": estimate_minute_rows(bars, sigma),
     }
 
 
@@ -292,6 +383,53 @@ def serialize_archive(archive: dict[str, object]) -> str:
     return json.dumps(archive, ensure_ascii=False, indent=2) + "\n"
 
 
+def empty_intraday_index() -> dict[str, object]:
+    return {
+        "schemaVersion": 1,
+        "symbol": SYMBOL,
+        "displayName": DISPLAY_NAME,
+        "method": empty_archive()["method"],
+        "updatedAt": None,
+        "days": [],
+    }
+
+
+def load_intraday_index(path: Path) -> dict[str, object]:
+    if not path.exists():
+        return empty_intraday_index()
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if (
+        not isinstance(payload, dict)
+        or payload.get("schemaVersion") != 1
+        or payload.get("symbol") != SYMBOL
+        or not isinstance(payload.get("days"), list)
+    ):
+        raise ValueError("existing intraday index has an unsupported schema")
+    return payload
+
+
+def merge_intraday_index(
+    index: dict[str, object],
+    incoming: Sequence[dict[str, object]],
+    collected_at: datetime,
+) -> dict[str, object]:
+    rows = index.get("days")
+    if not isinstance(rows, list):
+        raise ValueError("intraday index days are invalid")
+    by_date: dict[str, dict[str, object]] = {}
+    for row in rows:
+        if not isinstance(row, dict) or not isinstance(row.get("date"), str):
+            raise ValueError("intraday index day is invalid")
+        by_date[str(row["date"])] = row
+    for row in incoming:
+        by_date[str(row["date"])] = row
+    merged = dict(index)
+    merged["method"] = empty_archive()["method"]
+    merged["updatedAt"] = collected_at.astimezone(SEOUL).isoformat(timespec="seconds")
+    merged["days"] = [by_date[date] for date in sorted(by_date)]
+    return merged
+
+
 def write_atomic(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     handle, temporary_name = tempfile.mkstemp(prefix=path.name + ".", suffix=".tmp", dir=path.parent)
@@ -307,12 +445,11 @@ def write_atomic(path: Path, content: str) -> None:
         raise
 
 
-def collect_estimates(
+def collect_sessions(
     daily_volumes: dict[str, int],
     requested_dates: Sequence[str],
     recent: int,
-    collected_at: datetime,
-) -> list[dict[str, object]]:
+) -> dict[str, list[MinuteBar]]:
     candidates = list(requested_dates) if requested_dates else sorted(daily_volumes, reverse=True)
     sessions: dict[str, list[MinuteBar]] = {}
     for date in candidates:
@@ -331,18 +468,7 @@ def collect_estimates(
     if not sessions:
         raise ValueError("no completed minute sessions were found")
 
-    sigma, sample_size = estimate_sigma(sessions.values())
-    return [
-        estimate_day(
-            date,
-            sessions[date],
-            daily_volumes[date],
-            sigma,
-            sample_size,
-            collected_at,
-        )
-        for date in sorted(sessions)
-    ]
+    return sessions
 
 
 def parse_args() -> argparse.Namespace:
@@ -351,6 +477,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--date", action="append", default=[], help="specific YYYY-MM-DD session (repeatable)")
     parser.add_argument("--replace-date", action="append", default=[], help="explicitly replace an archived date")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--intraday-dir", type=Path, default=DEFAULT_INTRADAY_DIR)
+    parser.add_argument("--intraday-index", type=Path, default=DEFAULT_INTRADAY_INDEX)
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args()
 
@@ -364,17 +492,66 @@ def main() -> int:
 
     collected_at = datetime.now(timezone.utc)
     archive = load_archive(args.output)
+    intraday_index = load_intraday_index(args.intraday_index)
     daily_volumes = normalize_daily_volumes(fetch_json(DAILY_URL))
-    estimates = collect_estimates(daily_volumes, args.date, args.recent, collected_at)
+    sessions = collect_sessions(daily_volumes, args.date, args.recent)
+    sigma, sample_size = estimate_sigma(sessions.values())
+    estimates = [
+        estimate_day(
+            date,
+            sessions[date],
+            daily_volumes[date],
+            sigma,
+            sample_size,
+            collected_at,
+        )
+        for date in sorted(sessions)
+    ]
     merged, changed_dates = merge_days(archive, estimates, collected_at, set(args.replace_date))
-    if not changed_dates:
+    replace_dates = set(args.replace_date)
+    intraday_days: list[dict[str, object]] = []
+    intraday_entries: list[dict[str, object]] = []
+    for date in sorted(sessions):
+        output_path = args.intraday_dir / f"{date}.json"
+        if output_path.exists() and date not in replace_dates:
+            continue
+        day = build_intraday_day(
+            date,
+            sessions[date],
+            daily_volumes[date],
+            sigma,
+            sample_size,
+            collected_at,
+        )
+        intraday_days.append(day)
+        intraday_entries.append(
+            {
+                "date": date,
+                "path": f"kodex-intraday/{date}.json",
+                "minuteBars": day["minuteBars"],
+                "coverageRatio": day["coverageRatio"],
+                "sourceLastAt": day["sourceLastAt"],
+                "collectedAt": day["collectedAt"],
+            }
+        )
+
+    if not changed_dates and not intraday_days:
         print("No new completed trading days.")
         return 0
 
-    print("Added volume-pressure estimates: " + ", ".join(changed_dates))
+    if changed_dates:
+        print("Added volume-pressure estimates: " + ", ".join(changed_dates))
+    if intraday_days:
+        print("Archived one-minute sessions: " + ", ".join(str(day["date"]) for day in intraday_days))
     if args.dry_run:
         return 0
-    write_atomic(args.output, serialize_archive(merged))
+    if changed_dates:
+        write_atomic(args.output, serialize_archive(merged))
+    for day in intraday_days:
+        write_atomic(args.intraday_dir / f"{day['date']}.json", serialize_archive(day))
+    if intraday_entries:
+        updated_index = merge_intraday_index(intraday_index, intraday_entries, collected_at)
+        write_atomic(args.intraday_index, serialize_archive(updated_index))
     return 0
 
 

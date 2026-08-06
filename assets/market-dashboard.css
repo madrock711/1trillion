@@ -743,6 +743,38 @@
     align-items: flex-end;
 }
 
+.kodex-history-controls,
+.kodex-intraday-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.kodex-history-controls [hidden],
+.kodex-intraday-controls[hidden] {
+    display: none;
+}
+
+.kodex-intraday-controls label {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 750;
+}
+
+.kodex-intraday-controls select {
+    min-height: 34px;
+    padding: 0.35rem 2rem 0.35rem 0.65rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-control);
+    background: #0c1217;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
 .kodex-period-switcher {
     display: inline-flex;
     gap: 0.25rem;
@@ -785,6 +817,10 @@
     gap: 0.38rem;
 }
 
+.kodex-history-legend [hidden] {
+    display: none;
+}
+
 .kodex-history-legend span::before {
     width: 16px;
     height: 3px;
@@ -800,6 +836,7 @@
 .kodex-history-legend .is-ma5 { color: #ffd166; }
 .kodex-history-legend .is-ma20 { color: #66d2ff; }
 .kodex-history-legend .is-ma60 { color: #59dda0; }
+.kodex-history-legend .is-cvd { color: #f5d76e; }
 
 .kodex-history-readout {
     min-height: 1.4rem;
@@ -828,6 +865,12 @@
 .kodex-history-grid {
     stroke: rgba(143, 164, 180, 0.16);
     stroke-width: 1;
+}
+
+.kodex-history-zero-line {
+    stroke: rgba(211, 224, 232, 0.38);
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
 }
 
 .kodex-history-axis-label,
@@ -881,7 +924,7 @@
 }
 
 .kodex-history-volume {
-    opacity: 0.56;
+    opacity: 0.42;
 }
 
 .kodex-history-volume-group {
@@ -898,6 +941,23 @@
 
 .kodex-history-volume-segment.is-estimated-sell {
     fill: #4f8dff;
+}
+
+.kodex-history-pressure.is-buy {
+    fill: #ff4f5e;
+}
+
+.kodex-history-pressure.is-sell {
+    fill: #4f8dff;
+}
+
+.kodex-history-cvd {
+    fill: none;
+    stroke: #f5d76e;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
 }
 
 .kodex-history-line {
@@ -917,7 +977,7 @@
 
 .kodex-history-summary {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
     gap: 0.7rem;
     margin-top: var(--space-4);
 }
@@ -1731,6 +1791,12 @@
 
     .kodex-history-heading {
         align-items: flex-start;
+    }
+
+    .kodex-history-controls,
+    .kodex-intraday-controls {
+        width: 100%;
+        justify-content: flex-start;
     }
 
     .kodex-period-switcher {

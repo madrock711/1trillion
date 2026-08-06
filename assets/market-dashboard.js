@@ -13,12 +13,17 @@
     var dashboardData = null;
     var liveMarketSource = root.getAttribute('data-live-market-source');
     var kodexVolumeSource = root.getAttribute('data-kodex-volume-source');
+    var kodexIntradaySource = root.getAttribute('data-kodex-intraday-source');
     var selectedInstrumentId = null;
     var latestLiveData = null;
     var liveRefreshTimer = null;
     var liveRefreshPromise = null;
     var lastLiveRefreshAt = 0;
     var selectedKodexPeriod = '3m';
+    var selectedKodexChartMode = 'daily';
+    var selectedKodexIntradayDate = '';
+    var selectedKodexIntradayInterval = 5;
+    var kodexIntradayRenderToken = 0;
 
     function clear(node) {
         while (node && node.firstChild) node.removeChild(node.firstChild);
@@ -715,28 +720,26 @@
             || pressure.coverageRatio < 0.95
             || pressure.coverageRatio > 1.005) return null;
         return {
+            estimatedBuyVolume: pressure.estimatedBuyVolume,
+            estimatedSellVolume: pressure.estimatedSellVolume,
+            delta: pressure.estimatedBuyVolume - pressure.estimatedSellVolume,
             buyShare: pressure.estimatedBuyVolume / estimatedTotal,
             sellShare: pressure.estimatedSellVolume / estimatedTotal,
             coverageRatio: pressure.coverageRatio
         };
     }
 
-    function renderKodexHistoryChart(instrument) {
-        var svg = document.getElementById('kodex-history-chart');
-        var summary = document.getElementById('kodex-history-summary');
-        var readout = document.getElementById('kodex-history-readout');
-        if (!svg || !summary || !readout) return;
-        clear(svg);
-        clear(summary);
-
-        var liveInstrument = instrument && instrument.liveSnapshot || {};
-        var history = (liveInstrument.priceHistory || instrument && instrument.priceHistory || []).filter(function (row) {
-            return row && Number.isFinite(parseHistoryDate(row.date))
-                && [row.open, row.high, row.low, row.close, row.volume].every(Number.isFinite);
-        }).sort(function (left, right) {
-            return parseHistoryDate(left.date) - parseHistoryDate(right.date);
+    function bindKodexChartControls() {
+        Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-chart-mode]'), function (button) {
+            button.setAttribute('aria-pressed', button.getAttribute('data-kodex-chart-mode') === selectedKodexChartMode ? 'true' : 'false');
+            if (button.getAttribute('data-chart-bound') === 'true') return;
+            button.setAttribute('data-chart-bound', 'true');
+            button.addEventListener('click', function () {
+                selectedKodexChartMode = button.getAttribute('data-kodex-chart-mode') === 'intraday' ? 'intraday' : 'daily';
+                var currentInstrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
+                if (currentInstrument) renderKodexHistoryChart(currentInstrument);
+            });
         });
-
         Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-period]'), function (button) {
             button.setAttribute('aria-pressed', button.getAttribute('data-kodex-period') === selectedKodexPeriod ? 'true' : 'false');
             if (button.getAttribute('data-chart-bound') === 'true') return;
@@ -746,6 +749,140 @@
                 var currentInstrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
                 if (currentInstrument) renderKodexHistoryChart(currentInstrument);
             });
+        });
+        Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-interval]'), function (button) {
+            button.setAttribute('aria-pressed', Number(button.getAttribute('data-kodex-interval')) === selectedKodexIntradayInterval ? 'true' : 'false');
+            if (button.getAttribute('data-chart-bound') === 'true') return;
+            button.setAttribute('data-chart-bound', 'true');
+            button.addEventListener('click', function () {
+                selectedKodexIntradayInterval = Number(button.getAttribute('data-kodex-interval')) || 5;
+                var currentInstrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
+                if (currentInstrument) renderKodexHistoryChart(currentInstrument);
+            });
+        });
+        var dateSelect = document.getElementById('kodex-intraday-date');
+        if (dateSelect && dateSelect.getAttribute('data-chart-bound') !== 'true') {
+            dateSelect.setAttribute('data-chart-bound', 'true');
+            dateSelect.addEventListener('change', function () {
+                selectedKodexIntradayDate = dateSelect.value;
+                var currentInstrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
+                if (currentInstrument) renderKodexHistoryChart(currentInstrument);
+            });
+        }
+    }
+
+    function setKodexChartControls(instrument) {
+        bindKodexChartControls();
+        var liveInstrument = instrument && instrument.liveSnapshot || {};
+        var indexRows = liveInstrument.intradayIndex || instrument && instrument.intradayIndex || [];
+        var periodControls = document.getElementById('kodex-daily-controls');
+        var intradayControls = document.getElementById('kodex-intraday-controls');
+        if (periodControls) periodControls.hidden = selectedKodexChartMode !== 'daily';
+        if (intradayControls) intradayControls.hidden = selectedKodexChartMode !== 'intraday';
+        Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-chart-mode]'), function (button) {
+            button.setAttribute('aria-pressed', button.getAttribute('data-kodex-chart-mode') === selectedKodexChartMode ? 'true' : 'false');
+        });
+        Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-period]'), function (button) {
+            button.setAttribute('aria-pressed', button.getAttribute('data-kodex-period') === selectedKodexPeriod ? 'true' : 'false');
+        });
+        Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-interval]'), function (button) {
+            button.setAttribute('aria-pressed', Number(button.getAttribute('data-kodex-interval')) === selectedKodexIntradayInterval ? 'true' : 'false');
+        });
+        Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-daily-legend]'), function (node) {
+            node.hidden = selectedKodexChartMode !== 'daily';
+        });
+        var dateSelect = document.getElementById('kodex-intraday-date');
+        if (!dateSelect) return indexRows;
+        var dates = indexRows.map(function (row) { return row.date; });
+        if (!selectedKodexIntradayDate || dates.indexOf(selectedKodexIntradayDate) === -1) {
+            selectedKodexIntradayDate = dates[dates.length - 1] || '';
+        }
+        if (dateSelect.options.length !== dates.length || Array.prototype.some.call(dateSelect.options, function (option, index) {
+            return option.value !== dates[index];
+        })) {
+            clear(dateSelect);
+            dates.forEach(function (date) {
+                var option = document.createElement('option');
+                option.value = date;
+                option.textContent = formatHistoryDate(date);
+                dateSelect.appendChild(option);
+            });
+        }
+        dateSelect.value = selectedKodexIntradayDate;
+        return indexRows;
+    }
+
+    function aggregateIntradayBars(bars, interval) {
+        var groups = [];
+        (bars || []).forEach(function (bar) {
+            var parts = String(bar.time || '').split(':');
+            var minuteOfDay = Number(parts[0]) * 60 + Number(parts[1]);
+            var bucket = Math.floor((minuteOfDay - 9 * 60) / interval);
+            var current = groups[groups.length - 1];
+            if (!current || current.bucket !== bucket) {
+                current = {
+                    bucket: bucket,
+                    time: bar.time,
+                    endTime: bar.time,
+                    open: bar.open,
+                    high: bar.high,
+                    low: bar.low,
+                    close: bar.close,
+                    volume: 0,
+                    estimatedBuyVolume: 0,
+                    estimatedSellVolume: 0,
+                    delta: 0,
+                    cumulativeDelta: 0
+                };
+                groups.push(current);
+            }
+            current.endTime = bar.time;
+            current.high = Math.max(current.high, bar.high);
+            current.low = Math.min(current.low, bar.low);
+            current.close = bar.close;
+            current.volume += bar.volume;
+            current.estimatedBuyVolume += bar.estimatedBuyVolume;
+            current.estimatedSellVolume += bar.estimatedSellVolume;
+            current.delta += bar.delta;
+        });
+        var cvd = 0;
+        groups.forEach(function (row) {
+            cvd += row.delta;
+            row.cumulativeDelta = cvd;
+        });
+        return groups;
+    }
+
+    function formatPressurePercent(delta, volume) {
+        var percent = delta / Math.max(volume, 1) * 100;
+        if (Math.abs(percent) < 0.005) percent = 0;
+        return formatSigned(percent, '%', 2);
+    }
+
+    function addChartGrid(svg, left, right, top, bottom, minValue, maxValue, formatter) {
+        for (var index = 0; index <= 4; index += 1) {
+            var y = top + (bottom - top) * index / 4;
+            svg.appendChild(makeSvg('line', { x1: left, y1: y, x2: right, y2: y, 'class': 'kodex-history-grid' }));
+            var label = makeSvg('text', { x: right + 10, y: y + 4, 'class': 'kodex-history-axis-label' });
+            label.textContent = formatter(maxValue - (maxValue - minValue) * index / 4);
+            svg.appendChild(label);
+        }
+    }
+
+    function addChartSectionLabel(svg, text, x, y) {
+        var label = makeSvg('text', { x: x, y: y, 'class': 'kodex-history-section-label' });
+        label.textContent = text;
+        svg.appendChild(label);
+    }
+
+    function renderKodexDailyChart(instrument, svg, summary, readout) {
+        var svg = document.getElementById('kodex-history-chart');
+        var liveInstrument = instrument && instrument.liveSnapshot || {};
+        var history = (liveInstrument.priceHistory || instrument && instrument.priceHistory || []).filter(function (row) {
+            return row && Number.isFinite(parseHistoryDate(row.date))
+                && [row.open, row.high, row.low, row.close, row.volume].every(Number.isFinite);
+        }).sort(function (left, right) {
+            return parseHistoryDate(left.date) - parseHistoryDate(right.date);
         });
 
         if (history.length < 5) {
@@ -766,13 +903,17 @@
         var ma20 = simpleMovingAverage(history, 20);
         var ma60 = simpleMovingAverage(history, 60);
 
+        svg.setAttribute('viewBox', '0 0 1000 550');
         var width = 1000;
         var margin = { left: 24, right: 88 };
         var innerWidth = width - margin.left - margin.right;
         var priceTop = 34;
-        var priceBottom = 338;
-        var volumeTop = 374;
-        var volumeBottom = 454;
+        var priceBottom = 300;
+        var volumeTop = 330;
+        var volumeBottom = 400;
+        var pressureTop = 430;
+        var pressureBottom = 486;
+        var pressureMid = (pressureTop + pressureBottom) / 2;
         var xStep = innerWidth / rows.length;
         var candleWidth = Math.max(2.5, Math.min(9, xStep * 0.58));
 
@@ -794,35 +935,39 @@
             return priceTop + (maxPrice - value) / (maxPrice - minPrice) * (priceBottom - priceTop);
         }
 
-        for (var gridIndex = 0; gridIndex <= 4; gridIndex += 1) {
-            var gridY = priceTop + (priceBottom - priceTop) * gridIndex / 4;
-            svg.appendChild(makeSvg('line', {
-                x1: margin.left,
-                y1: gridY,
-                x2: width - margin.right,
-                y2: gridY,
-                'class': 'kodex-history-grid'
-            }));
-            var gridPrice = maxPrice - (maxPrice - minPrice) * gridIndex / 4;
-            var priceLabel = makeSvg('text', {
-                x: width - margin.right + 10,
-                y: gridY + 4,
-                'class': 'kodex-history-axis-label'
-            });
-            priceLabel.textContent = formatNumber(gridPrice, 0);
-            svg.appendChild(priceLabel);
-        }
-
-        [['일봉', priceTop + 12], ['거래량', volumeTop + 12]].forEach(function (item) {
-            var label = makeSvg('text', { x: margin.left, y: item[1], 'class': 'kodex-history-section-label' });
-            label.textContent = item[0];
-            svg.appendChild(label);
+        addChartGrid(svg, margin.left, width - margin.right, priceTop, priceBottom, minPrice, maxPrice, function (value) {
+            return formatNumber(value, 0);
         });
+        svg.appendChild(makeSvg('line', { x1: margin.left, y1: pressureMid, x2: width - margin.right, y2: pressureMid, 'class': 'kodex-history-zero-line' }));
+        addChartSectionLabel(svg, '일봉', margin.left, priceTop + 12);
+        addChartSectionLabel(svg, '거래량', margin.left, volumeTop + 12);
+        addChartSectionLabel(svg, '순압력·CVD', margin.left, pressureTop + 12);
 
         var maxVolume = Math.max.apply(Math, rows.map(function (row) { return row.volume; }));
         function volumeY(value) {
             return volumeBottom - value / Math.max(maxVolume, 1) * (volumeBottom - volumeTop);
         }
+
+        var dailyPressure = {};
+        var runningCvd = 0;
+        rows.forEach(function (row) {
+            var pressure = validVolumePressure(row);
+            if (!pressure) return;
+            runningCvd += pressure.delta;
+            dailyPressure[row.date] = {
+                delta: pressure.delta,
+                imbalance: pressure.delta / Math.max(row.volume, 1) * 100,
+                cvd: runningCvd,
+                coverageRatio: pressure.coverageRatio
+            };
+        });
+        var pressureRows = Object.keys(dailyPressure).map(function (date) { return dailyPressure[date]; });
+        var maxAbsDelta = Math.max.apply(Math, [1].concat(pressureRows.map(function (row) { return Math.abs(row.delta); })));
+        var cvdValues = pressureRows.map(function (row) { return row.cvd; });
+        var minCvd = Math.min.apply(Math, [0].concat(cvdValues));
+        var maxCvd = Math.max.apply(Math, [0].concat(cvdValues));
+        var cvdSpread = Math.max(maxCvd - minCvd, 1);
+        function cvdY(value) { return pressureTop + (maxCvd - value) / cvdSpread * (pressureBottom - pressureTop); }
 
         function updateReadout(row) {
             var parts = [
@@ -833,10 +978,10 @@
                 '저가 ' + formatPrice(row.low, '원'),
                 '거래량 ' + formatNumber(row.volume, 0) + '주'
             ];
-            var pressure = validVolumePressure(row);
+            var pressure = dailyPressure[row.date];
             if (pressure) {
-                parts.push('추정 매수 ' + formatNumber(pressure.buyShare * 100, 1) + '%');
-                parts.push('추정 매도 ' + formatNumber(pressure.sellShare * 100, 1) + '%');
+                parts.push('추정 순압력 ' + formatSigned(pressure.imbalance, '%', 2));
+                parts.push('CVD ' + formatSigned(pressure.cvd, '주', 0));
                 parts.push('분봉 포착률 ' + formatNumber(pressure.coverageRatio * 100, 1) + '%');
             }
             readout.textContent = parts.join(' · ');
@@ -871,53 +1016,35 @@
             group.appendChild(title);
             svg.appendChild(group);
 
-            var pressure = validVolumePressure(row);
+            svg.appendChild(makeSvg('rect', {
+                x: x - candleWidth / 2,
+                y: volumeY(row.volume),
+                width: candleWidth,
+                height: Math.max(1, volumeBottom - volumeY(row.volume)),
+                rx: 0.7,
+                'class': 'kodex-history-volume ' + tone
+            }));
+            var pressure = dailyPressure[row.date];
             if (pressure) {
-                var volumeGroup = makeSvg('g', { 'class': 'kodex-history-volume-group is-estimated' });
-                var totalHeight = Math.max(1, volumeBottom - volumeY(row.volume));
-                var sellHeight = totalHeight * pressure.sellShare;
-                volumeGroup.appendChild(makeSvg('rect', {
-                    x: x - candleWidth / 2,
-                    y: volumeY(row.volume),
-                    width: candleWidth,
-                    height: totalHeight,
-                    rx: 0.7,
-                    'class': 'kodex-history-volume-segment is-estimated-buy'
-                }));
-                volumeGroup.appendChild(makeSvg('rect', {
-                    x: x - candleWidth / 2,
-                    y: volumeBottom - sellHeight,
-                    width: candleWidth,
-                    height: sellHeight,
-                    rx: 0.7,
-                    'class': 'kodex-history-volume-segment is-estimated-sell'
-                }));
-                volumeGroup.addEventListener('pointerenter', function () { updateReadout(row); });
-                volumeGroup.addEventListener('focus', function () { updateReadout(row); });
-                volumeGroup.setAttribute('tabindex', '0');
-                volumeGroup.setAttribute('role', 'img');
-                volumeGroup.setAttribute('aria-label', formatHistoryDate(row.date)
-                    + ', 거래량 ' + formatNumber(row.volume, 0) + '주'
-                    + ', 추정 매수 ' + formatNumber(pressure.buyShare * 100, 1) + '%'
-                    + ', 추정 매도 ' + formatNumber(pressure.sellShare * 100, 1) + '%'
-                    + ', 분봉 포착률 ' + formatNumber(pressure.coverageRatio * 100, 1) + '%');
-                var volumeTitle = makeSvg('title');
-                volumeTitle.textContent = formatHistoryDate(row.date)
-                    + ' 추정 매수 ' + formatNumber(pressure.buyShare * 100, 1) + '%'
-                    + ' · 추정 매도 ' + formatNumber(pressure.sellShare * 100, 1) + '%';
-                volumeGroup.appendChild(volumeTitle);
-                svg.appendChild(volumeGroup);
-            } else {
+                var pressureHeight = Math.max(1.5, Math.abs(pressure.delta) / maxAbsDelta * (pressureBottom - pressureTop) / 2);
                 svg.appendChild(makeSvg('rect', {
                     x: x - candleWidth / 2,
-                    y: volumeY(row.volume),
+                    y: pressure.delta >= 0 ? pressureMid - pressureHeight : pressureMid,
                     width: candleWidth,
-                    height: Math.max(1, volumeBottom - volumeY(row.volume)),
+                    height: pressureHeight,
                     rx: 0.7,
-                    'class': 'kodex-history-volume ' + tone
+                    'class': 'kodex-history-pressure ' + (pressure.delta >= 0 ? 'is-buy' : 'is-sell')
                 }));
             }
         });
+
+        var cvdPath = '';
+        rows.forEach(function (row, index) {
+            var pressure = dailyPressure[row.date];
+            if (!pressure) return;
+            cvdPath += (cvdPath ? ' L ' : 'M ') + xFor(index).toFixed(2) + ' ' + cvdY(pressure.cvd).toFixed(2);
+        });
+        if (cvdPath) svg.appendChild(makeSvg('path', { d: cvdPath, 'class': 'kodex-history-cvd' }));
 
         [
             { values: ma5, className: 'is-ma5' },
@@ -933,7 +1060,7 @@
         tickIndexes.forEach(function (index) {
             var tick = makeSvg('text', {
                 x: xFor(index),
-                y: 488,
+                y: 532,
                 'class': 'kodex-history-date-label',
                 'text-anchor': index === 0 ? 'start' : index === rows.length - 1 ? 'end' : 'middle'
             });
@@ -950,6 +1077,174 @@
         appendKodexMetric(summary, '기간 최저', formatPrice(Math.min.apply(Math, rows.map(function (row) { return row.low; })), '원'));
         appendKodexMetric(summary, '누적 거래량', formatCompactVolume(periodVolume));
         appendKodexMetric(summary, '일평균 거래량', formatCompactVolume(periodVolume / rows.length));
+    }
+
+    function renderKodexIntradayRows(day, interval, svg, summary, readout) {
+        var rows = aggregateIntradayBars(day.bars, interval);
+        svg.setAttribute('viewBox', '0 0 1000 620');
+        var width = 1000;
+        var margin = { left: 24, right: 88 };
+        var right = width - margin.right;
+        var innerWidth = right - margin.left;
+        var priceTop = 34;
+        var priceBottom = 305;
+        var volumeTop = 335;
+        var volumeBottom = 410;
+        var pressureTop = 455;
+        var pressureBottom = 555;
+        var pressureMid = (pressureTop + pressureBottom) / 2;
+        var xStep = innerWidth / rows.length;
+        var candleWidth = Math.max(2.5, Math.min(14, xStep * 0.62));
+        function xFor(index) { return margin.left + xStep * index + xStep / 2; }
+
+        var minPrice = Math.min.apply(Math, rows.map(function (row) { return row.low; }));
+        var maxPrice = Math.max.apply(Math, rows.map(function (row) { return row.high; }));
+        var priceSpread = Math.max(maxPrice - minPrice, Math.abs(maxPrice || 1) * 0.005);
+        minPrice -= priceSpread * 0.04;
+        maxPrice += priceSpread * 0.04;
+        function priceY(value) { return priceTop + (maxPrice - value) / (maxPrice - minPrice) * (priceBottom - priceTop); }
+        addChartGrid(svg, margin.left, right, priceTop, priceBottom, minPrice, maxPrice, function (value) { return formatNumber(value, 0); });
+        addChartSectionLabel(svg, interval + '분봉', margin.left, priceTop + 12);
+        addChartSectionLabel(svg, '거래량', margin.left, volumeTop + 12);
+        addChartSectionLabel(svg, '순압력·CVD', margin.left, pressureTop + 12);
+        svg.appendChild(makeSvg('line', { x1: margin.left, y1: pressureMid, x2: right, y2: pressureMid, 'class': 'kodex-history-zero-line' }));
+
+        var maxVolume = Math.max.apply(Math, rows.map(function (row) { return row.volume; }));
+        var maxAbsDelta = Math.max.apply(Math, [1].concat(rows.map(function (row) { return Math.abs(row.delta); })));
+        var minCvd = Math.min.apply(Math, [0].concat(rows.map(function (row) { return row.cumulativeDelta; })));
+        var maxCvd = Math.max.apply(Math, [0].concat(rows.map(function (row) { return row.cumulativeDelta; })));
+        var cvdSpread = Math.max(maxCvd - minCvd, 1);
+        function volumeY(value) { return volumeBottom - value / Math.max(maxVolume, 1) * (volumeBottom - volumeTop); }
+        function cvdY(value) { return pressureTop + (maxCvd - value) / cvdSpread * (pressureBottom - pressureTop); }
+
+        function updateReadout(row) {
+            readout.textContent = formatHistoryDate(day.date) + ' ' + row.time + (row.endTime !== row.time ? '–' + row.endTime : '')
+                + ' · 종가 ' + formatPrice(row.close, '원')
+                + ' · 고가 ' + formatPrice(row.high, '원')
+                + ' · 저가 ' + formatPrice(row.low, '원')
+                + ' · 거래량 ' + formatNumber(row.volume, 0) + '주'
+                + ' · 추정 순압력 ' + formatPressurePercent(row.delta, row.volume)
+                + ' · CVD ' + formatSigned(row.cumulativeDelta, '주', 0);
+        }
+
+        var cvdPath = '';
+        rows.forEach(function (row, index) {
+            var x = xFor(index);
+            var tone = row.close > row.open ? 'is-up' : row.close < row.open ? 'is-down' : 'is-flat';
+            var group = makeSvg('g', { 'class': 'kodex-history-candle-group ' + tone, tabindex: '0', role: 'img' });
+            group.appendChild(makeSvg('line', { x1: x, y1: priceY(row.high), x2: x, y2: priceY(row.low), 'class': 'kodex-history-wick' }));
+            group.appendChild(makeSvg('rect', {
+                x: x - candleWidth / 2,
+                y: Math.min(priceY(row.open), priceY(row.close)),
+                width: candleWidth,
+                height: Math.max(1.8, Math.abs(priceY(row.open) - priceY(row.close))),
+                rx: 0.8,
+                'class': 'kodex-history-candle'
+            }));
+            group.addEventListener('pointerenter', function () { updateReadout(row); });
+            group.addEventListener('focus', function () { updateReadout(row); });
+            group.setAttribute('aria-label', row.time + ', 종가 ' + formatPrice(row.close, '원') + ', 추정 순압력 ' + formatSigned(row.delta, '주', 0));
+            svg.appendChild(group);
+            svg.appendChild(makeSvg('rect', {
+                x: x - candleWidth / 2,
+                y: volumeY(row.volume),
+                width: candleWidth,
+                height: Math.max(1, volumeBottom - volumeY(row.volume)),
+                rx: 0.7,
+                'class': 'kodex-history-volume ' + tone
+            }));
+            var deltaHeight = Math.max(1.5, Math.abs(row.delta) / maxAbsDelta * (pressureBottom - pressureTop) / 2);
+            svg.appendChild(makeSvg('rect', {
+                x: x - candleWidth / 2,
+                y: row.delta >= 0 ? pressureMid - deltaHeight : pressureMid,
+                width: candleWidth,
+                height: deltaHeight,
+                rx: 0.7,
+                'class': 'kodex-history-pressure ' + (row.delta >= 0 ? 'is-buy' : 'is-sell')
+            }));
+            cvdPath += (cvdPath ? ' L ' : 'M ') + x.toFixed(2) + ' ' + cvdY(row.cumulativeDelta).toFixed(2);
+        });
+        if (cvdPath) svg.appendChild(makeSvg('path', { d: cvdPath, 'class': 'kodex-history-cvd' }));
+
+        var tickIndexes = [0, Math.floor((rows.length - 1) / 4), Math.floor((rows.length - 1) / 2), Math.floor((rows.length - 1) * 3 / 4), rows.length - 1]
+            .filter(function (value, index, values) { return values.indexOf(value) === index; });
+        tickIndexes.forEach(function (index) {
+            var tick = makeSvg('text', {
+                x: xFor(index), y: 595, 'class': 'kodex-history-date-label',
+                'text-anchor': index === 0 ? 'start' : index === rows.length - 1 ? 'end' : 'middle'
+            });
+            tick.textContent = rows[index].time;
+            svg.appendChild(tick);
+        });
+
+        var latest = rows[rows.length - 1];
+        updateReadout(latest);
+        var totalVolume = rows.reduce(function (total, row) { return total + row.volume; }, 0);
+        var totalDelta = rows.reduce(function (total, row) { return total + row.delta; }, 0);
+        appendKodexMetric(summary, '거래일', formatHistoryDate(day.date));
+        appendKodexMetric(summary, '봉 간격', interval + '분');
+        appendKodexMetric(summary, '장중 수익률', formatSigned((latest.close / rows[0].open - 1) * 100, '%', 2));
+        appendKodexMetric(summary, '거래량', formatCompactVolume(totalVolume));
+        appendKodexMetric(summary, '추정 순압력', formatPressurePercent(totalDelta, totalVolume));
+        appendKodexMetric(summary, '종료 CVD', formatSigned(latest.cumulativeDelta, '주', 0));
+    }
+
+    function renderKodexIntradayChart(instrument, svg, summary, readout, indexRows) {
+        var liveInstrument = instrument && instrument.liveSnapshot || {};
+        var indexUrl = liveInstrument.intradayIndexUrl || instrument && instrument.intradayIndexUrl
+            || (kodexIntradaySource ? new URL(kodexIntradaySource, window.location.href).href : '');
+        if (!indexRows.length || !selectedKodexIntradayDate || !indexUrl
+            || !window.MarketDashboardLive || typeof window.MarketDashboardLive.fetchKodexIntradayDay !== 'function') {
+            readout.textContent = '보존된 분봉 거래일을 불러오지 못했습니다.';
+            var empty = makeSvg('text', { x: 500, y: 300, 'class': 'kodex-history-empty', 'text-anchor': 'middle' });
+            empty.textContent = '분봉 데이터를 확인하고 있습니다.';
+            svg.appendChild(empty);
+            return;
+        }
+        var token = ++kodexIntradayRenderToken;
+        readout.textContent = formatHistoryDate(selectedKodexIntradayDate) + ' 분봉과 추정 순압력을 불러오는 중입니다.';
+        window.MarketDashboardLive.fetchKodexIntradayDay(
+            indexUrl,
+            selectedKodexIntradayDate,
+            window.fetch.bind(window),
+            { indexRows: indexRows }
+        ).then(function (day) {
+            if (token !== kodexIntradayRenderToken || selectedKodexChartMode !== 'intraday') return;
+            clear(svg);
+            clear(summary);
+            renderKodexIntradayRows(day, selectedKodexIntradayInterval, svg, summary, readout);
+        }).catch(function () {
+            if (token !== kodexIntradayRenderToken) return;
+            readout.textContent = '선택한 거래일의 분봉을 불러오지 못했습니다.';
+            clear(svg);
+            var empty = makeSvg('text', { x: 500, y: 300, 'class': 'kodex-history-empty', 'text-anchor': 'middle' });
+            empty.textContent = '다른 거래일을 선택해 다시 확인해 주세요.';
+            svg.appendChild(empty);
+        });
+    }
+
+    function renderKodexHistoryChart(instrument) {
+        var svg = document.getElementById('kodex-history-chart');
+        var summary = document.getElementById('kodex-history-summary');
+        var readout = document.getElementById('kodex-history-readout');
+        if (!svg || !summary || !readout) return;
+        clear(svg);
+        clear(summary);
+        var indexRows = setKodexChartControls(instrument);
+        var title = document.getElementById('kodex-history-title');
+        var eyebrow = document.getElementById('kodex-history-eyebrow');
+        if (title) title.textContent = selectedKodexChartMode === 'daily'
+            ? 'KODEX 레버리지 3개월 가격 흐름'
+            : 'KODEX 레버리지 분봉 순압력';
+        if (eyebrow) eyebrow.textContent = selectedKodexChartMode === 'daily'
+            ? '일봉·거래량·순압력'
+            : '분봉·거래량·CVD';
+        if (selectedKodexChartMode === 'intraday') {
+            renderKodexIntradayChart(instrument, svg, summary, readout, indexRows);
+            return;
+        }
+        kodexIntradayRenderToken += 1;
+        renderKodexDailyChart(instrument, svg, summary, readout);
     }
 
     function renderKodex(data) {
@@ -1094,8 +1389,10 @@
         var estimatedDays = (liveInstrument.priceHistory || instrument.priceHistory || []).filter(function (row) {
             return Boolean(validVolumePressure(row));
         }).length;
+        var indexedDays = (liveInstrument.intradayIndex || instrument.intradayIndex || []).length;
+        estimatedDays = Math.max(estimatedDays, indexedDays);
         document.getElementById('kodex-data-note').textContent = '가격·거래량은 ' + (liveInstrument.asOfLabel || instrument.asOfLabel || data.asOfDisplay)
-            + ' 기준입니다. 추정치가 축적된 ' + estimatedDays + '거래일은 1분봉 가격 변화로 계산한 매수·매도 압력이며, 이전 구간은 종가 방향별 총거래량입니다.';
+            + ' 기준입니다. 최근 ' + estimatedDays + '거래일은 분봉 기반 순압력과 CVD를 볼 수 있습니다. 빨강·파랑은 체결별 Bid/Ask가 아니라 가격 변화와 거래량으로 추정한 매수·매도 우위입니다.';
     }
 
     function renderSources(data) {
@@ -1482,7 +1779,8 @@
             window.fetch.bind(window),
             {
                 signal: controller ? controller.signal : undefined,
-                volumePressureUrl: kodexVolumeSource ? new URL(kodexVolumeSource, window.location.href).href : undefined
+                volumePressureUrl: kodexVolumeSource ? new URL(kodexVolumeSource, window.location.href).href : undefined,
+                intradayIndexUrl: kodexIntradaySource ? new URL(kodexIntradaySource, window.location.href).href : undefined
             }
         ).then(function (liveData) {
             window.clearTimeout(timeoutId);
@@ -1507,6 +1805,27 @@
             return result;
         });
         return liveRefreshPromise;
+    }
+
+    function loadKodexIntradayIndex(data) {
+        if (!kodexIntradaySource || !window.MarketDashboardLive
+            || typeof window.MarketDashboardLive.normalizeKodexIntradayIndex !== 'function') return Promise.resolve(false);
+        var instrument = data && data.technical && findById(data.technical.instruments, 'KODEX');
+        if (!instrument) return Promise.resolve(false);
+        var absoluteUrl = new URL(kodexIntradaySource, window.location.href).href;
+        return fetch(absoluteUrl + (absoluteUrl.indexOf('?') === -1 ? '?' : '&') + '_=' + Date.now(), {
+            cache: 'no-store'
+        }).then(function (response) {
+            if (!response.ok) throw new Error('KODEX 분봉 색인을 불러오지 못했습니다.');
+            return response.json();
+        }).then(window.MarketDashboardLive.normalizeKodexIntradayIndex).then(function (rows) {
+            instrument.intradayIndex = rows;
+            instrument.intradayIndexUrl = absoluteUrl;
+            renderKodex(data);
+            return true;
+        }).catch(function () {
+            return false;
+        });
     }
 
     function cacheBustedUrl(url) {
@@ -1534,7 +1853,7 @@
         .then(validateData)
         .then(function (data) {
             render(data);
-            return refreshLiveMarketData(data);
+            return Promise.all([refreshLiveMarketData(data), loadKodexIntradayIndex(data)]);
         })
         .catch(function () {
             clear(loadState);

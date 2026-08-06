@@ -16,6 +16,7 @@ frontend:
       - 'articles/*.html'
       - 'charts/*.png'
       - 'assets/data/*.json'
+      - 'assets/data/kodex-intraday/*.json'
       - 'assets/*.js'
       - 'assets/*.css'
       - 'assets/icons/*'

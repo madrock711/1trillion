@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "symbol": "122630",
+  "displayName": "KODEX 레버리지",
+  "method": {
+    "id": "bvc-normal-1m-v1",
+    "interval": "1m",
+    "label": "분봉 기반 추정 매수·매도 압력",
+    "buyColor": "#ff4f5e",
+    "sellColor": "#4f8dff"
+  },
+  "updatedAt": "2026-08-06T15:38:58+09:00",
+  "days": [
+    {
+      "date": "2026-07-29",
+      "path": "kodex-intraday/2026-07-29.json",
+      "minuteBars": 347,
+      "coverageRatio": 0.995434,
+      "sourceLastAt": "2026-07-29T15:30:00+09:00",
+      "collectedAt": "2026-08-06T15:38:58+09:00"
+    },
+    {
+      "date": "2026-07-30",
+      "path": "kodex-intraday/2026-07-30.json",
+      "minuteBars": 379,
+      "coverageRatio": 0.99538,
+      "sourceLastAt": "2026-07-30T15:30:00+09:00",
+      "collectedAt": "2026-08-06T15:38:58+09:00"
+    },
+    {
+      "date": "2026-07-31",
+      "path": "kodex-intraday/2026-07-31.json",
+      "minuteBars": 377,
+      "coverageRatio": 0.996226,
+      "sourceLastAt": "2026-07-31T15:30:00+09:00",
+      "collectedAt": "2026-08-06T15:38:58+09:00"
+    },
+    {
+      "date": "2026-08-03",
+      "path": "kodex-intraday/2026-08-03.json",
+      "minuteBars": 381,
+      "coverageRatio": 0.989989,
+      "sourceLastAt": "2026-08-03T15:30:00+09:00",
+      "collectedAt": "2026-08-06T15:38:58+09:00"
+    },
+    {
+      "date": "2026-08-04",
+      "path": "kodex-intraday/2026-08-04.json",
+      "minuteBars": 381,
+      "coverageRatio": 0.9937,
+      "sourceLastAt": "2026-08-04T15:30:00+09:00",
+      "collectedAt": "2026-08-06T15:38:58+09:00"
+    },
+    {
+      "date": "2026-08-05",
+      "path": "kodex-intraday/2026-08-05.json",
+      "minuteBars": 381,
+      "coverageRatio": 0.990559,
+      "sourceLastAt": "2026-08-05T15:30:00+09:00",
+      "collectedAt": "2026-08-06T15:38:58+09:00"
+    },
+    {
+      "date": "2026-08-06",
+      "path": "kodex-intraday/2026-08-06.json",
+      "minuteBars": 381,
+      "coverageRatio": 1.0,
+      "sourceLastAt": "2026-08-06T15:30:00+09:00",
+      "collectedAt": "2026-08-06T15:38:58+09:00"
+    }
+  ]
+}

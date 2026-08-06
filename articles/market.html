@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260806-4">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260806-6">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -63,8 +63,8 @@
     }
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
-    <script defer src="../assets/market-live-data.js?v=20260806-4"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260806-5"></script>
+    <script defer src="../assets/market-live-data.js?v=20260806-5"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260806-9"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -86,7 +86,7 @@
         </div>
     </header>
 
-    <main class="content-page market-dashboard-page" id="main-content" tabindex="-1" data-dashboard-source="../assets/data/market-dashboard-latest.json" data-live-market-source="../market-data/" data-kodex-volume-source="../assets/data/kodex-volume-pressure.json">
+    <main class="content-page market-dashboard-page" id="main-content" tabindex="-1" data-dashboard-source="../assets/data/market-dashboard-latest.json" data-live-market-source="../market-data/" data-kodex-volume-source="../assets/data/kodex-volume-pressure.json" data-kodex-intraday-source="../assets/data/kodex-intraday-index.json">
         <section class="content-page-hero market-dashboard-hero">
             <p class="section-kicker">KOSPI · KODEX · Memory</p>
             <h1>시황분석 대시보드</h1>
@@ -440,25 +440,43 @@
                 <section class="market-dashboard-card kodex-history-card" aria-labelledby="kodex-history-title">
                     <div class="market-card-heading-row kodex-history-heading">
                         <div>
-                            <p class="market-card-label">일봉·거래량·이동평균</p>
+                            <p class="market-card-label" id="kodex-history-eyebrow">일봉·거래량·순압력</p>
                             <h3 id="kodex-history-title">KODEX 레버리지 3개월 가격 흐름</h3>
                         </div>
-                        <div class="kodex-period-switcher" aria-label="차트 조회 기간">
-                            <button type="button" data-kodex-period="1m" aria-pressed="false">1개월</button>
-                            <button type="button" data-kodex-period="3m" aria-pressed="true">3개월</button>
+                        <div class="kodex-history-controls">
+                            <div class="kodex-period-switcher" aria-label="차트 종류">
+                                <button type="button" data-kodex-chart-mode="daily" aria-pressed="true">일봉</button>
+                                <button type="button" data-kodex-chart-mode="intraday" aria-pressed="false">분봉</button>
+                            </div>
+                            <div class="kodex-period-switcher" id="kodex-daily-controls" aria-label="일봉 조회 기간">
+                                <button type="button" data-kodex-period="1m" aria-pressed="false">1개월</button>
+                                <button type="button" data-kodex-period="3m" aria-pressed="true">3개월</button>
+                            </div>
+                            <div class="kodex-intraday-controls" id="kodex-intraday-controls" hidden>
+                                <label for="kodex-intraday-date">거래일</label>
+                                <select id="kodex-intraday-date" aria-label="분봉 거래일"></select>
+                                <div class="kodex-period-switcher" aria-label="분봉 간격">
+                                    <button type="button" data-kodex-interval="1" aria-pressed="false">1분</button>
+                                    <button type="button" data-kodex-interval="5" aria-pressed="true">5분</button>
+                                    <button type="button" data-kodex-interval="15" aria-pressed="false">15분</button>
+                                    <button type="button" data-kodex-interval="30" aria-pressed="false">30분</button>
+                                    <button type="button" data-kodex-interval="60" aria-pressed="false">60분</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="kodex-history-legend" aria-label="차트 범례">
-                        <span class="is-up">상승 일봉·이전 거래량</span>
-                        <span class="is-down">하락 일봉·이전 거래량</span>
-                        <span class="is-estimated-buy">추정 매수</span>
-                        <span class="is-estimated-sell">추정 매도</span>
-                        <span class="is-ma5">5일선</span>
-                        <span class="is-ma20">20일선</span>
-                        <span class="is-ma60">60일선</span>
+                        <span class="is-up">상승 봉·거래량</span>
+                        <span class="is-down">하락 봉·거래량</span>
+                        <span class="is-estimated-buy">매수 우위</span>
+                        <span class="is-estimated-sell">매도 우위</span>
+                        <span class="is-cvd">누적 순압력 CVD</span>
+                        <span class="is-ma5" data-kodex-daily-legend>5일선</span>
+                        <span class="is-ma20" data-kodex-daily-legend>20일선</span>
+                        <span class="is-ma60" data-kodex-daily-legend>60일선</span>
                     </div>
                     <p class="kodex-history-readout" id="kodex-history-readout" aria-live="polite">3개월 일봉과 거래량을 불러오는 중입니다.</p>
-                    <div class="kodex-history-shell" tabindex="0" role="region" aria-label="KODEX 레버리지 3개월 일봉, 이동평균, 추정 매수·매도 압력과 거래량 차트">
+                    <div class="kodex-history-shell" tabindex="0" role="region" aria-label="KODEX 레버리지 일봉 또는 분봉, 거래량, 추정 순압력과 CVD 차트">
                         <svg id="kodex-history-chart" class="kodex-history-chart" viewBox="0 0 1000 500" role="img" aria-labelledby="kodex-history-title kodex-history-readout"></svg>
                     </div>
                     <div class="kodex-history-summary" id="kodex-history-summary"></div>

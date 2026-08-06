@@ -8,6 +8,8 @@ var live = require('../assets/market-live-data.js');
 var archivePath = path.join(__dirname, '..', 'assets', 'data', 'kodex-volume-pressure.json');
 var archive = JSON.parse(fs.readFileSync(archivePath, 'utf8'));
 var normalized = live.normalizeKodexVolumePressure(archive);
+var intradayIndexPath = path.join(__dirname, '..', 'assets', 'data', 'kodex-intraday-index.json');
+var intradayIndex = live.normalizeKodexIntradayIndex(JSON.parse(fs.readFileSync(intradayIndexPath, 'utf8')));
 
 assert.ok(normalized.length >= 6, 'archive should retain at least the initial six validated sessions');
 var dates = normalized.map(function (row) { return row.date; });
@@ -24,6 +26,23 @@ normalized.forEach(function (row) {
     assert.ok(Math.abs(row.buyShare - row.estimatedBuyVolume / row.dailyVolume) <= 0.000002);
     assert.ok(Math.abs(row.sellShare - row.estimatedSellVolume / row.dailyVolume) <= 0.000002);
     assert.ok(Math.abs(row.coverageRatio - row.minuteVolume / row.dailyVolume) <= 0.000002);
+});
+
+assert.ok(intradayIndex.length >= 7, 'the initial available minute sessions should remain archived');
+[
+    '2026-07-29', '2026-07-30', '2026-07-31', '2026-08-03', '2026-08-04', '2026-08-05', '2026-08-06'
+].forEach(function (date) {
+    assert.ok(intradayIndex.some(function (row) { return row.date === date; }), 'intraday session is missing: ' + date);
+});
+intradayIndex.forEach(function (entry) {
+    var dayPath = path.join(__dirname, '..', 'assets', 'data', entry.path);
+    var day = live.normalizeKodexIntradayDay(JSON.parse(fs.readFileSync(dayPath, 'utf8')));
+    assert.strictEqual(day.date, entry.date);
+    assert.strictEqual(day.bars.length, entry.minuteBars);
+    day.bars.forEach(function (bar) {
+        assert.strictEqual(bar.estimatedBuyVolume + bar.estimatedSellVolume, bar.volume);
+        assert.strictEqual(bar.estimatedBuyVolume - bar.estimatedSellVolume, bar.delta);
+    });
 });
 
 var history = [
