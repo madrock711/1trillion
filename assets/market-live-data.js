@@ -282,7 +282,7 @@
             var close = Number(quote.close[index]);
             var volume = Number(quote.volume[index]);
             if (![open, high, low, close, volume].every(Number.isFinite)
-                || volume < 0
+                || volume <= 0
                 || high < Math.max(open, close)
                 || low > Math.min(open, close)) return;
             var dateParts = new Intl.DateTimeFormat('en-CA', {
