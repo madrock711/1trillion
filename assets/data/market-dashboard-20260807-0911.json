@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "snapshotId": "20260807-0911",
+  "generatedAt": "2026-08-07T09:12:00+09:00",
+  "asOf": "2026-08-07T09:11:00+09:00",
+  "asOfDisplay": "2026년 8월 7일 09:11 KST",
+  "marketState": "한국 정규장 개장 초반",
+  "sourceLabel": "한국 시세와 수급은 8월 7일 09:11 KST Naver Finance 장중 자료를 반영했습니다. 미국 주가는 8월 6일 정규장 마감, 국채 금리는 8월 6일 미국 재무부와 FRED 기준입니다.",
+  "latestArticle": {"title":"2026년 8월 7일 KOSPI 장중 시황: 외국인·프로그램 순매수, 6,400선 공방","href":"market-2026-08-07.html"},
+  "headline": "외국인 현물과 프로그램 순매수가 전일 급락 뒤 KOSPI 반등을 이끌고 있습니다.",
+  "summary": "KOSPI는 09:11 KST 6,385.43(+1.41%)를 기록했습니다. 외국인 현물 +2,971억원, 프로그램 전체 +2,371억원과 대형 반도체 반등이 하단을 받쳤습니다. 시가를 회복한 지수는 6,400선 안착을 시험하고 있습니다.",
+  "markets": [
+    {"id":"KOSPI","label":"KOSPI","symbol":"K","value":6385.43,"changePercent":1.41,"asOf":"2026-08-07T09:11:00+09:00","asOfLabel":"8월 7일 09:11 KST","stateLabel":"장중 스냅샷","open":6365.07,"high":6415.60,"low":6352.61,"previousClose":6296.38,"flows":[{"label":"외국인","value":2971,"unit":"억원"},{"label":"기관","value":30,"unit":"억원"},{"label":"개인","value":-2690,"unit":"억원"}],"breadth":{"advance":596,"flat":57,"decline":231}},
+    {"id":"KOSDAQ","label":"KOSDAQ","symbol":"Q","value":810.50,"changePercent":1.10,"asOf":"2026-08-07T09:11:00+09:00","asOfLabel":"8월 7일 09:11 KST","stateLabel":"장중 스냅샷","open":807.62,"high":814.52,"low":806.23,"previousClose":801.67,"flows":[{"label":"외국인","value":-190,"unit":"억원"},{"label":"기관","value":102,"unit":"억원"},{"label":"개인","value":102,"unit":"억원"}],"breadth":{"advance":1173,"flat":105,"decline":421}}
+  ],
+  "stance":{"label":"관망 우세","attack":30,"wait":50,"defense":20,"note":"외국인 현물·프로그램 순매수가 이어지고 KOSPI가 6,400선 위에 안착해야 공격 점수를 높일 수 있습니다."},
+  "checkpoints":[
+    {"label":"외국인 현물","value":"+2,971억원","detail":"전일 대규모 매도 뒤 순매수 전환","tone":"positive"},
+    {"label":"프로그램 전체","value":"+2,371억원","detail":"비차익 +2,282억원이 반등을 지지","tone":"positive"},
+    {"label":"KOSPI 기준선","value":"6,400 / 6,296","detail":"6,400선 안착과 전일 종가 방어","tone":"warning"},
+    {"label":"달러/원","value":"1,424.40원","detail":"1,425원 안팎의 원화 흐름","tone":"warning"}
+  ],
+  "changes":[
+    {"label":"KOSPI","before":"8월 6일 종가 6,296.38 · -4.58%","after":"8월 7일 09:11 6,385.43 · +1.41%","meaning":"전일 급락 뒤 반발 매수가 들어왔습니다."},
+    {"label":"외국인 현물","before":"8월 6일 -3조2,893억원","after":"8월 7일 +2,971억원","meaning":"개장 초반 순매수로 전환했습니다."},
+    {"label":"프로그램 전체","before":"8월 6일 -2조1,257억원","after":"8월 7일 +2,371억원","meaning":"비차익 매수가 지수 하단을 받치고 있습니다."}
+  ],
+  "factors":[
+    {"label":"수급","metric":"외국인 +2,971억원","detail":"프로그램 전체 +2,371억원과 함께 반등을 이끌었습니다.","tone":"positive"},
+    {"label":"시장 폭","metric":"상승 596 · 하락 231","detail":"매수가 대형 반도체 밖으로도 퍼졌습니다.","tone":"positive"},
+    {"label":"미국 반도체","metric":"SOXX +0.34% · MU -1.31%","detail":"업종 지수는 버텼지만 메모리주는 혼조였습니다.","tone":"info"},
+    {"label":"메모리","metric":"DDR4 16Gb +0.85%","detail":"8월 5일 공개 현물가에서 공급 제약이 이어졌습니다.","tone":"positive"},
+    {"label":"미국 금리","metric":"10년물 4.69%","detail":"유가 상승과 함께 성장주 할인율을 압박합니다.","tone":"warning"},
+    {"label":"오늘 일정","metric":"미국 고용 21:30 KST","detail":"금리·달러·Nasdaq의 다음 분기점입니다.","tone":"info"}
+  ],
+  "flows":{"program":{"arbitrage":89,"nonArbitrage":2282,"total":2371,"unit":"억원"},"kospi200FuturesForeign":1661,"futuresUnit":"계약","futuresAsOfLabel":"8월 6일 최종"},
+  "memory":[{"label":"DDR5 16Gb","value":"$51.333","change":"보합"},{"label":"DDR4 16Gb","value":"$86.683","change":"+0.85%"},{"label":"DDR4 8Gb","value":"$42.112","change":"보합"}],
+  "scenarios":[
+    {"id":"base","label":"기본","range":"KOSPI 6,300~6,400","summary":"반발 매수와 외국인 순매수가 하단을 받치고 고용보고서 대기가 상단을 제한합니다.","conditions":["KOSPI 6,296 방어","외국인 현물 순매수 유지","프로그램 전체 순매수 유지"],"invalidation":"6,296을 이탈한 채 외국인·프로그램이 매도로 전환되면 약세 범위가 열립니다."},
+    {"id":"bull","label":"강세","range":"KOSPI 6,400~6,500","summary":"대형 반도체가 장중 고점을 넘고 외국인 매수가 확대되는 경우입니다.","conditions":["KOSPI 6,400 회복","삼성전자 236,000원 돌파","SK하이닉스 1,530,000원 돌파"],"invalidation":"지수가 시가 아래에 머물고 프로그램이 매도로 바뀌면 강세 시나리오는 성립하지 않습니다."},
+    {"id":"bear","label":"약세","range":"KOSPI 6,220~6,300","summary":"전일 종가를 이탈하고 외국인·프로그램 매도가 재개되는 경우입니다.","conditions":["KOSPI 6,296 이탈","외국인 현물 순매도 전환","프로그램 전체 순매도 전환"],"invalidation":"KOSPI가 6,365선을 회복하고 두 수급이 순매수를 유지하면 약세 시나리오는 약해집니다."}
+  ],
+  "strategyLevels":[
+    {"asset":"KOSPI","support":"6,296 / 6,238","pivot":"6,365","resistance":"6,400 / 6,500"},
+    {"asset":"KODEX 레버리지","support":"93,920원 / 92,200원","pivot":"94,845원","resistance":"95,830원 / 98,760원"},
+    {"asset":"삼성전자","support":"230,500원","pivot":"236,750원","resistance":"239,500원"},
+    {"asset":"SK하이닉스","support":"1,495,000원","pivot":"1,517,000원","resistance":"1,542,000원"},
+    {"asset":"USD/KRW","support":"1,415원","pivot":"1,424.40원","resistance":"1,430원"}
+  ],
+  "events":[
+    {"time":"8월 7일 21:30 KST","name":"미국 7월 고용보고서","path":"고용·실업률·임금이 금리와 달러를 재가격"},
+    {"time":"8월 9일 10:30 KST","name":"중국 7월 CPI·PPI","path":"중국 경기와 한국 수출주의 수요 기대"}
+  ],
+  "checklist":[{"id":"kospi-6365","label":"KOSPI가 6,365선을 회복해 유지했다"},{"id":"foreign-cash","label":"외국인 KOSPI 현물 순매수가 이어졌다"},{"id":"program","label":"프로그램 전체 순매수가 이어졌다"}],
+  "technical":{"note":"8월 7일 09:11 KST 당일 OHLC와 주요 기준선을 비교합니다.","instruments":[
+    {"id":"KOSPI","label":"KOSPI","unit":"pt","asOf":"2026-08-07T09:11:00+09:00","asOfLabel":"8월 7일 09:11 KST","points":[{"label":"전일 종가","value":6296.38},{"label":"시가","value":6365.07},{"label":"고가","value":6415.60},{"label":"저가","value":6352.61},{"label":"09:11","value":6385.43}],"levels":[{"label":"2차 지지","value":6238.32},{"label":"1차 지지","value":6296.38},{"label":"현재","value":6385.43},{"label":"반등 기준","value":6400}],"interpretation":"시가를 회복해 6,400선 안착을 시험하고 있습니다."},
+    {"id":"KOSDAQ","label":"KOSDAQ","unit":"pt","asOf":"2026-08-07T09:11:00+09:00","asOfLabel":"8월 7일 09:11 KST","points":[{"label":"전일 종가","value":801.67},{"label":"시가","value":807.62},{"label":"고가","value":814.52},{"label":"저가","value":806.23},{"label":"09:11","value":810.50}],"levels":[{"label":"전일 종가","value":801.67},{"label":"현재","value":810.50},{"label":"시가","value":807.62},{"label":"장중 고점","value":814.52}],"interpretation":"시가를 회복했고 장중 고점 돌파가 다음 기준입니다."},
+    {"id":"KODEX","label":"KODEX 레버리지","unit":"원","asOf":"2026-08-07T09:11:00+09:00","asOfLabel":"8월 7일 09:11 KST","points":[{"label":"전일 종가","value":92200},{"label":"시가","value":93920},{"label":"고가","value":95830},{"label":"저가","value":93560},{"label":"09:11","value":94845}],"levels":[{"label":"전일 종가","value":92200},{"label":"시가","value":93920},{"label":"현재","value":94845},{"label":"장중 고점","value":95830}],"interpretation":"시가를 회복했고 장중 고점 95,830원 돌파가 다음 기준입니다."}
+  ]},
+  "sources":[
+    {"label":"KOSPI","href":"https://m.stock.naver.com/domestic/index/KOSPI/total"},{"label":"KODEX 레버리지","href":"https://finance.naver.com/item/main.naver?code=122630"},{"label":"TrendForce DRAM spot","href":"https://www.trendforce.com/price/dram/dram_spot"},{"label":"미 재무부 국채금리","href":"https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?field_tdr_date_value=2026&type=daily_treasury_yield_curve"}
+  ]
+}
