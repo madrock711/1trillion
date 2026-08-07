@@ -23,6 +23,16 @@
         expiresAt: 0,
         pending: null
     };
+    var tqqqIntradayOneMinuteCache = {
+        value: null,
+        expiresAt: 0,
+        pending: null
+    };
+    var tqqqIntradayFiveMinuteCache = {
+        value: null,
+        expiresAt: 0,
+        pending: null
+    };
     var kodexVolumePressureCache = {
         value: null,
         expiresAt: 0,
@@ -52,6 +62,36 @@
         if (match[2] === '오후' && hour < 12) hour += 12;
         if (match[2] === '오전' && hour === 12) hour = 0;
         return Date.parse(match[1] + 'T' + String(hour).padStart(2, '0') + ':' + match[4] + ':' + (match[5] || '00') + '+09:00');
+    }
+
+    function seoulDate(now) {
+        var parts = new Intl.DateTimeFormat('en-CA', {
+            timeZone: 'Asia/Seoul',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).formatToParts(new Date(now));
+        var values = {};
+        parts.forEach(function (part) { values[part.type] = part.value; });
+        return values.year + '-' + values.month + '-' + values.day;
+    }
+
+    function normalCdf(value) {
+        var absolute = Math.abs(value) / Math.sqrt(2);
+        var t = 1 / (1 + 0.3275911 * absolute);
+        var polynomial = (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t;
+        var erf = 1 - polynomial * Math.exp(-absolute * absolute);
+        return 0.5 * (1 + (value < 0 ? -erf : erf));
+    }
+
+    function sampleSigma(values) {
+        if (!Array.isArray(values) || values.length < 2) return NaN;
+        var average = values.reduce(function (total, value) { return total + value; }, 0) / values.length;
+        var variance = values.reduce(function (total, value) {
+            var distance = value - average;
+            return total + distance * distance;
+        }, 0) / (values.length - 1);
+        return Math.sqrt(variance);
     }
 
     function kstParts(value) {
@@ -222,6 +262,97 @@
         return Object.keys(rowsByDate).sort().map(function (date) { return rowsByDate[date]; });
     }
 
+    function normalizeTqqqIntradayHistory(payload, sourceInterval) {
+        var raw = String(payload || '').trim();
+        var decoded;
+        try {
+            decoded = JSON.parse(raw);
+        } catch (error) {
+            throw new Error('TQQQ 분봉 응답이 올바르지 않습니다.');
+        }
+        var result = decoded && decoded.chart && decoded.chart.result && decoded.chart.result[0];
+        var quote = result && result.indicators && result.indicators.quote && result.indicators.quote[0];
+        var timestamps = result && result.timestamp || [];
+        if (!quote || !timestamps.length) throw new Error('TQQQ 분봉 이력이 비어 있습니다.');
+        var dayRows = {};
+        timestamps.forEach(function (timestamp, index) {
+            var open = Number(quote.open[index]);
+            var high = Number(quote.high[index]);
+            var low = Number(quote.low[index]);
+            var close = Number(quote.close[index]);
+            var volume = Number(quote.volume[index]);
+            if (![open, high, low, close, volume].every(Number.isFinite)
+                || volume < 0
+                || high < Math.max(open, close)
+                || low > Math.min(open, close)) return;
+            var dateParts = new Intl.DateTimeFormat('en-CA', {
+                timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit'
+            }).formatToParts(new Date(Number(timestamp) * 1000));
+            var timeParts = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+            }).formatToParts(new Date(Number(timestamp) * 1000));
+            var dateValues = {};
+            var timeValues = {};
+            dateParts.forEach(function (part) { dateValues[part.type] = part.value; });
+            timeParts.forEach(function (part) { timeValues[part.type] = part.value; });
+            var date = dateValues.year + '-' + dateValues.month + '-' + dateValues.day;
+            var time = timeValues.hour + ':' + timeValues.minute;
+            if (!dayRows[date]) dayRows[date] = [];
+            dayRows[date].push({
+                timestamp: Number(timestamp),
+                time: time,
+                open: open,
+                high: high,
+                low: low,
+                close: close,
+                volume: volume
+            });
+        });
+        var allChanges = [];
+        Object.keys(dayRows).forEach(function (date) {
+            dayRows[date].sort(function (left, right) { return left.timestamp - right.timestamp; });
+            dayRows[date].slice(1).forEach(function (row, index) {
+                allChanges.push(row.close - dayRows[date][index].close);
+            });
+        });
+        var sigma = sampleSigma(allChanges);
+        if (!Number.isFinite(sigma) || sigma <= 0) throw new Error('TQQQ 분봉 변동성을 계산할 수 없습니다.');
+        return Object.keys(dayRows).sort().map(function (date) {
+            var cumulativeDelta = 0;
+            var bars = dayRows[date].map(function (row, index) {
+                var neutral = index === 0;
+                var buyShare = neutral ? 0.5 : normalCdf((row.close - dayRows[date][index - 1].close) / sigma);
+                var estimatedBuyVolume = Math.max(0, Math.min(row.volume, Math.round(row.volume * buyShare)));
+                var estimatedSellVolume = row.volume - estimatedBuyVolume;
+                var delta = estimatedBuyVolume - estimatedSellVolume;
+                cumulativeDelta += delta;
+                return {
+                    time: row.time,
+                    open: row.open,
+                    high: row.high,
+                    low: row.low,
+                    close: row.close,
+                    volume: row.volume,
+                    estimatedBuyVolume: estimatedBuyVolume,
+                    estimatedSellVolume: estimatedSellVolume,
+                    delta: delta,
+                    cumulativeDelta: cumulativeDelta,
+                    neutral: neutral
+                };
+            });
+            var minuteVolume = bars.reduce(function (total, row) { return total + row.volume; }, 0);
+            return {
+                date: date,
+                interval: sourceInterval,
+                minuteVolume: minuteVolume,
+                sourceLastAt: new Date(dayRows[date][dayRows[date].length - 1].timestamp * 1000).toISOString(),
+                sigma: sigma,
+                sigmaSampleSize: allChanges.length,
+                bars: bars
+            };
+        });
+    }
+
     function normalizeKodexVolumePressure(payload) {
         if (!payload || payload.schemaVersion !== 1 || String(payload.symbol) !== '122630' || !Array.isArray(payload.days)) {
             throw new Error('KODEX 거래 압력 데이터가 올바르지 않습니다.');
@@ -240,6 +371,8 @@
                 sellShare: parseNumber(row && row.sellShare),
                 coverageRatio: parseNumber(row && row.coverageRatio),
                 minuteBars: parseNumber(row && row.minuteBars),
+                sigma: parseNumber(row && row.sigma),
+                sigmaSampleSize: parseNumber(row && row.sigmaSampleSize),
                 method: row && String(row.method || '')
             };
             var estimatedTotal = normalized.estimatedBuyVolume + normalized.estimatedSellVolume;
@@ -259,6 +392,8 @@
                 || normalized.coverageRatio < 0.95
                 || normalized.coverageRatio > 1.005
                 || normalized.minuteBars < 300
+                || normalized.sigma <= 0
+                || normalized.sigmaSampleSize < 2
                 || normalized.method !== 'bvc-normal-1m-v1'
                 || rowsByDate[date]) {
                 invalidRows = true;
@@ -358,7 +493,79 @@
             minuteVolume: parseNumber(payload.minuteVolume),
             coverageRatio: parseNumber(payload.coverageRatio),
             sourceLastAt: String(payload.sourceLastAt || ''),
+            sigma: parseNumber(payload.sigma),
+            sigmaSampleSize: parseNumber(payload.sigmaSampleSize),
             bars: rows
+        };
+    }
+
+    function normalizeKodexLiveIntradayDay(payload, expectedDate, referenceSigma, referenceSampleSize) {
+        if (!Array.isArray(payload) || payload.length < 2 || !/^\d{4}-\d{2}-\d{2}$/.test(expectedDate)) {
+            throw new Error('오늘 KODEX 분봉 데이터가 올바르지 않습니다.');
+        }
+        var compactDate = expectedDate.replace(/-/g, '');
+        var rowsByTimestamp = {};
+        payload.forEach(function (row) {
+            var timestamp = row && String(row.localDateTime || '');
+            var normalized = {
+                timestamp: timestamp,
+                time: timestamp.length === 14 ? timestamp.slice(8, 10) + ':' + timestamp.slice(10, 12) : '',
+                open: parseNumber(row && row.openPrice),
+                high: parseNumber(row && row.highPrice),
+                low: parseNumber(row && row.lowPrice),
+                close: parseNumber(row && row.currentPrice),
+                volume: parseNumber(row && row.accumulatedTradingVolume)
+            };
+            if (!/^\d{14}$/.test(timestamp)
+                || timestamp.slice(0, 8) !== compactDate
+                || !/^\d{2}:\d{2}$/.test(normalized.time)
+                || ![normalized.open, normalized.high, normalized.low, normalized.close, normalized.volume].every(Number.isFinite)
+                || normalized.volume < 0
+                || normalized.high < Math.max(normalized.open, normalized.close)
+                || normalized.low > Math.min(normalized.open, normalized.close)
+                || rowsByTimestamp[timestamp]) {
+                throw new Error('오늘 KODEX 분봉에 유효하지 않은 값이 있습니다.');
+            }
+            rowsByTimestamp[timestamp] = normalized;
+        });
+        var rawRows = Object.keys(rowsByTimestamp).sort().map(function (timestamp) { return rowsByTimestamp[timestamp]; });
+        var changes = rawRows.slice(1).map(function (row, index) { return row.close - rawRows[index].close; });
+        var sigma = Number.isFinite(referenceSigma) && referenceSigma > 0 ? referenceSigma : sampleSigma(changes);
+        if (!Number.isFinite(sigma) || sigma <= 0) throw new Error('오늘 KODEX 분봉 변동성을 계산할 수 없습니다.');
+        var cumulativeDelta = 0;
+        var bars = rawRows.map(function (row, index) {
+            var neutral = index === 0 || row.time >= '15:20';
+            var buyShare = neutral ? 0.5 : normalCdf((row.close - rawRows[index - 1].close) / sigma);
+            var estimatedBuyVolume = Math.max(0, Math.min(row.volume, Math.round(row.volume * buyShare)));
+            var estimatedSellVolume = row.volume - estimatedBuyVolume;
+            var delta = estimatedBuyVolume - estimatedSellVolume;
+            cumulativeDelta += delta;
+            return {
+                time: row.time,
+                open: row.open,
+                high: row.high,
+                low: row.low,
+                close: row.close,
+                volume: row.volume,
+                estimatedBuyVolume: estimatedBuyVolume,
+                estimatedSellVolume: estimatedSellVolume,
+                delta: delta,
+                cumulativeDelta: cumulativeDelta,
+                neutral: neutral
+            };
+        });
+        var minuteVolume = bars.reduce(function (total, row) { return total + row.volume; }, 0);
+        var latestTimestamp = rawRows[rawRows.length - 1].timestamp;
+        return {
+            date: expectedDate,
+            dailyVolume: minuteVolume,
+            minuteVolume: minuteVolume,
+            coverageRatio: 1,
+            sourceLastAt: expectedDate + 'T' + latestTimestamp.slice(8, 10) + ':' + latestTimestamp.slice(10, 12) + ':00+09:00',
+            sigma: sigma,
+            sigmaSampleSize: Number.isFinite(referenceSampleSize) ? referenceSampleSize : changes.length,
+            live: true,
+            bars: bars
         };
     }
 
@@ -629,6 +836,24 @@
         return tqqqHistoryCache.pending;
     }
 
+    function fetchTqqqIntradayHistory(fetchImpl, baseUrl, signal, nonce, now, ttlMs, interval) {
+        var oneMinute = interval === 1;
+        var cache = oneMinute ? tqqqIntradayOneMinuteCache : tqqqIntradayFiveMinuteCache;
+        if (cache.value && cache.expiresAt > now) return Promise.resolve(cache.value);
+        if (cache.pending) return cache.pending;
+        var route = oneMinute ? 'us/TQQQ/intraday-1m' : 'us/TQQQ/intraday-5m';
+        cache.pending = fetchText(fetchImpl, new URL(route, baseUrl).href, signal, nonce).then(function (payload) {
+            var rows = normalizeTqqqIntradayHistory(payload, oneMinute ? 1 : 5);
+            if (!rows.length) throw new Error('TQQQ 분봉 이력이 비어 있습니다.');
+            cache.value = rows;
+            cache.expiresAt = now + ttlMs;
+            return rows;
+        }).finally(function () {
+            cache.pending = null;
+        });
+        return cache.pending;
+    }
+
     function fetchKodexVolumePressure(fetchImpl, url, signal, nonce, now, ttlMs) {
         if (kodexVolumePressureCache.value && kodexVolumePressureCache.expiresAt > now) {
             return Promise.resolve(kodexVolumePressureCache.value);
@@ -693,14 +918,29 @@
         return state.pending;
     }
 
+    function fetchKodexLiveIntraday(fetchImpl, baseUrl, date, signal, nonce) {
+        var compactDate = String(date || '').replace(/-/g, '');
+        if (!/^\d{8}$/.test(compactDate)) return Promise.reject(new Error('오늘 분봉 날짜가 올바르지 않습니다.'));
+        var url = new URL('stock/122630/minute', baseUrl);
+        url.searchParams.set('startDateTime', compactDate + '0900');
+        url.searchParams.set('endDateTime', compactDate + '1530');
+        return fetchJson(fetchImpl, url.href, signal, nonce).then(function (payload) {
+            if (!Array.isArray(payload) || payload.length < 2) throw new Error('오늘 KODEX 분봉이 아직 없습니다.');
+            return payload;
+        });
+    }
+
     function fetchLatest(baseUrl, fetchImpl, options) {
         var settings = options || {};
         var now = Number.isFinite(settings.now) ? settings.now : Date.now();
         var nonce = settings.nonce || String(now);
         var signal = settings.signal;
+        var currentSeoulDate = seoulDate(now);
         if (settings.forceRefresh) {
             kodexHistoryCache.expiresAt = 0;
             tqqqHistoryCache.expiresAt = 0;
+            tqqqIntradayOneMinuteCache.expiresAt = 0;
+            tqqqIntradayFiveMinuteCache.expiresAt = 0;
             kodexVolumePressureCache.expiresAt = 0;
             kodexIntradayIndexCache.expiresAt = 0;
             kodexIntradayDayCache = {};
@@ -747,6 +987,24 @@
             now,
             Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000
         ).catch(function () { return null; });
+        var optionalTqqqIntradayOneMinuteRequest = fetchTqqqIntradayHistory(
+            fetchImpl,
+            baseUrl,
+            signal,
+            nonce,
+            now,
+            Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000,
+            1
+        ).catch(function () { return null; });
+        var optionalTqqqIntradayFiveMinuteRequest = fetchTqqqIntradayHistory(
+            fetchImpl,
+            baseUrl,
+            signal,
+            nonce,
+            now,
+            Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000,
+            5
+        ).catch(function () { return null; });
         var volumePressureUrl = settings.volumePressureUrl
             || new URL('../assets/data/kodex-volume-pressure.json', baseUrl).href;
         var optionalKodexVolumePressureRequest = fetchKodexVolumePressure(
@@ -767,21 +1025,34 @@
             now,
             Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000
         ).catch(function () { return null; });
+        var optionalKodexLiveIntradayRequest = fetchKodexLiveIntraday(
+            fetchImpl,
+            baseUrl,
+            currentSeoulDate,
+            signal,
+            nonce
+        ).catch(function () { return null; });
 
         return Promise.all(optionalIndexRequests.concat(optionalStockRequests).concat([
             optionalExchangeRequest,
             optionalKodexHistoryRequest,
             optionalTqqqHistoryRequest,
+            optionalTqqqIntradayOneMinuteRequest,
+            optionalTqqqIntradayFiveMinuteRequest,
             optionalKodexVolumePressureRequest,
-            optionalKodexIntradayIndexRequest
+            optionalKodexIntradayIndexRequest,
+            optionalKodexLiveIntradayRequest
         ])).then(function (items) {
             var markets = items.slice(0, INDEX_CODES.length).filter(Boolean);
             var instruments = items.slice(INDEX_CODES.length, INDEX_CODES.length + STOCKS.length).filter(Boolean);
             var exchange = items[INDEX_CODES.length + STOCKS.length];
             var kodexHistory = items[INDEX_CODES.length + STOCKS.length + 1];
             var tqqqHistory = items[INDEX_CODES.length + STOCKS.length + 2];
-            var kodexVolumePressure = items[INDEX_CODES.length + STOCKS.length + 3];
-            var kodexIntradayIndex = items[INDEX_CODES.length + STOCKS.length + 4];
+            var tqqqIntradayOneMinute = items[INDEX_CODES.length + STOCKS.length + 3];
+            var tqqqIntradayFiveMinute = items[INDEX_CODES.length + STOCKS.length + 4];
+            var kodexVolumePressure = items[INDEX_CODES.length + STOCKS.length + 5];
+            var kodexIntradayIndex = items[INDEX_CODES.length + STOCKS.length + 6];
+            var kodexLiveIntradayRaw = items[INDEX_CODES.length + STOCKS.length + 7];
             if (!markets.length) throw new Error('국내 지수 시세를 불러오지 못했습니다.');
             var primaryMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || markets[0];
             var kospiMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || null;
@@ -813,7 +1084,35 @@
             } else if (kodexInstrument) {
                 missingSources.push('KODEX 분봉 이력');
             }
+            if (kodexInstrument && kodexLiveIntradayRaw && kodexVolumePressure && kodexVolumePressure.length) {
+                var referencePressure = kodexVolumePressure[kodexVolumePressure.length - 1];
+                try {
+                    kodexInstrument.liveIntradayDay = normalizeKodexLiveIntradayDay(
+                        kodexLiveIntradayRaw,
+                        currentSeoulDate,
+                        referencePressure.sigma,
+                        referencePressure.sigmaSampleSize
+                    );
+                    if (!kodexInstrument.intradayIndex) kodexInstrument.intradayIndex = [];
+                    if (!kodexInstrument.intradayIndex.some(function (row) { return row.date === currentSeoulDate; })) {
+                        kodexInstrument.intradayIndex = kodexInstrument.intradayIndex.concat([{
+                            date: currentSeoulDate,
+                            path: '',
+                            minuteBars: kodexInstrument.liveIntradayDay.bars.length,
+                            coverageRatio: 1,
+                            sourceLastAt: kodexInstrument.liveIntradayDay.sourceLastAt,
+                            collectedAt: new Date(now).toISOString(),
+                            live: true
+                        }]);
+                    }
+                } catch (error) {
+                    missingSources.push('KODEX 오늘 분봉');
+                }
+            } else if (kodexInstrument && statuses.some(function (status) { return status === 'OPEN'; })) {
+                missingSources.push('KODEX 오늘 분봉');
+            }
             if (!tqqqHistory) missingSources.push('TQQQ 3개월 가격');
+            if (!tqqqIntradayOneMinute && !tqqqIntradayFiveMinute) missingSources.push('TQQQ 분봉 이력');
             var delayedSources = markets.concat(instruments).filter(function (item) { return item.delayed; }).map(function (item) {
                 return item.label;
             });
@@ -829,6 +1128,10 @@
                 markets: markets,
                 instruments: instruments,
                 tqqqHistory: tqqqHistory,
+                tqqqIntraday: {
+                    oneMinute: tqqqIntradayOneMinute || [],
+                    fiveMinute: tqqqIntradayFiveMinute || []
+                },
                 exchange: exchange,
                 program: kospiMarket ? kospiMarket.program : null,
                 partial: missingSources.length > 0 || delayedSources.length > 0,
@@ -847,9 +1150,11 @@
         normalizeExchange: normalizeExchange,
         normalizeKodexPriceHistory: normalizeKodexPriceHistory,
         normalizeTqqqPriceHistory: normalizeTqqqPriceHistory,
+        normalizeTqqqIntradayHistory: normalizeTqqqIntradayHistory,
         normalizeKodexVolumePressure: normalizeKodexVolumePressure,
         normalizeKodexIntradayIndex: normalizeKodexIntradayIndex,
         normalizeKodexIntradayDay: normalizeKodexIntradayDay,
+        normalizeKodexLiveIntradayDay: normalizeKodexLiveIntradayDay,
         mergeKodexVolumePressure: mergeKodexVolumePressure,
         fetchKodexIntradayDay: fetchKodexIntradayDay,
         parseNumber: parseNumber,

@@ -45,6 +45,31 @@ intradayIndex.forEach(function (entry) {
     });
 });
 
+var liveDay = live.normalizeKodexLiveIntradayDay([
+    { localDateTime: '20260807090000', openPrice: 100, highPrice: 101, lowPrice: 99, currentPrice: 100, accumulatedTradingVolume: 1000 },
+    { localDateTime: '20260807090100', openPrice: 100, highPrice: 103, lowPrice: 100, currentPrice: 102, accumulatedTradingVolume: 800 }
+], '2026-08-07', 1, 300);
+assert.strictEqual(liveDay.date, '2026-08-07');
+assert.strictEqual(liveDay.bars.length, 2);
+assert.strictEqual(liveDay.bars[0].delta, 0, 'opening minute should remain neutral');
+assert.ok(liveDay.bars[1].delta > 0, 'rising live minute should show buy pressure');
+assert.strictEqual(liveDay.bars[1].estimatedBuyVolume + liveDay.bars[1].estimatedSellVolume, 800);
+
+var tqqqIntraday = live.normalizeTqqqIntradayHistory(JSON.stringify({
+    chart: {
+        result: [{
+            timestamp: [1786109400, 1786109700, 1786110000],
+            indicators: { quote: [{
+                open: [70, 70, 71], high: [71, 72, 74], low: [69, 70, 71], close: [70, 71, 73], volume: [1000, 800, 900]
+            }] }
+        }]
+    }
+}), 5);
+assert.strictEqual(tqqqIntraday.length, 1);
+assert.strictEqual(tqqqIntraday[0].interval, 5);
+assert.strictEqual(tqqqIntraday[0].bars.length, 3);
+assert.strictEqual(tqqqIntraday[0].bars[2].estimatedBuyVolume + tqqqIntraday[0].bars[2].estimatedSellVolume, 900);
+
 var history = [
     { date: '2026-07-28', open: 1, high: 2, low: 1, close: 2, volume: 500 },
     { date: normalized[0].date, open: 1, high: 2, low: 1, close: 2, volume: normalized[0].dailyVolume }

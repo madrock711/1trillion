@@ -24,7 +24,6 @@
     var selectedKodexIntradayDate = '';
     var selectedKodexIntradayInterval = 5;
     var kodexIntradayRenderToken = 0;
-    var selectedTqqqPeriod = '3m';
 
     function clear(node) {
         while (node && node.firstChild) node.removeChild(node.firstChild);
@@ -713,6 +712,7 @@
                 selectedKodexChartMode = button.getAttribute('data-kodex-chart-mode') === 'intraday' ? 'intraday' : 'daily';
                 var currentInstrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
                 if (currentInstrument) renderKodexHistoryChart(currentInstrument);
+                renderTqqqSynchronized();
             });
         });
         Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-period]'), function (button) {
@@ -723,6 +723,7 @@
                 selectedKodexPeriod = button.getAttribute('data-kodex-period') === '1m' ? '1m' : '3m';
                 var currentInstrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
                 if (currentInstrument) renderKodexHistoryChart(currentInstrument);
+                renderTqqqSynchronized();
             });
         });
         Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-interval]'), function (button) {
@@ -733,6 +734,7 @@
                 selectedKodexIntradayInterval = Number(button.getAttribute('data-kodex-interval')) || 5;
                 var currentInstrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
                 if (currentInstrument) renderKodexHistoryChart(currentInstrument);
+                renderTqqqSynchronized();
             });
         });
         var dateSelect = document.getElementById('kodex-intraday-date');
@@ -742,6 +744,7 @@
                 selectedKodexIntradayDate = dateSelect.value;
                 var currentInstrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
                 if (currentInstrument) renderKodexHistoryChart(currentInstrument);
+                renderTqqqSynchronized();
             });
         }
         var refreshButton = document.getElementById('kodex-chart-refresh');
@@ -1141,7 +1144,14 @@
         appendKodexMetric(summary, '일평균 거래량', formatCompactVolume(periodVolume / rows.length));
     }
 
-    function renderKodexIntradayRows(day, interval, svg, summary, readout) {
+    function renderKodexIntradayRows(day, interval, svg, summary, readout, options) {
+        var settings = options || {};
+        var priceText = typeof settings.priceFormatter === 'function'
+            ? settings.priceFormatter
+            : function (value) { return formatPrice(value, '원'); };
+        var axisText = typeof settings.axisFormatter === 'function'
+            ? settings.axisFormatter
+            : function (value) { return formatNumber(value, 0); };
         var rows = aggregateIntradayBars(day.bars, interval);
         svg.setAttribute('viewBox', '0 0 1000 590');
         var width = 1000;
@@ -1163,7 +1173,7 @@
         minPrice -= priceSpread * 0.04;
         maxPrice += priceSpread * 0.04;
         function priceY(value) { return priceTop + (maxPrice - value) / (maxPrice - minPrice) * (priceBottom - priceTop); }
-        addChartGrid(svg, margin.left, right, priceTop, priceBottom, minPrice, maxPrice, function (value) { return formatNumber(value, 0); });
+        addChartGrid(svg, margin.left, right, priceTop, priceBottom, minPrice, maxPrice, axisText);
         addChartSectionLabel(svg, interval + '분봉', margin.left, priceTop + 12);
         addChartSectionLabel(svg, '거래량 X-ray · CVD', margin.left, volumeTop + 12);
 
@@ -1177,9 +1187,9 @@
 
         function updateReadout(row) {
             readout.textContent = formatHistoryDate(day.date) + ' ' + row.time + (row.endTime !== row.time ? '–' + row.endTime : '')
-                + ' · 종가 ' + formatPrice(row.close, '원')
-                + ' · 고가 ' + formatPrice(row.high, '원')
-                + ' · 저가 ' + formatPrice(row.low, '원')
+                + ' · 종가 ' + priceText(row.close)
+                + ' · 고가 ' + priceText(row.high)
+                + ' · 저가 ' + priceText(row.low)
                 + ' · 거래량 ' + formatNumber(row.volume, 0) + '주'
                 + ' · 추정 순압력 ' + formatPressurePercent(row.delta, row.volume)
                 + ' · CVD ' + formatSigned(row.cumulativeDelta, '주', 0);
@@ -1200,7 +1210,7 @@
                 'class': 'kodex-history-candle'
             }));
             bindLinkedChartBar(svg, group, index, row, updateReadout);
-            group.setAttribute('aria-label', row.time + ', 종가 ' + formatPrice(row.close, '원') + ', 추정 순압력 ' + formatSigned(row.delta, '주', 0));
+            group.setAttribute('aria-label', row.time + ', 종가 ' + priceText(row.close) + ', 추정 순압력 ' + formatSigned(row.delta, '주', 0));
             svg.appendChild(group);
             var volumeGroup = makeSvg('g', { 'class': 'kodex-history-volume-group', tabindex: '0', role: 'img' });
             volumeGroup.appendChild(makeSvg('rect', {
@@ -1253,9 +1263,11 @@
 
     function renderKodexIntradayChart(instrument, svg, summary, readout, indexRows) {
         var liveInstrument = instrument && instrument.liveSnapshot || {};
+        var liveDay = liveInstrument.liveIntradayDay || instrument && instrument.liveIntradayDay || null;
         var indexUrl = liveInstrument.intradayIndexUrl || instrument && instrument.intradayIndexUrl
             || (kodexIntradaySource ? new URL(kodexIntradaySource, window.location.href).href : '');
-        if (!indexRows.length || !selectedKodexIntradayDate || !indexUrl
+        var selectedIsLive = liveDay && liveDay.date === selectedKodexIntradayDate;
+        if (!indexRows.length || !selectedKodexIntradayDate || (!selectedIsLive && !indexUrl)
             || !window.MarketDashboardLive || typeof window.MarketDashboardLive.fetchKodexIntradayDay !== 'function') {
             readout.textContent = '보존된 분봉 거래일을 불러오지 못했습니다.';
             var empty = makeSvg('text', { x: 500, y: 300, 'class': 'kodex-history-empty', 'text-anchor': 'middle' });
@@ -1265,12 +1277,15 @@
         }
         var token = ++kodexIntradayRenderToken;
         readout.textContent = formatHistoryDate(selectedKodexIntradayDate) + ' 분봉과 추정 순압력을 불러오는 중입니다.';
-        window.MarketDashboardLive.fetchKodexIntradayDay(
-            indexUrl,
-            selectedKodexIntradayDate,
-            window.fetch.bind(window),
-            { indexRows: indexRows }
-        ).then(function (day) {
+        var dayRequest = selectedIsLive
+            ? Promise.resolve(liveDay)
+            : window.MarketDashboardLive.fetchKodexIntradayDay(
+                indexUrl,
+                selectedKodexIntradayDate,
+                window.fetch.bind(window),
+                { indexRows: indexRows }
+            );
+        dayRequest.then(function (day) {
             if (token !== kodexIntradayRenderToken || selectedKodexChartMode !== 'intraday') return;
             clear(svg);
             clear(summary);
@@ -1331,28 +1346,23 @@
         };
     }
 
-    function bindTqqqChartControls() {
-        Array.prototype.forEach.call(document.querySelectorAll('[data-tqqq-period]'), function (button) {
-            if (button.getAttribute('data-chart-bound') === 'true') return;
-            button.setAttribute('data-chart-bound', 'true');
-            button.addEventListener('click', function () {
-                selectedTqqqPeriod = button.getAttribute('data-tqqq-period') === '1m' ? '1m' : '3m';
-                renderTqqqHistoryChart((latestLiveData && latestLiveData.tqqqHistory) || []);
-            });
-        });
-    }
-
     function renderTqqqHistoryChart(rawHistory) {
         var svg = document.getElementById('tqqq-history-chart');
         var summary = document.getElementById('tqqq-history-summary');
         var readout = document.getElementById('tqqq-history-readout');
         if (!svg || !summary || !readout) return;
-        bindTqqqChartControls();
-        Array.prototype.forEach.call(document.querySelectorAll('[data-tqqq-period]'), function (button) {
-            button.setAttribute('aria-pressed', button.getAttribute('data-tqqq-period') === selectedTqqqPeriod ? 'true' : 'false');
-        });
         clear(svg);
         clear(summary);
+        svg.classList.remove('is-intraday');
+        var title = document.getElementById('tqqq-history-title');
+        var eyebrow = document.getElementById('tqqq-history-eyebrow');
+        var method = document.getElementById('tqqq-history-method');
+        var sourceNote = document.getElementById('tqqq-history-source-note');
+        if (title) title.textContent = 'TQQQ ' + (selectedKodexPeriod === '1m' ? '1개월' : '3개월') + ' 가격 흐름';
+        if (eyebrow) eyebrow.textContent = '미국 정규장 일봉·거래량 X-ray·CVD';
+        if (method) method.textContent = '막대 높이는 거래량, 빨강·파랑 채움은 일봉 가격 범위와 종가 위치로 추정한 매수·매도 우위입니다.';
+        if (sourceNote) sourceNote.textContent = '미국 정규장 일봉 기준이며, 순압력은 체결 Bid/Ask가 아닌 일중 가격 범위와 종가 위치를 거래량에 반영한 추정치입니다.';
+        Array.prototype.forEach.call(document.querySelectorAll('[data-tqqq-daily-legend]'), function (node) { node.hidden = false; });
         var history = (rawHistory || []).filter(function (row) {
             return row && Number.isFinite(parseHistoryDate(row.date))
                 && [row.open, row.high, row.low, row.close, row.volume].every(Number.isFinite);
@@ -1370,7 +1380,7 @@
 
         var latestTimestamp = parseHistoryDate(history[history.length - 1].date);
         var threshold = new Date(latestTimestamp);
-        threshold.setMonth(threshold.getMonth() - (selectedTqqqPeriod === '1m' ? 1 : 3));
+        threshold.setMonth(threshold.getMonth() - (selectedKodexPeriod === '1m' ? 1 : 3));
         var startIndex = history.findIndex(function (row) { return parseHistoryDate(row.date) >= threshold.getTime(); });
         if (startIndex < 0) startIndex = 0;
         var rows = history.slice(startIndex);
@@ -1520,6 +1530,77 @@
         appendKodexMetric(summary, '기준일', formatHistoryDate(latest.date));
     }
 
+    function matchingTqqqIntradayDay(rows, selectedDate, exactOnly) {
+        var sorted = (rows || []).slice().sort(function (left, right) {
+            return parseHistoryDate(left.date) - parseHistoryDate(right.date);
+        });
+        var exact = sorted.filter(function (day) { return day.date === selectedDate; })[0];
+        if (exact) return exact;
+        if (exactOnly) return null;
+        var earlier = sorted.filter(function (day) {
+            return parseHistoryDate(day.date) <= parseHistoryDate(selectedDate);
+        });
+        return earlier[earlier.length - 1] || null;
+    }
+
+    function renderTqqqIntradayChart(intradayHistory) {
+        var svg = document.getElementById('tqqq-history-chart');
+        var summary = document.getElementById('tqqq-history-summary');
+        var readout = document.getElementById('tqqq-history-readout');
+        if (!svg || !summary || !readout) return;
+        clear(svg);
+        clear(summary);
+        svg.classList.add('is-intraday');
+        Array.prototype.forEach.call(document.querySelectorAll('[data-tqqq-daily-legend]'), function (node) { node.hidden = true; });
+        var oneMinuteRows = intradayHistory && intradayHistory.oneMinute || [];
+        var fiveMinuteRows = intradayHistory && intradayHistory.fiveMinute || [];
+        var preferredRows = selectedKodexIntradayInterval === 1 ? oneMinuteRows : fiveMinuteRows;
+        var alternateRows = selectedKodexIntradayInterval === 1 ? fiveMinuteRows : oneMinuteRows;
+        var day = matchingTqqqIntradayDay(preferredRows, selectedKodexIntradayDate, true)
+            || matchingTqqqIntradayDay(alternateRows, selectedKodexIntradayDate, true)
+            || matchingTqqqIntradayDay(preferredRows, selectedKodexIntradayDate, false)
+            || matchingTqqqIntradayDay(alternateRows, selectedKodexIntradayDate, false);
+        var title = document.getElementById('tqqq-history-title');
+        var eyebrow = document.getElementById('tqqq-history-eyebrow');
+        var method = document.getElementById('tqqq-history-method');
+        var sourceNote = document.getElementById('tqqq-history-source-note');
+        if (!day) {
+            if (title) title.textContent = 'TQQQ 분봉 가격 흐름';
+            if (eyebrow) eyebrow.textContent = '미국 정규장 분봉·거래량 X-ray·CVD';
+            readout.textContent = '선택 기준에 대응하는 TQQQ 분봉을 확인하고 있습니다.';
+            var empty = makeSvg('text', { x: 500, y: 300, 'class': 'kodex-history-empty', 'text-anchor': 'middle' });
+            empty.textContent = 'TQQQ 분봉 데이터를 불러오는 중입니다.';
+            svg.appendChild(empty);
+            return;
+        }
+        var sourceInterval = Number(day.interval) || 5;
+        var effectiveInterval = Math.max(selectedKodexIntradayInterval, sourceInterval);
+        if (title) title.textContent = 'TQQQ ' + effectiveInterval + '분봉 가격 흐름';
+        if (eyebrow) eyebrow.textContent = '미국 정규장 분봉·거래량 X-ray·CVD';
+        if (method) method.textContent = 'KODEX와 같은 선택 기준으로 TQQQ 가격·거래량·추정 순압력과 CVD를 비교합니다.';
+        var sameDate = day.date === selectedKodexIntradayDate;
+        if (sourceNote) sourceNote.textContent = sameDate
+            ? formatHistoryDate(day.date) + ' 미국 정규장 ' + sourceInterval + '분 원자료를 사용했습니다.'
+            : 'KODEX ' + formatHistoryDate(selectedKodexIntradayDate) + ' 선택에 대응하는 가장 최근 미국 정규장 '
+                + formatHistoryDate(day.date) + ' 데이터를 표시합니다.';
+        renderKodexIntradayRows(day, effectiveInterval, svg, summary, readout, {
+            priceFormatter: formatUsdPrice,
+            axisFormatter: function (value) { return '$' + formatNumber(value, 2); }
+        });
+        if (!sameDate) appendKodexMetric(summary, 'KODEX 비교일', formatHistoryDate(selectedKodexIntradayDate));
+    }
+
+    function renderTqqqSynchronized() {
+        var daily = latestLiveData && latestLiveData.tqqqHistory
+            || dashboardData && dashboardData.tqqqHistory
+            || [];
+        if (selectedKodexChartMode === 'intraday') {
+            renderTqqqIntradayChart(latestLiveData && latestLiveData.tqqqIntraday || null);
+            return;
+        }
+        renderTqqqHistoryChart(daily);
+    }
+
     function renderKodex(data) {
         var instrument = findById(data.technical.instruments, 'KODEX');
         if (!instrument) return;
@@ -1609,7 +1690,7 @@
         document.getElementById('kodex-etf-meta').textContent = etfMeta.join(' · ');
 
         renderKodexHistoryChart(instrument);
-        renderTqqqHistoryChart((latestLiveData && latestLiveData.tqqqHistory) || data.tqqqHistory || []);
+        renderTqqqSynchronized();
 
         var trends = liveInstrument.investorTrends || instrument.investorTrends || [];
         var trendBody = document.getElementById('kodex-investor-trends');
@@ -1930,6 +2011,13 @@
             if (previous && Array.isArray(previous.priceHistory) && !Array.isArray(item.priceHistory)) {
                 item.priceHistory = previous.priceHistory;
             }
+            if (previous && Array.isArray(previous.intradayIndex) && !Array.isArray(item.intradayIndex)) {
+                item.intradayIndex = previous.intradayIndex;
+                item.intradayIndexUrl = previous.intradayIndexUrl;
+            }
+            if (previous && previous.liveIntradayDay && !item.liveIntradayDay) {
+                item.liveIntradayDay = previous.liveIntradayDay;
+            }
             byId[item.id] = item;
         });
         return Object.keys(byId).map(function (id) { return byId[id]; });
@@ -1956,6 +2044,8 @@
         var delayedSources = (incoming.delayedSources || []).concat(rejectedSources).filter(function (label, index, labels) {
             return labels.indexOf(label) === index;
         });
+        var previousTqqqIntraday = previous.tqqqIntraday || {};
+        var incomingTqqqIntraday = incoming.tqqqIntraday || {};
         return {
             asOf: primaryMarket.asOf,
             asOfDisplay: formatKstDateTime(primaryMarket.asOf),
@@ -1965,6 +2055,14 @@
             exchange: exchange,
             program: (findById(markets, 'KOSPI') || {}).program || incoming.program || previous.program || null,
             tqqqHistory: incoming.tqqqHistory || previous.tqqqHistory || [],
+            tqqqIntraday: {
+                oneMinute: Array.isArray(incomingTqqqIntraday.oneMinute) && incomingTqqqIntraday.oneMinute.length
+                    ? incomingTqqqIntraday.oneMinute
+                    : previousTqqqIntraday.oneMinute || [],
+                fiveMinute: Array.isArray(incomingTqqqIntraday.fiveMinute) && incomingTqqqIntraday.fiveMinute.length
+                    ? incomingTqqqIntraday.fiveMinute
+                    : previousTqqqIntraday.fiveMinute || []
+            },
             partial: Boolean(incoming.partial || rejectedSources.length),
             missingSources: missingSources,
             delayedSources: delayedSources,

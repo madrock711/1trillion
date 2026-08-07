@@ -35,6 +35,11 @@
     "status": "200"
   },
   {
+    "source": "/market-data/stock/122630/minute",
+    "target": "https://api.stock.naver.com/chart/domestic/item/122630/minute",
+    "status": "200"
+  },
+  {
     "source": "/market-data/stock/122630/history/price-1",
     "target": "https://m.stock.naver.com/front-api/stock/domestic/price/list?code=122630&page=1&pageSize=50",
     "status": "200"
@@ -77,6 +82,16 @@
   {
     "source": "/market-data/us/TQQQ/history",
     "target": "https://query1.finance.yahoo.com/v8/finance/chart/TQQQ?range=3mo&interval=1d",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/us/TQQQ/intraday-1m",
+    "target": "https://query1.finance.yahoo.com/v8/finance/chart/TQQQ?range=8d&interval=1m",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/us/TQQQ/intraday-5m",
+    "target": "https://query1.finance.yahoo.com/v8/finance/chart/TQQQ?range=1mo&interval=5m",
     "status": "200"
   },
   {

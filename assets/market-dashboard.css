@@ -723,10 +723,15 @@
 }
 
 .kodex-history-card {
+    position: relative;
     margin-bottom: var(--space-4);
     background:
         linear-gradient(155deg, rgba(105, 169, 255, 0.045), transparent 35%),
         #111713;
+}
+
+.kodex-primary-history-card {
+    padding-top: 4.5rem;
 }
 
 .technical-kodex-analysis {
@@ -759,6 +764,20 @@
     align-items: flex-end;
 }
 
+.kodex-chart-refresh-anchor {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    left: var(--space-4);
+    display: flex;
+    min-height: 2.15rem;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.55rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
 .kodex-history-controls,
 .kodex-intraday-controls {
     display: flex;
@@ -766,12 +785,6 @@
     align-items: center;
     justify-content: flex-end;
     gap: 0.5rem;
-}
-
-.kodex-primary-chart-controls {
-    display: grid;
-    justify-items: end;
-    gap: 0.35rem;
 }
 
 .kodex-chart-refresh {
@@ -1905,6 +1918,14 @@
 
     .kodex-history-heading {
         align-items: flex-start;
+    }
+
+    .kodex-primary-history-card {
+        padding-top: 4.25rem;
+    }
+
+    .kodex-chart-refresh-anchor {
+        justify-content: flex-start;
     }
 
     .kodex-history-controls,
