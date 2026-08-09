@@ -1031,14 +1031,9 @@
     function renderCompositeMomentumChart(days) {
         var svg = document.getElementById('composite-momentum-chart');
         var title = document.getElementById('composite-momentum-title');
-        var badge = document.getElementById('composite-momentum-badge');
         var readout = document.getElementById('composite-momentum-readout');
-        var summary = document.getElementById('composite-momentum-summary');
-        var method = document.querySelector('.composite-momentum-method');
-        var sourceNote = document.getElementById('composite-momentum-source-note');
-        if (!svg || !title || !badge || !readout || !summary) return;
+        if (!svg || !title || !readout) return;
         clear(svg);
-        clear(summary);
         var rows;
         if (selectedKodexChartMode === 'intraday') {
             var selectedDay = (days || []).filter(function (day) { return day.date === selectedKodexIntradayDate; })[0];
@@ -1050,17 +1045,11 @@
                 return Object.assign({ label: row.time }, row);
             });
             title.textContent = formatHistoryDate(selectedDay.date) + ' KOSPI·KODEX 거래량 모멘텀';
-            badge.textContent = selectedKodexIntradayInterval + '분봉 · 공통 시각';
-            if (method) method.textContent = '두 시장의 분봉 거래량 순압력을 정규화해 방향의 가속도를 비교합니다. 0선 위는 매수 모멘텀, 아래는 매도 모멘텀이 강해지는 구간이며 시그널선은 변화의 지속 여부를 보여줍니다.';
-            if (sourceNote) sourceNote.textContent = 'KOSPI와 KODEX의 1분봉 가격·거래량에 같은 확률 추정식을 적용한 상대 지표입니다. 실제 Bid/Ask 체결 분류는 아닙니다.';
         } else {
             rows = (days || []).map(function (day) {
                 return Object.assign({ label: day.date }, day.summary);
             });
             title.textContent = 'KOSPI·KODEX 합성 거래량 모멘텀 · ' + kospiPeriodLabel() + ' · ' + rows.length + '거래일';
-            badge.textContent = '일봉 5·20·5';
-            if (method) method.textContent = '두 시장의 일봉 거래량 순압력을 정규화해 방향의 가속도를 비교합니다. 0선 위는 매수 모멘텀, 아래는 매도 모멘텀이 강해지는 구간이며 시그널선은 변화의 지속 여부를 보여줍니다.';
-            if (sourceNote) sourceNote.textContent = 'KOSPI와 KODEX의 일봉 가격 범위와 종가 위치를 거래량 단위와 무관한 순압력으로 바꾼 상대 지표입니다. 실제 Bid/Ask 체결 분류는 아닙니다.';
         }
         rows = rows.filter(function (row) {
             return [row.direction, row.momentum, row.signal, row.divergence].every(Number.isFinite);
@@ -1073,8 +1062,8 @@
         var width = 1000;
         var left = 42;
         var right = 944;
-        var momentumTop = 42;
-        var momentumBottom = 292;
+        var momentumTop = 16;
+        var momentumBottom = 150;
         var innerWidth = right - left;
         var xStep = innerWidth / rows.length;
         function xFor(index) { return left + xStep * index + xStep / 2; }
@@ -1086,9 +1075,6 @@
             svg.appendChild(makeSvg('line', { x1: left, y1: y, x2: right, y2: y, 'class': 'composite-momentum-grid' }));
         });
         svg.appendChild(makeSvg('line', { x1: left, y1: momentumY(0), x2: right, y2: momentumY(0), 'class': 'composite-momentum-zero' }));
-        var momentumLabel = makeSvg('text', { x: left, y: momentumTop + 13, 'class': 'composite-momentum-label' });
-        momentumLabel.textContent = '방향 모멘텀';
-        svg.appendChild(momentumLabel);
         [momentumMax, 0, -momentumMax].forEach(function (value) {
             var label = makeSvg('text', { x: right + 10, y: momentumY(value) + 4, 'class': 'composite-momentum-axis' });
             label.textContent = formatSigned(value, '', 0);
@@ -1137,7 +1123,7 @@
             return values.indexOf(value) === index;
         });
         tickIndexes.forEach(function (index) {
-            var label = makeSvg('text', { x: xFor(index), y: 330, 'class': 'composite-momentum-axis', 'text-anchor': index === 0 ? 'start' : index === rows.length - 1 ? 'end' : 'middle' });
+            var label = makeSvg('text', { x: xFor(index), y: 178, 'class': 'composite-momentum-axis', 'text-anchor': index === 0 ? 'start' : index === rows.length - 1 ? 'end' : 'middle' });
             label.textContent = selectedKodexChartMode === 'intraday'
                 ? rows[index].time
                 : formatHistoryDate(rows[index].label).replace('월 ', '/').replace('일', '');
@@ -1145,10 +1131,6 @@
         });
         var latest = rows[rows.length - 1];
         updateReadout(latest);
-        appendKodexMetric(summary, '현재 판정', compositeDirectionLabel(latest.direction, latest.momentum));
-        appendKodexMetric(summary, '합성 방향', formatSigned(latest.direction, '점', 1));
-        appendKodexMetric(summary, '모멘텀', formatSigned(latest.momentum, '점', 1));
-        appendKodexMetric(summary, 'KODEX−KOSPI 괴리', formatSigned(latest.divergence, '점', 1));
     }
 
     function renderCompositeMomentumCard(instrument) {

@@ -832,51 +832,31 @@
 }
 
 .composite-momentum-card {
+    padding-bottom: var(--space-3);
     background:
         radial-gradient(circle at 88% 8%, rgba(255, 83, 103, 0.07), transparent 29%),
         linear-gradient(150deg, rgba(68, 209, 122, 0.055), transparent 34%),
         #111713;
 }
 
-.composite-momentum-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem 0.9rem;
-    margin: var(--space-4) 0 var(--space-2);
-    color: var(--text-muted);
-    font-size: 0.72rem;
+.technical-card-stack > .composite-momentum-card {
+    padding-top: 4rem;
 }
 
-.composite-momentum-legend span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.38rem;
+.composite-momentum-compact-heading {
+    margin: 0 0 0.45rem;
 }
 
-.composite-momentum-legend span::before {
-    width: 16px;
-    height: 3px;
-    border-radius: var(--radius-pill);
-    background: currentColor;
-    content: '';
-}
-
-.composite-momentum-legend .is-momentum-buy { color: #ff5367; }
-.composite-momentum-legend .is-momentum-sell { color: #4f8dff; }
-.composite-momentum-legend .is-signal { color: #f5d76e; }
-
-.composite-momentum-method {
-    margin: 0 0 var(--space-2);
-    color: #a5b5bd;
-    font-size: 0.78rem;
-    line-height: 1.65;
+.composite-momentum-compact-heading h3 {
+    margin: 0;
+    font-size: 1rem;
 }
 
 .composite-momentum-chart {
     display: block;
     width: 100%;
-    min-width: 760px;
-    min-height: 280px;
+    min-width: 680px;
+    min-height: 0;
 }
 
 .composite-momentum-zero {
