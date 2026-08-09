@@ -15,6 +15,152 @@
     "status": "200"
   },
   {
+    "source": "/market-data/index/KOSPI/history",
+    "target": "https://fchart.stock.naver.com/sise.nhn?symbol=KOSPI&timeframe=day&count=300&requestType=0",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-1",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=1",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-2",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=2",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-3",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=3",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-4",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=4",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-5",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=5",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-6",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=6",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-7",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=7",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-8",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=8",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-9",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=9",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-10",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=10",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-11",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=11",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-12",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=12",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-13",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=13",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-14",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=14",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-15",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=15",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-16",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=16",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-17",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=17",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-18",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=18",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-19",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=19",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-20",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=20",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-21",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=21",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-22",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=22",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-23",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=23",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-24",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=24",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-25",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=25",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-26",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=26",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-27",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=27",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow/page-28",
+    "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=28",
+    "status": "200"
+  },
+
+  {
     "source": "/market-data/index/KOSDAQ/basic",
     "target": "https://m.stock.naver.com/api/index/KOSDAQ/basic",
     "status": "200"

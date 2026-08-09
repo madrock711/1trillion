@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260807-03">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260809-01">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -64,8 +64,8 @@
     }
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
-    <script defer src="../assets/market-live-data.js?v=20260807-03"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260807-03"></script>
+    <script defer src="../assets/market-live-data.js?v=20260809-01"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260809-01"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -362,10 +362,51 @@
 
             <section class="market-view-panel" id="market-view-technical" data-view-panel="technical" aria-labelledby="technical-title">
                 <div class="market-panel-heading market-panel-heading--section">
-                    <p class="market-panel-kicker">KODEX leverage · TQQQ</p>
+                    <p class="market-panel-kicker">KOSPI · KODEX leverage · TQQQ</p>
                     <h2 id="technical-title">기술적 분석</h2>
-                    <p>KODEX 레버리지의 당일 가격 범위와 기준선, KODEX·TQQQ의 3개월 가격 흐름을 함께 봅니다.</p>
+                    <p>KOSPI의 가격·거래량·외국인 수급과 KODEX·TQQQ의 가격 흐름을 같은 거래일 기준으로 살펴봅니다.</p>
                 </div>
+
+                <section class="market-dashboard-card kospi-flow-card" aria-labelledby="kospi-flow-title">
+                    <div class="market-card-heading-row kospi-flow-heading">
+                        <div>
+                            <p class="market-card-label">KOSPI 일봉 · 거래량 · 외국인 현물 · MACD</p>
+                            <h3 id="kospi-flow-title">KOSPI 가격과 외국인 수급 흐름</h3>
+                        </div>
+                        <div class="kospi-flow-toolbar">
+                            <button class="kodex-chart-refresh kospi-flow-refresh" id="kospi-flow-refresh" type="button" aria-describedby="kospi-flow-refresh-status">
+                                <span aria-hidden="true">↻</span>
+                                <span>새로고침</span>
+                            </button>
+                            <div class="kodex-period-switcher kospi-flow-periods" aria-label="KOSPI 조회 기간">
+                                <button type="button" data-kospi-period="1m" aria-pressed="false">1개월</button>
+                                <button type="button" data-kospi-period="3m" aria-pressed="true">3개월</button>
+                                <button type="button" data-kospi-period="6m" aria-pressed="false">6개월</button>
+                                <button type="button" data-kospi-period="1y" aria-pressed="false">1년</button>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="kodex-chart-refresh-status kospi-flow-refresh-status" id="kospi-flow-refresh-status" aria-live="polite"></span>
+                    <div class="kospi-flow-legend" aria-label="KOSPI 수급 차트 범례">
+                        <span class="is-up">상승 봉</span>
+                        <span class="is-down">하락 봉</span>
+                        <span class="is-volume">거래량</span>
+                        <span class="is-foreign-buy">외국인 순매수</span>
+                        <span class="is-foreign-sell">외국인 순매도</span>
+                        <span class="is-ma5">5일선</span>
+                        <span class="is-ma20">20일선</span>
+                        <span class="is-ma60">60일선</span>
+                        <span class="is-macd">MACD</span>
+                        <span class="is-signal">Signal</span>
+                    </div>
+                    <p class="kospi-flow-method">회색 막대는 KOSPI 거래량(천주), 빨강·파랑 막대는 외국인 현물 순매수(억원)입니다. MACD는 KOSPI 종가의 12·26·9 기준입니다.</p>
+                    <p class="kodex-history-readout kospi-flow-readout" id="kospi-flow-readout" aria-live="polite">KOSPI 가격과 외국인 수급 이력을 불러오는 중입니다.</p>
+                    <div class="kodex-history-shell kospi-flow-shell" tabindex="0" role="region" aria-label="KOSPI 일봉, 거래량, 외국인 현물 순매수와 MACD 차트">
+                        <svg id="kospi-flow-chart" class="kodex-history-chart kospi-flow-chart" viewBox="0 0 1000 720" role="img" aria-labelledby="kospi-flow-title kospi-flow-readout"></svg>
+                    </div>
+                    <div class="kodex-history-summary kospi-flow-summary" id="kospi-flow-summary"></div>
+                    <p class="market-source-note" id="kospi-flow-source-note">KOSPI 가격·거래량과 외국인 현물 순매수는 Naver Finance의 KRX 공개 데이터 기준입니다.</p>
+                </section>
 
                 <div id="kodex-analysis" class="technical-kodex-analysis">
                 <section class="market-dashboard-card market-technical-card" aria-labelledby="technical-chart-title">

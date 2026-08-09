@@ -23,6 +23,12 @@
         expiresAt: 0,
         pending: null
     };
+    var kospiPriceHistoryCache = {
+        value: null,
+        expiresAt: 0,
+        pending: null
+    };
+    var kospiForeignFlowPageCache = {};
     var tqqqIntradayOneMinuteCache = {
         value: null,
         expiresAt: 0,
@@ -209,6 +215,104 @@
             });
         });
         return Object.keys(rowsByDate).sort().map(function (date) { return rowsByDate[date]; });
+    }
+
+    function normalizeKospiPriceHistory(payload) {
+        var rowsByDate = {};
+        var itemPattern = /<item\s+data=["']([^"']+)["'][^>]*\/>/gi;
+        var match;
+        while ((match = itemPattern.exec(String(payload || '')))) {
+            var parts = match[1].split('|');
+            if (parts.length < 6 || !/^\d{8}$/.test(parts[0])) continue;
+            var row = {
+                date: parts[0].slice(0, 4) + '-' + parts[0].slice(4, 6) + '-' + parts[0].slice(6, 8),
+                open: parseNumber(parts[1]),
+                high: parseNumber(parts[2]),
+                low: parseNumber(parts[3]),
+                close: parseNumber(parts[4]),
+                volume: parseNumber(parts[5])
+            };
+            if (![row.open, row.high, row.low, row.close, row.volume].every(Number.isFinite)
+                || row.volume <= 0
+                || row.high < Math.max(row.open, row.close)
+                || row.low > Math.min(row.open, row.close)) continue;
+            rowsByDate[row.date] = row;
+        }
+        return Object.keys(rowsByDate).sort().map(function (date) { return rowsByDate[date]; });
+    }
+
+    function normalizeKospiForeignFlowHtml(payload) {
+        var rowsByDate = {};
+        var rowPattern = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+        var rowMatch;
+        while ((rowMatch = rowPattern.exec(String(payload || '')))) {
+            var dateMatch = /<td[^>]*class=["'][^"']*\bdate2\b[^"']*["'][^>]*>\s*(\d{2})\.(\d{2})\.(\d{2})\s*<\/td>/i.exec(rowMatch[1]);
+            if (!dateMatch) continue;
+            var cells = [];
+            var cellPattern = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+            var cellMatch;
+            while ((cellMatch = cellPattern.exec(rowMatch[1]))) {
+                cells.push(cellMatch[1].replace(/<[^>]+>/g, '').replace(/&nbsp;/gi, ' ').trim());
+            }
+            if (cells.length < 4) continue;
+            var normalized = {
+                date: '20' + dateMatch[1] + '-' + dateMatch[2] + '-' + dateMatch[3],
+                personal: parseNumber(cells[1]),
+                foreign: parseNumber(cells[2]),
+                institution: parseNumber(cells[3]),
+                unit: '억원'
+            };
+            if (![normalized.personal, normalized.foreign, normalized.institution].every(Number.isFinite)) continue;
+            rowsByDate[normalized.date] = normalized;
+        }
+        return Object.keys(rowsByDate).sort().map(function (date) { return rowsByDate[date]; });
+    }
+
+    function mergeKospiTechnicalHistory(priceRows, flowRows) {
+        var flowsByDate = {};
+        (flowRows || []).forEach(function (row) {
+            if (row && /^\d{4}-\d{2}-\d{2}$/.test(row.date)) flowsByDate[row.date] = row;
+        });
+        return (priceRows || []).map(function (row) {
+            var flow = flowsByDate[row.date];
+            return {
+                date: row.date,
+                open: row.open,
+                high: row.high,
+                low: row.low,
+                close: row.close,
+                volume: row.volume,
+                foreign: flow && Number.isFinite(flow.foreign) ? flow.foreign : null,
+                institution: flow && Number.isFinite(flow.institution) ? flow.institution : null,
+                personal: flow && Number.isFinite(flow.personal) ? flow.personal : null,
+                flowUnit: '억원'
+            };
+        });
+    }
+
+    function exponentialMovingAverage(values, period) {
+        var multiplier = 2 / (period + 1);
+        var result = new Array(values.length).fill(null);
+        var previous = null;
+        values.forEach(function (value, index) {
+            if (!Number.isFinite(value)) return;
+            previous = previous === null ? value : value * multiplier + previous * (1 - multiplier);
+            result[index] = previous;
+        });
+        return result;
+    }
+
+    function calculateMacd(values, fastPeriod, slowPeriod, signalPeriod) {
+        var fast = exponentialMovingAverage(values, fastPeriod || 12);
+        var slow = exponentialMovingAverage(values, slowPeriod || 26);
+        var macd = values.map(function (_, index) {
+            return Number.isFinite(fast[index]) && Number.isFinite(slow[index]) ? fast[index] - slow[index] : null;
+        });
+        var signal = exponentialMovingAverage(macd, signalPeriod || 9);
+        var histogram = macd.map(function (value, index) {
+            return Number.isFinite(value) && Number.isFinite(signal[index]) ? value - signal[index] : null;
+        });
+        return { macd: macd, signal: signal, histogram: histogram };
     }
 
     function normalizeTqqqPriceHistory(payload) {
@@ -627,6 +731,7 @@
 
         var prices = validatedPrices(basic, integration, true);
         var ratio = signedValue(basic.fluctuationsRatio, basic.compareToPreviousPrice);
+        var totals = totalInfoMap(integration);
         var trend = integration.dealTrendInfo || {};
         var breadth = integration.upDownStockInfo || {};
         var program = integration.programTrendInfo || {};
@@ -677,6 +782,8 @@
             stateLabel: stateLabel(basic.marketStatus),
             marketStatus: basic.marketStatus,
             delayed: basic.marketStatus === 'OPEN' && now - timestamp > 10 * 60 * 1000,
+            volume: totals.accumulatedTradingVolume,
+            tradingValue: totals.accumulatedTradingValue,
             flows: normalizedFlows,
             breadth: normalizedBreadth,
             program: normalizedProgram
@@ -792,6 +899,69 @@
             fetchJson(fetchImpl, prefix + 'basic', signal, nonce),
             fetchJson(fetchImpl, prefix + 'integration', signal, nonce)
         ]);
+    }
+
+    function fetchKospiPriceHistory(fetchImpl, baseUrl, signal, nonce, now, ttlMs) {
+        if (kospiPriceHistoryCache.value && kospiPriceHistoryCache.expiresAt > now) {
+            return Promise.resolve(kospiPriceHistoryCache.value);
+        }
+        if (kospiPriceHistoryCache.pending) return kospiPriceHistoryCache.pending;
+        var historyUrl = new URL('index/KOSPI/history', baseUrl).href;
+        kospiPriceHistoryCache.pending = fetchText(fetchImpl, historyUrl, signal, nonce).then(function (payload) {
+            var rows = normalizeKospiPriceHistory(payload);
+            if (rows.length < 240) throw new Error('KOSPI 1년 가격 이력이 부족합니다.');
+            kospiPriceHistoryCache.value = rows;
+            kospiPriceHistoryCache.expiresAt = now + ttlMs;
+            return rows;
+        }).finally(function () {
+            kospiPriceHistoryCache.pending = null;
+        });
+        return kospiPriceHistoryCache.pending;
+    }
+
+    function fetchKospiForeignFlowPage(fetchImpl, baseUrl, page, signal, nonce, now, ttlMs) {
+        var cache = kospiForeignFlowPageCache[page] || { value: null, expiresAt: 0, pending: null };
+        kospiForeignFlowPageCache[page] = cache;
+        if (cache.value && cache.expiresAt > now) return Promise.resolve(cache.value);
+        if (cache.pending) return cache.pending;
+        var pageUrl = new URL('index/KOSPI/foreign-flow/page-' + page, baseUrl).href;
+        cache.pending = fetchText(fetchImpl, pageUrl, signal, nonce).then(function (payload) {
+            var rows = normalizeKospiForeignFlowHtml(payload);
+            if (!rows.length) throw new Error('KOSPI 외국인 수급 ' + page + '페이지가 비어 있습니다.');
+            cache.value = rows;
+            cache.expiresAt = now + ttlMs;
+            return rows;
+        }).finally(function () {
+            cache.pending = null;
+        });
+        return cache.pending;
+    }
+
+    function fetchKospiTechnicalHistory(fetchImpl, baseUrl, options) {
+        var settings = options || {};
+        var now = Number.isFinite(settings.now) ? settings.now : Date.now();
+        var nonce = settings.nonce || String(now);
+        var signal = settings.signal;
+        var ttlMs = Number.isFinite(settings.ttlMs) ? settings.ttlMs : 30 * 60 * 1000;
+        var pageCount = Math.max(3, Math.min(28, Number(settings.pageCount) || 8));
+        if (settings.forceRefresh) {
+            kospiPriceHistoryCache.expiresAt = 0;
+            for (var refreshPage = 1; refreshPage <= pageCount; refreshPage += 1) {
+                if (kospiForeignFlowPageCache[refreshPage]) kospiForeignFlowPageCache[refreshPage].expiresAt = 0;
+            }
+        }
+        var pageRequests = [];
+        for (var page = 1; page <= pageCount; page += 1) {
+            pageRequests.push(fetchKospiForeignFlowPage(fetchImpl, baseUrl, page, signal, nonce, now, ttlMs));
+        }
+        return Promise.all([
+            fetchKospiPriceHistory(fetchImpl, baseUrl, signal, nonce, now, ttlMs),
+            Promise.all(pageRequests)
+        ]).then(function (parts) {
+            var flowRows = [];
+            parts[1].forEach(function (rows) { flowRows = flowRows.concat(rows); });
+            return mergeKospiTechnicalHistory(parts[0], flowRows);
+        });
     }
 
     function fetchKodexHistory(fetchImpl, baseUrl, signal, nonce, now, ttlMs) {
@@ -1149,6 +1319,11 @@
         normalizeStock: normalizeStock,
         normalizeExchange: normalizeExchange,
         normalizeKodexPriceHistory: normalizeKodexPriceHistory,
+        normalizeKospiPriceHistory: normalizeKospiPriceHistory,
+        normalizeKospiForeignFlowHtml: normalizeKospiForeignFlowHtml,
+        mergeKospiTechnicalHistory: mergeKospiTechnicalHistory,
+        calculateMacd: calculateMacd,
+        fetchKospiTechnicalHistory: fetchKospiTechnicalHistory,
         normalizeTqqqPriceHistory: normalizeTqqqPriceHistory,
         normalizeTqqqIntradayHistory: normalizeTqqqIntradayHistory,
         normalizeKodexVolumePressure: normalizeKodexVolumePressure,

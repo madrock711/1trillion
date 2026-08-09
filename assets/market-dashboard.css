@@ -1098,6 +1098,169 @@
 .kodex-history-line.is-ma20 { stroke: #66d2ff; }
 .kodex-history-line.is-ma60 { stroke: #59dda0; }
 
+.kospi-flow-card {
+    position: relative;
+    margin-bottom: var(--space-4);
+    background:
+        linear-gradient(150deg, rgba(68, 209, 122, 0.055), transparent 34%),
+        #111713;
+}
+
+.kospi-flow-heading {
+    align-items: flex-end;
+}
+
+.kospi-flow-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.55rem;
+}
+
+.kospi-flow-refresh-status {
+    display: block;
+    margin-top: 0.4rem;
+    text-align: right;
+}
+
+.kospi-flow-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.9rem;
+    margin: var(--space-4) 0 var(--space-2);
+    color: var(--text-muted);
+    font-size: 0.72rem;
+}
+
+.kospi-flow-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38rem;
+}
+
+.kospi-flow-legend span::before {
+    width: 16px;
+    height: 3px;
+    border-radius: var(--radius-pill);
+    background: currentColor;
+    content: '';
+}
+
+.kospi-flow-legend .is-up { color: #ff737b; }
+.kospi-flow-legend .is-down { color: #69a9ff; }
+.kospi-flow-legend .is-volume { color: #75838d; }
+.kospi-flow-legend .is-foreign-buy { color: #ff4f5e; }
+.kospi-flow-legend .is-foreign-sell { color: #4f8dff; }
+.kospi-flow-legend .is-ma5 { color: #ffd166; }
+.kospi-flow-legend .is-ma20 { color: #66d2ff; }
+.kospi-flow-legend .is-ma60 { color: #59dda0; }
+.kospi-flow-legend .is-macd { color: #f5d76e; }
+.kospi-flow-legend .is-signal { color: #75e8a7; }
+
+.kospi-flow-method {
+    margin: 0 0 var(--space-2);
+    color: #94a9b5;
+    font-size: 0.74rem;
+    line-height: 1.55;
+}
+
+.kospi-flow-chart {
+    min-width: 760px;
+    min-height: 600px;
+}
+
+.kospi-flow-zero-line {
+    stroke: rgba(211, 224, 232, 0.38);
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+}
+
+.kospi-flow-axis-label {
+    fill: #83949f;
+    font-family: inherit;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+}
+
+.kospi-flow-candle-wick {
+    stroke: currentColor;
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+}
+
+.kospi-flow-candle {
+    fill: currentColor;
+}
+
+.kospi-flow-candle.is-up,
+.kospi-flow-candle-wick.is-up { color: #ff737b; }
+
+.kospi-flow-candle.is-down,
+.kospi-flow-candle-wick.is-down { color: #5f9cff; }
+
+.kospi-flow-candle.is-flat,
+.kospi-flow-candle-wick.is-flat { color: #a8b3ba; }
+
+.kospi-flow-volume {
+    fill: #60717c;
+    opacity: 0.34;
+}
+
+.kospi-flow-foreign {
+    opacity: 0.94;
+}
+
+.kospi-flow-foreign.is-buy,
+.kospi-flow-macd-histogram.is-positive { fill: #ff4f5e; }
+
+.kospi-flow-foreign.is-sell,
+.kospi-flow-macd-histogram.is-negative { fill: #4f8dff; }
+
+.kospi-flow-macd-histogram {
+    opacity: 0.72;
+}
+
+.kospi-flow-macd-line,
+.kospi-flow-signal-line {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+}
+
+.kospi-flow-macd-line { stroke: #f5d76e; }
+.kospi-flow-signal-line { stroke: #75e8a7; }
+
+.kospi-flow-hitbox {
+    fill: transparent;
+    outline: none;
+    cursor: crosshair;
+    pointer-events: all;
+}
+
+.kospi-flow-hitbox.is-linked-selected {
+    fill: rgba(255, 226, 122, 0.055);
+}
+
+.kospi-flow-candle.is-linked-selected,
+.kospi-flow-candle-wick.is-linked-selected,
+.kospi-flow-volume.is-linked-selected,
+.kospi-flow-foreign.is-linked-selected,
+.kospi-flow-macd-histogram.is-linked-selected {
+    stroke: #ffe27a;
+    stroke-width: 2;
+    filter: drop-shadow(0 0 3px rgba(255, 226, 122, 0.72));
+}
+
+.kospi-flow-shell:focus-visible,
+.kospi-flow-hitbox:focus-visible {
+    outline: 2px solid rgba(117, 232, 167, 0.68);
+    outline-offset: -2px;
+}
+
 .kodex-history-summary {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
@@ -1918,6 +2081,25 @@
 
     .kodex-history-heading {
         align-items: flex-start;
+    }
+
+    .kospi-flow-heading {
+        align-items: flex-start;
+    }
+
+    .kospi-flow-toolbar {
+        width: 100%;
+        justify-content: flex-start;
+        margin-top: var(--space-3);
+    }
+
+    .kospi-flow-refresh-status {
+        text-align: left;
+    }
+
+    .kospi-flow-periods {
+        max-width: 100%;
+        overflow-x: auto;
     }
 
     .kodex-primary-history-card {
