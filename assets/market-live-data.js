@@ -737,6 +737,90 @@
         });
     }
 
+    function calculateCompositeDailyVolumeMomentum(kospiRows, kodexRows, options) {
+        var settings = options || {};
+        var varianceAlpha = Number.isFinite(settings.varianceAlpha) ? settings.varianceAlpha : 2 / 61;
+        var fastPeriod = Number.isFinite(settings.fastPeriod) ? settings.fastPeriod : 5;
+        var slowPeriod = Number.isFinite(settings.slowPeriod) ? settings.slowPeriod : 20;
+        var signalPeriod = Number.isFinite(settings.signalPeriod) ? settings.signalPeriod : 5;
+        var kospiByDate = {};
+        var kodexByDate = {};
+
+        function normalizeDailyRows(rows, target) {
+            (rows || []).forEach(function (row) {
+                var date = normalizeIsoDate(row && row.date);
+                if (!date
+                    || ![row.open, row.high, row.low, row.close, row.volume].every(Number.isFinite)
+                    || row.volume <= 0
+                    || row.high < Math.max(row.open, row.close)
+                    || row.low > Math.min(row.open, row.close)) return;
+                var range = row.high - row.low;
+                var pressure = range > 0
+                    ? ((row.close - row.low) - (row.high - row.close)) / range
+                    : row.close > row.open ? 1 : row.close < row.open ? -1 : 0;
+                target[date] = {
+                    pressure: Math.max(-1, Math.min(1, pressure)),
+                    sourceLastAt: row.sourceLastAt || null
+                };
+            });
+        }
+        function normalizePressure(value, variance) {
+            var floor = 0.02;
+            var scale = Math.sqrt(Math.max(Number.isFinite(variance) ? variance : value * value, floor * floor));
+            return Math.tanh(Math.max(-3, Math.min(3, value / scale)) / 2);
+        }
+        function nextVariance(previous, value) {
+            return Number.isFinite(previous)
+                ? varianceAlpha * value * value + (1 - varianceAlpha) * previous
+                : Math.max(value * value, 0.02 * 0.02);
+        }
+        function nextEma(previous, value, period) {
+            var alpha = 2 / (period + 1);
+            return previous === null ? value : value * alpha + previous * (1 - alpha);
+        }
+
+        normalizeDailyRows(kospiRows, kospiByDate);
+        normalizeDailyRows(kodexRows, kodexByDate);
+        var commonDates = Object.keys(kospiByDate).filter(function (date) { return Boolean(kodexByDate[date]); }).sort();
+        var kospiVariance = null;
+        var kodexVariance = null;
+        var fast = null;
+        var slow = null;
+        var signal = null;
+
+        return commonDates.map(function (date) {
+            var kospiPressure = kospiByDate[date].pressure;
+            var kodexPressure = kodexByDate[date].pressure;
+            var kospiScore = normalizePressure(kospiPressure, kospiVariance);
+            var kodexScore = normalizePressure(kodexPressure, kodexVariance);
+            kospiVariance = nextVariance(kospiVariance, kospiPressure);
+            kodexVariance = nextVariance(kodexVariance, kodexPressure);
+            var direction = 50 * (kospiScore + kodexScore);
+            var divergence = 50 * (kodexScore - kospiScore);
+            fast = nextEma(fast, direction, fastPeriod);
+            slow = nextEma(slow, direction, slowPeriod);
+            var momentum = fast - slow;
+            signal = nextEma(signal, momentum, signalPeriod);
+            var point = {
+                time: '15:30',
+                kospiPressure: kospiPressure,
+                kodexPressure: kodexPressure,
+                kospiScore: kospiScore * 100,
+                kodexScore: kodexScore * 100,
+                direction: direction,
+                divergence: divergence,
+                momentum: momentum,
+                signal: signal
+            };
+            return {
+                date: date,
+                sourceLastAt: [kospiByDate[date].sourceLastAt, kodexByDate[date].sourceLastAt].filter(Boolean).sort().pop() || date + 'T15:30:00+09:00',
+                bars: [point],
+                summary: point
+            };
+        });
+    }
+
     function normalizeKodexVolumePressure(payload) {
         if (!payload || payload.schemaVersion !== 1 || String(payload.symbol) !== '122630' || !Array.isArray(payload.days)) {
             throw new Error('KODEX 거래 압력 데이터가 올바르지 않습니다.');
@@ -1793,6 +1877,7 @@
         fetchKospiIntradayDay: fetchKospiIntradayDay,
         estimateBvcPressureDays: estimateBvcPressureDays,
         calculateCompositeVolumeMomentum: calculateCompositeVolumeMomentum,
+        calculateCompositeDailyVolumeMomentum: calculateCompositeDailyVolumeMomentum,
         fetchKospiMinutePressureDays: fetchKospiMinutePressureDays,
         normalizeTqqqPriceHistory: normalizeTqqqPriceHistory,
         normalizeTqqqIntradayHistory: normalizeTqqqIntradayHistory,

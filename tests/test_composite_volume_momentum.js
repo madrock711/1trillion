@@ -29,9 +29,31 @@ function pressureDay(date, ratios) {
     };
 }
 
+function dailyRows(count, offset) {
+    const rows = [];
+    const start = new Date('2026-05-01T00:00:00Z');
+    for (let index = 0; index < count; index += 1) {
+        const date = new Date(start);
+        date.setUTCDate(date.getUTCDate() + index);
+        const closeLocation = index < Math.floor(count / 2) ? -0.45 : 0.65;
+        const low = 100 + (offset || 0) + index * 0.1;
+        const high = low + 10;
+        rows.push({
+            date: date.toISOString().slice(0, 10),
+            open: low + 5,
+            high,
+            low,
+            close: low + 5 + closeLocation * 5,
+            volume: 100000 + index * 100
+        });
+    }
+    return rows;
+}
+
 (async function run() {
     assert.strictEqual(typeof live.estimateBvcPressureDays, 'function');
     assert.strictEqual(typeof live.calculateCompositeVolumeMomentum, 'function');
+    assert.strictEqual(typeof live.calculateCompositeDailyVolumeMomentum, 'function');
     assert.strictEqual(typeof live.fetchKospiMinutePressureDays, 'function');
 
     const ratios = Array(40).fill(-0.12).concat(Array(40).fill(0.28));
@@ -59,6 +81,19 @@ function pressureDay(date, ratios) {
         before.map(row => [row.direction, row.momentum, row.signal, row.divergence]),
         after.slice(0, 70).map(row => [row.direction, row.momentum, row.signal, row.divergence]),
         'future bars must not change previously calculated scores'
+    );
+
+    const dailyKospi = dailyRows(70, 0);
+    const dailyKodex = dailyRows(70, 10);
+    const dailyComposite = live.calculateCompositeDailyVolumeMomentum(dailyKospi, dailyKodex);
+    assert.strictEqual(dailyComposite.length, 70, 'daily composite must retain the full common history');
+    assert(dailyComposite[69].summary.direction > 0, 'recent buy pressure should produce a positive daily direction');
+    assert(dailyComposite[40].summary.momentum > 0, 'daily sell-to-buy transition should produce positive momentum');
+    const dailyBefore = live.calculateCompositeDailyVolumeMomentum(dailyKospi.slice(0, 60), dailyKodex.slice(0, 60));
+    assert.deepStrictEqual(
+        dailyBefore.map(row => [row.summary.direction, row.summary.momentum, row.summary.signal, row.summary.divergence]),
+        dailyComposite.slice(0, 60).map(row => [row.summary.direction, row.summary.momentum, row.summary.signal, row.summary.divergence]),
+        'future daily bars must not change previously calculated scores'
     );
 
     const minutePayload = [

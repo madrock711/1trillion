@@ -1034,6 +1034,8 @@
         var badge = document.getElementById('composite-momentum-badge');
         var readout = document.getElementById('composite-momentum-readout');
         var summary = document.getElementById('composite-momentum-summary');
+        var method = document.querySelector('.composite-momentum-method');
+        var sourceNote = document.getElementById('composite-momentum-source-note');
         if (!svg || !title || !badge || !readout || !summary) return;
         clear(svg);
         clear(summary);
@@ -1049,12 +1051,16 @@
             });
             title.textContent = formatHistoryDate(selectedDay.date) + ' KOSPI·KODEX 거래량 모멘텀';
             badge.textContent = selectedKodexIntradayInterval + '분봉 · 공통 시각';
+            if (method) method.textContent = '두 시장의 분봉 거래량 순압력을 정규화해 방향의 가속도를 비교합니다. 0선 위는 매수 모멘텀, 아래는 매도 모멘텀이 강해지는 구간이며 시그널선은 변화의 지속 여부를 보여줍니다.';
+            if (sourceNote) sourceNote.textContent = 'KOSPI와 KODEX의 1분봉 가격·거래량에 같은 확률 추정식을 적용한 상대 지표입니다. 실제 Bid/Ask 체결 분류는 아닙니다.';
         } else {
             rows = (days || []).map(function (day) {
                 return Object.assign({ label: day.date }, day.summary);
             });
-            title.textContent = 'KOSPI·KODEX 합성 거래량 모멘텀 · ' + rows.length + '거래일';
-            badge.textContent = '장 마감 30분 평균';
+            title.textContent = 'KOSPI·KODEX 합성 거래량 모멘텀 · ' + kospiPeriodLabel() + ' · ' + rows.length + '거래일';
+            badge.textContent = '일봉 5·20·5';
+            if (method) method.textContent = '두 시장의 일봉 거래량 순압력을 정규화해 방향의 가속도를 비교합니다. 0선 위는 매수 모멘텀, 아래는 매도 모멘텀이 강해지는 구간이며 시그널선은 변화의 지속 여부를 보여줍니다.';
+            if (sourceNote) sourceNote.textContent = 'KOSPI와 KODEX의 일봉 가격 범위와 종가 위치를 거래량 단위와 무관한 순압력으로 바꾼 상대 지표입니다. 실제 Bid/Ask 체결 분류는 아닙니다.';
         }
         rows = rows.filter(function (row) {
             return [row.direction, row.momentum, row.signal, row.divergence].every(Number.isFinite);
@@ -1149,6 +1155,39 @@
         var readout = document.getElementById('composite-momentum-readout');
         if (!readout || !instrument || !window.MarketDashboardLive) return;
         var api = window.MarketDashboardLive;
+        if (selectedKodexChartMode === 'daily') {
+            if (typeof api.calculateCompositeDailyVolumeMomentum !== 'function') return;
+            var market = dashboardData && findById(dashboardData.markets, 'KOSPI');
+            var kospiRows = prepareKospiDailyRows(market);
+            var liveDailyInstrument = instrument.liveSnapshot || {};
+            var kodexHistory = (liveDailyInstrument.priceHistory || instrument.priceHistory || []).filter(function (row) {
+                return row && Number.isFinite(parseHistoryDate(row.date))
+                    && [row.open, row.high, row.low, row.close, row.volume].every(Number.isFinite)
+                    && row.volume > 0;
+            }).sort(function (left, right) {
+                return parseHistoryDate(left.date) - parseHistoryDate(right.date);
+            });
+            if (kodexHistory.length) {
+                var threshold = new Date(parseHistoryDate(kodexHistory[kodexHistory.length - 1].date));
+                threshold.setMonth(threshold.getMonth() - kospiPeriodMonths());
+                kodexHistory = kodexHistory.filter(function (row) { return parseHistoryDate(row.date) >= threshold.getTime(); });
+            }
+            if (kospiRows.length < 5 || kodexHistory.length < 5) {
+                readout.textContent = 'KOSPI와 KODEX의 ' + kospiPeriodLabel() + ' 일봉을 불러오는 중입니다.';
+                return;
+            }
+            var dailyKey = 'daily|' + selectedKodexPeriod + '|'
+                + kospiRows.length + '|' + kospiRows[kospiRows.length - 1].date + '|' + kospiRows[kospiRows.length - 1].close + '|'
+                + kodexHistory.length + '|' + kodexHistory[kodexHistory.length - 1].date + '|' + kodexHistory[kodexHistory.length - 1].close;
+            if (compositeMomentumState.key !== dailyKey || !compositeMomentumState.days.length) {
+                compositeMomentumRenderToken += 1;
+                compositeMomentumState.key = dailyKey;
+                compositeMomentumState.days = api.calculateCompositeDailyVolumeMomentum(kospiRows, kodexHistory);
+                compositeMomentumState.pending = null;
+            }
+            renderCompositeMomentumChart(compositeMomentumState.days);
+            return;
+        }
         if (typeof api.fetchKospiMinutePressureDays !== 'function'
             || typeof api.fetchKodexIntradayDay !== 'function'
             || typeof api.calculateCompositeVolumeMomentum !== 'function') return;
@@ -1160,7 +1199,7 @@
         var dates = indexRows.map(function (row) { return row.date; }).filter(Boolean).slice(-12);
         if (liveDay && dates.indexOf(liveDay.date) === -1) dates.push(liveDay.date);
         if (!dates.length || !indexUrl || !liveMarketSource) return;
-        var key = dates.join(',') + '|' + (liveDay && liveDay.sourceLastAt || 'archive');
+        var key = 'intraday|' + dates.join(',') + '|' + (liveDay && liveDay.sourceLastAt || 'archive');
         if (compositeMomentumState.key === key && compositeMomentumState.days.length) {
             renderCompositeMomentumChart(compositeMomentumState.days);
             return;
@@ -1492,6 +1531,8 @@
             kospiTechnicalHistory = rows;
             var market = dashboardData && findById(dashboardData.markets, 'KOSPI');
             renderKospiHistoryChart(market);
+            var instrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
+            if (instrument) renderCompositeMomentumCard(instrument);
             var displayRows = mergeCurrentKospiHistory(rows, market);
             var latest = displayRows[displayRows.length - 1];
             setKospiFlowRefreshState('ready', latest ? formatHistoryDate(latest.date) + ' 기준' : '최근 거래일 기준');
