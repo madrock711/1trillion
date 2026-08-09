@@ -30,6 +30,7 @@
     };
     var kospiForeignFlowPageCache = {};
     var kospiIntradayDayCache = {};
+    var kospiMinutePressureDayCache = {};
     var tqqqIntradayOneMinuteCache = {
         value: null,
         expiresAt: 0,
@@ -339,6 +340,145 @@
             rowsByTimestamp[timestamp] = normalized;
         });
         return Object.keys(rowsByTimestamp).sort().map(function (timestamp) { return rowsByTimestamp[timestamp]; });
+    }
+
+    function estimateBvcPressureDays(days) {
+        var normalizedDays = (days || []).map(function (day) {
+            return {
+                date: normalizeIsoDate(day && day.date),
+                sourceLastAt: day && day.sourceLastAt || null,
+                bars: (day && day.bars || []).filter(function (row) {
+                    return row && /^\d{2}:\d{2}$/.test(String(row.time || ''))
+                        && [row.open, row.high, row.low, row.close, row.volume].every(Number.isFinite)
+                        && row.volume >= 0;
+                }).slice().sort(function (left, right) { return left.time.localeCompare(right.time); })
+            };
+        }).filter(function (day) { return day.date && day.bars.length > 1; });
+        var changes = [];
+        normalizedDays.forEach(function (day) {
+            day.bars.slice(1).forEach(function (row, index) {
+                changes.push(row.close - day.bars[index].close);
+            });
+        });
+        var sigma = sampleSigma(changes);
+        if (!Number.isFinite(sigma) || sigma <= 0) throw new Error('분봉 변동성을 계산할 수 없습니다.');
+        return normalizedDays.map(function (day) {
+            var cumulativeDelta = 0;
+            var bars = day.bars.map(function (row, index) {
+                var neutral = index === 0 || row.time >= '15:20';
+                var buyShare = neutral ? 0.5 : normalCdf((row.close - day.bars[index - 1].close) / sigma);
+                var estimatedBuyVolume = Math.max(0, Math.min(row.volume, Math.round(row.volume * buyShare)));
+                var estimatedSellVolume = row.volume - estimatedBuyVolume;
+                var delta = estimatedBuyVolume - estimatedSellVolume;
+                cumulativeDelta += delta;
+                return {
+                    time: row.time,
+                    open: row.open,
+                    high: row.high,
+                    low: row.low,
+                    close: row.close,
+                    volume: row.volume,
+                    estimatedBuyVolume: estimatedBuyVolume,
+                    estimatedSellVolume: estimatedSellVolume,
+                    delta: delta,
+                    cumulativeDelta: cumulativeDelta,
+                    neutral: neutral
+                };
+            });
+            return {
+                date: day.date,
+                interval: '1m',
+                sourceLastAt: day.sourceLastAt,
+                minuteVolume: bars.reduce(function (total, row) { return total + row.volume; }, 0),
+                sigma: sigma,
+                sigmaSampleSize: changes.length,
+                bars: bars
+            };
+        });
+    }
+
+    function calculateCompositeVolumeMomentum(kospiDays, kodexDays, options) {
+        var settings = options || {};
+        var varianceAlpha = Number.isFinite(settings.varianceAlpha) ? settings.varianceAlpha : 2 / 121;
+        var fastPeriod = Number.isFinite(settings.fastPeriod) ? settings.fastPeriod : 15;
+        var slowPeriod = Number.isFinite(settings.slowPeriod) ? settings.slowPeriod : 60;
+        var signalPeriod = Number.isFinite(settings.signalPeriod) ? settings.signalPeriod : 15;
+        var kospiByDate = {};
+        var kodexByDate = {};
+        (kospiDays || []).forEach(function (day) { if (day && day.date) kospiByDate[day.date] = day; });
+        (kodexDays || []).forEach(function (day) { if (day && day.date) kodexByDate[day.date] = day; });
+        var commonDates = Object.keys(kospiByDate).filter(function (date) { return Boolean(kodexByDate[date]); }).sort();
+        var kospiVariance = null;
+        var kodexVariance = null;
+
+        function normalizePressure(value, variance) {
+            var floor = 0.02;
+            var scale = Math.sqrt(Math.max(Number.isFinite(variance) ? variance : value * value, floor * floor));
+            var z = Math.max(-3, Math.min(3, value / scale));
+            return Math.tanh(z / 2);
+        }
+        function nextVariance(previous, value) {
+            return Number.isFinite(previous)
+                ? varianceAlpha * value * value + (1 - varianceAlpha) * previous
+                : Math.max(value * value, 0.02 * 0.02);
+        }
+        function nextEma(previous, value, period) {
+            var alpha = 2 / (period + 1);
+            return previous === null ? value : value * alpha + previous * (1 - alpha);
+        }
+
+        return commonDates.map(function (date) {
+            var kospiBars = {};
+            var kodexBars = {};
+            (kospiByDate[date].bars || []).forEach(function (row) { kospiBars[row.time] = row; });
+            (kodexByDate[date].bars || []).forEach(function (row) { kodexBars[row.time] = row; });
+            var times = Object.keys(kospiBars).filter(function (time) { return Boolean(kodexBars[time]); }).sort();
+            var fast = null;
+            var slow = null;
+            var signal = null;
+            var bars = times.map(function (time) {
+                var kospi = kospiBars[time];
+                var kodex = kodexBars[time];
+                var kospiPressure = Number.isFinite(kospi.delta) ? kospi.delta / Math.max(kospi.volume, 1) : 0;
+                var kodexPressure = Number.isFinite(kodex.delta) ? kodex.delta / Math.max(kodex.volume, 1) : 0;
+                var kospiScore = normalizePressure(kospiPressure, kospiVariance);
+                var kodexScore = normalizePressure(kodexPressure, kodexVariance);
+                kospiVariance = nextVariance(kospiVariance, kospiPressure);
+                kodexVariance = nextVariance(kodexVariance, kodexPressure);
+                var direction = 50 * (kospiScore + kodexScore);
+                var divergence = 50 * (kodexScore - kospiScore);
+                fast = nextEma(fast, direction, fastPeriod);
+                slow = nextEma(slow, direction, slowPeriod);
+                var momentum = fast - slow;
+                signal = nextEma(signal, momentum, signalPeriod);
+                return {
+                    time: time,
+                    kospiPressure: kospiPressure,
+                    kodexPressure: kodexPressure,
+                    kospiScore: kospiScore * 100,
+                    kodexScore: kodexScore * 100,
+                    direction: direction,
+                    divergence: divergence,
+                    momentum: momentum,
+                    signal: signal
+                };
+            });
+            var tail = bars.slice(-30);
+            function average(key) {
+                return tail.length ? tail.reduce(function (total, row) { return total + row[key]; }, 0) / tail.length : NaN;
+            }
+            return {
+                date: date,
+                sourceLastAt: [kospiByDate[date].sourceLastAt, kodexByDate[date].sourceLastAt].filter(Boolean).sort().pop() || null,
+                bars: bars,
+                summary: {
+                    direction: average('direction'),
+                    momentum: average('momentum'),
+                    signal: average('signal'),
+                    divergence: average('divergence')
+                }
+            };
+        }).filter(function (day) { return day.bars.length > 1; });
     }
 
     function normalizeKospiIntradayForeignFlowHtml(payload, expectedDate) {
@@ -1216,6 +1356,68 @@
         return state.pending;
     }
 
+    function fetchKospiMinutePriceDay(fetchImpl, baseUrl, date, options) {
+        var settings = options || {};
+        var day = normalizeIsoDate(date);
+        if (!day) return Promise.reject(new Error('KOSPI 분봉 날짜가 올바르지 않습니다.'));
+        var now = Number.isFinite(settings.now) ? settings.now : Date.now();
+        var ttlMs = Number.isFinite(settings.ttlMs) ? settings.ttlMs : 15 * 60 * 1000;
+        var cacheKey = String(baseUrl || '') + '|' + day;
+        var state = kospiMinutePressureDayCache[cacheKey] || { value: null, expiresAt: 0, pending: null };
+        kospiMinutePressureDayCache[cacheKey] = state;
+        if (settings.forceRefresh) state.expiresAt = 0;
+        if (state.value && state.expiresAt > now) return Promise.resolve(state.value);
+        if (state.pending) return state.pending;
+        var compactDate = day.replace(/-/g, '');
+        var minuteUrl = new URL('index/KOSPI/minute', baseUrl);
+        minuteUrl.searchParams.set('startDateTime', compactDate + '0900');
+        minuteUrl.searchParams.set('endDateTime', compactDate + '1530');
+        state.pending = fetchJson(
+            fetchImpl,
+            minuteUrl.href,
+            settings.signal,
+            settings.nonce || String(now)
+        ).then(function (payload) {
+            var bars = normalizeKospiIntradayMinute(payload, day);
+            if (bars.length < 2) throw new Error(day + ' KOSPI 분봉이 비어 있습니다.');
+            var value = {
+                date: day,
+                interval: '1m',
+                sourceLastAt: day + 'T' + bars[bars.length - 1].time + ':00+09:00',
+                bars: bars
+            };
+            state.value = value;
+            state.expiresAt = now + ttlMs;
+            return value;
+        }).finally(function () {
+            state.pending = null;
+        });
+        return state.pending;
+    }
+
+    function fetchKospiMinutePressureDays(fetchImpl, baseUrl, dates, options) {
+        var settings = options || {};
+        var normalizedDates = (dates || []).map(normalizeIsoDate).filter(function (date, index, values) {
+            return Boolean(date) && values.indexOf(date) === index;
+        }).sort();
+        if (!normalizedDates.length) return Promise.resolve([]);
+        var results = new Array(normalizedDates.length);
+        var nextIndex = 0;
+        var workerCount = Math.max(1, Math.min(normalizedDates.length, Number(settings.concurrencyLimit) || 4));
+        function runWorker() {
+            var index = nextIndex;
+            nextIndex += 1;
+            if (index >= normalizedDates.length) return Promise.resolve();
+            return fetchKospiMinutePriceDay(fetchImpl, baseUrl, normalizedDates[index], settings).then(function (day) {
+                results[index] = day;
+                return runWorker();
+            });
+        }
+        var workers = [];
+        for (var index = 0; index < workerCount; index += 1) workers.push(runWorker());
+        return Promise.all(workers).then(function () { return estimateBvcPressureDays(results); });
+    }
+
     function fetchKodexHistory(fetchImpl, baseUrl, signal, nonce, now, ttlMs) {
         if (kodexHistoryCache.value && kodexHistoryCache.expiresAt > now) {
             return Promise.resolve(kodexHistoryCache.value);
@@ -1581,6 +1783,9 @@
         calculateMacd: calculateMacd,
         fetchKospiTechnicalHistory: fetchKospiTechnicalHistory,
         fetchKospiIntradayDay: fetchKospiIntradayDay,
+        estimateBvcPressureDays: estimateBvcPressureDays,
+        calculateCompositeVolumeMomentum: calculateCompositeVolumeMomentum,
+        fetchKospiMinutePressureDays: fetchKospiMinutePressureDays,
         normalizeTqqqPriceHistory: normalizeTqqqPriceHistory,
         normalizeTqqqIntradayHistory: normalizeTqqqIntradayHistory,
         normalizeKodexVolumePressure: normalizeKodexVolumePressure,

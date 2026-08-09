@@ -831,6 +831,102 @@
     margin: var(--space-3) 0 0;
 }
 
+.composite-momentum-card {
+    background:
+        radial-gradient(circle at 88% 8%, rgba(255, 83, 103, 0.07), transparent 29%),
+        linear-gradient(150deg, rgba(68, 209, 122, 0.055), transparent 34%),
+        #111713;
+}
+
+.composite-momentum-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.9rem;
+    margin: var(--space-4) 0 var(--space-2);
+    color: var(--text-muted);
+    font-size: 0.72rem;
+}
+
+.composite-momentum-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38rem;
+}
+
+.composite-momentum-legend span::before {
+    width: 16px;
+    height: 3px;
+    border-radius: var(--radius-pill);
+    background: currentColor;
+    content: '';
+}
+
+.composite-momentum-legend .is-direction-buy,
+.composite-momentum-legend .is-momentum-buy { color: #ff5367; }
+.composite-momentum-legend .is-direction-sell,
+.composite-momentum-legend .is-momentum-sell { color: #4f8dff; }
+.composite-momentum-legend .is-signal { color: #f5d76e; }
+.composite-momentum-legend .is-divergence { color: #c084fc; }
+
+.composite-momentum-method {
+    margin: 0 0 var(--space-2);
+    color: #a5b5bd;
+    font-size: 0.78rem;
+    line-height: 1.65;
+}
+
+.composite-momentum-chart {
+    display: block;
+    width: 100%;
+    min-width: 760px;
+    min-height: 390px;
+}
+
+.composite-momentum-zero {
+    stroke: rgba(211, 224, 232, 0.38);
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+    vector-effect: non-scaling-stroke;
+}
+
+.composite-momentum-grid {
+    stroke: rgba(143, 160, 171, 0.13);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+}
+
+.composite-direction-line,
+.composite-divergence-line,
+.composite-signal-line {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+}
+
+.composite-direction-line { stroke-width: 2.2; }
+.composite-direction-line.is-buy { stroke: #ff5367; }
+.composite-direction-line.is-sell { stroke: #4f8dff; }
+.composite-divergence-line { stroke: #c084fc; stroke-width: 1.45; opacity: 0.9; }
+.composite-signal-line { stroke: #f5d76e; stroke-width: 1.75; }
+.composite-momentum-bar.is-buy { fill: #ff5367; opacity: 0.86; }
+.composite-momentum-bar.is-sell { fill: #4f8dff; opacity: 0.86; }
+.composite-momentum-hit { fill: transparent; cursor: crosshair; outline: none; }
+.composite-momentum-hit.is-selected { fill: rgba(255, 226, 122, 0.08); stroke: rgba(255, 226, 122, 0.72); stroke-width: 1; }
+
+.composite-momentum-axis,
+.composite-momentum-label {
+    fill: #83949f;
+    font-family: inherit;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+}
+
+.composite-momentum-label {
+    fill: #b9c7ce;
+    font-weight: 750;
+}
+
 .kodex-history-heading {
     align-items: flex-end;
 }

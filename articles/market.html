@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260809-04">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260809-05">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -64,8 +64,8 @@
     }
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
-    <script defer src="../assets/market-live-data.js?v=20260809-03"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260809-04"></script>
+    <script defer src="../assets/market-live-data.js?v=20260809-04"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260809-05"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -531,6 +531,31 @@
                         <svg id="kodex-history-chart" class="kodex-history-chart" viewBox="0 0 1000 500" role="img" aria-labelledby="kodex-history-title kodex-history-readout"></svg>
                     </div>
                     <div class="kodex-history-summary" id="kodex-history-summary"></div>
+                </section>
+
+                <section class="market-dashboard-card composite-momentum-card technical-orderable technical-orderable--wide" data-technical-card="composite-momentum" data-technical-card-title="KOSPI·KODEX 합성 거래량 모멘텀" aria-labelledby="composite-momentum-title">
+                    <div class="market-card-heading-row">
+                        <div>
+                            <p class="market-card-label">정규화 합성 지표</p>
+                            <h3 id="composite-momentum-title">KOSPI·KODEX 거래량 모멘텀</h3>
+                        </div>
+                        <span class="market-method-badge" id="composite-momentum-badge">공통 1분봉</span>
+                    </div>
+                    <div class="composite-momentum-legend" aria-label="합성 거래량 모멘텀 범례">
+                        <span class="is-direction-buy">합성 매수 방향</span>
+                        <span class="is-direction-sell">합성 매도 방향</span>
+                        <span class="is-momentum-buy">매수 모멘텀</span>
+                        <span class="is-momentum-sell">매도 모멘텀</span>
+                        <span class="is-signal">모멘텀 시그널</span>
+                        <span class="is-divergence">KODEX−KOSPI 괴리</span>
+                    </div>
+                    <p class="composite-momentum-method">두 시장의 거래량 단위를 제거해 방향과 가속도를 비교합니다. 0선 위는 매수 우위, 아래는 매도 우위이며 괴리는 KODEX가 KOSPI보다 먼저 강해지거나 약해지는 구간을 보여줍니다.</p>
+                    <p class="kodex-history-readout composite-momentum-readout" id="composite-momentum-readout" aria-live="polite">공통 거래일의 합성 거래량 모멘텀을 계산하고 있습니다.</p>
+                    <div class="kodex-history-shell composite-momentum-shell" tabindex="0" role="region" aria-label="KOSPI와 KODEX 거래량의 정규화 합성 방향, 모멘텀과 괴리 차트">
+                        <svg id="composite-momentum-chart" class="composite-momentum-chart" viewBox="0 0 1000 500" role="img" aria-labelledby="composite-momentum-title composite-momentum-readout"></svg>
+                    </div>
+                    <div class="kodex-history-summary composite-momentum-summary" id="composite-momentum-summary"></div>
+                    <p class="market-source-note" id="composite-momentum-source-note">KOSPI와 KODEX의 1분봉 가격·거래량에 같은 확률 추정식을 적용한 상대 지표입니다. 실제 Bid/Ask 체결 분류는 아닙니다.</p>
                 </section>
 
                 <section class="market-dashboard-card kodex-history-card tqqq-history-card technical-orderable technical-orderable--wide" data-technical-card="tqqq-history" data-technical-card-title="TQQQ 가격 흐름" aria-labelledby="tqqq-history-title">

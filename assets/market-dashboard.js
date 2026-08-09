@@ -31,11 +31,15 @@
     var kospiIntradayViewCache = {};
     var kospiIntradayAbortController = null;
     var kospiIntradayRequestDate = '';
-    var technicalCardOrderStorageKey = 'hpmplab-technical-card-order-v1';
+    var compositeMomentumState = { key: '', days: [], pending: null };
+    var compositeMomentumRenderToken = 0;
+    var compositeMomentumForceRefresh = false;
+    var technicalCardOrderStorageKey = 'hpmplab-technical-card-order-v2';
     var defaultTechnicalCardOrder = [
         'kospi-flow',
-        'tqqq-history',
         'kodex-history',
+        'composite-momentum',
+        'tqqq-history',
         'kodex-technical',
         'kodex-quote',
         'kodex-range',
@@ -824,7 +828,10 @@
         var kospi = dashboardData && findById(dashboardData.markets, 'KOSPI');
         var kodex = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
         if (kospi) renderKospiHistoryChart(kospi);
-        if (kodex) renderKodexHistoryChart(kodex);
+        if (kodex) {
+            renderKodexHistoryChart(kodex);
+            renderCompositeMomentumCard(kodex);
+        }
         renderTqqqSynchronized();
     }
 
@@ -886,6 +893,8 @@
 
     function refreshTimeSensitiveData() {
         if (!dashboardData) return Promise.resolve(false);
+        compositeMomentumForceRefresh = true;
+        compositeMomentumState.key = '';
         setChartRefreshState('loading', '최신 데이터 확인 중');
         return refreshLiveMarketData(dashboardData, { silent: true, force: true }).then(function (applied) {
             var now = new Date();
@@ -986,6 +995,232 @@
             row.cumulativeDelta = cvd;
         });
         return groups;
+    }
+
+    function aggregateCompositeBars(bars, interval) {
+        var groups = [];
+        (bars || []).forEach(function (bar) {
+            var parts = String(bar.time || '').split(':');
+            var minuteOfDay = Number(parts[0]) * 60 + Number(parts[1]);
+            var bucket = Math.floor((minuteOfDay - 9 * 60) / interval);
+            var current = groups[groups.length - 1];
+            if (!current || current.bucket !== bucket) {
+                current = Object.assign({ bucket: bucket, endTime: bar.time }, bar);
+                groups.push(current);
+            } else {
+                current = Object.assign(current, bar, { bucket: bucket, time: current.time, endTime: bar.time });
+            }
+        });
+        return groups;
+    }
+
+    function compositeDirectionLabel(direction, momentum) {
+        if (direction >= 8) return momentum >= 0 ? '매수 우위 강화' : '매수 우위 둔화';
+        if (direction <= -8) return momentum <= 0 ? '매도 우위 강화' : '매도 압력 완화';
+        return momentum >= 0 ? '중립권 상향' : '중립권 하향';
+    }
+
+    function renderCompositeMomentumChart(days) {
+        var svg = document.getElementById('composite-momentum-chart');
+        var title = document.getElementById('composite-momentum-title');
+        var badge = document.getElementById('composite-momentum-badge');
+        var readout = document.getElementById('composite-momentum-readout');
+        var summary = document.getElementById('composite-momentum-summary');
+        if (!svg || !title || !badge || !readout || !summary) return;
+        clear(svg);
+        clear(summary);
+        var rows;
+        if (selectedKodexChartMode === 'intraday') {
+            var selectedDay = (days || []).filter(function (day) { return day.date === selectedKodexIntradayDate; })[0];
+            if (!selectedDay) {
+                readout.textContent = '선택한 거래일은 두 시장의 공통 1분봉이 부족합니다.';
+                return;
+            }
+            rows = aggregateCompositeBars(selectedDay.bars, selectedKodexIntradayInterval).map(function (row) {
+                return Object.assign({ label: row.time }, row);
+            });
+            title.textContent = formatHistoryDate(selectedDay.date) + ' KOSPI·KODEX 거래량 모멘텀';
+            badge.textContent = selectedKodexIntradayInterval + '분봉 · 공통 시각';
+        } else {
+            rows = (days || []).map(function (day) {
+                return Object.assign({ label: day.date }, day.summary);
+            });
+            title.textContent = 'KOSPI·KODEX 합성 거래량 모멘텀 · ' + rows.length + '거래일';
+            badge.textContent = '장 마감 30분 평균';
+        }
+        rows = rows.filter(function (row) {
+            return [row.direction, row.momentum, row.signal, row.divergence].every(Number.isFinite);
+        });
+        if (rows.length < 2) {
+            readout.textContent = '합성 거래량 모멘텀을 계산할 공통 구간이 부족합니다.';
+            return;
+        }
+
+        var width = 1000;
+        var left = 42;
+        var right = 944;
+        var directionTop = 42;
+        var directionBottom = 238;
+        var momentumTop = 292;
+        var momentumBottom = 438;
+        var innerWidth = right - left;
+        var xStep = innerWidth / rows.length;
+        function xFor(index) { return left + xStep * index + xStep / 2; }
+        var directionMax = Math.max(20, Math.max.apply(Math, rows.map(function (row) {
+            return Math.max(Math.abs(row.direction), Math.abs(row.divergence));
+        })) * 1.12);
+        var momentumMax = Math.max(5, Math.max.apply(Math, rows.map(function (row) {
+            return Math.max(Math.abs(row.momentum), Math.abs(row.signal));
+        })) * 1.15);
+        function directionY(value) { return directionTop + (directionMax - value) / (directionMax * 2) * (directionBottom - directionTop); }
+        function momentumY(value) { return momentumTop + (momentumMax - value) / (momentumMax * 2) * (momentumBottom - momentumTop); }
+        [directionTop, (directionTop + directionBottom) / 2, directionBottom, momentumTop, (momentumTop + momentumBottom) / 2, momentumBottom].forEach(function (y) {
+            svg.appendChild(makeSvg('line', { x1: left, y1: y, x2: right, y2: y, 'class': 'composite-momentum-grid' }));
+        });
+        svg.appendChild(makeSvg('line', { x1: left, y1: directionY(0), x2: right, y2: directionY(0), 'class': 'composite-momentum-zero' }));
+        svg.appendChild(makeSvg('line', { x1: left, y1: momentumY(0), x2: right, y2: momentumY(0), 'class': 'composite-momentum-zero' }));
+        [['합성 방향', directionTop + 13], ['방향 모멘텀', momentumTop + 13]].forEach(function (item) {
+            var label = makeSvg('text', { x: left, y: item[1], 'class': 'composite-momentum-label' });
+            label.textContent = item[0];
+            svg.appendChild(label);
+        });
+        [directionMax, 0, -directionMax].forEach(function (value) {
+            var label = makeSvg('text', { x: right + 10, y: directionY(value) + 4, 'class': 'composite-momentum-axis' });
+            label.textContent = formatSigned(value, '', 0);
+            svg.appendChild(label);
+        });
+        [momentumMax, 0, -momentumMax].forEach(function (value) {
+            var label = makeSvg('text', { x: right + 10, y: momentumY(value) + 4, 'class': 'composite-momentum-axis' });
+            label.textContent = formatSigned(value, '', 0);
+            svg.appendChild(label);
+        });
+
+        var divergencePath = '';
+        var signalPath = '';
+        rows.forEach(function (row, index) {
+            var x = xFor(index);
+            if (index > 0) {
+                var previous = rows[index - 1];
+                svg.appendChild(makeSvg('line', {
+                    x1: xFor(index - 1), y1: directionY(previous.direction),
+                    x2: x, y2: directionY(row.direction),
+                    'class': 'composite-direction-line ' + ((previous.direction + row.direction) / 2 >= 0 ? 'is-buy' : 'is-sell')
+                }));
+            }
+            divergencePath += (divergencePath ? ' L ' : 'M ') + x.toFixed(2) + ' ' + directionY(row.divergence).toFixed(2);
+            signalPath += (signalPath ? ' L ' : 'M ') + x.toFixed(2) + ' ' + momentumY(row.signal).toFixed(2);
+            var zeroY = momentumY(0);
+            var valueY = momentumY(row.momentum);
+            svg.appendChild(makeSvg('rect', {
+                x: x - Math.max(1.5, Math.min(10, xStep * 0.34)),
+                y: Math.min(zeroY, valueY),
+                width: Math.max(3, Math.min(20, xStep * 0.68)),
+                height: Math.max(1, Math.abs(valueY - zeroY)),
+                rx: 0.8,
+                'class': 'composite-momentum-bar ' + (row.momentum >= 0 ? 'is-buy' : 'is-sell')
+            }));
+        });
+        svg.appendChild(makeSvg('path', { d: divergencePath, 'class': 'composite-divergence-line' }));
+        svg.appendChild(makeSvg('path', { d: signalPath, 'class': 'composite-signal-line' }));
+
+        function updateReadout(row) {
+            var label = selectedKodexChartMode === 'intraday'
+                ? formatHistoryDate(selectedKodexIntradayDate) + ' ' + row.time + (row.endTime && row.endTime !== row.time ? '–' + row.endTime : '')
+                : formatHistoryDate(row.label);
+            readout.textContent = label
+                + ' · ' + compositeDirectionLabel(row.direction, row.momentum)
+                + ' · 합성 방향 ' + formatSigned(row.direction, '점', 1)
+                + ' · 모멘텀 ' + formatSigned(row.momentum, '점', 1)
+                + ' · KODEX−KOSPI 괴리 ' + formatSigned(row.divergence, '점', 1);
+        }
+        rows.forEach(function (row, index) {
+            var hit = makeSvg('rect', {
+                x: left + xStep * index,
+                y: directionTop,
+                width: Math.max(1, xStep),
+                height: momentumBottom - directionTop,
+                'class': 'composite-momentum-hit',
+                tabindex: '0',
+                role: 'img',
+                'aria-label': (row.label || row.time) + ', 합성 방향 ' + formatSigned(row.direction, '점', 1)
+            });
+            var select = function () {
+                Array.prototype.forEach.call(svg.querySelectorAll('.composite-momentum-hit'), function (node) { node.classList.remove('is-selected'); });
+                hit.classList.add('is-selected');
+                updateReadout(row);
+            };
+            hit.addEventListener('pointerenter', select);
+            hit.addEventListener('focus', select);
+            hit.addEventListener('click', select);
+            svg.appendChild(hit);
+        });
+        var tickIndexes = [0, Math.floor((rows.length - 1) / 2), rows.length - 1].filter(function (value, index, values) {
+            return values.indexOf(value) === index;
+        });
+        tickIndexes.forEach(function (index) {
+            var label = makeSvg('text', { x: xFor(index), y: 478, 'class': 'composite-momentum-axis', 'text-anchor': index === 0 ? 'start' : index === rows.length - 1 ? 'end' : 'middle' });
+            label.textContent = selectedKodexChartMode === 'intraday'
+                ? rows[index].time
+                : formatHistoryDate(rows[index].label).replace('월 ', '/').replace('일', '');
+            svg.appendChild(label);
+        });
+        var latest = rows[rows.length - 1];
+        updateReadout(latest);
+        appendKodexMetric(summary, '현재 판정', compositeDirectionLabel(latest.direction, latest.momentum));
+        appendKodexMetric(summary, '합성 방향', formatSigned(latest.direction, '점', 1));
+        appendKodexMetric(summary, '모멘텀', formatSigned(latest.momentum, '점', 1));
+        appendKodexMetric(summary, 'KODEX−KOSPI 괴리', formatSigned(latest.divergence, '점', 1));
+    }
+
+    function renderCompositeMomentumCard(instrument) {
+        var readout = document.getElementById('composite-momentum-readout');
+        if (!readout || !instrument || !window.MarketDashboardLive) return;
+        var api = window.MarketDashboardLive;
+        if (typeof api.fetchKospiMinutePressureDays !== 'function'
+            || typeof api.fetchKodexIntradayDay !== 'function'
+            || typeof api.calculateCompositeVolumeMomentum !== 'function') return;
+        var liveInstrument = instrument.liveSnapshot || {};
+        var indexRows = liveInstrument.intradayIndex || instrument.intradayIndex || [];
+        var indexUrl = liveInstrument.intradayIndexUrl || instrument.intradayIndexUrl
+            || (kodexIntradaySource ? new URL(kodexIntradaySource, window.location.href).href : '');
+        var liveDay = liveInstrument.liveIntradayDay || instrument.liveIntradayDay || null;
+        var dates = indexRows.map(function (row) { return row.date; }).filter(Boolean).slice(-12);
+        if (liveDay && dates.indexOf(liveDay.date) === -1) dates.push(liveDay.date);
+        if (!dates.length || !indexUrl || !liveMarketSource) return;
+        var key = dates.join(',') + '|' + (liveDay && liveDay.sourceLastAt || 'archive');
+        if (compositeMomentumState.key === key && compositeMomentumState.days.length) {
+            renderCompositeMomentumChart(compositeMomentumState.days);
+            return;
+        }
+        if (compositeMomentumState.pending && compositeMomentumState.key === key) return;
+        var token = ++compositeMomentumRenderToken;
+        compositeMomentumState.key = key;
+        readout.textContent = '공통 거래일의 1분봉을 정규화하고 있습니다.';
+        var kodexRequests = dates.map(function (date) {
+            if (liveDay && liveDay.date === date) return Promise.resolve(liveDay);
+            return api.fetchKodexIntradayDay(indexUrl, date, window.fetch.bind(window), { indexRows: indexRows });
+        });
+        var forceRefresh = compositeMomentumForceRefresh;
+        compositeMomentumForceRefresh = false;
+        compositeMomentumState.pending = Promise.all([
+            api.fetchKospiMinutePressureDays(
+                window.fetch.bind(window),
+                new URL(liveMarketSource, window.location.href).href,
+                dates,
+                { concurrencyLimit: 4, forceRefresh: forceRefresh }
+            ),
+            Promise.all(kodexRequests)
+        ]).then(function (parts) {
+            if (token !== compositeMomentumRenderToken) return;
+            var days = api.calculateCompositeVolumeMomentum(parts[0], parts[1]);
+            compositeMomentumState.days = days;
+            renderCompositeMomentumChart(days);
+        }).catch(function () {
+            if (token !== compositeMomentumRenderToken) return;
+            readout.textContent = '합성 거래량 모멘텀 데이터를 불러오지 못했습니다.';
+        }).finally(function () {
+            if (token === compositeMomentumRenderToken) compositeMomentumState.pending = null;
+        });
     }
 
     function formatPressurePercent(delta, volume) {
@@ -2308,8 +2543,8 @@
         appendKodexMetric(metrics, '누적 거래량', Number.isFinite(volume) ? formatNumber(volume, 0) + '주' : '확인 중');
         appendKodexMetric(metrics, '누적 거래대금', tradingValueLabel || (sessionPricesComplete ? '확인 중' : '장 종료 후 미제공'));
 
-        var rangeTrack = document.querySelector('#kodex-analysis .kodex-range-track');
-        var rangeLabels = document.querySelector('#kodex-analysis .kodex-range-labels');
+        var rangeTrack = document.querySelector('.kodex-range-card .kodex-range-track');
+        var rangeLabels = document.querySelector('.kodex-range-card .kodex-range-labels');
         if (rangeTrack) rangeTrack.hidden = !rangeAvailable;
         if (rangeLabels) rangeLabels.hidden = !rangeAvailable;
         document.getElementById('kodex-range-fill').style.width = rangePosition + '%';
@@ -2341,6 +2576,7 @@
         document.getElementById('kodex-etf-meta').textContent = etfMeta.join(' · ');
 
         renderKodexHistoryChart(instrument);
+        renderCompositeMomentumCard(instrument);
         renderTqqqSynchronized();
 
         var trends = liveInstrument.investorTrends || instrument.investorTrends || [];
