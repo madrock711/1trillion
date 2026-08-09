@@ -1102,6 +1102,15 @@
     line-height: 1.55;
 }
 
+.kospi-flow-readout {
+    block-size: calc(0.76rem * 1.55 * 2);
+    min-block-size: calc(0.76rem * 1.55 * 2);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    overscroll-behavior: contain;
+}
+
 .kodex-history-method {
     margin: 0 0 var(--space-2);
     color: #94a9b5;
@@ -2322,6 +2331,11 @@
 
     .kospi-flow-refresh-status {
         text-align: left;
+    }
+
+    .kospi-flow-readout {
+        block-size: calc(0.76rem * 1.55 * 5);
+        min-block-size: calc(0.76rem * 1.55 * 5);
     }
 
     .kospi-flow-periods {

@@ -18,7 +18,7 @@ assert(dashboard.includes("mode: 'intraday'"));
 assert((dashboard.match(/registerLinkedChartHitZones\(/g) || []).length >= 6);
 assert(css.includes('.linked-chart-hitbox.is-linked-selected'));
 assert(css.includes('.linked-chart-hitbox.is-linked-selected.is-locked'));
-assert(html.includes('market-dashboard.css?v=20260809-07'));
+assert(html.includes('market-dashboard.css?v=20260809-08'));
 assert(html.includes('market-dashboard.js?v=20260809-08'));
 
 console.log('Synchronized hover and click-lock chart highlight tests passed.');

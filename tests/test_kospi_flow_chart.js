@@ -27,6 +27,10 @@ async function main() {
     );
     assert.ok(dashboardCss.includes('.kospi-flow-foreign.is-buy { fill: #ffb454; }'), '외국인 순매수는 X-ray와 구별되는 색이어야 한다.');
     assert.ok(dashboardCss.includes('.kospi-flow-foreign.is-sell { fill: #35d3c8; }'), '외국인 순매도는 X-ray와 구별되는 색이어야 한다.');
+    assert.ok(dashboardCss.includes('.kospi-flow-readout'), 'KOSPI 상세 수치에는 전용 높이 규칙이 있어야 한다.');
+    assert.ok(dashboardCss.includes('block-size: calc(0.76rem * 1.55 * 2)'), '데스크톱 상세 수치 높이는 두 줄로 고정되어야 한다.');
+    assert.ok(dashboardCss.includes('overflow-y: auto'), '고정 높이를 넘는 상세 수치는 영역 안에서 읽을 수 있어야 한다.');
+    assert.ok(dashboardCss.includes('scrollbar-gutter: stable'), '스크롤바 출현으로 수치 줄바꿈 폭이 달라지지 않아야 한다.');
     assert.ok(marketHtml.includes('data-shared-intraday-date'), 'KOSPI와 KODEX의 분봉 거래일 선택이 동기화되어야 한다.');
     assert.ok(marketHtml.includes('외국인 수급 MACD'), '공개 범례는 외국인 수급 MACD임을 명시해야 한다.');
 
