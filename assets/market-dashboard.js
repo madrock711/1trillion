@@ -1381,6 +1381,45 @@
         });
     }
 
+    function ensureLinkedChartSelectionGradients(svg) {
+        var baseId = (svg.id || 'linked-chart').replace(/[^a-zA-Z0-9_-]/g, '-');
+        var hoverId = baseId + '-selection-hover-gradient';
+        var lockedId = baseId + '-selection-locked-gradient';
+        svg.style.setProperty('--linked-highlight-hover', 'url(#' + hoverId + ')');
+        svg.style.setProperty('--linked-highlight-locked', 'url(#' + lockedId + ')');
+        if (svg.querySelector('[data-linked-chart-gradients]')) return;
+
+        var defs = makeSvg('defs', { 'data-linked-chart-gradients': 'true' });
+        [
+            { id: hoverId, color: '#ffe27a', peak: 0.52, shoulder: 0.16, middle: 0.018 },
+            { id: lockedId, color: '#75e8a7', peak: 0.72, shoulder: 0.22, middle: 0.026 }
+        ].forEach(function (settings) {
+            var gradient = makeSvg('linearGradient', {
+                id: settings.id,
+                x1: '0%',
+                y1: '0%',
+                x2: '0%',
+                y2: '100%'
+            });
+            [
+                ['0%', settings.peak],
+                ['7%', settings.shoulder],
+                ['27%', settings.middle],
+                ['73%', settings.middle],
+                ['93%', settings.shoulder],
+                ['100%', settings.peak]
+            ].forEach(function (stop) {
+                gradient.appendChild(makeSvg('stop', {
+                    offset: stop[0],
+                    'stop-color': settings.color,
+                    'stop-opacity': stop[1]
+                }));
+            });
+            defs.appendChild(gradient);
+        });
+        svg.insertBefore(defs, svg.firstChild);
+    }
+
     function registerLinkedChartHitZones(svg, rows, updateReadout, options) {
         var settings = options || {};
         var left = Number(settings.left) || 0;
@@ -1394,6 +1433,7 @@
             updateReadout: updateReadout,
             mode: settings.mode === 'intraday' ? 'intraday' : 'daily'
         };
+        ensureLinkedChartSelectionGradients(svg);
         linkedChartViews[svg.id] = view;
         rows.forEach(function (row, index) {
             var hitbox = makeSvg('rect', {

@@ -913,15 +913,15 @@
 }
 
 .linked-chart-hitbox.is-linked-selected {
-    fill: rgba(255, 226, 122, 0.065);
-    stroke: rgba(255, 226, 122, 0.72);
+    fill: var(--linked-highlight-hover, rgba(255, 226, 122, 0.065));
+    stroke: var(--linked-highlight-hover, rgba(255, 226, 122, 0.72));
     stroke-width: 1;
     vector-effect: non-scaling-stroke;
 }
 
 .linked-chart-hitbox.is-linked-selected.is-locked {
-    fill: rgba(117, 232, 167, 0.085);
-    stroke: #75e8a7;
+    fill: var(--linked-highlight-locked, rgba(117, 232, 167, 0.085));
+    stroke: var(--linked-highlight-locked, #75e8a7);
     stroke-width: 1.4;
 }
 
