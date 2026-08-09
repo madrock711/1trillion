@@ -1410,12 +1410,20 @@
             if (index >= normalizedDates.length) return Promise.resolve();
             return fetchKospiMinutePriceDay(fetchImpl, baseUrl, normalizedDates[index], settings).then(function (day) {
                 results[index] = day;
+            }).catch(function () {
+                // Naver keeps only a limited intraday history. A missing older
+                // session must not discard newer dates that still overlap the
+                // locally archived KODEX minute data.
+                results[index] = null;
+            }).then(function () {
                 return runWorker();
             });
         }
         var workers = [];
         for (var index = 0; index < workerCount; index += 1) workers.push(runWorker());
-        return Promise.all(workers).then(function () { return estimateBvcPressureDays(results); });
+        return Promise.all(workers).then(function () {
+            return estimateBvcPressureDays(results.filter(Boolean));
+        });
     }
 
     function fetchKodexHistory(fetchImpl, baseUrl, signal, nonce, now, ttlMs) {

@@ -76,6 +76,16 @@ function pressureDay(date, ratios) {
     assert(requested[0].includes('startDateTime=202608070900'));
     assert(Number.isFinite(fetched[0].bars[1].delta));
 
+    const partialRequested = [];
+    const partial = await live.fetchKospiMinutePressureDays(async url => {
+        partialRequested.push(url);
+        const missing = url.includes('202607300900');
+        return { ok: true, json: async () => missing ? [] : minutePayload };
+    }, 'https://partial.example.test/market-data/', ['2026-07-30', '2026-08-07'], { forceRefresh: true });
+    assert.strictEqual(partialRequested.length, 2);
+    assert.strictEqual(partial.length, 1, 'missing older KOSPI minutes must not discard overlapping sessions');
+    assert.strictEqual(partial[0].date, '2026-08-07');
+
     const html = fs.readFileSync(path.join(__dirname, '..', 'articles', 'market.html'), 'utf8');
     const dashboard = fs.readFileSync(path.join(__dirname, '..', 'assets', 'market-dashboard.js'), 'utf8');
     const css = fs.readFileSync(path.join(__dirname, '..', 'assets', 'market-dashboard.css'), 'utf8');
