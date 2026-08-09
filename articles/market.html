@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260809-11">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260810-1">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -65,7 +65,7 @@
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
     <script defer src="../assets/market-live-data.js?v=20260809-06"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260809-12"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260810-1"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -150,14 +150,14 @@
                 </div>
 
                 <div class="market-analysis-grid">
-                    <article class="market-dashboard-card market-summary-card">
+                    <a class="market-dashboard-card market-summary-card" id="market-summary-article-link" href="market-2026-08-07.html">
                         <div class="market-card-heading-row market-card-heading-row--compact">
                             <p class="market-card-label">오늘 시장 요약</p>
                             <time class="market-method-badge" id="market-analysis-written-at">작성 시각 불러오는 중</time>
                         </div>
                         <h3 id="market-headline">최신 시장 요약을 불러오는 중입니다.</h3>
                         <p id="market-summary"></p>
-                    </article>
+                    </a>
                     <article class="market-dashboard-card market-change-card">
                         <p class="market-card-label">이전 분석 대비 변화</p>
                         <div class="market-change-list" id="market-change-list"></div>

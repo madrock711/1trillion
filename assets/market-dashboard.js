@@ -2858,10 +2858,13 @@
     }
 
     function renderLatestArticle(data) {
-        var link = document.getElementById('market-latest-article-link');
-        if (!link || !data.latestArticle) return;
-        link.href = data.latestArticle.href;
-        link.setAttribute('aria-label', data.latestArticle.title + ' 읽기');
+        if (!data.latestArticle) return;
+        ['market-latest-article-link', 'market-summary-article-link'].forEach(function (id) {
+            var link = document.getElementById(id);
+            if (!link) return;
+            link.href = data.latestArticle.href;
+            link.setAttribute('aria-label', data.latestArticle.title + ' 읽기');
+        });
     }
 
     function validateData(data) {
