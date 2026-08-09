@@ -914,6 +914,26 @@
 .composite-momentum-hit { fill: transparent; cursor: crosshair; outline: none; }
 .composite-momentum-hit.is-selected { fill: rgba(255, 226, 122, 0.08); stroke: rgba(255, 226, 122, 0.72); stroke-width: 1; }
 
+.linked-chart-hitbox {
+    fill: transparent;
+    cursor: crosshair;
+    outline: none;
+    pointer-events: all;
+}
+
+.linked-chart-hitbox.is-linked-selected {
+    fill: rgba(255, 226, 122, 0.065);
+    stroke: rgba(255, 226, 122, 0.72);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+}
+
+.linked-chart-hitbox.is-linked-selected.is-locked {
+    fill: rgba(117, 232, 167, 0.085);
+    stroke: #75e8a7;
+    stroke-width: 1.4;
+}
+
 .composite-momentum-axis,
 .composite-momentum-label {
     fill: #83949f;
@@ -1444,6 +1464,10 @@
 
 .kospi-flow-hitbox.is-linked-selected {
     fill: rgba(255, 226, 122, 0.055);
+}
+
+.kospi-flow-hitbox.is-linked-selected.is-locked {
+    fill: rgba(117, 232, 167, 0.085);
 }
 
 .kospi-flow-candle-group.is-linked-selected .kospi-flow-candle,

@@ -34,6 +34,9 @@
     var compositeMomentumState = { key: '', days: [], pending: null };
     var compositeMomentumRenderToken = 0;
     var compositeMomentumForceRefresh = false;
+    var linkedChartViews = {};
+    var linkedChartHoverSelection = null;
+    var linkedChartLockedSelection = null;
     var technicalCardOrderStorageKey = 'hpmplab-technical-card-order-v2';
     var defaultTechnicalCardOrder = [
         'kospi-flow',
@@ -49,6 +52,7 @@
     ];
 
     function clear(node) {
+        if (node && node.id && linkedChartViews[node.id]) delete linkedChartViews[node.id];
         while (node && node.firstChild) node.removeChild(node.firstChild);
     }
 
@@ -841,6 +845,7 @@
             if (button.getAttribute('data-chart-bound') === 'true') return;
             button.setAttribute('data-chart-bound', 'true');
             button.addEventListener('click', function () {
+                clearLinkedChartSelection(false);
                 selectedKodexChartMode = button.getAttribute('data-kodex-chart-mode') === 'intraday' ? 'intraday' : 'daily';
                 renderSynchronizedTechnicalCharts();
             });
@@ -850,6 +855,7 @@
             if (button.getAttribute('data-chart-bound') === 'true') return;
             button.setAttribute('data-chart-bound', 'true');
             button.addEventListener('click', function () {
+                clearLinkedChartSelection(false);
                 selectedKodexPeriod = button.getAttribute('data-kodex-period') === '1m' ? '1m' : '3m';
                 renderSynchronizedTechnicalCharts();
             });
@@ -859,6 +865,7 @@
             if (button.getAttribute('data-chart-bound') === 'true') return;
             button.setAttribute('data-chart-bound', 'true');
             button.addEventListener('click', function () {
+                clearLinkedChartSelection(false);
                 selectedKodexIntradayInterval = Number(button.getAttribute('data-kodex-interval')) || 5;
                 renderSynchronizedTechnicalCharts();
             });
@@ -867,6 +874,7 @@
             if (dateSelect.getAttribute('data-chart-bound') === 'true') return;
             dateSelect.setAttribute('data-chart-bound', 'true');
             dateSelect.addEventListener('change', function () {
+                clearLinkedChartSelection(false);
                 selectedKodexIntradayDate = dateSelect.value;
                 renderSynchronizedTechnicalCharts();
             });
@@ -1133,26 +1141,16 @@
                 + ' · 모멘텀 ' + formatSigned(row.momentum, '점', 1)
                 + ' · KODEX−KOSPI 괴리 ' + formatSigned(row.divergence, '점', 1);
         }
-        rows.forEach(function (row, index) {
-            var hit = makeSvg('rect', {
-                x: left + xStep * index,
-                y: directionTop,
-                width: Math.max(1, xStep),
-                height: momentumBottom - directionTop,
-                'class': 'composite-momentum-hit',
-                tabindex: '0',
-                role: 'img',
-                'aria-label': (row.label || row.time) + ', 합성 방향 ' + formatSigned(row.direction, '점', 1)
-            });
-            var select = function () {
-                Array.prototype.forEach.call(svg.querySelectorAll('.composite-momentum-hit'), function (node) { node.classList.remove('is-selected'); });
-                hit.classList.add('is-selected');
-                updateReadout(row);
-            };
-            hit.addEventListener('pointerenter', select);
-            hit.addEventListener('focus', select);
-            hit.addEventListener('click', select);
-            svg.appendChild(hit);
+        registerLinkedChartHitZones(svg, rows, updateReadout, {
+            mode: selectedKodexChartMode,
+            left: left,
+            right: right,
+            top: directionTop,
+            bottom: momentumBottom,
+            className: 'composite-momentum-hit',
+            ariaLabel: function (row) {
+                return (row.label || row.time) + ', 합성 방향 ' + formatSigned(row.direction, '점', 1);
+            }
         });
         var tickIndexes = [0, Math.floor((rows.length - 1) / 2), rows.length - 1].filter(function (value, index, values) {
             return values.indexOf(value) === index;
@@ -1262,23 +1260,155 @@
         svg.appendChild(label);
     }
 
-    function selectLinkedChartBar(svg, index, row, updateReadout) {
-        var selectedIndex = String(index);
-        Array.prototype.forEach.call(svg.querySelectorAll('[data-chart-bar-index]'), function (element) {
-            var selected = element.getAttribute('data-chart-bar-index') === selectedIndex;
-            element.classList.toggle('is-linked-selected', selected);
-            element.setAttribute('aria-selected', selected ? 'true' : 'false');
+    function linkedChartSelectionFor(view, index) {
+        var row = view.rows[index];
+        var progress = view.rows.length > 1 ? index / (view.rows.length - 1) : 0;
+        var date = row && (row.date || (view.mode === 'daily' ? row.label : '')) || '';
+        return {
+            mode: view.mode,
+            date: date,
+            progress: progress,
+            sourceId: view.svg.id,
+            sourceIndex: index
+        };
+    }
+
+    function linkedChartSelectionMatches(left, right) {
+        if (!left || !right || left.mode !== right.mode) return false;
+        if (left.mode === 'daily') return Boolean(left.date) && left.date === right.date;
+        return Math.abs(left.progress - right.progress) < 0.0025;
+    }
+
+    function linkedChartIndexFor(view, selection) {
+        if (!view || !view.rows.length || !selection || view.mode !== selection.mode) return -1;
+        if (selection.mode === 'intraday') {
+            return Math.max(0, Math.min(view.rows.length - 1, Math.round(selection.progress * (view.rows.length - 1))));
+        }
+        var exactIndex = view.rows.findIndex(function (row) {
+            return (row.date || row.label || '') === selection.date;
         });
-        updateReadout(row);
+        if (exactIndex >= 0) return exactIndex;
+        var target = parseHistoryDate(selection.date);
+        if (!Number.isFinite(target)) {
+            return Math.max(0, Math.min(view.rows.length - 1, Math.round(selection.progress * (view.rows.length - 1))));
+        }
+        var nearestIndex = -1;
+        var nearestDistance = Infinity;
+        view.rows.forEach(function (row, index) {
+            var value = parseHistoryDate(row.date || row.label || '');
+            if (!Number.isFinite(value)) return;
+            var distance = Math.abs(value - target);
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestIndex = index;
+            }
+        });
+        return nearestIndex;
+    }
+
+    function applyLinkedChartSelection(selection) {
+        Object.keys(linkedChartViews).forEach(function (id) {
+            var view = linkedChartViews[id];
+            var index = linkedChartIndexFor(view, selection);
+            var selectedIndex = String(index);
+            Array.prototype.forEach.call(view.svg.querySelectorAll('[data-chart-bar-index]'), function (element) {
+                var selected = index >= 0 && element.getAttribute('data-chart-bar-index') === selectedIndex;
+                element.classList.toggle('is-linked-selected', selected);
+                element.classList.toggle('is-selected', selected);
+                element.classList.toggle('is-locked', selected && Boolean(linkedChartLockedSelection));
+                element.setAttribute('aria-selected', selected ? 'true' : 'false');
+            });
+            if (index >= 0 && view.rows[index]) view.updateReadout(view.rows[index]);
+        });
+    }
+
+    function clearLinkedChartSelection(restoreLatest) {
+        linkedChartHoverSelection = null;
+        linkedChartLockedSelection = null;
+        Object.keys(linkedChartViews).forEach(function (id) {
+            var view = linkedChartViews[id];
+            Array.prototype.forEach.call(view.svg.querySelectorAll('[data-chart-bar-index]'), function (element) {
+                element.classList.remove('is-linked-selected', 'is-selected', 'is-locked');
+                element.setAttribute('aria-selected', 'false');
+            });
+            if (restoreLatest && view.rows.length) view.updateReadout(view.rows[view.rows.length - 1]);
+        });
+    }
+
+    function activateLinkedChartSelection(svg, index, lockSelection) {
+        var view = svg && linkedChartViews[svg.id];
+        if (!view || !view.rows[index]) return;
+        var selection = linkedChartSelectionFor(view, index);
+        if (lockSelection) {
+            if (linkedChartSelectionMatches(linkedChartLockedSelection, selection)) {
+                clearLinkedChartSelection(true);
+                return;
+            }
+            linkedChartLockedSelection = selection;
+        } else {
+            if (linkedChartLockedSelection) return;
+            linkedChartHoverSelection = selection;
+        }
+        applyLinkedChartSelection(linkedChartLockedSelection || linkedChartHoverSelection);
     }
 
     function bindLinkedChartBar(svg, element, index, row, updateReadout) {
         element.setAttribute('data-chart-bar-index', String(index));
         element.setAttribute('aria-selected', 'false');
-        var select = function () { selectLinkedChartBar(svg, index, row, updateReadout); };
-        element.addEventListener('pointerenter', select);
-        element.addEventListener('focus', select);
-        element.addEventListener('click', select);
+        element.addEventListener('pointerenter', function () {
+            activateLinkedChartSelection(svg, index, false);
+        });
+        element.addEventListener('focus', function () {
+            activateLinkedChartSelection(svg, index, false);
+        });
+        element.addEventListener('click', function (event) {
+            event.stopPropagation();
+            activateLinkedChartSelection(svg, index, true);
+        });
+    }
+
+    function registerLinkedChartHitZones(svg, rows, updateReadout, options) {
+        var settings = options || {};
+        var left = Number(settings.left) || 0;
+        var right = Number(settings.right) || 1000;
+        var top = Number(settings.top) || 0;
+        var bottom = Number(settings.bottom) || 500;
+        var xStep = (right - left) / Math.max(rows.length, 1);
+        var view = {
+            svg: svg,
+            rows: rows,
+            updateReadout: updateReadout,
+            mode: settings.mode === 'intraday' ? 'intraday' : 'daily'
+        };
+        linkedChartViews[svg.id] = view;
+        rows.forEach(function (row, index) {
+            var hitbox = makeSvg('rect', {
+                x: left + xStep * index,
+                y: top,
+                width: Math.max(1, xStep),
+                height: Math.max(1, bottom - top),
+                'class': 'linked-chart-hitbox' + (settings.className ? ' ' + settings.className : ''),
+                tabindex: '0',
+                role: 'button',
+                'aria-label': (typeof settings.ariaLabel === 'function' ? settings.ariaLabel(row) : (row.date || row.label || row.time || '')) + ' 차트 값 보기'
+            });
+            bindLinkedChartBar(svg, hitbox, index, row, updateReadout);
+            svg.appendChild(hitbox);
+        });
+        if (svg.__linkedChartBlankClick) svg.removeEventListener('click', svg.__linkedChartBlankClick);
+        svg.__linkedChartBlankClick = function (event) {
+            if (!event.target.closest || !event.target.closest('.linked-chart-hitbox')) clearLinkedChartSelection(true);
+        };
+        svg.addEventListener('click', svg.__linkedChartBlankClick);
+        var current = linkedChartLockedSelection || linkedChartHoverSelection;
+        if (current) {
+            applyLinkedChartSelection(current);
+            Promise.resolve().then(function () {
+                if (linkedChartViews[svg.id] === view) {
+                    applyLinkedChartSelection(linkedChartLockedSelection || linkedChartHoverSelection);
+                }
+            });
+        }
     }
 
     function kospiPeriodMonths() {
@@ -1656,18 +1786,6 @@
                 svg.appendChild(histogramBar);
                 bindLinkedChartBar(svg, histogramBar, index, row, updateReadout);
             }
-            var hitbox = makeSvg('rect', {
-                x: margin.left + xStep * index,
-                y: priceTop,
-                width: Math.max(2, xStep),
-                height: macdBottom - priceTop,
-                'class': 'kospi-flow-hitbox',
-                tabindex: 0,
-                role: 'button',
-                'aria-label': rowLabel(row) + ' 차트 값 보기'
-            });
-            svg.appendChild(hitbox);
-            bindLinkedChartBar(svg, hitbox, index, row, updateReadout);
             cvdPath += (cvdPath ? ' L ' : 'M ') + x.toFixed(2) + ' ' + cvdY(row.cumulativeDelta).toFixed(2);
         });
         if (cvdPath) svg.appendChild(makeSvg('path', { d: cvdPath, 'class': 'kospi-flow-cvd' }));
@@ -1694,6 +1812,16 @@
             });
             label.textContent = intraday ? rows[index].endTime : formatHistoryDate(rows[index].date);
             svg.appendChild(label);
+        });
+
+        registerLinkedChartHitZones(svg, rows, updateReadout, {
+            mode: intraday ? 'intraday' : 'daily',
+            left: margin.left,
+            right: right,
+            top: priceTop,
+            bottom: macdBottom,
+            className: 'kospi-flow-hitbox',
+            ariaLabel: rowLabel
         });
 
         var first = rows[0];
@@ -2019,6 +2147,15 @@
             svg.appendChild(tick);
         });
 
+        registerLinkedChartHitZones(svg, rows, updateReadout, {
+            mode: 'daily',
+            left: margin.left,
+            right: width - margin.right,
+            top: priceTop,
+            bottom: volumeBottom,
+            ariaLabel: function (row) { return formatHistoryDate(row.date); }
+        });
+
         var latest = rows[rows.length - 1];
         updateReadout(latest);
         var periodReturn = rows[0].close ? (latest.close / rows[0].close - 1) * 100 : NaN;
@@ -2133,6 +2270,15 @@
             });
             tick.textContent = rows[index].time;
             svg.appendChild(tick);
+        });
+
+        registerLinkedChartHitZones(svg, rows, updateReadout, {
+            mode: 'intraday',
+            left: margin.left,
+            right: right,
+            top: priceTop,
+            bottom: volumeBottom,
+            ariaLabel: function (row) { return formatHistoryDate(day.date) + ' ' + row.time; }
         });
 
         var latest = rows[rows.length - 1];
@@ -2405,6 +2551,15 @@
             });
             tick.textContent = formatHistoryDate(rows[index].date);
             svg.appendChild(tick);
+        });
+
+        registerLinkedChartHitZones(svg, rows, updateReadout, {
+            mode: 'daily',
+            left: margin.left,
+            right: right,
+            top: priceTop,
+            bottom: volumeBottom,
+            ariaLabel: function (row) { return formatHistoryDate(row.date); }
         });
 
         var latest = rows[rows.length - 1];
