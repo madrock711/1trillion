@@ -1463,11 +1463,11 @@
 }
 
 .kospi-flow-hitbox.is-linked-selected {
-    fill: rgba(255, 226, 122, 0.055);
+    fill: var(--linked-highlight-hover, rgba(255, 226, 122, 0.055));
 }
 
 .kospi-flow-hitbox.is-linked-selected.is-locked {
-    fill: rgba(117, 232, 167, 0.085);
+    fill: var(--linked-highlight-locked, rgba(117, 232, 167, 0.085));
 }
 
 .kospi-flow-candle-group.is-linked-selected .kospi-flow-candle,

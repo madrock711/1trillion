@@ -25,7 +25,9 @@ assert(css.includes('.linked-chart-hitbox.is-linked-selected'));
 assert(css.includes('.linked-chart-hitbox.is-linked-selected.is-locked'));
 assert(css.includes('fill: var(--linked-highlight-hover'));
 assert(css.includes('fill: var(--linked-highlight-locked'));
-assert(html.includes('market-dashboard.css?v=20260809-09'));
+assert(css.includes('.kospi-flow-hitbox.is-linked-selected {\n    fill: var(--linked-highlight-hover'));
+assert(css.includes('.kospi-flow-hitbox.is-linked-selected.is-locked {\n    fill: var(--linked-highlight-locked'));
+assert(html.includes('market-dashboard.css?v=20260809-10'));
 assert(html.includes('market-dashboard.js?v=20260809-09'));
 
 console.log('Synchronized hover and click-lock chart highlight tests passed.');
