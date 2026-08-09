@@ -20,6 +20,16 @@
     "status": "200"
   },
   {
+    "source": "/market-data/index/KOSPI/minute",
+    "target": "https://api.stock.naver.com/chart/domestic/index/KOSPI/minute",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/index/KOSPI/foreign-flow-time",
+    "target": "https://finance.naver.com/sise/investorDealTrendTime.nhn",
+    "status": "200"
+  },
+  {
     "source": "/market-data/index/KOSPI/foreign-flow/page-1",
     "target": "https://finance.naver.com/sise/investorDealTrendDay.nhn?bizdate=20991231&sosok=01&page=1",
     "status": "200"

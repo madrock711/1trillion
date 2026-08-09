@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260809-01">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260809-03">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -64,8 +64,8 @@
     }
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
-    <script defer src="../assets/market-live-data.js?v=20260809-01"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260809-01"></script>
+    <script defer src="../assets/market-live-data.js?v=20260809-03"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260809-03"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -370,7 +370,7 @@
                 <section class="market-dashboard-card kospi-flow-card" aria-labelledby="kospi-flow-title">
                     <div class="market-card-heading-row kospi-flow-heading">
                         <div>
-                            <p class="market-card-label">KOSPI 일봉 · 거래량 · 외국인 현물 · MACD</p>
+                            <p class="market-card-label" id="kospi-flow-eyebrow">KOSPI 일봉 · 거래량 X-ray · CVD · 외국인 수급 MACD</p>
                             <h3 id="kospi-flow-title">KOSPI 가격과 외국인 수급 흐름</h3>
                         </div>
                         <div class="kospi-flow-toolbar">
@@ -378,11 +378,26 @@
                                 <span aria-hidden="true">↻</span>
                                 <span>새로고침</span>
                             </button>
-                            <div class="kodex-period-switcher kospi-flow-periods" aria-label="KOSPI 조회 기간">
-                                <button type="button" data-kospi-period="1m" aria-pressed="false">1개월</button>
-                                <button type="button" data-kospi-period="3m" aria-pressed="true">3개월</button>
-                                <button type="button" data-kospi-period="6m" aria-pressed="false">6개월</button>
-                                <button type="button" data-kospi-period="1y" aria-pressed="false">1년</button>
+                            <div class="kodex-history-controls kospi-flow-controls">
+                                <div class="kodex-period-switcher" aria-label="KOSPI 차트 종류">
+                                    <button type="button" data-kodex-chart-mode="daily" aria-pressed="true">일봉</button>
+                                    <button type="button" data-kodex-chart-mode="intraday" aria-pressed="false">분봉</button>
+                                </div>
+                                <div class="kodex-period-switcher kospi-flow-periods" id="kospi-daily-controls" data-shared-daily-controls aria-label="KOSPI 일봉 조회 기간">
+                                    <button type="button" data-kodex-period="1m" aria-pressed="false">1개월</button>
+                                    <button type="button" data-kodex-period="3m" aria-pressed="true">3개월</button>
+                                </div>
+                                <div class="kodex-intraday-controls" id="kospi-intraday-controls" data-shared-intraday-controls hidden>
+                                    <label for="kospi-intraday-date">거래일</label>
+                                    <select id="kospi-intraday-date" data-shared-intraday-date aria-label="KOSPI 분봉 거래일"></select>
+                                    <div class="kodex-period-switcher" aria-label="KOSPI 분봉 간격">
+                                        <button type="button" data-kodex-interval="1" aria-pressed="false">1분</button>
+                                        <button type="button" data-kodex-interval="5" aria-pressed="true">5분</button>
+                                        <button type="button" data-kodex-interval="15" aria-pressed="false">15분</button>
+                                        <button type="button" data-kodex-interval="30" aria-pressed="false">30분</button>
+                                        <button type="button" data-kodex-interval="60" aria-pressed="false">60분</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -391,17 +406,20 @@
                         <span class="is-up">상승 봉</span>
                         <span class="is-down">하락 봉</span>
                         <span class="is-volume">거래량</span>
+                        <span class="is-estimated-buy">매수 우위 채움</span>
+                        <span class="is-estimated-sell">매도 우위 채움</span>
+                        <span class="is-cvd">누적 순압력 CVD</span>
                         <span class="is-foreign-buy">외국인 순매수</span>
                         <span class="is-foreign-sell">외국인 순매도</span>
-                        <span class="is-ma5">5일선</span>
-                        <span class="is-ma20">20일선</span>
-                        <span class="is-ma60">60일선</span>
-                        <span class="is-macd">MACD</span>
+                        <span class="is-ma5" data-kospi-daily-legend>5일선</span>
+                        <span class="is-ma20" data-kospi-daily-legend>20일선</span>
+                        <span class="is-ma60" data-kospi-daily-legend>60일선</span>
+                        <span class="is-macd">수급 MACD</span>
                         <span class="is-signal">Signal</span>
                     </div>
-                    <p class="kospi-flow-method">회색 막대는 KOSPI 거래량(천주), 빨강·파랑 막대는 외국인 현물 순매수(억원)입니다. MACD는 KOSPI 종가의 12·26·9 기준입니다.</p>
+                    <p class="kospi-flow-method" id="kospi-flow-method">거래량 X-ray와 CVD 위에 외국인 현물 순매수와 수급 MACD를 같은 거래일 기준으로 표시합니다.</p>
                     <p class="kodex-history-readout kospi-flow-readout" id="kospi-flow-readout" aria-live="polite">KOSPI 가격과 외국인 수급 이력을 불러오는 중입니다.</p>
-                    <div class="kodex-history-shell kospi-flow-shell" tabindex="0" role="region" aria-label="KOSPI 일봉, 거래량, 외국인 현물 순매수와 MACD 차트">
+                    <div class="kodex-history-shell kospi-flow-shell" tabindex="0" role="region" aria-label="KOSPI 일봉 또는 분봉, 거래량 X-ray, CVD, 외국인 현물 순매수와 수급 MACD 차트">
                         <svg id="kospi-flow-chart" class="kodex-history-chart kospi-flow-chart" viewBox="0 0 1000 720" role="img" aria-labelledby="kospi-flow-title kospi-flow-readout"></svg>
                     </div>
                     <div class="kodex-history-summary kospi-flow-summary" id="kospi-flow-summary"></div>
@@ -484,13 +502,13 @@
                                 <button type="button" data-kodex-chart-mode="daily" aria-pressed="true">일봉</button>
                                 <button type="button" data-kodex-chart-mode="intraday" aria-pressed="false">분봉</button>
                             </div>
-                            <div class="kodex-period-switcher" id="kodex-daily-controls" aria-label="일봉 조회 기간">
+                            <div class="kodex-period-switcher" id="kodex-daily-controls" data-shared-daily-controls aria-label="일봉 조회 기간">
                                 <button type="button" data-kodex-period="1m" aria-pressed="false">1개월</button>
                                 <button type="button" data-kodex-period="3m" aria-pressed="true">3개월</button>
                             </div>
-                            <div class="kodex-intraday-controls" id="kodex-intraday-controls" hidden>
+                            <div class="kodex-intraday-controls" id="kodex-intraday-controls" data-shared-intraday-controls hidden>
                                 <label for="kodex-intraday-date">거래일</label>
-                                <select id="kodex-intraday-date" aria-label="분봉 거래일"></select>
+                                <select id="kodex-intraday-date" data-shared-intraday-date aria-label="분봉 거래일"></select>
                                 <div class="kodex-period-switcher" aria-label="분봉 간격">
                                     <button type="button" data-kodex-interval="1" aria-pressed="false">1분</button>
                                     <button type="button" data-kodex-interval="5" aria-pressed="true">5분</button>

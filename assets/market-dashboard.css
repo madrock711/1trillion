@@ -1118,6 +1118,14 @@
     gap: 0.55rem;
 }
 
+.kospi-flow-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.55rem;
+}
+
 .kospi-flow-refresh-status {
     display: block;
     margin-top: 0.4rem;
@@ -1139,6 +1147,10 @@
     gap: 0.38rem;
 }
 
+.kospi-flow-legend [hidden] {
+    display: none;
+}
+
 .kospi-flow-legend span::before {
     width: 16px;
     height: 3px;
@@ -1150,12 +1162,15 @@
 .kospi-flow-legend .is-up { color: #ff737b; }
 .kospi-flow-legend .is-down { color: #69a9ff; }
 .kospi-flow-legend .is-volume { color: #75838d; }
-.kospi-flow-legend .is-foreign-buy { color: #ff4f5e; }
-.kospi-flow-legend .is-foreign-sell { color: #4f8dff; }
+.kospi-flow-legend .is-estimated-buy { color: #ff5367; }
+.kospi-flow-legend .is-estimated-sell { color: #4f8dff; }
+.kospi-flow-legend .is-cvd { color: #ffd54f; }
+.kospi-flow-legend .is-foreign-buy { color: #ffb454; }
+.kospi-flow-legend .is-foreign-sell { color: #35d3c8; }
 .kospi-flow-legend .is-ma5 { color: #ffd166; }
 .kospi-flow-legend .is-ma20 { color: #66d2ff; }
 .kospi-flow-legend .is-ma60 { color: #59dda0; }
-.kospi-flow-legend .is-macd { color: #f5d76e; }
+.kospi-flow-legend .is-macd { color: #c084fc; }
 .kospi-flow-legend .is-signal { color: #75e8a7; }
 
 .kospi-flow-method {
@@ -1207,14 +1222,33 @@
     opacity: 0.34;
 }
 
-.kospi-flow-foreign {
-    opacity: 0.94;
+.kospi-flow-volume-force {
+    opacity: 0.82;
 }
 
-.kospi-flow-foreign.is-buy,
-.kospi-flow-macd-histogram.is-positive { fill: #ff4f5e; }
+.kospi-flow-volume-force.is-buy { fill: #ff5367; }
+.kospi-flow-volume-force.is-sell { fill: #4f8dff; }
 
-.kospi-flow-foreign.is-sell,
+.kospi-flow-cvd {
+    fill: none;
+    stroke: #ffd54f;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+}
+
+.kospi-flow-foreign {
+    opacity: 0.94;
+    stroke: rgba(255, 255, 255, 0.38);
+    stroke-width: 0.7;
+}
+
+.kospi-flow-foreign.is-buy { fill: #ffb454; }
+.kospi-flow-foreign.is-sell { fill: #35d3c8; }
+
+.kospi-flow-macd-histogram.is-positive { fill: #ff4f5e; }
 .kospi-flow-macd-histogram.is-negative { fill: #4f8dff; }
 
 .kospi-flow-macd-histogram {
@@ -1231,7 +1265,7 @@
     pointer-events: none;
 }
 
-.kospi-flow-macd-line { stroke: #f5d76e; }
+.kospi-flow-macd-line { stroke: #c084fc; }
 .kospi-flow-signal-line { stroke: #75e8a7; }
 
 .kospi-flow-hitbox {
@@ -1245,9 +1279,10 @@
     fill: rgba(255, 226, 122, 0.055);
 }
 
-.kospi-flow-candle.is-linked-selected,
-.kospi-flow-candle-wick.is-linked-selected,
-.kospi-flow-volume.is-linked-selected,
+.kospi-flow-candle-group.is-linked-selected .kospi-flow-candle,
+.kospi-flow-candle-group.is-linked-selected .kospi-flow-candle-wick,
+.kospi-flow-volume-group.is-linked-selected .kospi-flow-volume,
+.kospi-flow-volume-group.is-linked-selected .kospi-flow-volume-force,
 .kospi-flow-foreign.is-linked-selected,
 .kospi-flow-macd-histogram.is-linked-selected {
     stroke: #ffe27a;
@@ -2091,6 +2126,11 @@
         width: 100%;
         justify-content: flex-start;
         margin-top: var(--space-3);
+    }
+
+    .kospi-flow-controls {
+        width: 100%;
+        justify-content: flex-start;
     }
 
     .kospi-flow-refresh-status {

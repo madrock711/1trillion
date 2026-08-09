@@ -29,6 +29,7 @@
         pending: null
     };
     var kospiForeignFlowPageCache = {};
+    var kospiIntradayDayCache = {};
     var tqqqIntradayOneMinuteCache = {
         value: null,
         expiresAt: 0,
@@ -287,6 +288,145 @@
                 personal: flow && Number.isFinite(flow.personal) ? flow.personal : null,
                 flowUnit: '억원'
             };
+        });
+    }
+
+    function normalizeIsoDate(value) {
+        var raw = String(value || '').trim();
+        if (/^\d{8}$/.test(raw)) {
+            return raw.slice(0, 4) + '-' + raw.slice(4, 6) + '-' + raw.slice(6, 8);
+        }
+        return /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : '';
+    }
+
+    function isKospiRegularSessionTime(value) {
+        return /^\d{2}:\d{2}$/.test(value) && value >= '09:00' && value <= '15:30';
+    }
+
+    function normalizeKospiIntradayMinute(payload, expectedDate) {
+        var decoded = payload;
+        if (!Array.isArray(decoded)) {
+            try {
+                decoded = JSON.parse(String(payload || ''));
+            } catch (error) {
+                throw new Error('KOSPI 분봉 응답이 올바르지 않습니다.');
+            }
+        }
+        if (!Array.isArray(decoded)) throw new Error('KOSPI 분봉 응답이 올바르지 않습니다.');
+        var expected = normalizeIsoDate(expectedDate);
+        var rowsByTimestamp = {};
+        decoded.forEach(function (row) {
+            var timestamp = row && String(row.localDateTime || '');
+            if (!/^\d{14}$/.test(timestamp)) return;
+            var date = normalizeIsoDate(timestamp.slice(0, 8));
+            var time = timestamp.slice(8, 10) + ':' + timestamp.slice(10, 12);
+            var normalized = {
+                date: date,
+                timestamp: timestamp,
+                time: time,
+                open: parseNumber(row && row.openPrice),
+                high: parseNumber(row && row.highPrice),
+                low: parseNumber(row && row.lowPrice),
+                close: parseNumber(row && row.currentPrice),
+                volume: parseNumber(row && row.accumulatedTradingVolume)
+            };
+            if ((expected && date !== expected)
+                || !isKospiRegularSessionTime(time)
+                || ![normalized.open, normalized.high, normalized.low, normalized.close, normalized.volume].every(Number.isFinite)
+                || normalized.volume < 0
+                || normalized.high < Math.max(normalized.open, normalized.close)
+                || normalized.low > Math.min(normalized.open, normalized.close)) return;
+            rowsByTimestamp[timestamp] = normalized;
+        });
+        return Object.keys(rowsByTimestamp).sort().map(function (timestamp) { return rowsByTimestamp[timestamp]; });
+    }
+
+    function normalizeKospiIntradayForeignFlowHtml(payload, expectedDate) {
+        var raw = String(payload || '');
+        var expected = normalizeIsoDate(expectedDate);
+        var payloadDateMatch = /\bbizdate=(\d{8})/i.exec(raw.replace(/&amp;/gi, '&'));
+        var payloadDate = payloadDateMatch ? normalizeIsoDate(payloadDateMatch[1]) : '';
+        var date = expected || payloadDate;
+        if (expected && payloadDate && expected !== payloadDate) {
+            throw new Error('선택한 거래일과 KOSPI 장중 수급 날짜가 다릅니다.');
+        }
+        var rowsByTime = {};
+        var rowPattern = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+        var rowMatch;
+        while ((rowMatch = rowPattern.exec(raw))) {
+            var cells = [];
+            var cellPattern = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+            var cellMatch;
+            while ((cellMatch = cellPattern.exec(rowMatch[1]))) {
+                cells.push(cellMatch[1]
+                    .replace(/<[^>]+>/g, '')
+                    .replace(/&nbsp;/gi, ' ')
+                    .replace(/&#160;/gi, ' ')
+                    .trim());
+            }
+            var time = String(cells[0] || '').trim();
+            if (cells.length < 4 || !isKospiRegularSessionTime(time)) continue;
+            var normalized = {
+                date: date || null,
+                time: time,
+                personal: parseNumber(cells[1]),
+                foreign: parseNumber(cells[2]),
+                institution: parseNumber(cells[3]),
+                unit: '억원'
+            };
+            if (![normalized.personal, normalized.foreign, normalized.institution].every(Number.isFinite)) continue;
+            rowsByTime[time] = normalized;
+        }
+        return Object.keys(rowsByTime).sort().map(function (time) { return rowsByTime[time]; });
+    }
+
+    function extractKospiIntradayForeignFlowPageCount(payload) {
+        var raw = String(payload || '').replace(/&amp;/gi, '&');
+        var pageCount = 1;
+        var pagePattern = /(?:[?&])page=(\d+)/gi;
+        var match;
+        while ((match = pagePattern.exec(raw))) {
+            var page = Number(match[1]);
+            if (Number.isFinite(page) && page > pageCount) pageCount = page;
+        }
+        return pageCount;
+    }
+
+    function mergeKospiIntradayForeignFlow(priceRows, flowRows) {
+        var snapshotsByKey = {};
+        (flowRows || []).forEach(function (row) {
+            if (!row || !isKospiRegularSessionTime(String(row.time || '')) || !Number.isFinite(row.foreign)) return;
+            var date = normalizeIsoDate(row.date);
+            snapshotsByKey[(date || '') + '|' + row.time] = row;
+        });
+        var snapshots = Object.keys(snapshotsByKey).map(function (key) { return snapshotsByKey[key]; }).sort(function (left, right) {
+            return String(left.date || '').localeCompare(String(right.date || '')) || left.time.localeCompare(right.time);
+        });
+        var flowIndex = 0;
+        var latest = null;
+        return (priceRows || []).map(function (row) {
+            while (flowIndex < snapshots.length) {
+                var candidate = snapshots[flowIndex];
+                var candidateDate = normalizeIsoDate(candidate.date);
+                if (candidateDate && candidateDate < row.date) {
+                    flowIndex += 1;
+                    continue;
+                }
+                if (candidateDate && candidateDate > row.date) break;
+                if (candidate.time > row.time) break;
+                latest = candidate;
+                flowIndex += 1;
+            }
+            var merged = {};
+            Object.keys(row).forEach(function (key) { merged[key] = row[key]; });
+            var sameDate = latest && (!latest.date || normalizeIsoDate(latest.date) === row.date);
+            merged.foreign = sameDate ? latest.foreign : null;
+            merged.institution = sameDate ? latest.institution : null;
+            merged.personal = sameDate ? latest.personal : null;
+            merged.flowObservedAt = sameDate ? latest.time : null;
+            merged.flowCarriedForward = Boolean(sameDate && latest.time !== row.time);
+            merged.flowUnit = '억원';
+            return merged;
         });
     }
 
@@ -893,6 +1033,26 @@
         });
     }
 
+    function fetchTextWithConcurrency(fetchImpl, urls, signal, nonce, limit) {
+        var targets = urls || [];
+        if (!targets.length) return Promise.resolve([]);
+        var results = new Array(targets.length);
+        var nextIndex = 0;
+        var workerCount = Math.max(1, Math.min(targets.length, Number(limit) || 6));
+        function runWorker() {
+            var index = nextIndex;
+            nextIndex += 1;
+            if (index >= targets.length) return Promise.resolve();
+            return fetchText(fetchImpl, targets[index], signal, nonce).then(function (payload) {
+                results[index] = payload;
+                return runWorker();
+            });
+        }
+        var workers = [];
+        for (var index = 0; index < workerCount; index += 1) workers.push(runWorker());
+        return Promise.all(workers).then(function () { return results; });
+    }
+
     function fetchPair(fetchImpl, baseUrl, category, code, signal, nonce) {
         var prefix = new URL(category + '/' + code + '/', baseUrl).href;
         return Promise.all([
@@ -962,6 +1122,98 @@
             parts[1].forEach(function (rows) { flowRows = flowRows.concat(rows); });
             return mergeKospiTechnicalHistory(parts[0], flowRows);
         });
+    }
+
+    function fetchKospiIntradayDay(fetchImpl, baseUrl, date, options) {
+        var settings = options || {};
+        var day = normalizeIsoDate(date);
+        if (!day) return Promise.reject(new Error('KOSPI 분봉 날짜가 올바르지 않습니다.'));
+        if (typeof fetchImpl !== 'function') return Promise.reject(new Error('KOSPI 분봉 요청 함수가 없습니다.'));
+        var now = Number.isFinite(settings.now) ? settings.now : Date.now();
+        var ttlMs = Number.isFinite(settings.ttlMs) ? settings.ttlMs : 60 * 1000;
+        var nonce = settings.nonce || String(now);
+        var signal = settings.signal;
+        var cacheKey = String(baseUrl || '') + '|' + day;
+        var state = kospiIntradayDayCache[cacheKey] || { value: null, expiresAt: 0, pending: null, pendingSignal: null };
+        kospiIntradayDayCache[cacheKey] = state;
+        if (settings.forceRefresh) state.expiresAt = 0;
+        if (state.value && state.expiresAt > now) return Promise.resolve(state.value);
+        if (state.pending) {
+            var shouldRestart = Boolean(settings.forceRefresh)
+                || Boolean(signal && state.pendingSignal && signal !== state.pendingSignal);
+            if (!shouldRestart) return state.pending;
+            return state.pending.catch(function () { return null; }).then(function () {
+                return fetchKospiIntradayDay(fetchImpl, baseUrl, day, Object.assign({}, settings, {
+                    forceRefresh: true,
+                    nonce: String(Date.now())
+                }));
+            });
+        }
+
+        var compactDate = day.replace(/-/g, '');
+        var minuteUrl = new URL('index/KOSPI/minute', baseUrl);
+        minuteUrl.searchParams.set('startDateTime', compactDate + '0900');
+        minuteUrl.searchParams.set('endDateTime', compactDate + '1530');
+        var firstFlowUrl = new URL('index/KOSPI/foreign-flow-time', baseUrl);
+        firstFlowUrl.searchParams.set('bizdate', compactDate);
+        firstFlowUrl.searchParams.set('sosok', '01');
+        firstFlowUrl.searchParams.set('page', '1');
+
+        state.pendingSignal = signal || null;
+        state.pending = Promise.all([
+            fetchJson(fetchImpl, minuteUrl.href, signal, nonce),
+            fetchText(fetchImpl, firstFlowUrl.href, signal, nonce)
+        ]).then(function (initialParts) {
+            var priceRows = normalizeKospiIntradayMinute(initialParts[0], day);
+            if (!priceRows.length) throw new Error('선택한 거래일의 KOSPI 분봉이 없습니다.');
+            var pageCount = extractKospiIntradayForeignFlowPageCount(initialParts[1]);
+            var maxPages = Number.isFinite(settings.maxPages) ? Math.max(1, Math.floor(settings.maxPages)) : 100;
+            if (pageCount > maxPages) throw new Error('KOSPI 장중 수급 페이지 수가 허용 범위를 넘었습니다.');
+            var remainingUrls = [];
+            for (var page = 2; page <= pageCount; page += 1) {
+                var pageUrl = new URL('index/KOSPI/foreign-flow-time', baseUrl);
+                pageUrl.searchParams.set('bizdate', compactDate);
+                pageUrl.searchParams.set('sosok', '01');
+                pageUrl.searchParams.set('page', String(page));
+                remainingUrls.push(pageUrl.href);
+            }
+            return fetchTextWithConcurrency(
+                fetchImpl,
+                remainingUrls,
+                signal,
+                nonce,
+                settings.concurrencyLimit
+            ).then(function (remainingPayloads) {
+                var flowRows = [];
+                [initialParts[1]].concat(remainingPayloads).forEach(function (payload) {
+                    flowRows = flowRows.concat(normalizeKospiIntradayForeignFlowHtml(payload, day));
+                });
+                var uniqueFlows = {};
+                flowRows.forEach(function (row) { uniqueFlows[row.time] = row; });
+                flowRows = Object.keys(uniqueFlows).sort().map(function (time) { return uniqueFlows[time]; });
+                var bars = mergeKospiIntradayForeignFlow(priceRows, flowRows);
+                var latestPrice = priceRows[priceRows.length - 1];
+                var latestFlow = flowRows.length ? flowRows[flowRows.length - 1] : null;
+                return {
+                    date: day,
+                    interval: '1m',
+                    sourceLastAt: day + 'T' + latestPrice.time + ':00+09:00',
+                    flowSourceLastAt: latestFlow ? day + 'T' + latestFlow.time + ':00+09:00' : null,
+                    flowPageCount: pageCount,
+                    flowSnapshotCount: flowRows.length,
+                    minuteVolume: priceRows.reduce(function (total, row) { return total + row.volume; }, 0),
+                    bars: bars
+                };
+            });
+        }).then(function (value) {
+            state.value = value;
+            state.expiresAt = now + ttlMs;
+            return value;
+        }).finally(function () {
+            state.pending = null;
+            state.pendingSignal = null;
+        });
+        return state.pending;
     }
 
     function fetchKodexHistory(fetchImpl, baseUrl, signal, nonce, now, ttlMs) {
@@ -1322,8 +1574,13 @@
         normalizeKospiPriceHistory: normalizeKospiPriceHistory,
         normalizeKospiForeignFlowHtml: normalizeKospiForeignFlowHtml,
         mergeKospiTechnicalHistory: mergeKospiTechnicalHistory,
+        normalizeKospiIntradayMinute: normalizeKospiIntradayMinute,
+        normalizeKospiIntradayForeignFlowHtml: normalizeKospiIntradayForeignFlowHtml,
+        extractKospiIntradayForeignFlowPageCount: extractKospiIntradayForeignFlowPageCount,
+        mergeKospiIntradayForeignFlow: mergeKospiIntradayForeignFlow,
         calculateMacd: calculateMacd,
         fetchKospiTechnicalHistory: fetchKospiTechnicalHistory,
+        fetchKospiIntradayDay: fetchKospiIntradayDay,
         normalizeTqqqPriceHistory: normalizeTqqqPriceHistory,
         normalizeTqqqIntradayHistory: normalizeTqqqIntradayHistory,
         normalizeKodexVolumePressure: normalizeKodexVolumePressure,

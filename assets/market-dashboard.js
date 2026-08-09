@@ -24,9 +24,13 @@
     var selectedKodexIntradayDate = '';
     var selectedKodexIntradayInterval = 5;
     var kodexIntradayRenderToken = 0;
-    var selectedKospiPeriod = '3m';
     var kospiTechnicalHistory = [];
     var kospiHistoryRequestToken = 0;
+    var kospiIntradayRenderToken = 0;
+    var kospiIntradayForceRefresh = false;
+    var kospiIntradayViewCache = {};
+    var kospiIntradayAbortController = null;
+    var kospiIntradayRequestDate = '';
 
     function clear(node) {
         while (node && node.firstChild) node.removeChild(node.firstChild);
@@ -706,6 +710,14 @@
         };
     }
 
+    function renderSynchronizedTechnicalCharts() {
+        var kospi = dashboardData && findById(dashboardData.markets, 'KOSPI');
+        var kodex = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
+        if (kospi) renderKospiHistoryChart(kospi);
+        if (kodex) renderKodexHistoryChart(kodex);
+        renderTqqqSynchronized();
+    }
+
     function bindKodexChartControls() {
         Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-chart-mode]'), function (button) {
             button.setAttribute('aria-pressed', button.getAttribute('data-kodex-chart-mode') === selectedKodexChartMode ? 'true' : 'false');
@@ -713,9 +725,7 @@
             button.setAttribute('data-chart-bound', 'true');
             button.addEventListener('click', function () {
                 selectedKodexChartMode = button.getAttribute('data-kodex-chart-mode') === 'intraday' ? 'intraday' : 'daily';
-                var currentInstrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
-                if (currentInstrument) renderKodexHistoryChart(currentInstrument);
-                renderTqqqSynchronized();
+                renderSynchronizedTechnicalCharts();
             });
         });
         Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-period]'), function (button) {
@@ -724,9 +734,7 @@
             button.setAttribute('data-chart-bound', 'true');
             button.addEventListener('click', function () {
                 selectedKodexPeriod = button.getAttribute('data-kodex-period') === '1m' ? '1m' : '3m';
-                var currentInstrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
-                if (currentInstrument) renderKodexHistoryChart(currentInstrument);
-                renderTqqqSynchronized();
+                renderSynchronizedTechnicalCharts();
             });
         });
         Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-interval]'), function (button) {
@@ -735,21 +743,17 @@
             button.setAttribute('data-chart-bound', 'true');
             button.addEventListener('click', function () {
                 selectedKodexIntradayInterval = Number(button.getAttribute('data-kodex-interval')) || 5;
-                var currentInstrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
-                if (currentInstrument) renderKodexHistoryChart(currentInstrument);
-                renderTqqqSynchronized();
+                renderSynchronizedTechnicalCharts();
             });
         });
-        var dateSelect = document.getElementById('kodex-intraday-date');
-        if (dateSelect && dateSelect.getAttribute('data-chart-bound') !== 'true') {
+        Array.prototype.forEach.call(document.querySelectorAll('[data-shared-intraday-date]'), function (dateSelect) {
+            if (dateSelect.getAttribute('data-chart-bound') === 'true') return;
             dateSelect.setAttribute('data-chart-bound', 'true');
             dateSelect.addEventListener('change', function () {
                 selectedKodexIntradayDate = dateSelect.value;
-                var currentInstrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
-                if (currentInstrument) renderKodexHistoryChart(currentInstrument);
-                renderTqqqSynchronized();
+                renderSynchronizedTechnicalCharts();
             });
-        }
+        });
         var refreshButton = document.getElementById('kodex-chart-refresh');
         if (refreshButton && refreshButton.getAttribute('data-chart-bound') !== 'true') {
             refreshButton.setAttribute('data-chart-bound', 'true');
@@ -794,10 +798,12 @@
         bindKodexChartControls();
         var liveInstrument = instrument && instrument.liveSnapshot || {};
         var indexRows = liveInstrument.intradayIndex || instrument && instrument.intradayIndex || [];
-        var periodControls = document.getElementById('kodex-daily-controls');
-        var intradayControls = document.getElementById('kodex-intraday-controls');
-        if (periodControls) periodControls.hidden = selectedKodexChartMode !== 'daily';
-        if (intradayControls) intradayControls.hidden = selectedKodexChartMode !== 'intraday';
+        Array.prototype.forEach.call(document.querySelectorAll('[data-shared-daily-controls]'), function (node) {
+            node.hidden = selectedKodexChartMode !== 'daily';
+        });
+        Array.prototype.forEach.call(document.querySelectorAll('[data-shared-intraday-controls]'), function (node) {
+            node.hidden = selectedKodexChartMode !== 'intraday';
+        });
         Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-chart-mode]'), function (button) {
             button.setAttribute('aria-pressed', button.getAttribute('data-kodex-chart-mode') === selectedKodexChartMode ? 'true' : 'false');
         });
@@ -810,24 +816,24 @@
         Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-daily-legend]'), function (node) {
             node.hidden = selectedKodexChartMode !== 'daily';
         });
-        var dateSelect = document.getElementById('kodex-intraday-date');
-        if (!dateSelect) return indexRows;
         var dates = indexRows.map(function (row) { return row.date; });
         if (!selectedKodexIntradayDate || dates.indexOf(selectedKodexIntradayDate) === -1) {
             selectedKodexIntradayDate = dates[dates.length - 1] || '';
         }
-        if (dateSelect.options.length !== dates.length || Array.prototype.some.call(dateSelect.options, function (option, index) {
-            return option.value !== dates[index];
-        })) {
-            clear(dateSelect);
-            dates.forEach(function (date) {
-                var option = document.createElement('option');
-                option.value = date;
-                option.textContent = formatHistoryDate(date);
-                dateSelect.appendChild(option);
-            });
-        }
-        dateSelect.value = selectedKodexIntradayDate;
+        Array.prototype.forEach.call(document.querySelectorAll('[data-shared-intraday-date]'), function (dateSelect) {
+            if (dateSelect.options.length !== dates.length || Array.prototype.some.call(dateSelect.options, function (option, index) {
+                return option.value !== dates[index];
+            })) {
+                clear(dateSelect);
+                dates.forEach(function (date) {
+                    var option = document.createElement('option');
+                    option.value = date;
+                    option.textContent = formatHistoryDate(date);
+                    dateSelect.appendChild(option);
+                });
+            }
+            dateSelect.value = selectedKodexIntradayDate;
+        });
         return indexRows;
     }
 
@@ -931,24 +937,15 @@
     }
 
     function kospiPeriodMonths() {
-        if (selectedKospiPeriod === '1m') return 1;
-        if (selectedKospiPeriod === '6m') return 6;
-        if (selectedKospiPeriod === '1y') return 12;
-        return 3;
+        return selectedKodexPeriod === '1m' ? 1 : 3;
     }
 
     function kospiPeriodLabel() {
-        if (selectedKospiPeriod === '1m') return '1개월';
-        if (selectedKospiPeriod === '6m') return '6개월';
-        if (selectedKospiPeriod === '1y') return '1년';
-        return '3개월';
+        return selectedKodexPeriod === '1m' ? '1개월' : '3개월';
     }
 
     function kospiFlowPageCount() {
-        if (selectedKospiPeriod === '1m') return 3;
-        if (selectedKospiPeriod === '6m') return 15;
-        if (selectedKospiPeriod === '1y') return 28;
-        return 8;
+        return 15;
     }
 
     function seoulIsoDate(value) {
@@ -1005,24 +1002,16 @@
     }
 
     function bindKospiFlowControls() {
-        Array.prototype.forEach.call(document.querySelectorAll('[data-kospi-period]'), function (button) {
-            button.setAttribute('aria-pressed', button.getAttribute('data-kospi-period') === selectedKospiPeriod ? 'true' : 'false');
-            if (button.getAttribute('data-chart-bound') === 'true') return;
-            button.setAttribute('data-chart-bound', 'true');
-            button.addEventListener('click', function () {
-                selectedKospiPeriod = button.getAttribute('data-kospi-period') || '3m';
-                Array.prototype.forEach.call(document.querySelectorAll('[data-kospi-period]'), function (periodButton) {
-                    periodButton.setAttribute('aria-pressed', periodButton === button ? 'true' : 'false');
-                });
-                loadKospiTechnicalHistory(false);
-            });
-        });
+        bindKodexChartControls();
         var refreshButton = document.getElementById('kospi-flow-refresh');
         if (refreshButton && refreshButton.getAttribute('data-chart-bound') !== 'true') {
             refreshButton.setAttribute('data-chart-bound', 'true');
             refreshButton.addEventListener('click', function () {
+                kospiIntradayForceRefresh = selectedKodexChartMode === 'intraday';
                 var liveRefresh = dashboardData ? refreshLiveMarketData(dashboardData, { force: true, silent: true }) : Promise.resolve(false);
-                return Promise.all([liveRefresh, loadKospiTechnicalHistory(true)]);
+                return Promise.all([liveRefresh, loadKospiTechnicalHistory(true)]).then(function () {
+                    renderSynchronizedTechnicalCharts();
+                });
             });
         }
     }
@@ -1066,54 +1055,105 @@
         });
     }
 
-    function renderKospiHistoryChart(market) {
-        bindKospiFlowControls();
-        var svg = document.getElementById('kospi-flow-chart');
-        var summary = document.getElementById('kospi-flow-summary');
-        var readout = document.getElementById('kospi-flow-readout');
-        var title = document.getElementById('kospi-flow-title');
-        if (!svg || !summary || !readout) return;
-        clear(svg);
-        clear(summary);
-        if (title) title.textContent = 'KOSPI 가격과 외국인 수급 · ' + kospiPeriodLabel();
-
+    function prepareKospiDailyRows(market) {
         var history = mergeCurrentKospiHistory(kospiTechnicalHistory, market).filter(function (row) {
             return row && Number.isFinite(parseHistoryDate(row.date))
                 && [row.open, row.high, row.low, row.close, row.volume].every(Number.isFinite)
                 && row.volume > 0;
+        }).sort(function (left, right) {
+            return parseHistoryDate(left.date) - parseHistoryDate(right.date);
         });
-        if (history.length < 30) {
+        if (!history.length) return [];
+        var ma5 = simpleMovingAverage(history, 5);
+        var ma20 = simpleMovingAverage(history, 20);
+        var ma60 = simpleMovingAverage(history, 60);
+        var flowMacd = window.MarketDashboardLive.calculateMacd(history.map(function (row) { return row.foreign; }), 12, 26, 9);
+        var threshold = new Date(parseHistoryDate(history[history.length - 1].date));
+        threshold.setMonth(threshold.getMonth() - kospiPeriodMonths());
+        var startIndex = history.findIndex(function (row) { return parseHistoryDate(row.date) >= threshold.getTime(); });
+        if (startIndex < 0) startIndex = 0;
+        var runningCvd = 0;
+        return history.slice(startIndex).map(function (row, index) {
+            var sourceIndex = startIndex + index;
+            var pressure = estimateDailyVolumePressure(row);
+            runningCvd += pressure.delta;
+            return Object.assign({}, row, pressure, {
+                cumulativeDelta: runningCvd,
+                ma5: ma5[sourceIndex],
+                ma20: ma20[sourceIndex],
+                ma60: ma60[sourceIndex],
+                flowMacd: flowMacd.macd[sourceIndex],
+                flowSignal: flowMacd.signal[sourceIndex],
+                flowHistogram: flowMacd.histogram[sourceIndex]
+            });
+        });
+    }
+
+    function prepareKospiIntradayRows(day) {
+        var minuteRows = (day && day.bars || []).map(function (row) {
+            var pressure = estimateDailyVolumePressure(row);
+            return Object.assign({}, row, pressure);
+        });
+        var rows = aggregateIntradayBars(minuteRows, selectedKodexIntradayInterval);
+        rows.forEach(function (row) {
+            row.date = day.date;
+            var bucketRows = minuteRows.filter(function (source) {
+                return source.time >= row.time && source.time <= row.endTime;
+            });
+            var last = bucketRows[bucketRows.length - 1];
+            row.foreign = last && Number.isFinite(last.foreign) ? last.foreign : null;
+            row.flowObservedAt = last && last.flowObservedAt || null;
+            row.flowCarriedForward = Boolean(last && last.flowCarriedForward);
+        });
+        var flowMacd = window.MarketDashboardLive.calculateMacd(rows.map(function (row) { return row.foreign; }), 12, 26, 9);
+        return rows.map(function (row, index) {
+            return Object.assign({}, row, {
+                flowMacd: flowMacd.macd[index],
+                flowSignal: flowMacd.signal[index],
+                flowHistogram: flowMacd.histogram[index]
+            });
+        });
+    }
+
+    function renderKospiRows(rows, options) {
+        var svg = document.getElementById('kospi-flow-chart');
+        var summary = document.getElementById('kospi-flow-summary');
+        var readout = document.getElementById('kospi-flow-readout');
+        var title = document.getElementById('kospi-flow-title');
+        var eyebrow = document.getElementById('kospi-flow-eyebrow');
+        var method = document.getElementById('kospi-flow-method');
+        var sourceNote = document.getElementById('kospi-flow-source-note');
+        if (!svg || !summary || !readout) return;
+        clear(svg);
+        clear(summary);
+        var intraday = options.mode === 'intraday';
+        svg.classList.toggle('is-intraday', intraday);
+        if (title) title.textContent = intraday
+            ? 'KOSPI 가격과 외국인 수급 · ' + formatHistoryDate(options.date) + ' ' + selectedKodexIntradayInterval + '분봉'
+            : 'KOSPI 가격과 외국인 수급 · ' + kospiPeriodLabel();
+        if (eyebrow) eyebrow.textContent = intraday
+            ? 'KOSPI 분봉 · 거래량 X-ray · CVD · 외국인 수급 MACD'
+            : 'KOSPI 일봉 · 거래량 X-ray · CVD · 외국인 수급 MACD';
+        if (method) method.textContent = intraday
+            ? '거래량 막대에는 가격 움직임으로 추정한 매수·매도 우위를 겹치고, 외국인 장중 누적 순매수의 흐름은 막대와 MACD로 함께 표시합니다.'
+            : '거래량 막대에는 일봉 가격 범위와 종가 위치로 추정한 매수·매도 우위를 겹치고, 외국인 일별 순매수의 흐름은 막대와 MACD로 함께 표시합니다.';
+        if (sourceNote) sourceNote.textContent = intraday
+            ? 'KOSPI 분봉과 외국인 장중 누적 순매수는 Naver Finance의 KRX 공개 데이터 기준입니다.'
+            : 'KOSPI 일봉과 외국인 현물 순매수는 Naver Finance의 KRX 공개 데이터 기준입니다.';
+        Array.prototype.forEach.call(document.querySelectorAll('[data-kospi-daily-legend]'), function (node) {
+            node.hidden = intraday;
+        });
+        if (rows.length < 5) {
             var empty = makeSvg('text', { x: 500, y: 350, 'class': 'kodex-history-empty', 'text-anchor': 'middle' });
-            empty.textContent = 'KOSPI 가격·수급 이력을 불러오는 중입니다.';
+            empty.textContent = '선택한 기준의 KOSPI 가격·수급 데이터를 확인하고 있습니다.';
             svg.appendChild(empty);
             return;
         }
 
-        var ma5 = simpleMovingAverage(history, 5);
-        var ma20 = simpleMovingAverage(history, 20);
-        var ma60 = simpleMovingAverage(history, 60);
-        var macdData = window.MarketDashboardLive.calculateMacd(history.map(function (row) { return row.close; }), 12, 26, 9);
-        var latestTimestamp = parseHistoryDate(history[history.length - 1].date);
-        var threshold = new Date(latestTimestamp);
-        threshold.setMonth(threshold.getMonth() - kospiPeriodMonths());
-        var startIndex = history.findIndex(function (row) { return parseHistoryDate(row.date) >= threshold.getTime(); });
-        if (startIndex < 0) startIndex = 0;
-        var rows = history.slice(startIndex).map(function (row, index) {
-            var sourceIndex = startIndex + index;
-            return Object.assign({}, row, {
-                ma5: ma5[sourceIndex],
-                ma20: ma20[sourceIndex],
-                ma60: ma60[sourceIndex],
-                macd: macdData.macd[sourceIndex],
-                signal: macdData.signal[sourceIndex],
-                histogram: macdData.histogram[sourceIndex]
-            });
-        });
-
         svg.setAttribute('viewBox', '0 0 1000 720');
         var width = 1000;
         var margin = { left: 28, right: 92 };
-        var innerWidth = width - margin.left - margin.right;
+        var right = width - margin.right;
         var priceTop = 34;
         var priceBottom = 328;
         var flowTop = 366;
@@ -1122,14 +1162,16 @@
         var flowZero = (flowPlotTop + flowBottom) / 2;
         var macdTop = 566;
         var macdBottom = 676;
-        var xStep = innerWidth / rows.length;
-        var candleWidth = Math.max(2.2, Math.min(8.5, xStep * 0.58));
+        var xStep = (right - margin.left) / rows.length;
+        var candleWidth = Math.max(1.4, Math.min(8.5, xStep * 0.58));
         function xFor(index) { return margin.left + xStep * index + xStep / 2; }
 
         var priceValues = [];
         rows.forEach(function (row) {
             priceValues.push(row.high, row.low);
-            [row.ma5, row.ma20, row.ma60].forEach(function (value) { if (Number.isFinite(value)) priceValues.push(value); });
+            if (!intraday) [row.ma5, row.ma20, row.ma60].forEach(function (value) {
+                if (Number.isFinite(value)) priceValues.push(value);
+            });
         });
         var minPrice = Math.min.apply(Math, priceValues);
         var maxPrice = Math.max.apply(Math, priceValues);
@@ -1137,126 +1179,138 @@
         minPrice -= priceSpread * 0.05;
         maxPrice += priceSpread * 0.05;
         function priceY(value) { return priceTop + (maxPrice - value) / (maxPrice - minPrice) * (priceBottom - priceTop); }
-
-        addChartGrid(svg, margin.left, width - margin.right, priceTop, priceBottom, minPrice, maxPrice, function (value) {
+        addChartGrid(svg, margin.left, right, priceTop, priceBottom, minPrice, maxPrice, function (value) {
             return formatNumber(value, 0);
         });
-        addChartSectionLabel(svg, 'KOSPI 일봉', margin.left, priceTop + 12);
-        addChartSectionLabel(svg, '거래량 · 외국인 현물 순매수', margin.left, flowTop + 12);
-        addChartSectionLabel(svg, 'KOSPI MACD 12 · 26 · 9', margin.left, macdTop + 12);
+        addChartSectionLabel(svg, intraday ? selectedKodexIntradayInterval + '분봉' : '일봉', margin.left, priceTop + 12);
+        addChartSectionLabel(svg, '거래량 X-ray · CVD · 외국인 현물', margin.left, flowTop + 12);
+        addChartSectionLabel(svg, '외국인 수급 MACD 12 · 26 · 9', margin.left, macdTop + 12);
 
         var maxVolume = Math.max.apply(Math, rows.map(function (row) { return row.volume; }));
         function volumeY(value) { return flowBottom - value / Math.max(maxVolume, 1) * (flowBottom - flowPlotTop); }
+        var forceScale = pressureStrengthScale(rows, function (row) { return row.delta; }, function (row) { return row.volume; });
+        var cvdValues = rows.map(function (row) { return row.cumulativeDelta; });
+        var minCvd = Math.min.apply(Math, [0].concat(cvdValues));
+        var maxCvd = Math.max.apply(Math, [0].concat(cvdValues));
+        var cvdSpread = Math.max(maxCvd - minCvd, 1);
+        function cvdY(value) { return flowPlotTop + 3 + (maxCvd - value) / cvdSpread * (flowBottom - flowPlotTop - 10); }
         var foreignValues = rows.map(function (row) { return row.foreign; }).filter(Number.isFinite);
         var maxForeignAbs = Math.max.apply(Math, [1].concat(foreignValues.map(Math.abs)));
         function foreignY(value) {
             var halfHeight = (flowBottom - flowPlotTop) / 2 - 4;
             return flowZero - value / maxForeignAbs * halfHeight;
         }
-        svg.appendChild(makeSvg('line', {
-            x1: margin.left,
-            y1: flowZero,
-            x2: width - margin.right,
-            y2: flowZero,
-            'class': 'kospi-flow-zero-line'
-        }));
+        svg.appendChild(makeSvg('line', { x1: margin.left, y1: flowZero, x2: right, y2: flowZero, 'class': 'kospi-flow-zero-line' }));
         [
             { value: maxForeignAbs, y: flowPlotTop + 5 },
             { value: 0, y: flowZero + 4 },
             { value: -maxForeignAbs, y: flowBottom - 3 }
         ].forEach(function (tick) {
-            var label = makeSvg('text', { x: width - margin.right + 10, y: tick.y, 'class': 'kospi-flow-axis-label' });
+            var label = makeSvg('text', { x: right + 10, y: tick.y, 'class': 'kospi-flow-axis-label' });
             label.textContent = formatSigned(tick.value, '억', 0);
             svg.appendChild(label);
         });
 
         var macdValues = [];
         rows.forEach(function (row) {
-            [row.macd, row.signal, row.histogram].forEach(function (value) { if (Number.isFinite(value)) macdValues.push(Math.abs(value)); });
+            [row.flowMacd, row.flowSignal, row.flowHistogram].forEach(function (value) {
+                if (Number.isFinite(value)) macdValues.push(Math.abs(value));
+            });
         });
         var maxMacdAbs = Math.max.apply(Math, [1].concat(macdValues));
         function macdY(value) { return macdTop + (maxMacdAbs - value) / (maxMacdAbs * 2) * (macdBottom - macdTop); }
         var macdZero = macdY(0);
-        svg.appendChild(makeSvg('line', {
-            x1: margin.left,
-            y1: macdZero,
-            x2: width - margin.right,
-            y2: macdZero,
-            'class': 'kospi-flow-zero-line'
-        }));
+        svg.appendChild(makeSvg('line', { x1: margin.left, y1: macdZero, x2: right, y2: macdZero, 'class': 'kospi-flow-zero-line' }));
 
+        function rowLabel(row) {
+            return intraday ? formatHistoryDate(row.date) + ' ' + row.endTime : formatHistoryDate(row.date);
+        }
         function updateReadout(row) {
             var parts = [
-                formatHistoryDate(row.date),
+                rowLabel(row),
                 '종가 ' + formatNumber(row.close, 2),
                 '시가 ' + formatNumber(row.open, 2),
                 '고가 ' + formatNumber(row.high, 2),
                 '저가 ' + formatNumber(row.low, 2),
-                '거래량 ' + formatNumber(row.volume, 0) + '천주'
+                '거래량 ' + formatNumber(row.volume, 0) + '천주',
+                '추정 순압력 ' + formatPressurePercent(row.delta, row.volume),
+                'CVD ' + formatSigned(row.cumulativeDelta, '천주', 0)
             ];
             if (Number.isFinite(row.foreign)) parts.push('외국인 ' + formatSigned(row.foreign, '억원', 0));
-            if (Number.isFinite(row.macd)) parts.push('MACD ' + formatSigned(row.macd, '', 2));
-            if (Number.isFinite(row.signal)) parts.push('Signal ' + formatSigned(row.signal, '', 2));
+            if (Number.isFinite(row.flowMacd)) parts.push('수급 MACD ' + formatSigned(row.flowMacd, '억원', 2));
+            if (Number.isFinite(row.flowSignal)) parts.push('Signal ' + formatSigned(row.flowSignal, '억원', 2));
             readout.textContent = parts.join(' · ');
         }
 
+        var cvdPath = '';
         rows.forEach(function (row, index) {
             var x = xFor(index);
-            var rising = row.close > row.open;
-            var falling = row.close < row.open;
-            var tone = rising ? 'is-up' : falling ? 'is-down' : 'is-flat';
-            var wick = makeSvg('line', {
-                x1: x, y1: priceY(row.high), x2: x, y2: priceY(row.low),
-                'class': 'kospi-flow-candle-wick ' + tone
-            });
-            var bodyTop = Math.min(priceY(row.open), priceY(row.close));
-            var bodyHeight = Math.max(1.8, Math.abs(priceY(row.open) - priceY(row.close)));
-            var body = makeSvg('rect', {
-                x: x - candleWidth / 2, y: bodyTop, width: candleWidth, height: bodyHeight,
-                rx: 1, 'class': 'kospi-flow-candle ' + tone
-            });
-            svg.appendChild(wick);
-            svg.appendChild(body);
-            bindLinkedChartBar(svg, wick, index, row, updateReadout);
-            bindLinkedChartBar(svg, body, index, row, updateReadout);
+            var tone = row.close > row.open ? 'is-up' : row.close < row.open ? 'is-down' : 'is-flat';
+            var candleGroup = makeSvg('g', { 'class': 'kospi-flow-candle-group ' + tone, tabindex: '0', role: 'img' });
+            candleGroup.appendChild(makeSvg('line', {
+                x1: x, y1: priceY(row.high), x2: x, y2: priceY(row.low), 'class': 'kospi-flow-candle-wick ' + tone
+            }));
+            candleGroup.appendChild(makeSvg('rect', {
+                x: x - candleWidth / 2,
+                y: Math.min(priceY(row.open), priceY(row.close)),
+                width: candleWidth,
+                height: Math.max(1.8, Math.abs(priceY(row.open) - priceY(row.close))),
+                rx: 1,
+                'class': 'kospi-flow-candle ' + tone
+            }));
+            bindLinkedChartBar(svg, candleGroup, index, row, updateReadout);
+            candleGroup.setAttribute('aria-label', rowLabel(row) + ', 종가 ' + formatNumber(row.close, 2));
+            svg.appendChild(candleGroup);
 
             var volumeTop = volumeY(row.volume);
-            var volumeBar = makeSvg('rect', {
-                x: x - candleWidth * 0.55,
-                y: volumeTop,
-                width: candleWidth * 1.1,
-                height: Math.max(1, flowBottom - volumeTop),
-                'class': 'kospi-flow-volume'
-            });
-            svg.appendChild(volumeBar);
-            bindLinkedChartBar(svg, volumeBar, index, row, updateReadout);
+            var volumeHeight = Math.max(1, flowBottom - volumeTop);
+            var forceHeight = Math.max(1.5, volumeHeight * pressureFillRatio(row.delta, row.volume, forceScale));
+            var volumeGroup = makeSvg('g', { 'class': 'kospi-flow-volume-group kodex-history-volume-group', tabindex: '0', role: 'img' });
+            volumeGroup.appendChild(makeSvg('rect', {
+                x: x - candleWidth * 0.58, y: volumeTop, width: candleWidth * 1.16, height: volumeHeight,
+                rx: 0.7, 'class': 'kospi-flow-volume is-xray-base'
+            }));
+            volumeGroup.appendChild(makeSvg('rect', {
+                x: x - candleWidth * 0.58,
+                y: flowBottom - forceHeight,
+                width: candleWidth * 1.16,
+                height: forceHeight,
+                rx: 0.7,
+                'class': 'kospi-flow-volume-force ' + (row.delta >= 0 ? 'is-buy' : 'is-sell')
+            }));
+            bindLinkedChartBar(svg, volumeGroup, index, row, updateReadout);
+            var volumeLabel = rowLabel(row)
+                + ', 거래량 ' + formatNumber(row.volume, 0) + '천주'
+                + ', 추정 순압력 ' + formatPressurePercent(row.delta, row.volume)
+                + ', CVD ' + formatSigned(row.cumulativeDelta, '천주', 0);
+            if (Number.isFinite(row.foreign)) volumeLabel += ', 외국인 ' + formatSigned(row.foreign, '억원', 0);
+            volumeGroup.setAttribute('aria-label', volumeLabel);
+            svg.appendChild(volumeGroup);
 
             if (Number.isFinite(row.foreign)) {
                 var foreignEnd = foreignY(row.foreign);
                 var foreignBar = makeSvg('rect', {
-                    x: x - candleWidth * 0.34,
+                    x: x - candleWidth * 0.22,
                     y: Math.min(flowZero, foreignEnd),
-                    width: candleWidth * 0.68,
+                    width: candleWidth * 0.44,
                     height: Math.max(1.5, Math.abs(foreignEnd - flowZero)),
                     'class': 'kospi-flow-foreign ' + (row.foreign >= 0 ? 'is-buy' : 'is-sell')
                 });
                 svg.appendChild(foreignBar);
                 bindLinkedChartBar(svg, foreignBar, index, row, updateReadout);
             }
-
-            if (Number.isFinite(row.histogram)) {
-                var histogramEnd = macdY(row.histogram);
+            if (Number.isFinite(row.flowHistogram)) {
+                var histogramEnd = macdY(row.flowHistogram);
                 var histogramBar = makeSvg('rect', {
                     x: x - candleWidth * 0.42,
                     y: Math.min(macdZero, histogramEnd),
                     width: candleWidth * 0.84,
                     height: Math.max(1, Math.abs(histogramEnd - macdZero)),
-                    'class': 'kospi-flow-macd-histogram ' + (row.histogram >= 0 ? 'is-positive' : 'is-negative')
+                    'class': 'kospi-flow-macd-histogram ' + (row.flowHistogram >= 0 ? 'is-positive' : 'is-negative')
                 });
                 svg.appendChild(histogramBar);
                 bindLinkedChartBar(svg, histogramBar, index, row, updateReadout);
             }
-
             var hitbox = makeSvg('rect', {
                 x: margin.left + xStep * index,
                 y: priceTop,
@@ -1265,13 +1319,15 @@
                 'class': 'kospi-flow-hitbox',
                 tabindex: 0,
                 role: 'button',
-                'aria-label': formatHistoryDate(row.date) + ' 차트 값 보기'
+                'aria-label': rowLabel(row) + ' 차트 값 보기'
             });
             svg.appendChild(hitbox);
             bindLinkedChartBar(svg, hitbox, index, row, updateReadout);
+            cvdPath += (cvdPath ? ' L ' : 'M ') + x.toFixed(2) + ' ' + cvdY(row.cumulativeDelta).toFixed(2);
         });
+        if (cvdPath) svg.appendChild(makeSvg('path', { d: cvdPath, 'class': 'kospi-flow-cvd' }));
 
-        [
+        if (!intraday) [
             { key: 'ma5', className: 'kodex-history-line is-ma5' },
             { key: 'ma20', className: 'kodex-history-line is-ma20' },
             { key: 'ma60', className: 'kodex-history-line is-ma60' }
@@ -1279,34 +1335,137 @@
             var path = svgPathForSeries(rows.map(function (row) { return row[series.key]; }), 0, xFor, priceY);
             if (path) svg.appendChild(makeSvg('path', { d: path, 'class': series.className }));
         });
-        var macdPath = svgPathForSeries(rows.map(function (row) { return row.macd; }), 0, xFor, macdY);
-        var signalPath = svgPathForSeries(rows.map(function (row) { return row.signal; }), 0, xFor, macdY);
+        var macdPath = svgPathForSeries(rows.map(function (row) { return row.flowMacd; }), 0, xFor, macdY);
+        var signalPath = svgPathForSeries(rows.map(function (row) { return row.flowSignal; }), 0, xFor, macdY);
         if (macdPath) svg.appendChild(makeSvg('path', { d: macdPath, 'class': 'kospi-flow-macd-line' }));
         if (signalPath) svg.appendChild(makeSvg('path', { d: signalPath, 'class': 'kospi-flow-signal-line' }));
 
         var tickIndexes = [0, Math.floor((rows.length - 1) * 0.25), Math.floor((rows.length - 1) * 0.5), Math.floor((rows.length - 1) * 0.75), rows.length - 1]
             .filter(function (value, index, values) { return value >= 0 && values.indexOf(value) === index; });
         tickIndexes.forEach(function (index) {
-            var label = makeSvg('text', { x: xFor(index), y: 707, 'class': 'kodex-history-date-label', 'text-anchor': 'middle' });
-            label.textContent = formatHistoryDate(rows[index].date);
+            var label = makeSvg('text', {
+                x: xFor(index), y: 707, 'class': 'kodex-history-date-label',
+                'text-anchor': index === 0 ? 'start' : index === rows.length - 1 ? 'end' : 'middle'
+            });
+            label.textContent = intraday ? rows[index].endTime : formatHistoryDate(rows[index].date);
             svg.appendChild(label);
         });
 
         var first = rows[0];
         var latest = rows[rows.length - 1];
-        var periodReturn = (latest.close / first.close - 1) * 100;
-        var cumulativeForeign = rows.reduce(function (total, row) {
-            return total + (Number.isFinite(row.foreign) ? row.foreign : 0);
-        }, 0);
-        var buyDays = rows.filter(function (row) { return Number.isFinite(row.foreign) && row.foreign > 0; }).length;
-        var sellDays = rows.filter(function (row) { return Number.isFinite(row.foreign) && row.foreign < 0; }).length;
-        appendKodexMetric(summary, '최근 종가', formatNumber(latest.close, 2));
-        appendKodexMetric(summary, '기간 수익률', formatSigned(periodReturn, '%', 2));
-        appendKodexMetric(summary, '외국인 누적', formatSigned(cumulativeForeign, '억원', 0));
-        appendKodexMetric(summary, '순매수·순매도일', buyDays + '일 · ' + sellDays + '일');
-        appendKodexMetric(summary, 'MACD 상태', latest.macd >= latest.signal ? 'MACD가 Signal 위' : 'MACD가 Signal 아래');
-        appendKodexMetric(summary, '기준일', formatHistoryDate(latest.date));
+        var latestMacd = rows.slice().reverse().filter(function (row) {
+            return Number.isFinite(row.flowMacd) && Number.isFinite(row.flowSignal);
+        })[0];
+        appendKodexMetric(summary, intraday ? '현재 지수' : '최근 종가', formatNumber(latest.close, 2));
+        appendKodexMetric(summary, intraday ? '장중 수익률' : '기간 수익률', formatSigned((latest.close / first.open - 1) * 100, '%', 2));
+        appendKodexMetric(summary, '종료 CVD', formatSigned(latest.cumulativeDelta, '천주', 0));
+        if (intraday) {
+            appendKodexMetric(summary, '외국인 장중 누적', formatSigned(latest.foreign, '억원', 0));
+        } else {
+            var cumulativeForeign = rows.reduce(function (total, row) {
+                return total + (Number.isFinite(row.foreign) ? row.foreign : 0);
+            }, 0);
+            appendKodexMetric(summary, '외국인 기간 누적', formatSigned(cumulativeForeign, '억원', 0));
+        }
+        appendKodexMetric(summary, '수급 MACD', latestMacd
+            ? (latestMacd.flowMacd >= latestMacd.flowSignal ? 'MACD가 Signal 위' : 'MACD가 Signal 아래')
+            : '수급 데이터 확인 중');
+        appendKodexMetric(summary, intraday ? '기준 시각' : '기준일', rowLabel(latest));
         updateReadout(latest);
+    }
+
+    function renderKospiIntradayChart() {
+        var svg = document.getElementById('kospi-flow-chart');
+        var summary = document.getElementById('kospi-flow-summary');
+        var readout = document.getElementById('kospi-flow-readout');
+        if (!svg || !summary || !readout) return;
+        if (!selectedKodexIntradayDate || !liveMarketSource || !window.MarketDashboardLive
+            || typeof window.MarketDashboardLive.fetchKospiIntradayDay !== 'function') {
+            renderKospiRows([], { mode: 'intraday', date: selectedKodexIntradayDate });
+            readout.textContent = '선택한 거래일의 KOSPI 분봉과 외국인 수급을 확인하고 있습니다.';
+            return;
+        }
+        var selectedDate = selectedKodexIntradayDate;
+        var cached = kospiIntradayViewCache[selectedDate];
+        var forceRefresh = kospiIntradayForceRefresh;
+        kospiIntradayForceRefresh = false;
+        if (cached && cached.day) {
+            renderKospiRows(prepareKospiIntradayRows(cached.day), { mode: 'intraday', date: cached.day.date });
+            if (!forceRefresh && Date.now() - cached.receivedAt < 60 * 1000) {
+                setKospiFlowRefreshState('ready', cached.day.flowSourceLastAt
+                    ? formatHistoryDate(cached.day.date) + ' ' + cached.day.flowSourceLastAt.slice(11, 16) + ' 수급 기준'
+                    : formatHistoryDate(cached.day.date) + ' 가격 기준');
+                return;
+            }
+        } else {
+            renderKospiRows([], { mode: 'intraday', date: selectedDate });
+        }
+        if (kospiIntradayAbortController && kospiIntradayRequestDate === selectedDate && !forceRefresh) return;
+        if (kospiIntradayAbortController) kospiIntradayAbortController.abort();
+        kospiIntradayAbortController = typeof AbortController === 'function' ? new AbortController() : null;
+        kospiIntradayRequestDate = selectedDate;
+        var token = ++kospiIntradayRenderToken;
+        var controller = kospiIntradayAbortController;
+        var timeoutId = window.setTimeout(function () { if (controller) controller.abort(); }, 20000);
+        if (!cached) readout.textContent = formatHistoryDate(selectedDate) + ' 분봉과 외국인 수급을 불러오는 중입니다.';
+        setKospiFlowRefreshState('loading', formatHistoryDate(selectedDate) + ' 분봉 수급 확인 중');
+        window.MarketDashboardLive.fetchKospiIntradayDay(
+            window.fetch.bind(window),
+            new URL(liveMarketSource, window.location.href).href,
+            selectedDate,
+            {
+                now: Date.now(),
+                nonce: String(Date.now()),
+                forceRefresh: forceRefresh,
+                signal: controller && controller.signal,
+                concurrencyLimit: 6
+            }
+        ).then(function (day) {
+            if (token !== kospiIntradayRenderToken || selectedKodexChartMode !== 'intraday') return;
+            kospiIntradayViewCache[day.date] = { day: day, receivedAt: Date.now() };
+            renderKospiRows(prepareKospiIntradayRows(day), { mode: 'intraday', date: day.date });
+            setKospiFlowRefreshState('ready', day.flowSourceLastAt
+                ? formatHistoryDate(day.date) + ' ' + day.flowSourceLastAt.slice(11, 16) + ' 수급 기준'
+                : formatHistoryDate(day.date) + ' 가격 기준');
+        }).catch(function (error) {
+            if (token !== kospiIntradayRenderToken) return;
+            if (error && error.name === 'AbortError') {
+                setKospiFlowRefreshState(cached ? 'ready' : 'error', cached
+                    ? formatHistoryDate(selectedDate) + ' 이전 수급 유지'
+                    : '분봉 수급 불러오기 중단 · 다시 시도');
+                return;
+            }
+            readout.textContent = '선택한 거래일의 KOSPI 분봉·외국인 수급을 불러오지 못했습니다.';
+            setKospiFlowRefreshState('error', '분봉 수급 불러오기 실패');
+        }).finally(function () {
+            window.clearTimeout(timeoutId);
+            if (controller === kospiIntradayAbortController) {
+                kospiIntradayAbortController = null;
+                kospiIntradayRequestDate = '';
+            }
+        });
+    }
+
+    function renderKospiHistoryChart(market) {
+        bindKospiFlowControls();
+        var instrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
+        if (instrument) setKodexChartControls(instrument);
+        if (selectedKodexChartMode === 'intraday') {
+            renderKospiIntradayChart();
+            return;
+        }
+        if (kospiIntradayAbortController) {
+            kospiIntradayAbortController.abort();
+            kospiIntradayAbortController = null;
+            kospiIntradayRequestDate = '';
+        }
+        kospiIntradayRenderToken += 1;
+        var dailyRows = prepareKospiDailyRows(market);
+        renderKospiRows(dailyRows, { mode: 'daily' });
+        var latestDaily = dailyRows[dailyRows.length - 1];
+        setKospiFlowRefreshState('ready', latestDaily
+            ? formatHistoryDate(latestDaily.date) + ' 기준'
+            : kospiPeriodLabel() + ' 일봉');
     }
 
     function renderKodexDailyChart(instrument, svg, summary, readout) {
@@ -1694,7 +1853,7 @@
         var eyebrow = document.getElementById('kodex-history-eyebrow');
         svg.classList.toggle('is-intraday', selectedKodexChartMode === 'intraday');
         if (title) title.textContent = selectedKodexChartMode === 'daily'
-            ? 'KODEX 레버리지 3개월 가격 흐름'
+            ? 'KODEX 레버리지 ' + (selectedKodexPeriod === '1m' ? '1개월' : '3개월') + ' 가격 흐름'
             : 'KODEX 레버리지 분봉 거래량 X-ray';
         if (eyebrow) eyebrow.textContent = selectedKodexChartMode === 'daily'
             ? '일봉·거래량 X-ray·CVD'
