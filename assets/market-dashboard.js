@@ -925,6 +925,9 @@
         bindKodexChartControls();
         var liveInstrument = instrument && instrument.liveSnapshot || {};
         var indexRows = liveInstrument.intradayIndex || instrument && instrument.intradayIndex || [];
+        var liveDay = liveInstrument.liveIntradayDay || instrument && instrument.liveIntradayDay || null;
+        var kospiLive = latestLiveData && findById(latestLiveData.markets, 'KOSPI');
+        var marketStatus = kospiLive && kospiLive.marketStatus || '';
         Array.prototype.forEach.call(document.querySelectorAll('[data-shared-daily-controls]'), function (node) {
             node.hidden = selectedKodexChartMode !== 'daily';
         });
@@ -944,6 +947,14 @@
             node.hidden = selectedKodexChartMode !== 'daily';
         });
         var dates = indexRows.map(function (row) { return row.date; });
+        function dateOptionLabel(date) {
+            if (liveDay && liveDay.date === date) {
+                if (marketStatus === 'OPEN') return formatHistoryDate(date) + ' · 오늘 실시간';
+                if (marketStatus === 'PREOPEN') return formatHistoryDate(date) + ' · 오늘 장전';
+                return formatHistoryDate(date) + ' · 당일 마감';
+            }
+            return formatHistoryDate(date) + ' · 마감';
+        }
         if (!selectedKodexIntradayDate || dates.indexOf(selectedKodexIntradayDate) === -1) {
             selectedKodexIntradayDate = dates[dates.length - 1] || '';
         }
@@ -955,10 +966,13 @@
                 dates.forEach(function (date) {
                     var option = document.createElement('option');
                     option.value = date;
-                    option.textContent = formatHistoryDate(date);
+                    option.textContent = dateOptionLabel(date);
                     dateSelect.appendChild(option);
                 });
             }
+            Array.prototype.forEach.call(dateSelect.options, function (option) {
+                option.textContent = dateOptionLabel(option.value);
+            });
             dateSelect.value = selectedKodexIntradayDate;
         });
         return indexRows;
