@@ -2974,17 +2974,17 @@
         return true;
     }
 
-    function updateInstitutionCheckpoint(data, liveMarket) {
-        var institution = (liveMarket.flows || []).filter(function (flow) {
-            return flow.label === '기관';
+    function updateFlowCheckpoint(data, liveMarket, flowLabel, checkpointLabel) {
+        var flow = (liveMarket.flows || []).filter(function (item) {
+            return item.label === flowLabel;
         })[0];
         var checkpoint = (data.checkpoints || []).filter(function (item) {
-            return item.label === '기관 현물';
+            return item.label === checkpointLabel;
         })[0];
-        if (!institution || !checkpoint) return;
-        checkpoint.value = formatSigned(institution.value, institution.unit);
+        if (!flow || !checkpoint) return;
+        checkpoint.value = formatSigned(flow.value, flow.unit);
         checkpoint.detail = liveMarket.marketStatus === 'CLOSE' ? '정규장 누적 순매매' : '장중 누적 순매매';
-        checkpoint.tone = institution.value > 0 ? 'positive' : institution.value < 0 ? 'danger' : 'info';
+        checkpoint.tone = flow.value > 0 ? 'positive' : flow.value < 0 ? 'danger' : 'info';
     }
 
     function updateExchangeCheckpoint(data, exchange) {
@@ -2999,15 +2999,16 @@
 
     function updateProgramCheckpoint(data, program, liveMarket) {
         var checkpoint = (data.checkpoints || []).filter(function (item) {
-            return item.label === '외국인 선물' || item.label === '전체 프로그램';
+            return item.label === '외국인 선물' || item.label === '전체 프로그램' || item.label === '프로그램 전체';
         })[0];
         if (!program || !checkpoint || !Number.isFinite(program.total)) return;
-        checkpoint.label = '전체 프로그램';
+        if (checkpoint.label === '외국인 선물') checkpoint.label = '프로그램 전체';
         checkpoint.value = formatSigned(program.total, program.unit);
-        checkpoint.detail = liveMarket && liveMarket.marketStatus === 'CLOSE'
-            ? '정규장 누적 프로그램 순매매'
-            : '장중 누적 프로그램 순매매';
-        checkpoint.tone = program.total > 0 ? 'positive' : program.total < 0 ? 'warning' : 'info';
+        var session = liveMarket && liveMarket.marketStatus === 'CLOSE' ? '정규장 누적' : '장중 누적';
+        checkpoint.detail = Number.isFinite(program.nonArbitrage)
+            ? '비차익 ' + formatSigned(program.nonArbitrage, program.unit) + ' · ' + session
+            : session + ' 프로그램 순매매';
+        checkpoint.tone = program.total > 0 ? 'positive' : program.total < 0 ? 'danger' : 'info';
     }
 
     function flowByLabel(market, label) {
@@ -3184,7 +3185,8 @@
         var incomingKospi = findById(liveData.markets, 'KOSPI');
         var displayKospi = findById(data.markets, 'KOSPI');
         if (incomingKospi) {
-            updateInstitutionCheckpoint(data, incomingKospi);
+            updateFlowCheckpoint(data, incomingKospi, '외국인', '외국인 현물');
+            updateFlowCheckpoint(data, incomingKospi, '기관', '기관 현물');
             updateProgramCheckpoint(data, incomingKospi.program || liveData.program, incomingKospi);
             updateLiveAnalysisFacts(data, incomingKospi, liveData.exchange);
             if (data.flows && incomingKospi.program) data.flows.program = incomingKospi.program;
