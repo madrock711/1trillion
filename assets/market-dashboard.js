@@ -1067,55 +1067,31 @@
         var width = 1000;
         var left = 42;
         var right = 944;
-        var directionTop = 42;
-        var directionBottom = 238;
-        var momentumTop = 292;
-        var momentumBottom = 438;
+        var momentumTop = 42;
+        var momentumBottom = 292;
         var innerWidth = right - left;
         var xStep = innerWidth / rows.length;
         function xFor(index) { return left + xStep * index + xStep / 2; }
-        var directionMax = Math.max(20, Math.max.apply(Math, rows.map(function (row) {
-            return Math.max(Math.abs(row.direction), Math.abs(row.divergence));
-        })) * 1.12);
         var momentumMax = Math.max(5, Math.max.apply(Math, rows.map(function (row) {
             return Math.max(Math.abs(row.momentum), Math.abs(row.signal));
         })) * 1.15);
-        function directionY(value) { return directionTop + (directionMax - value) / (directionMax * 2) * (directionBottom - directionTop); }
         function momentumY(value) { return momentumTop + (momentumMax - value) / (momentumMax * 2) * (momentumBottom - momentumTop); }
-        [directionTop, (directionTop + directionBottom) / 2, directionBottom, momentumTop, (momentumTop + momentumBottom) / 2, momentumBottom].forEach(function (y) {
+        [momentumTop, (momentumTop + momentumBottom) / 2, momentumBottom].forEach(function (y) {
             svg.appendChild(makeSvg('line', { x1: left, y1: y, x2: right, y2: y, 'class': 'composite-momentum-grid' }));
         });
-        svg.appendChild(makeSvg('line', { x1: left, y1: directionY(0), x2: right, y2: directionY(0), 'class': 'composite-momentum-zero' }));
         svg.appendChild(makeSvg('line', { x1: left, y1: momentumY(0), x2: right, y2: momentumY(0), 'class': 'composite-momentum-zero' }));
-        [['합성 방향', directionTop + 13], ['방향 모멘텀', momentumTop + 13]].forEach(function (item) {
-            var label = makeSvg('text', { x: left, y: item[1], 'class': 'composite-momentum-label' });
-            label.textContent = item[0];
-            svg.appendChild(label);
-        });
-        [directionMax, 0, -directionMax].forEach(function (value) {
-            var label = makeSvg('text', { x: right + 10, y: directionY(value) + 4, 'class': 'composite-momentum-axis' });
-            label.textContent = formatSigned(value, '', 0);
-            svg.appendChild(label);
-        });
+        var momentumLabel = makeSvg('text', { x: left, y: momentumTop + 13, 'class': 'composite-momentum-label' });
+        momentumLabel.textContent = '방향 모멘텀';
+        svg.appendChild(momentumLabel);
         [momentumMax, 0, -momentumMax].forEach(function (value) {
             var label = makeSvg('text', { x: right + 10, y: momentumY(value) + 4, 'class': 'composite-momentum-axis' });
             label.textContent = formatSigned(value, '', 0);
             svg.appendChild(label);
         });
 
-        var divergencePath = '';
         var signalPath = '';
         rows.forEach(function (row, index) {
             var x = xFor(index);
-            if (index > 0) {
-                var previous = rows[index - 1];
-                svg.appendChild(makeSvg('line', {
-                    x1: xFor(index - 1), y1: directionY(previous.direction),
-                    x2: x, y2: directionY(row.direction),
-                    'class': 'composite-direction-line ' + ((previous.direction + row.direction) / 2 >= 0 ? 'is-buy' : 'is-sell')
-                }));
-            }
-            divergencePath += (divergencePath ? ' L ' : 'M ') + x.toFixed(2) + ' ' + directionY(row.divergence).toFixed(2);
             signalPath += (signalPath ? ' L ' : 'M ') + x.toFixed(2) + ' ' + momentumY(row.signal).toFixed(2);
             var zeroY = momentumY(0);
             var valueY = momentumY(row.momentum);
@@ -1128,7 +1104,6 @@
                 'class': 'composite-momentum-bar ' + (row.momentum >= 0 ? 'is-buy' : 'is-sell')
             }));
         });
-        svg.appendChild(makeSvg('path', { d: divergencePath, 'class': 'composite-divergence-line' }));
         svg.appendChild(makeSvg('path', { d: signalPath, 'class': 'composite-signal-line' }));
 
         function updateReadout(row) {
@@ -1145,7 +1120,7 @@
             mode: selectedKodexChartMode,
             left: left,
             right: right,
-            top: directionTop,
+            top: momentumTop,
             bottom: momentumBottom,
             className: 'composite-momentum-hit',
             ariaLabel: function (row) {
@@ -1156,7 +1131,7 @@
             return values.indexOf(value) === index;
         });
         tickIndexes.forEach(function (index) {
-            var label = makeSvg('text', { x: xFor(index), y: 478, 'class': 'composite-momentum-axis', 'text-anchor': index === 0 ? 'start' : index === rows.length - 1 ? 'end' : 'middle' });
+            var label = makeSvg('text', { x: xFor(index), y: 330, 'class': 'composite-momentum-axis', 'text-anchor': index === 0 ? 'start' : index === rows.length - 1 ? 'end' : 'middle' });
             label.textContent = selectedKodexChartMode === 'intraday'
                 ? rows[index].time
                 : formatHistoryDate(rows[index].label).replace('월 ', '/').replace('일', '');

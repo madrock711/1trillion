@@ -91,9 +91,14 @@ function pressureDay(date, ratios) {
     const css = fs.readFileSync(path.join(__dirname, '..', 'assets', 'market-dashboard.css'), 'utf8');
     assert(html.includes('data-technical-card="composite-momentum"'));
     assert(html.includes('id="composite-momentum-chart"'));
+    assert(html.includes('viewBox="0 0 1000 350"'));
+    assert(!html.includes('합성 매수 방향'));
+    assert(!html.includes('합성 매도 방향'));
     assert(html.includes('실제 Bid/Ask 체결 분류는 아닙니다'));
     assert(dashboard.includes("'kospi-flow',\n        'kodex-history',\n        'composite-momentum',\n        'tqqq-history'"));
     assert(dashboard.includes("document.querySelector('.kodex-range-card .kodex-range-track')"));
+    assert(!dashboard.includes("'class': 'composite-direction-line"));
+    assert(!dashboard.includes("'class': 'composite-divergence-line"));
     assert(css.includes('.composite-momentum-card'));
     console.log('composite volume momentum tests passed');
 }()).catch(error => {

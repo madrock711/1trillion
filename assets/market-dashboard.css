@@ -861,12 +861,9 @@
     content: '';
 }
 
-.composite-momentum-legend .is-direction-buy,
 .composite-momentum-legend .is-momentum-buy { color: #ff5367; }
-.composite-momentum-legend .is-direction-sell,
 .composite-momentum-legend .is-momentum-sell { color: #4f8dff; }
 .composite-momentum-legend .is-signal { color: #f5d76e; }
-.composite-momentum-legend .is-divergence { color: #c084fc; }
 
 .composite-momentum-method {
     margin: 0 0 var(--space-2);
@@ -879,7 +876,7 @@
     display: block;
     width: 100%;
     min-width: 760px;
-    min-height: 390px;
+    min-height: 280px;
 }
 
 .composite-momentum-zero {
@@ -895,8 +892,6 @@
     vector-effect: non-scaling-stroke;
 }
 
-.composite-direction-line,
-.composite-divergence-line,
 .composite-signal-line {
     fill: none;
     stroke-linecap: round;
@@ -904,10 +899,6 @@
     vector-effect: non-scaling-stroke;
 }
 
-.composite-direction-line { stroke-width: 2.2; }
-.composite-direction-line.is-buy { stroke: #ff5367; }
-.composite-direction-line.is-sell { stroke: #4f8dff; }
-.composite-divergence-line { stroke: #c084fc; stroke-width: 1.45; opacity: 0.9; }
 .composite-signal-line { stroke: #f5d76e; stroke-width: 1.75; }
 .composite-momentum-bar.is-buy { fill: #ff5367; opacity: 0.86; }
 .composite-momentum-bar.is-sell { fill: #4f8dff; opacity: 0.86; }
