@@ -739,6 +739,77 @@
     gap: var(--space-4);
 }
 
+.technical-card-stack {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+}
+
+.technical-card-stack > .technical-orderable {
+    position: relative;
+    min-width: 0;
+    margin: 0;
+    padding-top: 4.65rem;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.technical-card-stack > .technical-orderable--wide {
+    grid-column: 1 / -1;
+}
+
+.technical-card-order-controls {
+    position: absolute;
+    z-index: 4;
+    top: 0.85rem;
+    left: 0.9rem;
+    display: inline-flex;
+    gap: 0.28rem;
+    padding: 0.22rem;
+    border: 1px solid rgba(105, 169, 255, 0.2);
+    border-radius: 0.7rem;
+    background: rgba(9, 15, 21, 0.9);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.technical-card-order-button {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    place-items: center;
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    background: rgba(105, 169, 255, 0.09);
+    color: #a9cfff;
+    font: inherit;
+    font-size: 1.05rem;
+    font-weight: 900;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.technical-card-order-button:hover:not(:disabled),
+.technical-card-order-button:focus-visible {
+    border-color: rgba(85, 230, 160, 0.55);
+    background: rgba(85, 230, 160, 0.16);
+    color: #76e9a7;
+    outline: none;
+}
+
+.technical-card-order-button:disabled {
+    opacity: 0.28;
+    cursor: default;
+}
+
+.technical-card-stack > .technical-orderable.is-order-updated {
+    border-color: rgba(85, 230, 160, 0.5);
+    box-shadow: 0 0 0 2px rgba(85, 230, 160, 0.08);
+}
+
+.technical-card-stack > .technical-orderable .kodex-chart-refresh-anchor {
+    left: 6.4rem;
+}
+
 .technical-comparison-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -2020,6 +2091,7 @@
     .market-analysis-grid,
     .market-strategy-layout,
     .market-article-list,
+    .technical-card-stack,
     .kodex-focus-grid,
     .kodex-focus-grid--secondary {
         grid-template-columns: minmax(0, 1fr);
@@ -2080,6 +2152,10 @@
     .market-technical-card,
     .market-dashboard-sources {
         padding: var(--space-4);
+    }
+
+    .technical-card-stack > .technical-orderable {
+        padding-top: 4.4rem;
     }
 
     .market-stance-strip {

@@ -31,6 +31,18 @@
     var kospiIntradayViewCache = {};
     var kospiIntradayAbortController = null;
     var kospiIntradayRequestDate = '';
+    var technicalCardOrderStorageKey = 'hpmplab-technical-card-order-v1';
+    var defaultTechnicalCardOrder = [
+        'kospi-flow',
+        'tqqq-history',
+        'kodex-history',
+        'kodex-technical',
+        'kodex-quote',
+        'kodex-range',
+        'kodex-investor',
+        'kodex-levels',
+        'kodex-market-context'
+    ];
 
     function clear(node) {
         while (node && node.firstChild) node.removeChild(node.firstChild);
@@ -168,6 +180,103 @@
         }
     }
 
+    function directTechnicalCards(stack) {
+        return Array.prototype.filter.call(stack.children, function (node) {
+            return node.hasAttribute && node.hasAttribute('data-technical-card');
+        });
+    }
+
+    function readTechnicalCardOrder() {
+        try {
+            var stored = JSON.parse(window.localStorage.getItem(technicalCardOrderStorageKey) || '[]');
+            return Array.isArray(stored) ? stored.filter(function (id) { return typeof id === 'string'; }) : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function saveTechnicalCardOrder(stack) {
+        try {
+            window.localStorage.setItem(technicalCardOrderStorageKey, JSON.stringify(
+                directTechnicalCards(stack).map(function (card) { return card.getAttribute('data-technical-card'); })
+            ));
+        } catch (error) {
+            // 저장이 제한된 브라우저에서도 현재 화면의 카드 이동은 그대로 유지한다.
+        }
+    }
+
+    function updateTechnicalCardOrderControls(stack) {
+        var cards = directTechnicalCards(stack);
+        cards.forEach(function (card, index) {
+            var up = card.querySelector('[data-technical-card-move="up"]');
+            var down = card.querySelector('[data-technical-card-move="down"]');
+            if (up) up.disabled = index === 0;
+            if (down) down.disabled = index === cards.length - 1;
+        });
+    }
+
+    function moveTechnicalCard(stack, card, direction) {
+        var cards = directTechnicalCards(stack);
+        var currentIndex = cards.indexOf(card);
+        var targetIndex = currentIndex + direction;
+        if (currentIndex < 0 || targetIndex < 0 || targetIndex >= cards.length) return;
+
+        if (direction < 0) stack.insertBefore(card, cards[targetIndex]);
+        else stack.insertBefore(cards[targetIndex], card);
+
+        saveTechnicalCardOrder(stack);
+        updateTechnicalCardOrderControls(stack);
+        card.classList.remove('is-order-updated');
+        window.requestAnimationFrame(function () { card.classList.add('is-order-updated'); });
+
+        var status = document.getElementById('technical-card-order-status');
+        if (status) {
+            var title = card.getAttribute('data-technical-card-title') || '선택한 분석 카드';
+            status.textContent = title + ' 박스를 ' + (direction < 0 ? '위로' : '아래로') + ' 이동했습니다.';
+        }
+    }
+
+    function initializeTechnicalCardOrdering() {
+        var stack = document.getElementById('technical-card-stack');
+        if (!stack) return;
+
+        var cardsById = {};
+        directTechnicalCards(stack).forEach(function (card) {
+            cardsById[card.getAttribute('data-technical-card')] = card;
+        });
+
+        var savedOrder = readTechnicalCardOrder();
+        var requestedOrder = savedOrder.concat(defaultTechnicalCardOrder).filter(function (id, index, values) {
+            return cardsById[id] && values.indexOf(id) === index;
+        });
+        Object.keys(cardsById).forEach(function (id) {
+            if (requestedOrder.indexOf(id) === -1) requestedOrder.push(id);
+        });
+        requestedOrder.forEach(function (id) { stack.appendChild(cardsById[id]); });
+
+        directTechnicalCards(stack).forEach(function (card) {
+            var title = card.getAttribute('data-technical-card-title') || '분석 카드';
+            var controls = make('div', 'technical-card-order-controls');
+            controls.setAttribute('role', 'group');
+            controls.setAttribute('aria-label', title + ' 위치 이동');
+
+            [['up', '⌃', '위로 이동', -1], ['down', '⌄', '아래로 이동', 1]].forEach(function (config) {
+                var button = make('button', 'technical-card-order-button', config[1]);
+                button.type = 'button';
+                button.setAttribute('data-technical-card-move', config[0]);
+                button.setAttribute('aria-label', title + ' ' + config[2]);
+                button.title = config[2];
+                button.addEventListener('click', function () {
+                    moveTechnicalCard(stack, card, config[3]);
+                });
+                controls.appendChild(button);
+            });
+            card.insertBefore(controls, card.firstChild);
+        });
+
+        updateTechnicalCardOrderControls(stack);
+    }
+
     viewLinks.forEach(function (link) {
         link.addEventListener('click', function (event) {
             if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -186,6 +295,7 @@
         setView(currentViewFromUrl());
     });
 
+    initializeTechnicalCardOrdering();
     setView(currentViewFromUrl());
 
     function isStaleSnapshot(data) {
