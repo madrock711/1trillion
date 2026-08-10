@@ -17,7 +17,7 @@ async function main() {
     assert.ok(dashboardSource.includes("marketStatus === 'OPEN'"), '개장 중 당일 분봉은 실시간으로 표시되어야 한다.');
     assert.ok(dashboardSource.includes("formatHistoryDate(date) + ' · 오늘 실시간'"), '당일 실시간 날짜 라벨이 있어야 한다.');
     assert.ok(dashboardSource.includes("formatHistoryDate(date) + ' · 마감'"), '이전 거래일은 보관된 마감 차트로 표시되어야 한다.');
-    assert.ok(dashboardSource.includes("dates.indexOf(selectedKodexIntradayDate) === -1"), '자동 갱신 때 유효한 이전 거래일 선택을 유지해야 한다.');
+    assert.ok(dashboardSource.includes('preferredIntradayDate(indexRows, selectedKodexIntradayDate, selectedKodexIntradayDateExplicit)'), '새로고침 기본값은 오늘을 고르되 명시적으로 고른 이전 거래일은 유지해야 한다.');
     assert.ok(dashboardSource.includes('kospi-flow-volume-force'), 'KOSPI 거래량 X-ray 채움이 유지되어야 한다.');
     assert.ok(dashboardSource.includes('kospi-flow-cvd'), 'KOSPI 누적 순압력 CVD가 유지되어야 한다.');
     assert.ok(dashboardSource.includes('kospiIntradayViewCache'), '자동 갱신 중 기존 KOSPI 분봉 차트를 유지해야 한다.');

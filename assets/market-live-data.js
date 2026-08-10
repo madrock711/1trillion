@@ -410,6 +410,9 @@
         var commonDates = Object.keys(kospiByDate).filter(function (date) { return Boolean(kodexByDate[date]); }).sort();
         var kospiVariance = null;
         var kodexVariance = null;
+        var fast = null;
+        var slow = null;
+        var signal = null;
 
         function normalizePressure(value, variance) {
             var floor = 0.02;
@@ -433,9 +436,6 @@
             (kospiByDate[date].bars || []).forEach(function (row) { kospiBars[row.time] = row; });
             (kodexByDate[date].bars || []).forEach(function (row) { kodexBars[row.time] = row; });
             var times = Object.keys(kospiBars).filter(function (time) { return Boolean(kodexBars[time]); }).sort();
-            var fast = null;
-            var slow = null;
-            var signal = null;
             var bars = times.map(function (time) {
                 var kospi = kospiBars[time];
                 var kodex = kodexBars[time];
@@ -452,6 +452,8 @@
                 var momentum = fast - slow;
                 signal = nextEma(signal, momentum, signalPeriod);
                 return {
+                    date: date,
+                    sessionDate: date,
                     time: time,
                     kospiPressure: kospiPressure,
                     kodexPressure: kodexPressure,
@@ -1056,6 +1058,20 @@
         if (current) Object.assign(current, values);
         else rows.push(values);
         return rows.sort(function (left, right) { return left.date.localeCompare(right.date); });
+    }
+
+    function preferredIntradayDate(indexRows, currentDate, explicitSelection) {
+        var rows = (indexRows || []).filter(function (row) {
+            return row && normalizeIsoDate(row.date);
+        }).slice().sort(function (left, right) { return left.date.localeCompare(right.date); });
+        var dates = rows.map(function (row) { return row.date; });
+        var current = normalizeIsoDate(currentDate);
+        var liveDate = rows.filter(function (row) { return row.live; }).map(function (row) {
+            return row.date;
+        }).slice(-1)[0] || '';
+        if (!explicitSelection && liveDate) return liveDate;
+        if (current && dates.indexOf(current) !== -1) return current;
+        return dates[dates.length - 1] || '';
     }
 
     function buildRollingIntradayDay(previousDay, currentDay, targetDate) {
@@ -1958,6 +1974,7 @@
         normalizeKodexIntradayDay: normalizeKodexIntradayDay,
         normalizeKodexLiveIntradayDay: normalizeKodexLiveIntradayDay,
         ensureCurrentIntradayIndex: ensureCurrentIntradayIndex,
+        preferredIntradayDate: preferredIntradayDate,
         buildRollingIntradayDay: buildRollingIntradayDay,
         mergeRuntimeIntradayIndex: mergeRuntimeIntradayIndex,
         intradaySourceDate: intradaySourceDate,

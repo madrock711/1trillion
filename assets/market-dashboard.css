@@ -456,6 +456,9 @@
 }
 
 .market-view-tabs {
+    position: sticky;
+    top: 12px;
+    z-index: 30;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 2px;
@@ -465,6 +468,165 @@
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-panel);
     background: #0f151d;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+.technical-navigator-active .market-dashboard-page {
+    padding-bottom: 118px;
+}
+
+.technical-range-navigator {
+    position: fixed;
+    left: 50%;
+    bottom: 12px;
+    z-index: 45;
+    width: min(1120px, calc(100vw - 32px));
+    padding: 0.65rem 0.85rem 0.55rem;
+    border: 1px solid rgba(84, 222, 154, 0.42);
+    border-radius: 15px;
+    background: rgba(9, 16, 22, 0.94);
+    box-shadow: 0 14px 38px rgba(0, 0, 0, 0.48), 0 0 24px rgba(68, 209, 122, 0.08);
+    backdrop-filter: blur(14px);
+    transform: translateX(-50%);
+}
+
+.technical-range-navigator[hidden] {
+    display: none !important;
+}
+
+.technical-range-heading,
+.technical-range-labels {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+}
+
+.technical-range-heading strong {
+    color: #dfffee;
+    font-size: 0.78rem;
+}
+
+.technical-range-heading span,
+.technical-range-labels {
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+}
+
+.technical-range-heading span {
+    margin-right: auto;
+}
+
+.technical-range-heading button {
+    min-height: 28px;
+    padding: 0 0.65rem;
+    border: 1px solid rgba(105, 169, 255, 0.32);
+    border-radius: 999px;
+    background: rgba(105, 169, 255, 0.08);
+    color: #b9d4ff;
+    font: inherit;
+    font-size: 0.68rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.technical-range-heading button:hover,
+.technical-range-heading button:focus-visible {
+    border-color: rgba(84, 222, 154, 0.72);
+    color: #dfffee;
+}
+
+.technical-range-track {
+    position: relative;
+    height: 44px;
+    margin: 0.3rem 0 0.15rem;
+    overflow: hidden;
+    border: 1px solid rgba(136, 162, 187, 0.2);
+    border-radius: 9px;
+    background: #0a1118;
+    touch-action: none;
+}
+
+.technical-range-overview-line {
+    fill: none;
+    stroke: rgba(118, 196, 255, 0.82);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+}
+
+#technical-range-overview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.technical-range-selection {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    min-width: 5%;
+    border-inline: 2px solid #55e39d;
+    background: linear-gradient(90deg, rgba(68, 209, 122, 0.1), rgba(105, 169, 255, 0.1));
+    cursor: grab;
+    touch-action: none;
+}
+
+.technical-range-selection.is-dragging {
+    cursor: grabbing;
+    background: linear-gradient(90deg, rgba(68, 209, 122, 0.18), rgba(105, 169, 255, 0.18));
+}
+
+.technical-range-selection:focus-visible {
+    outline: 2px solid #ffe46f;
+    outline-offset: -3px;
+}
+
+.technical-range-input {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    appearance: none;
+    background: transparent;
+    pointer-events: none;
+}
+
+.technical-range-input::-webkit-slider-runnable-track {
+    height: 100%;
+    background: transparent;
+}
+
+.technical-range-input::-webkit-slider-thumb {
+    width: 18px;
+    height: 42px;
+    margin-top: 0;
+    border: 2px solid #07120c;
+    border-radius: 7px;
+    appearance: none;
+    background: #55e39d;
+    box-shadow: 0 0 0 1px rgba(196, 255, 222, 0.72);
+    cursor: ew-resize;
+    pointer-events: auto;
+}
+
+.technical-range-input::-moz-range-track {
+    height: 100%;
+    background: transparent;
+}
+
+.technical-range-input::-moz-range-thumb {
+    width: 16px;
+    height: 38px;
+    border: 2px solid #07120c;
+    border-radius: 7px;
+    background: #55e39d;
+    box-shadow: 0 0 0 1px rgba(196, 255, 222, 0.72);
+    cursor: ew-resize;
+    pointer-events: auto;
 }
 
 .market-view-tabs a {
@@ -2248,13 +2410,32 @@
     .market-dashboard-hero { order: 1; }
     .market-dashboard-load { order: 2; }
     .market-view-tabs {
-        position: sticky;
         top: 112px;
         z-index: 30;
         order: 3;
         grid-template-columns: repeat(3, minmax(112px, 1fr));
         box-shadow: 0 10px 28px rgba(0, 0, 0, 0.34);
         overflow-x: auto;
+    }
+
+    .technical-navigator-active .market-dashboard-page {
+        padding-bottom: 108px;
+    }
+
+    .technical-range-navigator {
+        bottom: 8px;
+        width: calc(100vw - 16px);
+        padding: 0.5rem 0.6rem 0.45rem;
+        border-radius: 12px;
+    }
+
+    .technical-range-heading strong {
+        font-size: 0.7rem;
+    }
+
+    .technical-range-heading span,
+    .technical-range-labels {
+        font-size: 0.62rem;
     }
     .market-dashboard-overview { order: 4; }
     .market-view-panels { order: 5; }

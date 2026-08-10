@@ -41,6 +41,16 @@ const openIndex = live.ensureCurrentIntradayIndex(
 );
 assert.strictEqual(openIndex[2].minuteBars, 1);
 assert.strictEqual(openIndex[2].pending, false);
+assert.strictEqual(
+    live.preferredIntradayDate(openIndex, '2026-08-07', false),
+    '2026-08-10',
+    '새로고침 뒤 사용자가 과거일을 고르지 않았다면 오늘 실시간 날짜가 우선이어야 한다.'
+);
+assert.strictEqual(
+    live.preferredIntradayDate(openIndex, '2026-08-07', true),
+    '2026-08-07',
+    '사용자가 직접 고른 과거 거래일은 새로고침 뒤에도 유지해야 한다.'
+);
 
 const rolledRuntimeIndex = live.mergeRuntimeIntradayIndex(
     archiveIndex.concat([{ date: '2026-08-10', path: '', live: true, pending: false }]),

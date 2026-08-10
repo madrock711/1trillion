@@ -22,7 +22,13 @@
     var selectedKodexPeriod = '3m';
     var selectedKodexChartMode = 'daily';
     var selectedKodexIntradayDate = '';
+    var selectedKodexIntradayDateExplicit = false;
     var selectedKodexIntradayInterval = 5;
+    var technicalRangeStart = 0;
+    var technicalRangeEnd = 100;
+    var technicalRangeRows = [];
+    var technicalRangeRenderFrame = 0;
+    var technicalRangeDrag = null;
     var kodexIntradayRenderToken = 0;
     var kospiTechnicalHistory = [];
     var kospiHistoryRequestToken = 0;
@@ -180,6 +186,8 @@
         viewPanels.forEach(function (panel) {
             panel.hidden = panel.getAttribute('data-view-panel') !== selected;
         });
+
+        setTechnicalNavigatorVisibility(selected === 'technical');
 
         if (historyMode) {
             var nextUrl = new URL(window.location.href);
@@ -781,6 +789,153 @@
         return Number(match[2]) + '월 ' + Number(match[3]) + '일';
     }
 
+    function technicalRangeSlice(rows) {
+        var source = Array.isArray(rows) ? rows : [];
+        if (source.length < 3 || (technicalRangeStart <= 0 && technicalRangeEnd >= 100)) return source.slice();
+        var lastIndex = source.length - 1;
+        var startIndex = Math.max(0, Math.min(lastIndex - 1, Math.floor(lastIndex * technicalRangeStart / 100)));
+        var endIndex = Math.max(startIndex + 1, Math.min(lastIndex, Math.ceil(lastIndex * technicalRangeEnd / 100)));
+        return source.slice(startIndex, endIndex + 1);
+    }
+
+    function technicalRangePointLabel(row) {
+        if (!row) return '범위 확인 불가';
+        var date = row.date || row.sessionDate || row.label || '';
+        var time = row.endTime || row.time || '';
+        return (date ? formatHistoryDate(date) : '') + (time ? ' ' + time : '');
+    }
+
+    function updateTechnicalRangeUi() {
+        var startInput = document.getElementById('technical-range-start');
+        var endInput = document.getElementById('technical-range-end');
+        var selection = document.getElementById('technical-range-selection');
+        var startLabel = document.getElementById('technical-range-start-label');
+        var endLabel = document.getElementById('technical-range-end-label');
+        var summary = document.getElementById('technical-range-summary');
+        if (!startInput || !endInput || !selection) return;
+        startInput.value = String(technicalRangeStart);
+        endInput.value = String(technicalRangeEnd);
+        selection.style.left = technicalRangeStart + '%';
+        selection.style.width = Math.max(0, technicalRangeEnd - technicalRangeStart) + '%';
+        selection.setAttribute('aria-valuenow', String(Math.round((technicalRangeStart + technicalRangeEnd) / 2)));
+        var visible = technicalRangeSlice(technicalRangeRows);
+        var first = visible[0];
+        var last = visible[visible.length - 1];
+        if (startLabel) startLabel.textContent = technicalRangePointLabel(first);
+        if (endLabel) endLabel.textContent = technicalRangePointLabel(last);
+        if (summary) summary.textContent = technicalRangeStart <= 0 && technicalRangeEnd >= 100
+            ? '전체 구간'
+            : '선택 구간 ' + visible.length + '개 봉';
+    }
+
+    function updateTechnicalRangeNavigator(rows) {
+        technicalRangeRows = (rows || []).filter(function (row) {
+            return row && Number.isFinite(row.close);
+        }).slice();
+        var svg = document.getElementById('technical-range-overview');
+        if (!svg) return;
+        clear(svg);
+        if (technicalRangeRows.length > 1) {
+            var width = 1000;
+            var height = 42;
+            var prices = technicalRangeRows.map(function (row) { return row.close; });
+            var min = Math.min.apply(Math, prices);
+            var max = Math.max.apply(Math, prices);
+            var spread = Math.max(max - min, Math.abs(max || 1) * 0.001);
+            var path = prices.map(function (price, index) {
+                var x = index / Math.max(prices.length - 1, 1) * width;
+                var y = 5 + (max - price) / spread * (height - 10);
+                return (index ? 'L ' : 'M ') + x.toFixed(2) + ' ' + y.toFixed(2);
+            }).join(' ');
+            svg.appendChild(makeSvg('path', { d: path, 'class': 'technical-range-overview-line' }));
+        }
+        updateTechnicalRangeUi();
+    }
+
+    function queueTechnicalRangeRender() {
+        if (technicalRangeRenderFrame) window.cancelAnimationFrame(technicalRangeRenderFrame);
+        technicalRangeRenderFrame = window.requestAnimationFrame(function () {
+            technicalRangeRenderFrame = 0;
+            clearLinkedChartSelection(false);
+            renderSynchronizedTechnicalCharts();
+        });
+    }
+
+    function setTechnicalRange(start, end, rerender) {
+        var minimum = 5;
+        var nextStart = Math.max(0, Math.min(100 - minimum, Number(start) || 0));
+        var nextEnd = Math.max(minimum, Math.min(100, Number(end) || 100));
+        if (nextEnd - nextStart < minimum) {
+            if (nextStart !== technicalRangeStart) nextStart = nextEnd - minimum;
+            else nextEnd = nextStart + minimum;
+        }
+        technicalRangeStart = Math.max(0, nextStart);
+        technicalRangeEnd = Math.min(100, nextEnd);
+        updateTechnicalRangeUi();
+        if (rerender !== false) queueTechnicalRangeRender();
+    }
+
+    function bindTechnicalRangeNavigator() {
+        var navigator = document.getElementById('technical-range-navigator');
+        if (!navigator || navigator.getAttribute('data-bound') === 'true') return;
+        navigator.setAttribute('data-bound', 'true');
+        var startInput = document.getElementById('technical-range-start');
+        var endInput = document.getElementById('technical-range-end');
+        var selection = document.getElementById('technical-range-selection');
+        var track = document.getElementById('technical-range-track');
+        var reset = document.getElementById('technical-range-reset');
+        startInput.addEventListener('input', function () {
+            setTechnicalRange(Math.min(Number(startInput.value), technicalRangeEnd - 5), technicalRangeEnd);
+        });
+        endInput.addEventListener('input', function () {
+            setTechnicalRange(technicalRangeStart, Math.max(Number(endInput.value), technicalRangeStart + 5));
+        });
+        reset.addEventListener('click', function () { setTechnicalRange(0, 100); });
+        selection.addEventListener('pointerdown', function (event) {
+            if (!track || event.button !== 0) return;
+            technicalRangeDrag = {
+                pointerId: event.pointerId,
+                startX: event.clientX,
+                start: technicalRangeStart,
+                end: technicalRangeEnd,
+                width: Math.max(track.getBoundingClientRect().width, 1)
+            };
+            selection.setPointerCapture(event.pointerId);
+            selection.classList.add('is-dragging');
+            event.preventDefault();
+        });
+        selection.addEventListener('pointermove', function (event) {
+            if (!technicalRangeDrag || technicalRangeDrag.pointerId !== event.pointerId) return;
+            var span = technicalRangeDrag.end - technicalRangeDrag.start;
+            var delta = (event.clientX - technicalRangeDrag.startX) / technicalRangeDrag.width * 100;
+            var nextStart = Math.max(0, Math.min(100 - span, technicalRangeDrag.start + delta));
+            setTechnicalRange(nextStart, nextStart + span, false);
+        });
+        function finishDrag(event) {
+            if (!technicalRangeDrag || technicalRangeDrag.pointerId !== event.pointerId) return;
+            technicalRangeDrag = null;
+            selection.classList.remove('is-dragging');
+            queueTechnicalRangeRender();
+        }
+        selection.addEventListener('pointerup', finishDrag);
+        selection.addEventListener('pointercancel', finishDrag);
+        selection.addEventListener('keydown', function (event) {
+            if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+            var span = technicalRangeEnd - technicalRangeStart;
+            var delta = event.key === 'ArrowLeft' ? -2 : 2;
+            var nextStart = Math.max(0, Math.min(100 - span, technicalRangeStart + delta));
+            setTechnicalRange(nextStart, nextStart + span);
+            event.preventDefault();
+        });
+    }
+
+    function setTechnicalNavigatorVisibility(visible) {
+        var navigator = document.getElementById('technical-range-navigator');
+        bindTechnicalRangeNavigator();
+        if (navigator) navigator.hidden = !visible;
+        document.documentElement.classList.toggle('technical-navigator-active', Boolean(visible));
+    }
+
     function formatCompactVolume(value) {
         if (!Number.isFinite(value)) return '데이터 없음';
         if (value >= 100000000) return formatNumber(value / 100000000, 2) + '억주';
@@ -831,6 +986,7 @@
     function renderSynchronizedTechnicalCharts() {
         var kospi = dashboardData && findById(dashboardData.markets, 'KOSPI');
         var kodex = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
+        if (kodex) setKodexChartControls(kodex);
         if (kospi) renderKospiHistoryChart(kospi);
         if (kodex) {
             renderKodexHistoryChart(kodex);
@@ -876,6 +1032,7 @@
             dateSelect.addEventListener('change', function () {
                 clearLinkedChartSelection(false);
                 selectedKodexIntradayDate = dateSelect.value;
+                selectedKodexIntradayDateExplicit = true;
                 renderSynchronizedTechnicalCharts();
             });
         });
@@ -956,8 +1113,13 @@
             }
             return formatHistoryDate(date) + ' · 마감';
         }
-        if (!selectedKodexIntradayDate || dates.indexOf(selectedKodexIntradayDate) === -1) {
-            selectedKodexIntradayDate = dates[dates.length - 1] || '';
+        var preferredDate = window.MarketDashboardLive && typeof window.MarketDashboardLive.preferredIntradayDate === 'function'
+            ? window.MarketDashboardLive.preferredIntradayDate(indexRows, selectedKodexIntradayDate, selectedKodexIntradayDateExplicit)
+            : dates[dates.length - 1] || '';
+        var selectionWasValid = dates.indexOf(selectedKodexIntradayDate) !== -1;
+        if (preferredDate !== selectedKodexIntradayDate) {
+            selectedKodexIntradayDate = preferredDate;
+            if (!selectionWasValid) selectedKodexIntradayDateExplicit = false;
         }
         Array.prototype.forEach.call(document.querySelectorAll('[data-shared-intraday-date]'), function (dateSelect) {
             if (dateSelect.options.length !== dates.length || Array.prototype.some.call(dateSelect.options, function (option, index) {
@@ -1048,15 +1210,37 @@
             var parts = String(bar.time || '').split(':');
             var minuteOfDay = Number(parts[0]) * 60 + Number(parts[1]);
             var bucket = Math.floor((minuteOfDay - 9 * 60) / interval);
+            var sessionDate = String(bar.sessionDate || bar.date || '');
+            var bucketKey = sessionDate + '|' + bucket;
             var current = groups[groups.length - 1];
-            if (!current || current.bucket !== bucket) {
-                current = Object.assign({ bucket: bucket, endTime: bar.time }, bar);
+            if (!current || current.bucketKey !== bucketKey) {
+                current = Object.assign({
+                    bucket: bucket,
+                    bucketKey: bucketKey,
+                    date: sessionDate,
+                    sessionDate: sessionDate,
+                    endTime: bar.time
+                }, bar);
                 groups.push(current);
             } else {
-                current = Object.assign(current, bar, { bucket: bucket, time: current.time, endTime: bar.time });
+                current = Object.assign(current, bar, {
+                    bucket: bucket,
+                    bucketKey: bucketKey,
+                    date: sessionDate,
+                    sessionDate: sessionDate,
+                    time: current.time,
+                    endTime: bar.time
+                });
             }
         });
         return groups;
+    }
+
+    function selectedIntradayEntry() {
+        var instrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
+        var liveInstrument = instrument && instrument.liveSnapshot || {};
+        var indexRows = liveInstrument.intradayIndex || instrument && instrument.intradayIndex || [];
+        return indexRows.filter(function (row) { return row && row.date === selectedKodexIntradayDate; })[0] || null;
     }
 
     function compositeDirectionLabel(direction, momentum) {
@@ -1078,10 +1262,20 @@
                 readout.textContent = '선택한 거래일은 두 시장의 공통 1분봉이 부족합니다.';
                 return;
             }
-            rows = aggregateCompositeBars(selectedDay.bars, selectedKodexIntradayInterval).map(function (row) {
-                return Object.assign({ label: row.time }, row);
-            });
-            title.textContent = formatHistoryDate(selectedDay.date) + ' KOSPI·KODEX 거래량 모멘텀';
+            var selectedEntry = selectedIntradayEntry();
+            var previousDay = selectedEntry && selectedEntry.live
+                ? (days || []).filter(function (day) { return day.date < selectedDay.date; }).slice(-1)[0]
+                : null;
+            var combinedBars = (previousDay ? previousDay.bars : []).concat(selectedDay.bars || []);
+            rows = aggregateCompositeBars(combinedBars, selectedKodexIntradayInterval);
+            if (previousDay) {
+                var previousCount = aggregateCompositeBars(previousDay.bars, selectedKodexIntradayInterval).length;
+                if (previousCount > 0) rows = rows.slice(-previousCount);
+            }
+            rows = rows.map(function (row) { return Object.assign({ label: row.time }, row); });
+            title.textContent = previousDay
+                ? formatHistoryDate(previousDay.date) + ' → ' + formatHistoryDate(selectedDay.date) + ' KOSPI·KODEX 거래량 모멘텀'
+                : formatHistoryDate(selectedDay.date) + ' KOSPI·KODEX 거래량 모멘텀';
         } else {
             rows = (days || []).map(function (day) {
                 return Object.assign({ label: day.date }, day.summary);
@@ -1091,6 +1285,7 @@
         rows = rows.filter(function (row) {
             return [row.direction, row.momentum, row.signal, row.divergence].every(Number.isFinite);
         });
+        rows = technicalRangeSlice(rows);
         if (rows.length < 2) {
             readout.textContent = '합성 거래량 모멘텀을 계산할 공통 구간이 부족합니다.';
             return;
@@ -1137,7 +1332,7 @@
 
         function updateReadout(row) {
             var label = selectedKodexChartMode === 'intraday'
-                ? formatHistoryDate(selectedKodexIntradayDate) + ' ' + row.time + (row.endTime && row.endTime !== row.time ? '–' + row.endTime : '')
+                ? formatHistoryDate(row.date || selectedKodexIntradayDate) + ' ' + row.time + (row.endTime && row.endTime !== row.time ? '–' + row.endTime : '')
                 : formatHistoryDate(row.label);
             readout.textContent = label
                 + ' · ' + compositeDirectionLabel(row.direction, row.momentum)
@@ -1162,7 +1357,9 @@
         tickIndexes.forEach(function (index) {
             var label = makeSvg('text', { x: xFor(index), y: 178, 'class': 'composite-momentum-axis', 'text-anchor': index === 0 ? 'start' : index === rows.length - 1 ? 'end' : 'middle' });
             label.textContent = selectedKodexChartMode === 'intraday'
-                ? rows[index].time
+                ? ((index === 0 || rows[index].date !== rows[index - 1].date)
+                    ? formatHistoryDate(rows[index].date).replace('월 ', '/').replace('일', '') + ' '
+                    : '') + rows[index].time
                 : formatHistoryDate(rows[index].label).replace('월 ', '/').replace('일', '');
             svg.appendChild(label);
         });
@@ -1715,6 +1912,8 @@
             svg.appendChild(empty);
             return;
         }
+        updateTechnicalRangeNavigator(rows);
+        rows = technicalRangeSlice(rows);
 
         svg.setAttribute('viewBox', '0 0 1000 720');
         var width = 1000;
@@ -2131,7 +2330,9 @@
         threshold.setMonth(threshold.getMonth() - (selectedKodexPeriod === '1m' ? 1 : 3));
         var startIndex = history.findIndex(function (row) { return parseHistoryDate(row.date) >= threshold.getTime(); });
         if (startIndex < 0) startIndex = 0;
-        var rows = history.slice(startIndex);
+        var rows = technicalRangeSlice(history.slice(startIndex));
+        startIndex = Math.max(0, history.indexOf(rows[0]));
+        var endIndex = startIndex + rows.length;
         var ma5 = simpleMovingAverage(history, 5);
         var ma20 = simpleMovingAverage(history, 20);
         var ma60 = simpleMovingAverage(history, 60);
@@ -2153,7 +2354,7 @@
         var priceValues = [];
         rows.forEach(function (row) { priceValues.push(row.high, row.low); });
         [ma5, ma20, ma60].forEach(function (series) {
-            series.slice(startIndex).forEach(function (value) {
+            series.slice(startIndex, endIndex).forEach(function (value) {
                 if (Number.isFinite(value)) priceValues.push(value);
             });
         });
@@ -2297,7 +2498,7 @@
             { values: ma20, className: 'is-ma20' },
             { values: ma60, className: 'is-ma60' }
         ].forEach(function (series) {
-            var path = svgPathForSeries(series.values, startIndex, xFor, priceY);
+            var path = svgPathForSeries(series.values.slice(startIndex, endIndex), 0, xFor, priceY);
             if (path) svg.appendChild(makeSvg('path', { d: path, 'class': 'kodex-history-line ' + series.className }));
         });
 
@@ -2342,7 +2543,7 @@
         var axisText = typeof settings.axisFormatter === 'function'
             ? settings.axisFormatter
             : function (value) { return formatNumber(value, 0); };
-        var rows = rollingIntradayRows(day, interval);
+        var rows = technicalRangeSlice(rollingIntradayRows(day, interval));
         svg.setAttribute('viewBox', '0 0 1000 590');
         var width = 1000;
         var margin = { left: 24, right: 88 };
@@ -2621,7 +2822,9 @@
         threshold.setMonth(threshold.getMonth() - (selectedKodexPeriod === '1m' ? 1 : 3));
         var startIndex = history.findIndex(function (row) { return parseHistoryDate(row.date) >= threshold.getTime(); });
         if (startIndex < 0) startIndex = 0;
-        var rows = history.slice(startIndex);
+        var rows = technicalRangeSlice(history.slice(startIndex));
+        startIndex = Math.max(0, history.indexOf(rows[0]));
+        var endIndex = startIndex + rows.length;
         var ma5 = simpleMovingAverage(history, 5);
         var ma20 = simpleMovingAverage(history, 20);
         var ma60 = simpleMovingAverage(history, 60);
@@ -2643,7 +2846,7 @@
         var values = [];
         rows.forEach(function (row) { values.push(row.high, row.low); });
         [ma5, ma20, ma60].forEach(function (series) {
-            series.slice(startIndex).forEach(function (value) {
+            series.slice(startIndex, endIndex).forEach(function (value) {
                 if (Number.isFinite(value)) values.push(value);
             });
         });
@@ -2741,7 +2944,7 @@
             { values: ma60, className: 'is-ma60' }
         ].forEach(function (line) {
             var path = '';
-            line.values.slice(startIndex).forEach(function (value, index) {
+            line.values.slice(startIndex, endIndex).forEach(function (value, index) {
                 if (!Number.isFinite(value)) return;
                 path += (path ? ' L ' : 'M ') + xFor(index).toFixed(2) + ' ' + priceY(value).toFixed(2);
             });

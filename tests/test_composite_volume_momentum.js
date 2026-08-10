@@ -65,6 +65,13 @@ function dailyRows(count, offset) {
     assert(composite[0].bars[79].direction > 0, 'same-sign buy pressure should produce a positive direction');
     assert(composite[0].bars[79].momentum > 0, 'a sell-to-buy transition should produce positive momentum');
 
+    const continuous = live.calculateCompositeVolumeMomentum(
+        [pressureDay('2026-08-06', Array(40).fill(-0.2)), pressureDay('2026-08-07', Array(40).fill(0.3))],
+        [pressureDay('2026-08-06', Array(40).fill(-0.2)), pressureDay('2026-08-07', Array(40).fill(0.3))]
+    );
+    assert.strictEqual(continuous[1].bars[0].date, '2026-08-07');
+    assert.notStrictEqual(continuous[1].bars[0].momentum, 0, '당일 첫 봉에서도 직전 거래일 모멘텀이 이어져야 한다.');
+
     const kospiStable = [pressureDay('2026-08-07', Array(80).fill(0.1))];
     const kodexAccelerating = [pressureDay('2026-08-07', Array(50).fill(0.1).concat(Array(30).fill(0.75)))];
     const divergence = live.calculateCompositeVolumeMomentum(kospiStable, kodexAccelerating)[0].bars;
@@ -141,6 +148,8 @@ function dailyRows(count, offset) {
     assert(css.includes('.composite-momentum-card'));
     assert(css.includes('min-width: 680px'));
     assert(dashboard.includes('var momentumBottom = 150;'));
+    assert(dashboard.includes('var combinedBars = (previousDay ? previousDay.bars : []).concat(selectedDay.bars || []);'));
+    assert(dashboard.includes('rows = rows.slice(-previousCount);'));
     console.log('composite volume momentum tests passed');
 }()).catch(error => {
     console.error(error);
