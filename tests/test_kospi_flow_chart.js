@@ -28,7 +28,7 @@ async function main() {
     assert.ok(dashboardSource.includes("if (title) title.textContent = 'KOSPI';"), 'KOSPI 카드 제목은 모드가 바뀌어도 한 줄로 유지되어야 한다.');
     assert.ok(dashboardSource.includes("if (title) title.textContent = 'KODEX 레버리지';"), 'KODEX 카드 제목은 모드가 바뀌어도 한 줄로 유지되어야 한다.');
     assert.ok(dashboardSource.includes("if (title) title.textContent = 'TQQQ';"), 'TQQQ 카드 제목은 모드가 바뀌어도 한 줄로 유지되어야 한다.');
-    assert.ok(dashboardSource.includes("selectedKodexIntradayInterval + '분'"), 'KOSPI 분봉 간격은 짧은 분 표기를 사용해야 한다.');
+    assert.ok(dashboardSource.includes("(options.interval || selectedKodexIntradayInterval) + '분'"), 'KOSPI 분봉 간격은 자동 집계 간격을 짧은 분 표기로 표시해야 한다.');
     assert.ok(dashboardSource.includes("interval + '분'"), 'KODEX와 TQQQ 분봉 간격은 짧은 분 표기를 사용해야 한다.');
     assert.ok(dashboardCss.includes('.kospi-flow-foreign.is-buy { fill: #ffb454; }'), '외국인 순매수는 X-ray와 구별되는 색이어야 한다.');
     assert.ok(dashboardCss.includes('.kospi-flow-foreign.is-sell { fill: #35d3c8; }'), '외국인 순매도는 X-ray와 구별되는 색이어야 한다.');

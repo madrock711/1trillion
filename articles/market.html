@@ -65,8 +65,8 @@
     }
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
-    <script defer src="../assets/market-live-data.js?v=20260810-4"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260810-17"></script>
+    <script defer src="../assets/market-live-data.js?v=20260810-5"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260810-18"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -417,7 +417,8 @@
                                 <div class="kodex-period-switcher" id="technical-daily-controls" data-shared-daily-controls aria-label="공통 일봉 조회 기간">
                                     <button type="button" data-kodex-period="1m" aria-pressed="false">1개월</button>
                                     <button type="button" data-kodex-period="3m" aria-pressed="false">3개월</button>
-                                    <button type="button" data-kodex-period="6m" aria-pressed="true">6개월</button>
+                                    <button type="button" data-kodex-period="6m" aria-pressed="false">6개월</button>
+                                    <button type="button" data-kodex-period="1y" aria-pressed="true">1년</button>
                                 </div>
                                 <div class="kodex-intraday-controls" id="technical-intraday-controls" data-shared-intraday-controls hidden>
                                     <label for="technical-intraday-date">거래일</label>
@@ -519,7 +520,7 @@
                         <span class="is-stochastic-k">Slow %K 20·12</span>
                         <span class="is-stochastic-d">Slow %D 20·12·12</span>
                     </div>
-                    <p class="kodex-history-readout" id="kodex-history-readout" aria-live="polite">6개월 가격과 거래량을 불러오는 중입니다.</p>
+                    <p class="kodex-history-readout" id="kodex-history-readout" aria-live="polite">1년 가격과 거래량을 불러오는 중입니다.</p>
                     <div class="kodex-history-shell" tabindex="0" role="region" aria-label="KODEX 레버리지 일봉 또는 분봉, 스토캐스틱 슬로우, 거래량 X-ray와 누적 CVD 차트">
                         <svg id="kodex-history-chart" class="kodex-history-chart" viewBox="0 0 1000 500" role="img" aria-labelledby="kodex-history-title kodex-history-readout"></svg>
                     </div>

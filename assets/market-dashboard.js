@@ -19,11 +19,13 @@
     var liveRefreshTimer = null;
     var liveRefreshPromise = null;
     var lastLiveRefreshAt = 0;
-    var selectedKodexPeriod = '6m';
+    var selectedKodexPeriod = '1y';
     var selectedKodexChartMode = 'daily';
     var selectedKodexIntradayDate = '';
     var selectedKodexIntradayDateExplicit = false;
     var selectedKodexIntradayInterval = 5;
+    var intradayNavigatorSessionCount = 4;
+    var maxIntradayRenderedBars = 800;
     var technicalRangeStart = 50;
     var technicalRangeEnd = 100;
     var technicalRangeRows = [];
@@ -1221,7 +1223,7 @@
             button.addEventListener('click', function () {
                 clearLinkedChartSelection(false);
                 var period = button.getAttribute('data-kodex-period');
-                selectedKodexPeriod = ['1m', '3m', '6m'].indexOf(period) !== -1 ? period : '6m';
+                selectedKodexPeriod = ['1m', '3m', '6m', '1y'].indexOf(period) !== -1 ? period : '1y';
                 renderSynchronizedTechnicalCharts();
             });
         });
@@ -1395,12 +1397,22 @@
         return groups;
     }
 
-    function previousArchivedIntradayEntry(indexRows, targetDate) {
+    function intradayWindowEntries(indexRows, targetDate, count) {
         return (indexRows || []).filter(function (row) {
-            return row && row.date < targetDate && row.path && !row.live;
+            return row && row.date <= targetDate && (row.path || row.live);
         }).sort(function (left, right) {
             return left.date.localeCompare(right.date);
-        }).slice(-1)[0] || null;
+        }).slice(-Math.max(1, Number(count) || intradayNavigatorSessionCount));
+    }
+
+    function effectiveIntradayInterval(day, requestedInterval) {
+        var requested = Math.max(1, Number(requestedInterval) || 1);
+        var visibleRatio = Math.max(0.05, (technicalRangeEnd - technicalRangeStart) / 100);
+        var rawCount = day && Array.isArray(day.bars) ? day.bars.length : 0;
+        var candidates = [1, 5, 15, 30, 60].filter(function (value) { return value >= requested; });
+        return candidates.filter(function (value) {
+            return rawCount * visibleRatio / value <= maxIntradayRenderedBars;
+        })[0] || candidates[candidates.length - 1] || requested;
     }
 
     function rollingIntradayRows(day, interval) {
@@ -1460,11 +1472,14 @@
                 readout.textContent = '선택한 거래일은 두 시장의 공통 1분봉이 부족합니다.';
                 return;
             }
-            var previousDay = (days || []).filter(function (day) {
-                return day.date < selectedDay.date;
-            }).slice(-1)[0] || null;
-            var combinedBars = (previousDay ? previousDay.bars : []).concat(selectedDay.bars || []);
-            rows = aggregateCompositeBars(combinedBars, selectedKodexIntradayInterval);
+            var visibleDays = (days || []).filter(function (day) {
+                return day.date <= selectedDay.date;
+            }).slice(-intradayNavigatorSessionCount);
+            var combinedBars = visibleDays.reduce(function (bars, day) {
+                return bars.concat(day.bars || []);
+            }, []);
+            var compositeDay = { bars: combinedBars };
+            rows = aggregateCompositeBars(combinedBars, effectiveIntradayInterval(compositeDay, selectedKodexIntradayInterval));
             rows = rows.map(function (row) { return Object.assign({ label: row.time }, row); });
         } else {
             rows = (days || []).map(function (day) {
@@ -1872,7 +1887,7 @@
     }
 
     function kospiPeriodMonths() {
-        return selectedKodexPeriod === '1m' ? 1 : selectedKodexPeriod === '3m' ? 3 : 6;
+        return selectedKodexPeriod === '1m' ? 1 : selectedKodexPeriod === '3m' ? 3 : selectedKodexPeriod === '6m' ? 6 : 12;
     }
 
     function kospiPeriodLabel() {
@@ -1880,7 +1895,7 @@
     }
 
     function kospiFlowPageCount() {
-        return 15;
+        return 28;
     }
 
     function seoulIsoDate(value) {
@@ -2026,13 +2041,13 @@
         });
     }
 
-    function prepareKospiIntradayRows(day) {
+    function prepareKospiIntradayRows(day, interval) {
         var minuteRows = (day && day.bars || []).map(function (row) {
             var pressure = estimateDailyVolumePressure(row);
             var sessionDate = row.sessionDate || row.date || day.date;
             return Object.assign({}, row, pressure, { date: sessionDate, sessionDate: sessionDate });
         });
-        var rows = rollingIntradayRows(Object.assign({}, day, { bars: minuteRows }), selectedKodexIntradayInterval);
+        var rows = rollingIntradayRows(Object.assign({}, day, { bars: minuteRows }), interval || selectedKodexIntradayInterval);
         rows.forEach(function (row) {
             var bucketRows = minuteRows.filter(function (source) {
                 return source.date === row.date && source.time >= row.time && source.time <= row.endTime;
@@ -2125,7 +2140,7 @@
         addChartGrid(svg, margin.left, right, priceTop, priceBottom, minPrice, maxPrice, function (value) {
             return formatNumber(value, 0);
         });
-        addChartSectionLabel(svg, intraday ? selectedKodexIntradayInterval + '분' : '일봉', margin.left, priceTop + 12);
+        addChartSectionLabel(svg, intraday ? (options.interval || selectedKodexIntradayInterval) + '분' : '일봉', margin.left, priceTop + 12);
         addChartSectionLabel(svg, '거래량 X-ray · CVD · 외국인 현물', margin.left, flowTop + 12);
         addChartSectionLabel(svg, '외국인 수급 MACD 12 · 26 · 9', margin.left, macdTop + 12);
         var bollingerBandPath = svgBandPath(rows, 'bbUpper', 'bbLower', xFor, priceY);
@@ -2358,8 +2373,11 @@
         var indexRows = liveInstrument.intradayIndex || instrument && instrument.intradayIndex || [];
         var selectedEntry = indexRows.filter(function (row) { return row.date === selectedDate; })[0];
         var selectedIsCurrent = Boolean(selectedEntry && selectedEntry.live);
-        var previousEntry = previousArchivedIntradayEntry(indexRows, selectedDate);
-        var rolling = Boolean(previousEntry);
+        var windowEntries = intradayWindowEntries(indexRows, selectedDate, intradayNavigatorSessionCount);
+        var previousEntries = windowEntries.filter(function (row) { return row.date < selectedDate && row.path; });
+        var previousEntry = previousEntries.slice(-1)[0] || null;
+        var olderEntries = previousEntries.slice(0, -1);
+        var rolling = windowEntries.length > 1;
         var kospiLive = latestLiveData && findById(latestLiveData.markets, 'KOSPI');
         var marketStatus = kospiLive && kospiLive.marketStatus || '';
         var includeCurrentSession = !selectedIsCurrent
@@ -2374,21 +2392,24 @@
             return;
         }
 
-        function makeVisibleDay(days) {
+        function makeVisibleDay(days, olderDays) {
             if (!rolling) return days[0] || null;
             var previousDay = days.filter(function (day) { return day && day.date === previousEntry.date; })[0];
             var currentDay = days.filter(function (day) { return day && day.date === selectedDate; })[0]
                 || kospiIntradayViewCache[selectedDate] && kospiIntradayViewCache[selectedDate].day
                 || null;
-            return previousDay ? window.MarketDashboardLive.buildRollingIntradayDay(previousDay, currentDay, selectedDate) : null;
+            var combinedDays = (olderDays || []).concat([previousDay, currentDay].filter(Boolean));
+            return previousDay ? window.MarketDashboardLive.buildRollingIntradayDays(combinedDays, selectedDate) : null;
         }
 
         function renderVisibleDay(day) {
             if (!day) return false;
-            renderKospiRows(prepareKospiIntradayRows(day), {
+            var interval = effectiveIntradayInterval(day, selectedKodexIntradayInterval);
+            renderKospiRows(prepareKospiIntradayRows(day, interval), {
                 mode: 'intraday',
                 date: selectedDate,
-                rolling: rolling
+                rolling: rolling,
+                interval: interval
             });
             return true;
         }
@@ -2396,7 +2417,7 @@
         var cachedDays = requestDates.map(function (date) {
             return kospiIntradayViewCache[date] && kospiIntradayViewCache[date].day || null;
         });
-        var cached = cachedDays.every(Boolean) ? makeVisibleDay(cachedDays) : null;
+        var cached = cachedDays.every(Boolean) ? makeVisibleDay(cachedDays, []) : null;
         var forceRefresh = kospiIntradayForceRefresh;
         kospiIntradayForceRefresh = false;
         if (cached) {
@@ -2404,7 +2425,7 @@
             var freshestReceivedAt = Math.min.apply(Math, requestDates.map(function (date) {
                 return kospiIntradayViewCache[date] && kospiIntradayViewCache[date].receivedAt || 0;
             }));
-            if (!forceRefresh && Date.now() - freshestReceivedAt < 60 * 1000) {
+            if (!forceRefresh && !olderEntries.length && Date.now() - freshestReceivedAt < 60 * 1000) {
                 setKospiFlowRefreshState('ready', cached.flowSourceLastAt
                     ? formatHistoryDate(window.MarketDashboardLive.intradaySourceDate(cached.flowSourceLastAt, selectedDate)) + ' ' + cached.flowSourceLastAt.slice(11, 16) + ' 수급 기준'
                     : formatHistoryDate(selectedDate) + (rolling && !cached.currentBarCount ? ' 장전 · 직전 장 연결' : ' 가격 기준'));
@@ -2425,28 +2446,40 @@
                 + (selectedIsCurrent ? ' 실시간' : '') + ' 분봉·수급을 연결하고 있습니다.'
             : formatHistoryDate(selectedDate) + ' 분봉과 외국인 수급을 불러오는 중입니다.';
         setKospiFlowRefreshState('loading', formatHistoryDate(selectedDate) + ' 분봉 수급 확인 중');
-        Promise.all(requestDates.map(function (date) {
-            return window.MarketDashboardLive.fetchKospiIntradayDay(
+        var sourceBaseUrl = new URL(liveMarketSource, window.location.href).href;
+        var olderDates = olderEntries.map(function (entry) { return entry.date; });
+        Promise.all([
+            olderDates.length ? window.MarketDashboardLive.fetchKospiMinutePressureDays(
                 window.fetch.bind(window),
-                new URL(liveMarketSource, window.location.href).href,
-                date,
-                {
-                    now: Date.now(),
-                    nonce: String(Date.now()),
-                    forceRefresh: forceRefresh && date === selectedDate,
-                    signal: controller && controller.signal,
-                    concurrencyLimit: 6
-                }
-            ).catch(function (error) {
-                if (selectedIsCurrent && date === selectedDate && (!error || error.name !== 'AbortError')) return null;
-                throw error;
-            });
-        })).then(function (days) {
+                sourceBaseUrl,
+                olderDates,
+                { concurrencyLimit: 2, signal: controller && controller.signal }
+            ) : Promise.resolve([]),
+            Promise.all(requestDates.map(function (date) {
+                return window.MarketDashboardLive.fetchKospiIntradayDay(
+                    window.fetch.bind(window),
+                    sourceBaseUrl,
+                    date,
+                    {
+                        now: Date.now(),
+                        nonce: String(Date.now()),
+                        forceRefresh: forceRefresh && date === selectedDate,
+                        signal: controller && controller.signal,
+                        concurrencyLimit: 6
+                    }
+                ).catch(function (error) {
+                    if (selectedIsCurrent && date === selectedDate && (!error || error.name !== 'AbortError')) return null;
+                    throw error;
+                });
+            }))
+        ]).then(function (parts) {
             if (token !== kospiIntradayRenderToken || selectedKodexChartMode !== 'intraday') return;
+            var olderDays = parts[0] || [];
+            var days = parts[1] || [];
             days.filter(Boolean).forEach(function (day) {
                 kospiIntradayViewCache[day.date] = { day: day, receivedAt: Date.now() };
             });
-            var visibleDay = makeVisibleDay(days.filter(Boolean));
+            var visibleDay = makeVisibleDay(days.filter(Boolean), olderDays);
             renderVisibleDay(visibleDay);
             setKospiFlowRefreshState('ready', visibleDay && visibleDay.flowSourceLastAt
                 ? formatHistoryDate(window.MarketDashboardLive.intradaySourceDate(visibleDay.flowSourceLastAt, selectedDate)) + ' ' + visibleDay.flowSourceLastAt.slice(11, 16) + ' 수급 기준'
@@ -2904,7 +2937,8 @@
             || (kodexIntradaySource ? new URL(kodexIntradaySource, window.location.href).href : '');
         var selectedEntry = indexRows.filter(function (row) { return row.date === selectedKodexIntradayDate; })[0];
         var selectedIsCurrent = Boolean(selectedEntry && selectedEntry.live);
-        var previousEntry = previousArchivedIntradayEntry(indexRows, selectedKodexIntradayDate);
+        var windowEntries = intradayWindowEntries(indexRows, selectedKodexIntradayDate, intradayNavigatorSessionCount);
+        var previousEntry = windowEntries.filter(function (row) { return row.date < selectedKodexIntradayDate && row.path; }).slice(-1)[0] || null;
         if (!indexRows.length || !selectedEntry || !selectedKodexIntradayDate || !indexUrl
             || !window.MarketDashboardLive || typeof window.MarketDashboardLive.fetchKodexIntradayDay !== 'function') {
             readout.textContent = '보존된 분봉 거래일을 불러오지 못했습니다.';
@@ -2918,36 +2952,29 @@
             ? formatHistoryDate(previousEntry.date) + '과 ' + formatHistoryDate(selectedKodexIntradayDate)
                 + (selectedIsCurrent ? ' 실시간' : '') + ' 분봉을 연결하고 있습니다.'
             : formatHistoryDate(selectedKodexIntradayDate) + ' 분봉과 추정 순압력을 불러오는 중입니다.';
-        var currentDayRequest = selectedIsCurrent
-            ? Promise.resolve(liveDay && liveDay.date === selectedKodexIntradayDate ? liveDay : null)
-            : window.MarketDashboardLive.fetchKodexIntradayDay(
+        var dayRequests = windowEntries.map(function (entry) {
+            if (entry.date === selectedKodexIntradayDate && selectedIsCurrent) {
+                return Promise.resolve(liveDay && liveDay.date === selectedKodexIntradayDate ? liveDay : null);
+            }
+            return window.MarketDashboardLive.fetchKodexIntradayDay(
                 indexUrl,
-                selectedKodexIntradayDate,
+                entry.date,
                 window.fetch.bind(window),
                 { indexRows: indexRows }
             );
-        var dayRequest = previousEntry
-            ? Promise.all([
-                window.MarketDashboardLive.fetchKodexIntradayDay(
-                    indexUrl,
-                    previousEntry.date,
-                    window.fetch.bind(window),
-                    { indexRows: indexRows }
-                ),
-                currentDayRequest
-            ]).then(function (days) {
-                return window.MarketDashboardLive.buildRollingIntradayDay(
-                    days[0],
-                    days[1],
-                    selectedKodexIntradayDate
-                );
-            })
-            : currentDayRequest;
+        });
+        var dayRequest = Promise.all(dayRequests).then(function (days) {
+            var availableDays = days.filter(Boolean);
+            return availableDays.length > 1
+                ? window.MarketDashboardLive.buildRollingIntradayDays(availableDays, selectedKodexIntradayDate)
+                : availableDays[0] || null;
+        });
         dayRequest.then(function (day) {
             if (token !== kodexIntradayRenderToken || selectedKodexChartMode !== 'intraday') return;
             clear(svg);
             clear(summary);
-            renderKodexIntradayRows(day, selectedKodexIntradayInterval, svg, summary, readout, {
+            var interval = effectiveIntradayInterval(day, selectedKodexIntradayInterval);
+            renderKodexIntradayRows(day, interval, svg, summary, readout, {
                 showStochasticSlow: true
             });
         }).catch(function () {
@@ -3240,15 +3267,15 @@
         var sourceDays = preferredRows.some(function (candidate) { return candidate.date === day.date; })
             ? preferredRows
             : alternateRows;
-        var previousDay = sourceDays.filter(function (candidate) {
-            return parseHistoryDate(candidate.date) < parseHistoryDate(day.date);
+        var windowDays = sourceDays.filter(function (candidate) {
+            return parseHistoryDate(candidate.date) <= parseHistoryDate(day.date);
         }).sort(function (left, right) {
             return parseHistoryDate(left.date) - parseHistoryDate(right.date);
-        }).slice(-1)[0] || null;
-        if (previousDay) {
-            day = window.MarketDashboardLive.buildRollingIntradayDay(previousDay, day, day.date);
+        }).slice(-intradayNavigatorSessionCount);
+        if (windowDays.length > 1) {
+            day = window.MarketDashboardLive.buildRollingIntradayDays(windowDays, day.date);
         }
-        var effectiveInterval = Math.max(selectedKodexIntradayInterval, sourceInterval);
+        var effectiveInterval = Math.max(effectiveIntradayInterval(day, selectedKodexIntradayInterval), sourceInterval);
         if (title) title.textContent = 'TQQQ';
         var sameDate = day.date === selectedKodexIntradayDate;
         if (sourceNote) sourceNote.textContent = sameDate

@@ -1082,31 +1082,44 @@
         return dates[dates.length - 1] || '';
     }
 
-    function buildRollingIntradayDay(previousDay, currentDay, targetDate) {
+    function buildRollingIntradayDays(days, targetDate) {
         var target = normalizeIsoDate(targetDate);
-        if (!previousDay || !normalizeIsoDate(previousDay.date) || !Array.isArray(previousDay.bars)
-            || !target || (currentDay && !Array.isArray(currentDay.bars))) {
+        var sourceDays = (days || []).filter(function (day) {
+            return day && normalizeIsoDate(day.date) && Array.isArray(day.bars);
+        }).slice().sort(function (left, right) { return left.date.localeCompare(right.date); });
+        if (!target || !sourceDays.length) {
             throw new Error('연속 분봉을 만들 거래일 데이터가 올바르지 않습니다.');
         }
-        var previousDate = normalizeIsoDate(previousDay.date);
-        var previousBars = previousDay.bars.map(function (bar) {
-            return Object.assign({}, bar, { date: previousDate, sessionDate: previousDate });
+        var bars = [];
+        sourceDays.forEach(function (day) {
+            var sessionDate = normalizeIsoDate(day.date);
+            day.bars.forEach(function (bar) {
+                bars.push(Object.assign({}, bar, { date: sessionDate, sessionDate: sessionDate }));
+            });
         });
-        var currentBars = currentDay ? currentDay.bars.map(function (bar) {
-            return Object.assign({}, bar, { date: target, sessionDate: target });
-        }) : [];
+        var currentDay = sourceDays.filter(function (day) { return day.date === target; }).slice(-1)[0] || null;
+        var currentBarCount = currentDay ? currentDay.bars.length : 0;
+        var previousDays = sourceDays.filter(function (day) { return day.date < target; });
+        var previousBarCount = previousDays.reduce(function (total, day) { return total + day.bars.length; }, 0);
+        var sourceLastAt = sourceDays.map(function (day) { return day.sourceLastAt; }).filter(Boolean).sort().slice(-1)[0] || '';
+        var flowSourceLastAt = sourceDays.map(function (day) { return day.flowSourceLastAt; }).filter(Boolean).sort().slice(-1)[0] || '';
         return {
             date: target,
-            previousDate: previousDate,
-            rolling: true,
+            previousDate: previousDays.length ? previousDays[previousDays.length - 1].date : '',
+            sessionDates: sourceDays.map(function (day) { return day.date; }),
+            rolling: sourceDays.length > 1,
             live: Boolean(currentDay && currentDay.live),
-            pending: !currentBars.length,
-            previousBarCount: previousBars.length,
-            currentBarCount: currentBars.length,
-            sourceLastAt: currentDay && currentDay.sourceLastAt || previousDay.sourceLastAt || '',
-            flowSourceLastAt: currentDay && currentDay.flowSourceLastAt || previousDay.flowSourceLastAt || '',
-            bars: previousBars.concat(currentBars)
+            pending: !currentBarCount,
+            previousBarCount: previousBarCount,
+            currentBarCount: currentBarCount,
+            sourceLastAt: sourceLastAt,
+            flowSourceLastAt: flowSourceLastAt,
+            bars: bars
         };
+    }
+
+    function buildRollingIntradayDay(previousDay, currentDay, targetDate) {
+        return buildRollingIntradayDays([previousDay, currentDay].filter(Boolean), targetDate);
     }
 
     function mergeRuntimeIntradayIndex(previousRows, incomingRows) {
@@ -1613,11 +1626,9 @@
         if (kodexHistoryCache.pending) return kodexHistoryCache.pending;
 
         var historyPrefix = new URL('stock/122630/history/', baseUrl).href;
-        kodexHistoryCache.pending = Promise.all([
-            fetchJson(fetchImpl, historyPrefix + 'price-1', signal, nonce),
-            fetchJson(fetchImpl, historyPrefix + 'price-2', signal, nonce),
-            fetchJson(fetchImpl, historyPrefix + 'price-3', signal, nonce)
-        ]).then(function (parts) {
+        kodexHistoryCache.pending = Promise.all([1, 2, 3, 4, 5].map(function (page) {
+            return fetchJson(fetchImpl, historyPrefix + 'price-' + page, signal, nonce);
+        })).then(function (parts) {
             var history = normalizeKodexPriceHistory(parts);
             if (history.length < 55) throw new Error('KODEX 가격 이력이 부족합니다.');
             kodexHistoryCache.value = history;
@@ -1986,6 +1997,7 @@
         ensureCurrentIntradayIndex: ensureCurrentIntradayIndex,
         preferredIntradayDate: preferredIntradayDate,
         buildRollingIntradayDay: buildRollingIntradayDay,
+        buildRollingIntradayDays: buildRollingIntradayDays,
         mergeRuntimeIntradayIndex: mergeRuntimeIntradayIndex,
         intradaySourceDate: intradaySourceDate,
         mergeKodexVolumePressure: mergeKodexVolumePressure,
