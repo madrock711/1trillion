@@ -489,7 +489,7 @@
 }
 
 .technical-navigator-floating .market-dashboard-page {
-    padding-bottom: 118px;
+    padding-bottom: calc(var(--technical-navigator-height, 118px) + 12px);
 }
 
 .technical-range-navigator-slot {
@@ -529,6 +529,7 @@
 .technical-range-heading,
 .technical-range-labels {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 0.7rem;
@@ -549,7 +550,7 @@
     margin-right: auto;
 }
 
-.technical-range-heading button {
+.technical-range-heading > button {
     min-height: 28px;
     padding: 0 0.65rem;
     border: 1px solid rgba(105, 169, 255, 0.32);
@@ -562,10 +563,43 @@
     cursor: pointer;
 }
 
-.technical-range-heading button:hover,
-.technical-range-heading button:focus-visible {
+.technical-range-heading > button:hover,
+.technical-range-heading > button:focus-visible {
     border-color: rgba(84, 222, 154, 0.72);
     color: #dfffee;
+}
+
+.technical-global-chart-controls {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.4rem;
+}
+
+.technical-global-chart-controls [hidden] {
+    display: none !important;
+}
+
+.technical-global-chart-controls .kodex-intraday-controls {
+    flex-wrap: nowrap;
+}
+
+.technical-global-chart-controls .kodex-period-switcher {
+    flex: 0 0 auto;
+}
+
+.technical-global-chart-controls .kodex-period-switcher button {
+    min-height: 28px;
+    padding: 0.28rem 0.55rem;
+    font-size: 0.68rem;
+}
+
+.technical-global-chart-controls .kodex-intraday-controls select {
+    min-height: 30px;
+    max-width: 178px;
+    padding-block: 0.25rem;
+    font-size: 0.7rem;
 }
 
 .technical-range-track {
@@ -2455,7 +2489,7 @@
     }
 
     .technical-navigator-floating .market-dashboard-page {
-        padding-bottom: 108px;
+        padding-bottom: calc(var(--technical-navigator-height, 108px) + 8px);
     }
 
     .technical-range-navigator.is-floating {
@@ -2475,6 +2509,25 @@
     .technical-range-heading span,
     .technical-range-labels {
         font-size: 0.62rem;
+    }
+
+    .technical-global-chart-controls {
+        order: 3;
+        width: 100%;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 0.15rem;
+        scrollbar-width: thin;
+    }
+
+    .technical-global-chart-controls .kodex-intraday-controls {
+        width: auto;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+    }
+
+    .technical-global-chart-controls .kodex-period-switcher {
+        margin-top: 0;
     }
     .market-dashboard-overview { order: 4; }
     .market-view-panels { order: 5; }

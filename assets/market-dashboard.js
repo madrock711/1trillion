@@ -335,6 +335,7 @@
         if (canFloat) {
             var bottomOffset = window.matchMedia('(max-width: 720px)').matches ? 8 : 12;
             var navigatorHeight = Math.max(navigator.getBoundingClientRect().height, navigator.offsetHeight, 1);
+            document.documentElement.style.setProperty('--technical-navigator-height', Math.ceil(navigatorHeight) + 'px');
             var anchorCard = slot.previousElementSibling;
             var stackStyle = slot.parentElement ? window.getComputedStyle(slot.parentElement) : null;
             var stackGap = stackStyle ? parseFloat(stackStyle.rowGap || stackStyle.gap) || 0 : 0;
@@ -1014,7 +1015,10 @@
         if (visible) placeTechnicalRangeNavigator(stack);
         if (slot) slot.hidden = !visible;
         if (!visible && navigator) navigator.classList.remove('is-floating');
-        if (!visible && slot) slot.style.height = '';
+        if (!visible && slot) {
+            slot.classList.remove('is-floating');
+            slot.style.removeProperty('height');
+        }
         document.documentElement.classList.toggle('technical-navigator-active', Boolean(visible));
         if (!visible) document.documentElement.classList.remove('technical-navigator-floating');
         queueFloatingDashboardControlsUpdate();
@@ -1222,6 +1226,7 @@
             });
             dateSelect.value = selectedKodexIntradayDate;
         });
+        queueFloatingDashboardControlsUpdate();
         return indexRows;
     }
 

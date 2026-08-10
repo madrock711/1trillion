@@ -15,6 +15,14 @@ assert(html.includes('id="technical-range-start"'));
 assert(html.includes('id="technical-range-end"'));
 assert(html.includes('id="technical-range-selection"'));
 assert(html.includes('id="technical-range-overview"'));
+assert(html.includes('class="technical-global-chart-controls"'));
+assert(html.includes('id="technical-intraday-date"'));
+assert.strictEqual((html.match(/data-kodex-chart-mode="daily"/g) || []).length, 1, '일봉·분봉 선택은 공통 네비게이터에 한 번만 있어야 한다.');
+assert.strictEqual((html.match(/data-kodex-period="1m"/g) || []).length, 1, '일봉 조회 기간은 공통 네비게이터에 한 번만 있어야 한다.');
+assert.strictEqual((html.match(/data-shared-intraday-date/g) || []).length, 1, '거래일 선택은 공통 네비게이터에 한 번만 있어야 한다.');
+assert.strictEqual((html.match(/data-kodex-interval="5"/g) || []).length, 1, '분봉 간격 선택은 공통 네비게이터에 한 번만 있어야 한다.');
+assert(!html.includes('id="kospi-intraday-date"'));
+assert(!html.includes('id="kodex-intraday-date"'));
 assert(dashboard.includes('var selectedKodexIntradayDateExplicit = false;'));
 assert(dashboard.includes('selectedKodexIntradayDateExplicit = true;'));
 assert(dashboard.includes('MarketDashboardLive.preferredIntradayDate(indexRows, selectedKodexIntradayDate, selectedKodexIntradayDateExplicit)'));
@@ -40,6 +48,9 @@ assert(css.includes('.market-view-tabs {\n    --market-tabs-sticky-top: 64px;\n 
 assert(css.includes('.market-view-tabs.is-floating {'));
 assert(css.includes('.technical-range-selection.is-dragging'));
 assert(css.includes('.technical-range-input::-webkit-slider-thumb'));
+assert(css.includes('.technical-global-chart-controls {'));
+assert(css.includes('.technical-global-chart-controls [hidden] {\n    display: none !important;'));
+assert(css.includes('padding-bottom: calc(var(--technical-navigator-height'));
 
 const navigatorSlotIndex = html.indexOf('id="technical-range-navigator-slot"');
 const firstChartEndIndex = html.indexOf('</section>', html.indexOf('data-technical-card="kospi-flow"'));
