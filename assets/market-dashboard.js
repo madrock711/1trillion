@@ -2376,8 +2376,10 @@
         var previousEntry = rolling ? previousArchivedIntradayEntry(indexRows, selectedDate) : null;
         var kospiLive = latestLiveData && findById(latestLiveData.markets, 'KOSPI');
         var marketStatus = kospiLive && kospiLive.marketStatus || '';
+        var includeCurrentSession = marketStatus === 'OPEN'
+            || Boolean(marketStatus === 'CLOSE' && selectedEntry && selectedEntry.closed);
         var requestDates = rolling
-            ? [previousEntry && previousEntry.date].filter(Boolean).concat(marketStatus === 'OPEN' ? [selectedDate] : [])
+            ? [previousEntry && previousEntry.date].filter(Boolean).concat(includeCurrentSession ? [selectedDate] : [])
             : [selectedDate];
         if (!requestDates.length || (rolling && !previousEntry)) {
             renderKospiRows([], { mode: 'intraday', date: selectedDate });

@@ -123,11 +123,12 @@ assert.ok(dashboard.includes('previousArchivedIntradayEntry(indexRows, selectedK
 assert.ok(dashboard.includes("formatHistoryDate(date) + ' · 오늘 장전'"), '장전 오늘 라벨이 유지되어야 한다.');
 assert.ok(dashboard.includes("formatHistoryDate(date) + ' · 당일 마감'"), '장 마감 뒤 런타임 거래일 라벨이 유지되어야 한다.');
 assert.ok(dashboard.includes('MarketDashboardLive.preferredIntradayDate(indexRows, selectedKodexIntradayDate, selectedKodexIntradayDateExplicit)'), '모든 차트는 같은 최신 거래일 선택 helper를 사용해야 한다.');
+assert.ok(dashboard.includes("marketStatus === 'CLOSE' && selectedEntry && selectedEntry.closed"), '장 마감 런타임 항목도 KOSPI 당일 분봉·수급을 요청해야 한다.');
 assert.ok(dashboard.includes("row && row.path"), '장전 placeholder를 합성 모멘텀 원자료로 요청하면 안 된다.');
 assert.ok(dashboard.includes('MarketDashboardLive.intradaySourceDate(cached.flowSourceLastAt, selectedDate)'), '장전 수급 기준일은 전 거래일 실제 날짜를 표시해야 한다.');
 assert.ok(dashboard.includes('MarketDashboardLive.mergeRuntimeIntradayIndex('), '날짜 목록 병합은 회귀 테스트 가능한 helper를 사용해야 한다.');
 assert.ok(css.includes('.intraday-session-divider'), '두 거래일의 경계를 차트에서 구분해야 한다.');
 assert.ok(html.includes('market-live-data.js?v=20260810-3'), '장 마감 거래일 수정본은 이전 live-data 캐시를 우회해야 한다.');
-assert.ok(html.includes('market-dashboard.js?v=20260810-14'), '공통 날짜 선택 UI도 이전 dashboard 캐시를 우회해야 한다.');
+assert.ok(html.includes('market-dashboard.js?v=20260810-15'), '공통 날짜 선택 UI도 이전 dashboard 캐시를 우회해야 한다.');
 
 console.log('Intraday current-session continuity tests passed.');
