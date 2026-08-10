@@ -26,6 +26,8 @@ assert(dashboard.includes("firstChart.insertAdjacentElement('afterend', slot)"))
 assert(dashboard.includes('function updateFloatingDashboardControls()'));
 assert(dashboard.includes('slotTop <= triggerTop'));
 assert(dashboard.includes("navigator.classList.toggle('is-floating', shouldFloat)"));
+assert(dashboard.includes("slot.classList.toggle('is-floating', shouldFloat)"));
+assert(!dashboard.includes("slot.style.height = navigatorHeight + 'px'"), '플로팅 중 원래 슬롯 높이를 남기면 카드 사이에 빈 공간이 생긴다.');
 assert(dashboard.includes("tabs.classList.toggle('is-floating'"));
 assert(dashboard.includes("selection.addEventListener('pointermove'"));
 assert(dashboard.includes("selection.addEventListener('keydown'"));
@@ -33,6 +35,7 @@ assert((dashboard.match(/technicalRangeSlice\(/g) || []).length >= 7, '모든 �
 assert(css.includes('.technical-range-navigator {'));
 assert(css.includes('.technical-range-navigator.is-floating {\n    position: fixed;'));
 assert(css.includes('.technical-range-navigator-slot {'));
+assert(css.includes('.technical-range-navigator-slot.is-floating {\n    display: contents;'));
 assert(css.includes('.market-view-tabs {\n    --market-tabs-sticky-top: 64px;\n    position: sticky;'));
 assert(css.includes('.market-view-tabs.is-floating {'));
 assert(css.includes('.technical-range-selection.is-dragging'));

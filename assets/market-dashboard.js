@@ -335,14 +335,21 @@
         if (canFloat) {
             var bottomOffset = window.matchMedia('(max-width: 720px)').matches ? 8 : 12;
             var navigatorHeight = Math.max(navigator.getBoundingClientRect().height, navigator.offsetHeight, 1);
-            var slotTop = slot.getBoundingClientRect().top;
+            var anchorCard = slot.previousElementSibling;
+            var stackStyle = slot.parentElement ? window.getComputedStyle(slot.parentElement) : null;
+            var stackGap = stackStyle ? parseFloat(stackStyle.rowGap || stackStyle.gap) || 0 : 0;
+            var slotTop = anchorCard
+                ? anchorCard.getBoundingClientRect().bottom + stackGap
+                : slot.getBoundingClientRect().top;
             var triggerTop = window.innerHeight - bottomOffset - navigatorHeight;
             var panelBottom = technicalPanel.getBoundingClientRect().bottom;
             shouldFloat = slotTop <= triggerTop && panelBottom > window.innerHeight - bottomOffset;
-            if (shouldFloat) slot.style.height = navigatorHeight + 'px';
         }
         if (navigator) navigator.classList.toggle('is-floating', shouldFloat);
-        if (slot && !shouldFloat) slot.style.height = '';
+        if (slot) {
+            slot.classList.toggle('is-floating', shouldFloat);
+            slot.style.removeProperty('height');
+        }
         document.documentElement.classList.toggle('technical-navigator-floating', shouldFloat);
     }
 

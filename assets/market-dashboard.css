@@ -498,6 +498,10 @@
     min-width: 0;
 }
 
+.technical-range-navigator-slot.is-floating {
+    display: contents;
+}
+
 .technical-range-navigator-slot[hidden] {
     display: none !important;
 }
