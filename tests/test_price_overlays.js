@@ -84,9 +84,8 @@ assert.ok(css.includes('.kodex-stochastic-line.is-k'));
 assert.ok(css.includes('.kodex-stochastic-line.is-d'));
 assert.ok(css.includes('stroke: #ff4f5e;'), 'Slow %K는 빨강이어야 한다.');
 assert.ok(css.includes('stroke: #4f8dff;'), 'Slow %D는 파랑이어야 한다.');
-assert.ok(css.includes('.kodex-stochastic-zone-fill.is-k-dominant'));
-assert.ok(css.includes('.kodex-stochastic-zone-fill.is-d-dominant'));
-assert.ok(source.includes("'class': 'kodex-stochastic-zone-fill ' + (kLead >= 0 ? 'is-k-dominant' : 'is-d-dominant')"));
+assert.ok(!css.includes('.kodex-stochastic-zone-fill'));
+assert.ok(!source.includes('kodex-stochastic-zone-fill'));
 assert.strictEqual((html.match(/Slow %K 20·12/g) || []).length, 1);
 assert.strictEqual((html.match(/Slow %D 20·12·12/g) || []).length, 1);
 

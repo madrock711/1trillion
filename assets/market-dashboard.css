@@ -1567,19 +1567,6 @@
     opacity: 0.92;
 }
 
-.kodex-stochastic-zone-fill {
-    stroke: none;
-    pointer-events: none;
-}
-
-.kodex-stochastic-zone-fill.is-k-dominant {
-    fill: rgba(255, 79, 94, 0.18);
-}
-
-.kodex-stochastic-zone-fill.is-d-dominant {
-    fill: rgba(79, 141, 255, 0.18);
-}
-
 .kospi-flow-card {
     position: relative;
     margin-bottom: var(--space-4);
