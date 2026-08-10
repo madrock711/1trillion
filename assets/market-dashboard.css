@@ -1317,6 +1317,8 @@
 .kodex-history-legend .is-ma20 { color: #66d2ff; }
 .kodex-history-legend .is-ma60 { color: #59dda0; }
 .kodex-history-legend .is-bollinger { color: #b89cff; }
+.kodex-history-legend .is-stochastic-k { color: #ff9f43; }
+.kodex-history-legend .is-stochastic-d { color: #e4b7ff; }
 .kodex-history-legend .is-cvd { color: #f5d76e; }
 
 .kodex-history-readout {
@@ -1528,6 +1530,41 @@
     fill: rgba(184, 156, 255, 0.08);
     stroke: none;
     pointer-events: none;
+}
+
+.kodex-stochastic-guide {
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+}
+
+.kodex-stochastic-guide.is-mid {
+    stroke: rgba(236, 242, 246, 0.16);
+    stroke-width: 1;
+}
+
+.kodex-stochastic-guide.is-band {
+    stroke: rgba(236, 242, 246, 0.09);
+    stroke-width: 1;
+    stroke-dasharray: 3 5;
+}
+
+.kodex-stochastic-line {
+    fill: none;
+    stroke-width: 1.45;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+}
+
+.kodex-stochastic-line.is-k {
+    stroke: #ff9f43;
+    opacity: 0.82;
+}
+
+.kodex-stochastic-line.is-d {
+    stroke: #e4b7ff;
+    opacity: 0.88;
 }
 
 .kospi-flow-card {

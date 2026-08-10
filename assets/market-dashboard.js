@@ -1042,6 +1042,44 @@
         return result;
     }
 
+    function simpleMovingAverageValues(values, period) {
+        var result = new Array(values.length).fill(null);
+        var window = [];
+        var sum = 0;
+        values.forEach(function (value, index) {
+            window.push(value);
+            if (Number.isFinite(value)) sum += value;
+            if (window.length > period) {
+                var removed = window.shift();
+                if (Number.isFinite(removed)) sum -= removed;
+            }
+            if (window.length === period && window.every(Number.isFinite)) result[index] = sum / period;
+        });
+        return result;
+    }
+
+    function stochasticSlowRows(rows, lookback, smoothKPeriod, smoothDPeriod) {
+        var fastK = new Array(rows.length).fill(null);
+        rows.forEach(function (row, index) {
+            if (index < lookback - 1) return;
+            var highest = -Infinity;
+            var lowest = Infinity;
+            for (var cursor = index - lookback + 1; cursor <= index; cursor += 1) {
+                highest = Math.max(highest, rows[cursor].high);
+                lowest = Math.min(lowest, rows[cursor].low);
+            }
+            fastK[index] = highest > lowest ? (row.close - lowest) / (highest - lowest) * 100 : 50;
+        });
+        var slowK = simpleMovingAverageValues(fastK, smoothKPeriod);
+        var slowD = simpleMovingAverageValues(slowK, smoothDPeriod);
+        return rows.map(function (row, index) {
+            return Object.assign({}, row, {
+                stochSlowK: slowK[index],
+                stochSlowD: slowD[index]
+            });
+        });
+    }
+
     function priceOverlayRows(rows) {
         var ma5 = simpleMovingAverage(rows, 5);
         var ma20 = simpleMovingAverage(rows, 20);
@@ -1099,6 +1137,38 @@
             path += (path ? ' L ' : 'M ') + xFor(index).toFixed(2) + ' ' + yFor(value).toFixed(2);
         });
         return path;
+    }
+
+    function appendStochasticSlowOverlay(svg, rows, xFor, priceTop, priceBottom) {
+        var hasValues = rows.some(function (row) {
+            return Number.isFinite(row.stochSlowK) || Number.isFinite(row.stochSlowD);
+        });
+        if (!hasValues) return;
+        var plotHeight = priceBottom - priceTop;
+        var overlayTop = priceTop + plotHeight * 0.1;
+        var overlayBottom = priceBottom - plotHeight * 0.1;
+        function oscillatorY(value) {
+            return overlayTop + (100 - value) / 100 * (overlayBottom - overlayTop);
+        }
+        [20, 50, 80].forEach(function (value) {
+            svg.appendChild(makeSvg('line', {
+                x1: xFor(0),
+                y1: oscillatorY(value),
+                x2: xFor(rows.length - 1),
+                y2: oscillatorY(value),
+                'class': 'kodex-stochastic-guide ' + (value === 50 ? 'is-mid' : 'is-band')
+            }));
+        });
+        [
+            { key: 'stochSlowK', className: 'is-k' },
+            { key: 'stochSlowD', className: 'is-d' }
+        ].forEach(function (series) {
+            var path = svgPathForSeries(rows.map(function (row) { return row[series.key]; }), 0, xFor, oscillatorY);
+            if (path) svg.appendChild(makeSvg('path', {
+                d: path,
+                'class': 'kodex-stochastic-line ' + series.className
+            }));
+        });
     }
 
     function validVolumePressure(row) {
@@ -2460,7 +2530,7 @@
         var rows = technicalRangeSlice(history.slice(startIndex));
         startIndex = Math.max(0, history.indexOf(rows[0]));
         var endIndex = startIndex + rows.length;
-        var priceOverlays = priceOverlayRows(history);
+        var priceOverlays = stochasticSlowRows(priceOverlayRows(history), 20, 12, 12);
 
         svg.setAttribute('viewBox', '0 0 1000 530');
         var width = 1000;
@@ -2501,6 +2571,7 @@
         var bollingerRows = priceOverlays.slice(startIndex, endIndex);
         var bollingerBandPath = svgBandPath(bollingerRows, 'bbUpper', 'bbLower', xFor, priceY);
         if (bollingerBandPath) svg.appendChild(makeSvg('path', { d: bollingerBandPath, 'class': 'kodex-history-bollinger-band' }));
+        appendStochasticSlowOverlay(svg, bollingerRows, xFor, priceTop, priceBottom);
 
         var maxVolume = Math.max.apply(Math, rows.map(function (row) { return row.volume; }));
         function volumeY(value) {
@@ -2674,7 +2745,9 @@
         var axisText = typeof settings.axisFormatter === 'function'
             ? settings.axisFormatter
             : function (value) { return formatNumber(value, 0); };
-        var rows = technicalRangeSlice(priceOverlayRows(rollingIntradayRows(day, interval)));
+        var overlayRows = priceOverlayRows(rollingIntradayRows(day, interval));
+        if (settings.showStochasticSlow) overlayRows = stochasticSlowRows(overlayRows, 20, 12, 12);
+        var rows = technicalRangeSlice(overlayRows);
         svg.setAttribute('viewBox', '0 0 1000 590');
         var width = 1000;
         var margin = { left: 24, right: 88 };
@@ -2707,6 +2780,7 @@
         addChartSectionLabel(svg, '거래량 X-ray · CVD', margin.left, volumeTop + 12);
         var bollingerBandPath = svgBandPath(rows, 'bbUpper', 'bbLower', xFor, priceY);
         if (bollingerBandPath) svg.appendChild(makeSvg('path', { d: bollingerBandPath, 'class': 'kodex-history-bollinger-band' }));
+        if (settings.showStochasticSlow) appendStochasticSlowOverlay(svg, rows, xFor, priceTop, priceBottom);
 
         var maxVolume = Math.max.apply(Math, rows.map(function (row) { return row.volume; }));
         var forceScale = pressureStrengthScale(rows, function (row) { return row.delta; }, function (row) { return row.volume; });
@@ -2879,7 +2953,9 @@
             if (token !== kodexIntradayRenderToken || selectedKodexChartMode !== 'intraday') return;
             clear(svg);
             clear(summary);
-            renderKodexIntradayRows(day, selectedKodexIntradayInterval, svg, summary, readout);
+            renderKodexIntradayRows(day, selectedKodexIntradayInterval, svg, summary, readout, {
+                showStochasticSlow: true
+            });
         }).catch(function () {
             if (token !== kodexIntradayRenderToken) return;
             readout.textContent = '선택한 거래일의 분봉을 불러오지 못했습니다.';
