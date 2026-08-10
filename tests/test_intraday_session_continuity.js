@@ -24,7 +24,20 @@ assert.strictEqual(preopenIndex[2].minuteBars, 0, '장전부터 오늘 날짜를
 assert.strictEqual(preopenIndex[2].path, '', '장전 항목을 보존 파일로 오인하면 안 된다.');
 
 const closedIndex = live.ensureCurrentIntradayIndex(archiveIndex, '2026-08-10', 'CLOSE', null);
-assert.deepStrictEqual(closedIndex.map((row) => row.date), ['2026-08-06', '2026-08-07'], '휴장 상태에는 가짜 오늘 항목을 만들면 안 된다.');
+assert.deepStrictEqual(
+    closedIndex.map((row) => row.date),
+    ['2026-08-06', '2026-08-07', '2026-08-10'],
+    '장 마감 뒤 정적 색인이 갱신되기 전에도 당일 거래일을 유지해야 한다.'
+);
+assert.strictEqual(closedIndex[2].closed, true);
+assert.strictEqual(closedIndex[2].pending, true);
+
+const holidayClosedIndex = live.ensureCurrentIntradayIndex(archiveIndex, '2026-08-07', 'CLOSE', null);
+assert.deepStrictEqual(
+    holidayClosedIndex.map((row) => row.date),
+    ['2026-08-06', '2026-08-07'],
+    '마지막 확정 거래일과 같은 CLOSE 응답에는 별도 가짜 날짜를 만들면 안 된다.'
+);
 
 const firstLiveDay = live.normalizeKodexLiveIntradayDay([
     { localDateTime: '20260810090000', openPrice: 90605, highPrice: 91660, lowPrice: 90480, currentPrice: 90605, accumulatedTradingVolume: 207894 }
@@ -51,6 +64,11 @@ assert.strictEqual(
     '2026-08-07',
     '사용자가 직접 고른 과거 거래일은 새로고침 뒤에도 유지해야 한다.'
 );
+assert.strictEqual(
+    live.preferredIntradayDate(closedIndex, '2026-08-07', false),
+    '2026-08-10',
+    '장 마감 뒤에도 자동 선택은 유효한 과거 선택값이 아니라 최신 거래일을 따라야 한다.'
+);
 
 const rolledRuntimeIndex = live.mergeRuntimeIntradayIndex(
     archiveIndex.concat([{ date: '2026-08-10', path: '', live: true, pending: false }]),
@@ -61,6 +79,13 @@ assert.deepStrictEqual(
     ['2026-08-06', '2026-08-07', '2026-08-11'],
     '새 거래일 응답에는 이전 path 없는 live placeholder가 남으면 안 된다.'
 );
+const postCloseRuntimeIndex = live.mergeRuntimeIntradayIndex(openIndex, closedIndex);
+assert.deepStrictEqual(
+    postCloseRuntimeIndex.map((row) => row.date),
+    ['2026-08-06', '2026-08-07', '2026-08-10'],
+    'OPEN에서 CLOSE로 바뀌는 새로고침에도 당일 런타임 거래일이 사라지면 안 된다.'
+);
+assert.strictEqual(postCloseRuntimeIndex[2].closed, true);
 assert.strictEqual(
     live.intradaySourceDate('2026-08-07T15:30:00+09:00', '2026-08-10'),
     '2026-08-07',
@@ -91,13 +116,18 @@ assert.strictEqual(rollingOpen.bars[4].sessionDate, '2026-08-10');
 
 const dashboard = fs.readFileSync(path.join(__dirname, '../assets/market-dashboard.js'), 'utf8');
 const css = fs.readFileSync(path.join(__dirname, '../assets/market-dashboard.css'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, '../articles/market.html'), 'utf8');
 assert.ok(dashboard.includes("var bucketKey = sessionDate + '|' + bucket"), '서로 다른 거래일의 같은 시각 봉을 합치면 안 된다.');
 assert.ok(dashboard.includes('rows.slice(-previousCount)'), '전일 한 세션 폭을 유지하며 왼쪽 봉이 밀려나야 한다.');
 assert.ok(dashboard.includes('previousArchivedIntradayEntry(indexRows, selectedKodexIntradayDate)'), '오늘 보기에는 직전 보존 거래일을 연결해야 한다.');
 assert.ok(dashboard.includes("formatHistoryDate(date) + ' · 오늘 장전'"), '장전 오늘 라벨이 유지되어야 한다.');
+assert.ok(dashboard.includes("formatHistoryDate(date) + ' · 당일 마감'"), '장 마감 뒤 런타임 거래일 라벨이 유지되어야 한다.');
+assert.ok(dashboard.includes('MarketDashboardLive.preferredIntradayDate(indexRows, selectedKodexIntradayDate, selectedKodexIntradayDateExplicit)'), '모든 차트는 같은 최신 거래일 선택 helper를 사용해야 한다.');
 assert.ok(dashboard.includes("row && row.path"), '장전 placeholder를 합성 모멘텀 원자료로 요청하면 안 된다.');
 assert.ok(dashboard.includes('MarketDashboardLive.intradaySourceDate(cached.flowSourceLastAt, selectedDate)'), '장전 수급 기준일은 전 거래일 실제 날짜를 표시해야 한다.');
 assert.ok(dashboard.includes('MarketDashboardLive.mergeRuntimeIntradayIndex('), '날짜 목록 병합은 회귀 테스트 가능한 helper를 사용해야 한다.');
 assert.ok(css.includes('.intraday-session-divider'), '두 거래일의 경계를 차트에서 구분해야 한다.');
+assert.ok(html.includes('market-live-data.js?v=20260810-3'), '장 마감 거래일 수정본은 이전 live-data 캐시를 우회해야 한다.');
+assert.ok(html.includes('market-dashboard.js?v=20260810-14'), '공통 날짜 선택 UI도 이전 dashboard 캐시를 우회해야 한다.');
 
 console.log('Intraday current-session continuity tests passed.');

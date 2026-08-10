@@ -1043,7 +1043,14 @@
         var rows = (indexRows || []).map(function (row) { return Object.assign({}, row); });
         var date = normalizeIsoDate(currentDate);
         var status = String(marketStatus || '').toUpperCase();
-        if (!date || (status !== 'PREOPEN' && status !== 'OPEN')) return rows;
+        var latestArchivedDate = rows.filter(function (row) {
+            return row && row.path && normalizeIsoDate(row.date);
+        }).map(function (row) {
+            return row.date;
+        }).sort().slice(-1)[0] || '';
+        var keepClosingSession = status === 'CLOSE'
+            && (Boolean(liveDay) || !latestArchivedDate || date > latestArchivedDate);
+        if (!date || (status !== 'PREOPEN' && status !== 'OPEN' && !keepClosingSession)) return rows;
         var current = rows.filter(function (row) { return row.date === date; })[0];
         var values = {
             date: date,
@@ -1053,6 +1060,7 @@
             sourceLastAt: liveDay && liveDay.sourceLastAt || '',
             collectedAt: new Date(Number.isFinite(now) ? now : Date.now()).toISOString(),
             live: true,
+            closed: status === 'CLOSE',
             pending: !liveDay
         };
         if (current) Object.assign(current, values);
@@ -1069,7 +1077,7 @@
         var liveDate = rows.filter(function (row) { return row.live; }).map(function (row) {
             return row.date;
         }).slice(-1)[0] || '';
-        if (!explicitSelection && liveDate) return liveDate;
+        if (!explicitSelection) return liveDate || dates[dates.length - 1] || '';
         if (current && dates.indexOf(current) !== -1) return current;
         return dates[dates.length - 1] || '';
     }
@@ -1230,6 +1238,7 @@
             asOf: new Date(timestamp).toISOString(),
             asOfLabel: formatAsOfLabel(timestamp),
             shortTimeLabel: formatShortTime(timestamp),
+            sessionDate: normalizeIsoDate(bizdate) || normalizeIsoDate(marketDateKey(timestamp)),
             stateLabel: stateLabel(basic.marketStatus),
             marketStatus: basic.marketStatus,
             delayed: basic.marketStatus === 'OPEN' && now - timestamp > 10 * 60 * 1000,
@@ -1859,6 +1868,7 @@
             if (!markets.length) throw new Error('국내 지수 시세를 불러오지 못했습니다.');
             var primaryMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || markets[0];
             var kospiMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || null;
+            var marketSessionDate = kospiMarket && kospiMarket.sessionDate || currentSeoulDate;
             var marketTimestamp = Date.parse(primaryMarket.asOf);
             var statuses = markets.map(function (market) { return market.marketStatus; });
             var marketState = statuses.every(function (status) { return status === 'CLOSE'; })
@@ -1884,7 +1894,7 @@
             if (kodexInstrument && kodexIntradayIndex) {
                 kodexInstrument.intradayIndex = ensureCurrentIntradayIndex(
                     kodexIntradayIndex,
-                    currentSeoulDate,
+                    marketSessionDate,
                     kospiMarket && kospiMarket.marketStatus,
                     null,
                     now
@@ -1898,13 +1908,13 @@
                 try {
                     kodexInstrument.liveIntradayDay = normalizeKodexLiveIntradayDay(
                         kodexLiveIntradayRaw,
-                        currentSeoulDate,
+                        marketSessionDate,
                         referencePressure.sigma,
                         referencePressure.sigmaSampleSize
                     );
                     kodexInstrument.intradayIndex = ensureCurrentIntradayIndex(
                         kodexInstrument.intradayIndex || [],
-                        currentSeoulDate,
+                        marketSessionDate,
                         kospiMarket && kospiMarket.marketStatus,
                         kodexInstrument.liveIntradayDay,
                         now
