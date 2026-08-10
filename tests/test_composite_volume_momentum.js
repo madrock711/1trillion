@@ -132,6 +132,8 @@ function dailyRows(count, offset) {
     const dashboard = fs.readFileSync(path.join(__dirname, '..', 'assets', 'market-dashboard.js'), 'utf8');
     const css = fs.readFileSync(path.join(__dirname, '..', 'assets', 'market-dashboard.css'), 'utf8');
     assert(html.includes('data-technical-card="composite-momentum"'));
+    assert(html.includes('data-technical-card-title="KOSPI·KODEX 거래량 모멘텀"'));
+    assert(html.includes('id="composite-momentum-title">KOSPI·KODEX 거래량 모멘텀</h3>'));
     assert(html.includes('id="composite-momentum-chart"'));
     assert(html.includes('viewBox="0 0 1000 190"'));
     assert(html.includes('class="sr-only" id="composite-momentum-readout"'));
@@ -150,6 +152,9 @@ function dailyRows(count, offset) {
     assert(dashboard.includes('var momentumBottom = 150;'));
     assert(dashboard.includes('var combinedBars = (previousDay ? previousDay.bars : []).concat(selectedDay.bars || []);'));
     assert(dashboard.includes('rows = rows.slice(-previousCount);'));
+    assert(dashboard.includes("title.textContent = 'KOSPI·KODEX 거래량 모멘텀';"));
+    assert(!dashboard.includes("formatHistoryDate(previousDay.date) + ' → ' + formatHistoryDate(selectedDay.date) + ' KOSPI·KODEX 거래량 모멘텀'"));
+    assert(!dashboard.includes("'KOSPI·KODEX 합성 거래량 모멘텀 · ' + kospiPeriodLabel()"));
     console.log('composite volume momentum tests passed');
 }()).catch(error => {
     console.error(error);

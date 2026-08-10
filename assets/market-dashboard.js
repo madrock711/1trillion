@@ -1344,6 +1344,7 @@
         var readout = document.getElementById('composite-momentum-readout');
         if (!svg || !title || !readout) return;
         clear(svg);
+        title.textContent = 'KOSPI·KODEX 거래량 모멘텀';
         var rows;
         if (selectedKodexChartMode === 'intraday') {
             var selectedDay = (days || []).filter(function (day) { return day.date === selectedKodexIntradayDate; })[0];
@@ -1362,14 +1363,10 @@
                 if (previousCount > 0) rows = rows.slice(-previousCount);
             }
             rows = rows.map(function (row) { return Object.assign({ label: row.time }, row); });
-            title.textContent = previousDay
-                ? formatHistoryDate(previousDay.date) + ' → ' + formatHistoryDate(selectedDay.date) + ' KOSPI·KODEX 거래량 모멘텀'
-                : formatHistoryDate(selectedDay.date) + ' KOSPI·KODEX 거래량 모멘텀';
         } else {
             rows = (days || []).map(function (day) {
                 return Object.assign({ label: day.date }, day.summary);
             });
-            title.textContent = 'KOSPI·KODEX 합성 거래량 모멘텀 · ' + kospiPeriodLabel() + ' · ' + rows.length + '거래일';
         }
         rows = rows.filter(function (row) {
             return [row.direction, row.momentum, row.signal, row.divergence].every(Number.isFinite);
