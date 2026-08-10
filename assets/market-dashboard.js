@@ -29,6 +29,8 @@
     var technicalRangeRows = [];
     var technicalRangeRenderFrame = 0;
     var technicalRangeDrag = null;
+    var floatingDashboardControlsFrame = 0;
+    var floatingDashboardControlsBound = false;
     var kodexIntradayRenderToken = 0;
     var kospiTechnicalHistory = [];
     var kospiHistoryRequestToken = 0;
@@ -56,6 +58,7 @@
         'kodex-levels',
         'kodex-market-context'
     ];
+    var technicalChartCardIds = ['kospi-flow', 'kodex-history', 'composite-momentum', 'tqqq-history'];
 
     function clear(node) {
         if (node && node.id && linkedChartViews[node.id]) delete linkedChartViews[node.id];
@@ -231,6 +234,15 @@
         });
     }
 
+    function placeTechnicalRangeNavigator(stack) {
+        var slot = document.getElementById('technical-range-navigator-slot');
+        if (!stack || !slot) return;
+        var firstChart = directTechnicalCards(stack).filter(function (card) {
+            return technicalChartCardIds.indexOf(card.getAttribute('data-technical-card')) !== -1;
+        })[0];
+        if (firstChart && firstChart.nextElementSibling !== slot) firstChart.insertAdjacentElement('afterend', slot);
+    }
+
     function moveTechnicalCard(stack, card, direction) {
         var cards = directTechnicalCards(stack);
         var currentIndex = cards.indexOf(card);
@@ -240,8 +252,10 @@
         if (direction < 0) stack.insertBefore(card, cards[targetIndex]);
         else stack.insertBefore(cards[targetIndex], card);
 
+        placeTechnicalRangeNavigator(stack);
         saveTechnicalCardOrder(stack);
         updateTechnicalCardOrderControls(stack);
+        queueFloatingDashboardControlsUpdate();
         card.classList.remove('is-order-updated');
         window.requestAnimationFrame(function () { card.classList.add('is-order-updated'); });
 
@@ -269,6 +283,7 @@
             if (requestedOrder.indexOf(id) === -1) requestedOrder.push(id);
         });
         requestedOrder.forEach(function (id) { stack.appendChild(cardsById[id]); });
+        placeTechnicalRangeNavigator(stack);
 
         directTechnicalCards(stack).forEach(function (card) {
             var title = card.getAttribute('data-technical-card-title') || '분석 카드';
@@ -293,6 +308,60 @@
         updateTechnicalCardOrderControls(stack);
     }
 
+    function updateFloatingDashboardControls() {
+        var tabs = document.getElementById('dashboard-tabs');
+        var tabsSentinel = document.getElementById('dashboard-tabs-sentinel');
+        if (tabs && !tabsSentinel) {
+            tabsSentinel = make('span', 'market-view-tabs-sentinel');
+            tabsSentinel.id = 'dashboard-tabs-sentinel';
+            tabsSentinel.setAttribute('aria-hidden', 'true');
+            tabs.insertAdjacentElement('beforebegin', tabsSentinel);
+        }
+
+        if (tabs && tabsSentinel) {
+            var header = document.querySelector('body > header');
+            var stickyHeader = header && window.getComputedStyle(header).position === 'sticky';
+            var desktopTop = stickyHeader ? Math.ceil(header.getBoundingClientRect().height) + 8 : 12;
+            tabs.style.setProperty('--market-tabs-sticky-top', desktopTop + 'px');
+            var resolvedTop = parseFloat(window.getComputedStyle(tabs).top) || desktopTop;
+            tabs.classList.toggle('is-floating', tabsSentinel.getBoundingClientRect().top <= resolvedTop);
+        }
+
+        var slot = document.getElementById('technical-range-navigator-slot');
+        var navigator = document.getElementById('technical-range-navigator');
+        var technicalPanel = document.querySelector('[data-view-panel="technical"]');
+        var canFloat = slot && navigator && technicalPanel && !slot.hidden && !technicalPanel.hidden;
+        var shouldFloat = false;
+        if (canFloat) {
+            var bottomOffset = window.matchMedia('(max-width: 720px)').matches ? 8 : 12;
+            var navigatorHeight = Math.max(navigator.getBoundingClientRect().height, navigator.offsetHeight, 1);
+            var slotTop = slot.getBoundingClientRect().top;
+            var triggerTop = window.innerHeight - bottomOffset - navigatorHeight;
+            var panelBottom = technicalPanel.getBoundingClientRect().bottom;
+            shouldFloat = slotTop <= triggerTop && panelBottom > window.innerHeight - bottomOffset;
+            if (shouldFloat) slot.style.height = navigatorHeight + 'px';
+        }
+        if (navigator) navigator.classList.toggle('is-floating', shouldFloat);
+        if (slot && !shouldFloat) slot.style.height = '';
+        document.documentElement.classList.toggle('technical-navigator-floating', shouldFloat);
+    }
+
+    function queueFloatingDashboardControlsUpdate() {
+        if (floatingDashboardControlsFrame) return;
+        floatingDashboardControlsFrame = window.requestAnimationFrame(function () {
+            floatingDashboardControlsFrame = 0;
+            updateFloatingDashboardControls();
+        });
+    }
+
+    function bindFloatingDashboardControls() {
+        if (floatingDashboardControlsBound) return;
+        floatingDashboardControlsBound = true;
+        window.addEventListener('scroll', queueFloatingDashboardControlsUpdate, { passive: true });
+        window.addEventListener('resize', queueFloatingDashboardControlsUpdate);
+        queueFloatingDashboardControlsUpdate();
+    }
+
     viewLinks.forEach(function (link) {
         link.addEventListener('click', function (event) {
             if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -312,6 +381,7 @@
     });
 
     initializeTechnicalCardOrdering();
+    bindFloatingDashboardControls();
     setView(currentViewFromUrl());
 
     function isStaleSnapshot(data) {
@@ -931,9 +1001,16 @@
 
     function setTechnicalNavigatorVisibility(visible) {
         var navigator = document.getElementById('technical-range-navigator');
+        var slot = document.getElementById('technical-range-navigator-slot');
+        var stack = document.getElementById('technical-card-stack');
         bindTechnicalRangeNavigator();
-        if (navigator) navigator.hidden = !visible;
+        if (visible) placeTechnicalRangeNavigator(stack);
+        if (slot) slot.hidden = !visible;
+        if (!visible && navigator) navigator.classList.remove('is-floating');
+        if (!visible && slot) slot.style.height = '';
         document.documentElement.classList.toggle('technical-navigator-active', Boolean(visible));
+        if (!visible) document.documentElement.classList.remove('technical-navigator-floating');
+        queueFloatingDashboardControlsUpdate();
     }
 
     function formatCompactVolume(value) {

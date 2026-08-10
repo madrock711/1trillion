@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260810-3">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260810-4">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -66,7 +66,7 @@
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
     <script defer src="../assets/market-live-data.js?v=20260810-2"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260810-4"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260810-5"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -432,6 +432,26 @@
                     <p class="market-source-note" id="kospi-flow-source-note">KOSPI 가격·거래량과 외국인 현물 순매수는 Naver Finance의 KRX 공개 데이터 기준입니다.</p>
                 </section>
 
+                <div class="technical-range-navigator-slot" id="technical-range-navigator-slot" hidden>
+                    <aside class="technical-range-navigator" id="technical-range-navigator" aria-label="기술적 분석 표시 구간">
+                        <div class="technical-range-heading">
+                            <strong>차트 표시 구간</strong>
+                            <span id="technical-range-summary">전체 구간</span>
+                            <button type="button" id="technical-range-reset">전체 보기</button>
+                        </div>
+                        <div class="technical-range-track" id="technical-range-track">
+                            <svg id="technical-range-overview" viewBox="0 0 1000 42" preserveAspectRatio="none" aria-hidden="true"></svg>
+                            <div class="technical-range-selection" id="technical-range-selection" role="slider" tabindex="0" aria-label="선택 구간 이동" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div>
+                            <input id="technical-range-start" class="technical-range-input is-start" type="range" min="0" max="100" step="1" value="0" aria-label="표시 구간 시작">
+                            <input id="technical-range-end" class="technical-range-input is-end" type="range" min="0" max="100" step="1" value="100" aria-label="표시 구간 끝">
+                        </div>
+                        <div class="technical-range-labels" aria-live="polite">
+                            <span id="technical-range-start-label">시작</span>
+                            <span id="technical-range-end-label">끝</span>
+                        </div>
+                    </aside>
+                </div>
+
                 <section class="market-dashboard-card market-technical-card technical-orderable technical-orderable--wide" data-technical-card="kodex-technical" data-technical-card-title="KODEX 당일 가격 범위" aria-labelledby="technical-chart-title">
                     <div class="market-card-heading-row market-card-heading-row--technical">
                         <div>
@@ -617,24 +637,6 @@
                 </aside>
             </section>
         </div>
-
-        <aside class="technical-range-navigator" id="technical-range-navigator" aria-label="기술적 분석 표시 구간" hidden>
-            <div class="technical-range-heading">
-                <strong>차트 표시 구간</strong>
-                <span id="technical-range-summary">전체 구간</span>
-                <button type="button" id="technical-range-reset">전체 보기</button>
-            </div>
-            <div class="technical-range-track" id="technical-range-track">
-                <svg id="technical-range-overview" viewBox="0 0 1000 42" preserveAspectRatio="none" aria-hidden="true"></svg>
-                <div class="technical-range-selection" id="technical-range-selection" role="slider" tabindex="0" aria-label="선택 구간 이동" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div>
-                <input id="technical-range-start" class="technical-range-input is-start" type="range" min="0" max="100" step="1" value="0" aria-label="표시 구간 시작">
-                <input id="technical-range-end" class="technical-range-input is-end" type="range" min="0" max="100" step="1" value="100" aria-label="표시 구간 끝">
-            </div>
-            <div class="technical-range-labels" aria-live="polite">
-                <span id="technical-range-start-label">시작</span>
-                <span id="technical-range-end-label">끝</span>
-            </div>
-        </aside>
 
         <section class="market-dashboard-sources" aria-labelledby="dashboard-source-title">
             <h2 id="dashboard-source-title">데이터 기준과 출처</h2>
