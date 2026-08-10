@@ -23,7 +23,7 @@ assert(
     'KOSPI 기준선은 작성 당시 분석값을 유지해야 합니다.'
 );
 assert(
-    html.includes('market-dashboard.js?v=20260810-2'),
+    html.includes('market-dashboard.js?v=20260810-3'),
     '수정된 대시보드 스크립트가 캐시를 우회해야 합니다.'
 );
 

@@ -968,7 +968,7 @@
     }
 
     function normalizeKodexLiveIntradayDay(payload, expectedDate, referenceSigma, referenceSampleSize) {
-        if (!Array.isArray(payload) || payload.length < 2 || !/^\d{4}-\d{2}-\d{2}$/.test(expectedDate)) {
+        if (!Array.isArray(payload) || payload.length < 1 || !/^\d{4}-\d{2}-\d{2}$/.test(expectedDate)) {
             throw new Error('오늘 KODEX 분봉 데이터가 올바르지 않습니다.');
         }
         var compactDate = expectedDate.replace(/-/g, '');
@@ -1035,6 +1035,77 @@
             live: true,
             bars: bars
         };
+    }
+
+    function ensureCurrentIntradayIndex(indexRows, currentDate, marketStatus, liveDay, now) {
+        var rows = (indexRows || []).map(function (row) { return Object.assign({}, row); });
+        var date = normalizeIsoDate(currentDate);
+        var status = String(marketStatus || '').toUpperCase();
+        if (!date || (status !== 'PREOPEN' && status !== 'OPEN')) return rows;
+        var current = rows.filter(function (row) { return row.date === date; })[0];
+        var values = {
+            date: date,
+            path: current && current.path || '',
+            minuteBars: liveDay && Array.isArray(liveDay.bars) ? liveDay.bars.length : 0,
+            coverageRatio: liveDay ? 1 : 0,
+            sourceLastAt: liveDay && liveDay.sourceLastAt || '',
+            collectedAt: new Date(Number.isFinite(now) ? now : Date.now()).toISOString(),
+            live: true,
+            pending: !liveDay
+        };
+        if (current) Object.assign(current, values);
+        else rows.push(values);
+        return rows.sort(function (left, right) { return left.date.localeCompare(right.date); });
+    }
+
+    function buildRollingIntradayDay(previousDay, currentDay, targetDate) {
+        var target = normalizeIsoDate(targetDate);
+        if (!previousDay || !normalizeIsoDate(previousDay.date) || !Array.isArray(previousDay.bars)
+            || !target || (currentDay && !Array.isArray(currentDay.bars))) {
+            throw new Error('연속 분봉을 만들 거래일 데이터가 올바르지 않습니다.');
+        }
+        var previousDate = normalizeIsoDate(previousDay.date);
+        var previousBars = previousDay.bars.map(function (bar) {
+            return Object.assign({}, bar, { date: previousDate, sessionDate: previousDate });
+        });
+        var currentBars = currentDay ? currentDay.bars.map(function (bar) {
+            return Object.assign({}, bar, { date: target, sessionDate: target });
+        }) : [];
+        return {
+            date: target,
+            previousDate: previousDate,
+            rolling: true,
+            live: Boolean(currentDay && currentDay.live),
+            pending: !currentBars.length,
+            previousBarCount: previousBars.length,
+            currentBarCount: currentBars.length,
+            sourceLastAt: currentDay && currentDay.sourceLastAt || previousDay.sourceLastAt || '',
+            flowSourceLastAt: currentDay && currentDay.flowSourceLastAt || previousDay.flowSourceLastAt || '',
+            bars: previousBars.concat(currentBars)
+        };
+    }
+
+    function mergeRuntimeIntradayIndex(previousRows, incomingRows) {
+        var incoming = Array.isArray(incomingRows) ? incomingRows : [];
+        var incomingLiveEntry = incoming.filter(function (row) {
+            return row && row.live && !row.path;
+        }).slice(-1)[0] || null;
+        var byDate = {};
+        (Array.isArray(previousRows) ? previousRows : []).concat(incoming).forEach(function (row) {
+            if (row && normalizeIsoDate(row.date)) byDate[row.date] = row;
+        });
+        return Object.keys(byDate).sort().map(function (date) {
+            return byDate[date];
+        }).filter(function (row) {
+            return !row.live || Boolean(row.path)
+                || Boolean(incomingLiveEntry && row.date === incomingLiveEntry.date);
+        });
+    }
+
+    function intradaySourceDate(sourceLastAt, fallbackDate) {
+        return normalizeIsoDate(String(sourceLastAt || '').slice(0, 10))
+            || normalizeIsoDate(fallbackDate)
+            || '';
     }
 
     function cleanDisplayText(value) {
@@ -1641,7 +1712,7 @@
         url.searchParams.set('startDateTime', compactDate + '0900');
         url.searchParams.set('endDateTime', compactDate + '1530');
         return fetchJson(fetchImpl, url.href, signal, nonce).then(function (payload) {
-            if (!Array.isArray(payload) || payload.length < 2) throw new Error('오늘 KODEX 분봉이 아직 없습니다.');
+            if (!Array.isArray(payload) || payload.length < 1) throw new Error('오늘 KODEX 분봉이 아직 없습니다.');
             return payload;
         });
     }
@@ -1795,7 +1866,13 @@
             }
             if (kodexInstrument && !kodexVolumePressure) missingSources.push('KODEX 분봉 기반 거래 압력');
             if (kodexInstrument && kodexIntradayIndex) {
-                kodexInstrument.intradayIndex = kodexIntradayIndex;
+                kodexInstrument.intradayIndex = ensureCurrentIntradayIndex(
+                    kodexIntradayIndex,
+                    currentSeoulDate,
+                    kospiMarket && kospiMarket.marketStatus,
+                    null,
+                    now
+                );
                 kodexInstrument.intradayIndexUrl = intradayIndexUrl;
             } else if (kodexInstrument) {
                 missingSources.push('KODEX 분봉 이력');
@@ -1809,18 +1886,13 @@
                         referencePressure.sigma,
                         referencePressure.sigmaSampleSize
                     );
-                    if (!kodexInstrument.intradayIndex) kodexInstrument.intradayIndex = [];
-                    if (!kodexInstrument.intradayIndex.some(function (row) { return row.date === currentSeoulDate; })) {
-                        kodexInstrument.intradayIndex = kodexInstrument.intradayIndex.concat([{
-                            date: currentSeoulDate,
-                            path: '',
-                            minuteBars: kodexInstrument.liveIntradayDay.bars.length,
-                            coverageRatio: 1,
-                            sourceLastAt: kodexInstrument.liveIntradayDay.sourceLastAt,
-                            collectedAt: new Date(now).toISOString(),
-                            live: true
-                        }]);
-                    }
+                    kodexInstrument.intradayIndex = ensureCurrentIntradayIndex(
+                        kodexInstrument.intradayIndex || [],
+                        currentSeoulDate,
+                        kospiMarket && kospiMarket.marketStatus,
+                        kodexInstrument.liveIntradayDay,
+                        now
+                    );
                 } catch (error) {
                     missingSources.push('KODEX 오늘 분봉');
                 }
@@ -1885,6 +1957,10 @@
         normalizeKodexIntradayIndex: normalizeKodexIntradayIndex,
         normalizeKodexIntradayDay: normalizeKodexIntradayDay,
         normalizeKodexLiveIntradayDay: normalizeKodexLiveIntradayDay,
+        ensureCurrentIntradayIndex: ensureCurrentIntradayIndex,
+        buildRollingIntradayDay: buildRollingIntradayDay,
+        mergeRuntimeIntradayIndex: mergeRuntimeIntradayIndex,
+        intradaySourceDate: intradaySourceDate,
         mergeKodexVolumePressure: mergeKodexVolumePressure,
         fetchKodexIntradayDay: fetchKodexIntradayDay,
         parseNumber: parseNumber,
