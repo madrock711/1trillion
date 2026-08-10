@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-10-0852-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-08-10.md",
+  "reportSha256": "aa0c9e2d30471b3fd0528a7181970a307dec283d9799d9ac072eb9c5323c47a2",
+  "issuedAt": "2026-08-10T08:52:00+09:00",
+  "dataCutoffAt": "2026-08-10T08:51:00+09:00",
+  "marketState": "preopen",
+  "marketRegime": "mixed",
+  "evaluationBucket": "preopen",
+  "target": {
+    "sessionDate": "2026-08-10",
+    "horizon": "session_close",
+    "instrument": "KOSPI",
+    "leadSessions": 0,
+    "previousSessionDate": "2026-08-07"
+  },
+  "reference": {
+    "price": 6258.77,
+    "asOf": "2026-08-07T15:30:00+09:00",
+    "kind": "previous_close"
+  },
+  "scenarios": {
+    "bull": {"low": 6400, "high": 6550, "probability": 0.30},
+    "base": {"low": 6250, "high": 6400, "probability": 0.50},
+    "bear": {"low": 6100, "high": 6250, "probability": 0.20}
+  },
+  "closeEnvelopeCoverage": 0.90,
+  "pathEnvelope": {"low": 6100, "high": 6550, "coverage": 0.90},
+  "drivers": [
+    {
+      "id": "us-yield-semiconductor",
+      "rank": 1,
+      "claim": "미국 장기금리 하락과 반도체 반등이 국내 대형 반도체의 출발을 지지한다.",
+      "validationMetric": "삼성전자·SK하이닉스 시가 대비 종가와 미국 10년물"
+    },
+    {
+      "id": "domestic-flow-persistence",
+      "rank": 2,
+      "claim": "외국인 현물과 비차익 프로그램의 개장 후 지속성이 지수 반등을 결정한다.",
+      "validationMetric": "09:30·10:00·14:00·종가 누적 수급"
+    },
+    {
+      "id": "memory-tightness",
+      "rank": 3,
+      "claim": "DRAM 공급 제약이 반도체 하단을 지지한다.",
+      "validationMetric": "DDR5·DDR4 현물가와 삼성전자·SK하이닉스 종가"
+    }
+  ],
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-08-10T15:20:00+09:00",
+      "conditions": [
+        {"id":"bull-price","description":"KOSPI 6,400 상회","metricId":"kospi_price","operator":"gte","threshold":6400,"source":"Naver Finance KOSPI"},
+        {"id":"bull-flow","description":"외국인 현물 순매수 유지","metricId":"foreign_cash","operator":"gt","threshold":0,"source":"Naver Finance 투자자별 매매동향"}
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-08-10T15:20:00+09:00",
+      "conditions": [
+        {"id":"base-support","description":"직전 종가 6,258.77 방어","metricId":"kospi_price","operator":"gte","threshold":6258.77,"source":"Naver Finance KOSPI"}
+      ]
+    },
+    "bear": {
+      "logic": "OR",
+      "observeBy": "2026-08-10T15:20:00+09:00",
+      "conditions": [
+        {"id":"bear-price","description":"KOSPI 6,250 하회","metricId":"kospi_price","operator":"lt","threshold":6250,"source":"Naver Finance KOSPI"},
+        {"id":"bear-program","description":"프로그램 전체 순매도","metricId":"program_total","operator":"lt","threshold":0,"source":"Naver Finance 프로그램 매매동향"}
+      ]
+    }
+  },
+  "posture": {"attack": 35, "wait": 50, "defense": 15},
+  "supersedes": null,
+  "contentHash": "9fedf550ca68b4520a43d5f93340a1718fedc3cfb8ffc2cfcf77719a0f922485"
+}
