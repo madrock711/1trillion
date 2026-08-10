@@ -1150,6 +1150,26 @@
         function oscillatorY(value) {
             return overlayTop + (100 - value) / 100 * (overlayBottom - overlayTop);
         }
+        for (var index = 1; index < rows.length; index += 1) {
+            var previous = rows[index - 1];
+            var current = rows[index];
+            var values = [previous.stochSlowK, previous.stochSlowD, current.stochSlowK, current.stochSlowD];
+            if (!values.every(Number.isFinite)) continue;
+            var isOverbought = Math.max.apply(Math, values) >= 80;
+            var isOversold = Math.min.apply(Math, values) <= 20;
+            if (!isOverbought && !isOversold) continue;
+            var kLead = (previous.stochSlowK - previous.stochSlowD)
+                + (current.stochSlowK - current.stochSlowD);
+            svg.appendChild(makeSvg('polygon', {
+                points: [
+                    xFor(index - 1).toFixed(2) + ',' + oscillatorY(previous.stochSlowK).toFixed(2),
+                    xFor(index).toFixed(2) + ',' + oscillatorY(current.stochSlowK).toFixed(2),
+                    xFor(index).toFixed(2) + ',' + oscillatorY(current.stochSlowD).toFixed(2),
+                    xFor(index - 1).toFixed(2) + ',' + oscillatorY(previous.stochSlowD).toFixed(2)
+                ].join(' '),
+                'class': 'kodex-stochastic-zone-fill ' + (kLead >= 0 ? 'is-k-dominant' : 'is-d-dominant')
+            }));
+        }
         [20, 50, 80].forEach(function (value) {
             svg.appendChild(makeSvg('line', {
                 x1: xFor(0),
