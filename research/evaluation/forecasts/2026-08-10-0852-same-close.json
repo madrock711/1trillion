@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "forecastId": "2026-08-10-0852-same-close",
-  "visibility": "public",
+  "visibility": "internal",
   "reportPath": "reports/2026-08-10.md",
   "reportSha256": "aa0c9e2d30471b3fd0528a7181970a307dec283d9799d9ac072eb9c5323c47a2",
   "issuedAt": "2026-08-10T08:52:00+09:00",
@@ -73,7 +73,16 @@
       ]
     }
   },
+  "hypothesisTrials": [
+    {
+      "hypothesisId": "us-chip-signal-overweight",
+      "regime": "mixed",
+      "candidatePrediction": 6325,
+      "baselineId": "reference_carry",
+      "predictorVersion": "us-chip-signal-overweight-v1"
+    }
+  ],
   "posture": {"attack": 35, "wait": 50, "defense": 15},
   "supersedes": null,
-  "contentHash": "9fedf550ca68b4520a43d5f93340a1718fedc3cfb8ffc2cfcf77719a0f922485"
+  "contentHash": "5c77da5fbb5e3579926353f059d4f6cb6b2426af15337c55677b3552157263c2"
 }
