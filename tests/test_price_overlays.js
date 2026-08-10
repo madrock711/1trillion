@@ -71,7 +71,13 @@ assert.ok(source.includes('priceOverlayRows(rollingIntradayRows(day, interval))'
 assert.ok(source.includes('if (intraday) rows = priceOverlayRows(rows);'), 'KOSPI 분봉에도 가격 오버레이를 계산해야 한다.');
 assert.ok(source.includes("{ key: 'bbUpper', className: 'kodex-history-line is-bollinger' }"));
 assert.ok(source.includes("{ key: 'bbLower', className: 'kodex-history-line is-bollinger' }"));
-assert.ok(source.includes("node.getAttribute('data-price-ma-period') + (intraday ? '봉선' : '일선')"));
+assert.ok(source.includes("node.textContent = node.getAttribute('data-price-ma-period');"));
+['상승 봉', '하락 봉', '매수 우위 채움', '매도 우위 채움'].forEach((label) => {
+    assert.ok(!html.includes(label), `${label} 범례는 가격 차트에서 제거되어야 한다.`);
+});
+['5', '20', '60'].forEach((period) => {
+    assert.strictEqual((html.match(new RegExp(`data-price-ma-period="${period}">${period}<`, 'g')) || []).length, 3);
+});
 assert.strictEqual((html.match(/볼린저밴드 20·2/g) || []).length, 3, '세 가격 차트에 볼린저밴드 범례가 있어야 한다.');
 assert.strictEqual((html.match(/data-price-ma-period="5"/g) || []).length, 3);
 assert.ok(css.includes('.kodex-history-bollinger-band'));

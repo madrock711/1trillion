@@ -129,6 +129,6 @@ assert.ok(dashboard.includes('MarketDashboardLive.intradaySourceDate(cached.flow
 assert.ok(dashboard.includes('MarketDashboardLive.mergeRuntimeIntradayIndex('), '날짜 목록 병합은 회귀 테스트 가능한 helper를 사용해야 한다.');
 assert.ok(css.includes('.intraday-session-divider'), '두 거래일의 경계를 차트에서 구분해야 한다.');
 assert.ok(html.includes('market-live-data.js?v=20260810-3'), '장 마감 거래일 수정본은 이전 live-data 캐시를 우회해야 한다.');
-assert.ok(html.includes('market-dashboard.js?v=20260810-15'), '공통 날짜 선택 UI도 이전 dashboard 캐시를 우회해야 한다.');
+assert.ok(html.includes('market-dashboard.js?v=20260810-16'), '공통 날짜 선택 UI도 이전 dashboard 캐시를 우회해야 한다.');
 
 console.log('Intraday current-session continuity tests passed.');

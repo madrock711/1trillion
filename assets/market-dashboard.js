@@ -1126,7 +1126,7 @@
     function updatePriceOverlayLegend(intraday) {
         Array.prototype.forEach.call(document.querySelectorAll('[data-price-ma-period]'), function (node) {
             node.hidden = false;
-            node.textContent = node.getAttribute('data-price-ma-period') + (intraday ? '봉선' : '일선');
+            node.textContent = node.getAttribute('data-price-ma-period');
         });
     }
 
