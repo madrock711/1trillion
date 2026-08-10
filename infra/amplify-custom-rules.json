@@ -16,7 +16,7 @@
   },
   {
     "source": "/market-data/index/KOSPI/history",
-    "target": "https://fchart.stock.naver.com/sise.nhn?symbol=KOSPI&timeframe=day&count=300&requestType=0",
+    "target": "https://fchart.stock.naver.com/sise.nhn?symbol=KOSPI&timeframe=day&count=360&requestType=0",
     "status": "200"
   },
   {
@@ -221,6 +221,16 @@
     "status": "200"
   },
   {
+    "source": "/market-data/stock/122630/history/price-6",
+    "target": "https://m.stock.naver.com/front-api/stock/domestic/price/list?code=122630&page=6&pageSize=50",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/stock/122630/history/price-7",
+    "target": "https://m.stock.naver.com/front-api/stock/domestic/price/list?code=122630&page=7&pageSize=50",
+    "status": "200"
+  },
+  {
     "source": "/market-data/stock/005930/basic",
     "target": "https://m.stock.naver.com/api/stock/005930/basic",
     "status": "200"
@@ -247,7 +257,7 @@
   },
   {
     "source": "/market-data/us/TQQQ/history",
-    "target": "https://query1.finance.yahoo.com/v8/finance/chart/TQQQ?range=1y&interval=1d",
+    "target": "https://query1.finance.yahoo.com/v8/finance/chart/TQQQ?range=2y&interval=1d",
     "status": "200"
   },
   {

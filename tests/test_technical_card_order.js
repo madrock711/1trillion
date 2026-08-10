@@ -21,7 +21,7 @@ assert.deepStrictEqual(cardIds, [
 ]);
 assert.strictEqual(new Set(cardIds).size, cardIds.length, 'technical card ids must be unique');
 
-assert(js.includes("'kospi-flow',\n        'kodex-history',\n        'composite-momentum',\n        'tqqq-history'"), 'default order should keep KOSPI, KODEX, composite, and TQQQ charts together');
+assert(/'kospi-flow',\r?\n\s*'kodex-history',\r?\n\s*'composite-momentum',\r?\n\s*'tqqq-history'/.test(js), 'default order should keep KOSPI, KODEX, composite, and TQQQ charts together');
 assert(js.includes("hpmplab-technical-card-order-v2"), 'technical order must persist in localStorage');
 assert(js.includes("data-technical-card-move"), 'technical cards need move controls');
 assert(js.includes("updateTechnicalCardOrderControls(stack)"), 'move control disabled states must be refreshed');

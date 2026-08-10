@@ -1626,7 +1626,7 @@
         if (kodexHistoryCache.pending) return kodexHistoryCache.pending;
 
         var historyPrefix = new URL('stock/122630/history/', baseUrl).href;
-        kodexHistoryCache.pending = Promise.all([1, 2, 3, 4, 5].map(function (page) {
+        kodexHistoryCache.pending = Promise.all([1, 2, 3, 4, 5, 6, 7].map(function (page) {
             return fetchJson(fetchImpl, historyPrefix + 'price-' + page, signal, nonce);
         })).then(function (parts) {
             var history = normalizeKodexPriceHistory(parts);

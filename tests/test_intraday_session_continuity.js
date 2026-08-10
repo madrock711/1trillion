@@ -128,6 +128,8 @@ const html = fs.readFileSync(path.join(__dirname, '../articles/market.html'), 'u
 assert.ok(dashboard.includes("var bucketKey = sessionDate + '|' + bucket"), '서로 다른 거래일의 같은 시각 봉을 합치면 안 된다.');
 assert.ok(!dashboard.includes('rows.slice(-previousCount)'), '두 거래일 원자료를 한 거래일로 다시 잘라내면 안 된다.');
 assert.ok(dashboard.includes('intradayWindowEntries(indexRows, selectedKodexIntradayDate, intradayNavigatorSessionCount)'), '선택 거래일에는 최대 네 거래일을 연결해야 한다.');
+assert.ok(dashboard.includes('intradayWindowEntries(indexRows, selectedKodexIntradayDate, intradayIndicatorWarmupSessionCount)'), '분봉 지표는 화면 밖 선행 거래일까지 계산해야 한다.');
+assert.ok(dashboard.includes('setIntradayDisplaySessions(day, visibleEntries)'), '계산 구간과 실제 표시 구간을 분리해야 한다.');
 assert.ok(dashboard.includes("formatHistoryDate(date) + ' · 오늘 장전'"), '장전 오늘 라벨이 유지되어야 한다.');
 assert.ok(dashboard.includes("formatHistoryDate(date) + ' · 당일 마감'"), '장 마감 뒤 런타임 거래일 라벨이 유지되어야 한다.');
 assert.ok(dashboard.includes('MarketDashboardLive.preferredIntradayDate(indexRows, selectedKodexIntradayDate, selectedKodexIntradayDateExplicit)'), '모든 차트는 같은 최신 거래일 선택 helper를 사용해야 한다.');
@@ -136,7 +138,7 @@ assert.ok(dashboard.includes("row && row.path"), '장전 placeholder를 합성 �
 assert.ok(dashboard.includes('MarketDashboardLive.intradaySourceDate(cached.flowSourceLastAt, selectedDate)'), '장전 수급 기준일은 전 거래일 실제 날짜를 표시해야 한다.');
 assert.ok(dashboard.includes('MarketDashboardLive.mergeRuntimeIntradayIndex('), '날짜 목록 병합은 회귀 테스트 가능한 helper를 사용해야 한다.');
 assert.ok(css.includes('.intraday-session-divider'), '두 거래일의 경계를 차트에서 구분해야 한다.');
-assert.ok(html.includes('market-live-data.js?v=20260810-5'), '1년·네 거래일 원자료는 이전 live-data 캐시를 우회해야 한다.');
-assert.ok(html.includes('market-dashboard.js?v=20260810-18'), '네 거래일 분봉 범위는 이전 dashboard 캐시를 우회해야 한다.');
+assert.ok(html.includes('market-live-data.js?v=20260810-6'), '선행 계산 원자료는 이전 live-data 캐시를 우회해야 한다.');
+assert.ok(html.includes('market-dashboard.js?v=20260810-19'), '숨은 선행 봉 계산은 이전 dashboard 캐시를 우회해야 한다.');
 
 console.log('Intraday current-session continuity tests passed.');

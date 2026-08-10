@@ -68,7 +68,7 @@ assert.ok(bandPath.startsWith('M '), '볼린저밴드 영역 경로가 생성되
 assert.ok(bandPath.endsWith(' Z'), '볼린저밴드 영역은 닫힌 경로여야 한다.');
 
 assert.ok(source.includes('priceOverlayRows(rollingIntradayRows(day, interval))'), 'KODEX와 TQQQ 분봉은 봉 집계 뒤 가격 오버레이를 계산해야 한다.');
-assert.ok(source.includes('if (intraday) rows = priceOverlayRows(rows);'), 'KOSPI 분봉에도 가격 오버레이를 계산해야 한다.');
+assert.ok(source.includes('rows = priceOverlayRows(rows);') && source.includes('rows = intradayDisplayRows(rows, options.day);'), 'KOSPI 분봉은 숨은 선행 봉으로 가격 오버레이를 계산한 뒤 표시 구간만 남겨야 한다.');
 assert.ok(source.includes("{ key: 'bbUpper', className: 'kodex-history-line is-bollinger' }"));
 assert.ok(source.includes("{ key: 'bbLower', className: 'kodex-history-line is-bollinger' }"));
 assert.ok(source.includes("node.textContent = node.getAttribute('data-price-ma-period');"));
