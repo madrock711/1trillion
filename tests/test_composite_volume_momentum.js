@@ -151,7 +151,7 @@ function dailyRows(count, offset) {
     assert(css.includes('min-width: 680px'));
     assert(dashboard.includes('var momentumBottom = 150;'));
     assert(dashboard.includes('var combinedBars = (previousDay ? previousDay.bars : []).concat(selectedDay.bars || []);'));
-    assert(dashboard.includes('rows = rows.slice(-previousCount);'));
+    assert(!dashboard.includes('rows = rows.slice(-previousCount);'), '합성 모멘텀도 두 거래일 원자료를 유지해야 한다.');
     assert(dashboard.includes("title.textContent = 'KOSPI·KODEX 거래량 모멘텀';"));
     assert(!dashboard.includes("formatHistoryDate(previousDay.date) + ' → ' + formatHistoryDate(selectedDay.date) + ' KOSPI·KODEX 거래량 모멘텀'"));
     assert(!dashboard.includes("'KOSPI·KODEX 합성 거래량 모멘텀 · ' + kospiPeriodLabel()"));

@@ -1619,7 +1619,7 @@
             fetchJson(fetchImpl, historyPrefix + 'price-3', signal, nonce)
         ]).then(function (parts) {
             var history = normalizeKodexPriceHistory(parts);
-            if (history.length < 55) throw new Error('KODEX 3개월 가격 이력이 부족합니다.');
+            if (history.length < 55) throw new Error('KODEX 가격 이력이 부족합니다.');
             kodexHistoryCache.value = history;
             kodexHistoryCache.expiresAt = now + ttlMs;
             return history;
@@ -1638,7 +1638,7 @@
         var historyUrl = new URL('us/TQQQ/history', baseUrl).href;
         tqqqHistoryCache.pending = fetchText(fetchImpl, historyUrl, signal, nonce).then(function (csv) {
             var history = normalizeTqqqPriceHistory(csv);
-            if (history.length < 55) throw new Error('TQQQ 3개월 가격 이력이 부족합니다.');
+            if (history.length < 55) throw new Error('TQQQ 가격 이력이 부족합니다.');
             tqqqHistoryCache.value = history;
             tqqqHistoryCache.expiresAt = now + ttlMs;
             return history;
@@ -1888,7 +1888,7 @@
             if (kodexInstrument && kodexHistory) {
                 kodexInstrument.priceHistory = mergeKodexVolumePressure(kodexHistory, kodexVolumePressure);
             } else if (kodexInstrument) {
-                missingSources.push('KODEX 3개월 가격·수급');
+                missingSources.push('KODEX 가격·수급');
             }
             if (kodexInstrument && !kodexVolumePressure) missingSources.push('KODEX 분봉 기반 거래 압력');
             if (kodexInstrument && kodexIntradayIndex) {
@@ -1925,7 +1925,7 @@
             } else if (kodexInstrument && statuses.some(function (status) { return status === 'OPEN'; })) {
                 missingSources.push('KODEX 오늘 분봉');
             }
-            if (!tqqqHistory) missingSources.push('TQQQ 3개월 가격');
+            if (!tqqqHistory) missingSources.push('TQQQ 가격');
             if (!tqqqIntradayOneMinute && !tqqqIntradayFiveMinute) missingSources.push('TQQQ 분봉 이력');
             var delayedSources = markets.concat(instruments).filter(function (item) { return item.delayed; }).map(function (item) {
                 return item.label;
