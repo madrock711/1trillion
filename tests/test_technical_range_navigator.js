@@ -34,8 +34,11 @@ assert(amplifyRules.includes('TQQQ?range=2y&interval=1d'), 'TQQQ 일봉은 1년 
 assert(amplifyRules.includes('count=360'), 'KOSPI 일봉은 1년 표시 앞의 60봉 계산 구간까지 확보해야 한다.');
 assert(amplifyRules.includes('/market-data/stock/122630/history/price-7'), 'KODEX 일봉은 1년 표시 앞의 지표 계산 구간까지 페이지를 확장해야 한다.');
 assert(dashboard.includes('var intradayNavigatorSessionCount = 4;'));
-assert(dashboard.includes('var intradayIndicatorWarmupSessionCount = 12;'));
+assert(dashboard.includes('var intradayIndicatorWarmupSessionCount = 14;'));
 assert(dashboard.includes('function intradayDisplayRows(rows, day)'));
+assert(dashboard.includes('function intradayCalculationDays(primaryDays, warmupDays, targetDate)'));
+assert(amplifyRules.includes('/market-data/index/KOSPI/intraday-warmup'));
+assert(amplifyRules.includes('/market-data/stock/122630/intraday-warmup'));
 assert(dashboard.includes('var maxIntradayRenderedBars = 800;'));
 assert(dashboard.includes('function effectiveIntradayInterval(day, requestedInterval)'));
 assert(dashboard.includes('selectedKodexIntradayDateExplicit = true;'));

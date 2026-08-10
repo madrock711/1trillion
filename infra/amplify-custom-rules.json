@@ -25,6 +25,11 @@
     "status": "200"
   },
   {
+    "source": "/market-data/index/KOSPI/intraday-warmup",
+    "target": "https://query1.finance.yahoo.com/v8/finance/chart/%5EKS11?range=1mo&interval=5m",
+    "status": "200"
+  },
+  {
     "source": "/market-data/index/KOSPI/foreign-flow-time",
     "target": "https://finance.naver.com/sise/investorDealTrendTime.nhn",
     "status": "200"
@@ -193,6 +198,11 @@
   {
     "source": "/market-data/stock/122630/minute",
     "target": "https://api.stock.naver.com/chart/domestic/item/122630/minute",
+    "status": "200"
+  },
+  {
+    "source": "/market-data/stock/122630/intraday-warmup",
+    "target": "https://query1.finance.yahoo.com/v8/finance/chart/122630.KS?range=1mo&interval=5m",
     "status": "200"
   },
   {

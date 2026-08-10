@@ -70,6 +70,22 @@ assert.strictEqual(tqqqIntraday[0].interval, 5);
 assert.strictEqual(tqqqIntraday[0].bars.length, 3);
 assert.strictEqual(tqqqIntraday[0].bars[2].estimatedBuyVolume + tqqqIntraday[0].bars[2].estimatedSellVolume, 900);
 
+var koreaBaseTimestamp = Math.floor(Date.parse('2026-08-10T00:00:00Z') / 1000);
+var koreanWarmup = live.normalizeKoreanYahooIntradayHistory(JSON.stringify({
+    chart: {
+        result: [{
+            timestamp: [koreaBaseTimestamp, koreaBaseTimestamp + 300, koreaBaseTimestamp + 600],
+            indicators: { quote: [{
+                open: [100, 100, 102], high: [101, 103, 103], low: [99, 100, 100], close: [100, 102, 101], volume: [1000, 900, 800]
+            }] }
+        }]
+    }
+}), 5, 'KODEX');
+assert.strictEqual(koreanWarmup[0].date, '2026-08-10');
+assert.strictEqual(koreanWarmup[0].bars[0].time, '09:00');
+assert.strictEqual(koreanWarmup[0].bars[2].time, '09:10');
+assert.strictEqual(koreanWarmup[0].bars[2].estimatedBuyVolume + koreanWarmup[0].bars[2].estimatedSellVolume, 800);
+
 var history = [
     { date: '2026-07-28', open: 1, high: 2, low: 1, close: 2, volume: 500 },
     { date: normalized[0].date, open: 1, high: 2, low: 1, close: 2, volume: normalized[0].dailyVolume }

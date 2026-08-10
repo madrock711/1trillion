@@ -25,7 +25,7 @@
     var selectedKodexIntradayDateExplicit = false;
     var selectedKodexIntradayInterval = 5;
     var intradayNavigatorSessionCount = 4;
-    var intradayIndicatorWarmupSessionCount = 12;
+    var intradayIndicatorWarmupSessionCount = 14;
     var maxIntradayRenderedBars = 800;
     var technicalRangeStart = 50;
     var technicalRangeEnd = 100;
@@ -1424,6 +1424,18 @@
         });
     }
 
+    function intradayCalculationDays(primaryDays, warmupDays, targetDate) {
+        var byDate = {};
+        (warmupDays || []).concat(primaryDays || []).forEach(function (day) {
+            if (day && day.date && day.date <= targetDate && Array.isArray(day.bars) && day.bars.length) {
+                byDate[day.date] = day;
+            }
+        });
+        return Object.keys(byDate).sort().map(function (date) {
+            return byDate[date];
+        }).slice(-intradayIndicatorWarmupSessionCount);
+    }
+
     function effectiveIntradayInterval(day, requestedInterval) {
         var requested = Math.max(1, Number(requestedInterval) || 1);
         var visibleRatio = Math.max(0.05, (technicalRangeEnd - technicalRangeStart) / 100);
@@ -2405,6 +2417,7 @@
         var olderEntries = previousEntries.slice(0, -1);
         var rolling = windowEntries.length > 1;
         var kospiLive = latestLiveData && findById(latestLiveData.markets, 'KOSPI');
+        var kospiWarmupDays = kospiLive && kospiLive.indicatorWarmupDays || [];
         var marketStatus = kospiLive && kospiLive.marketStatus || '';
         var includeCurrentSession = !selectedIsCurrent
             || marketStatus === 'OPEN'
@@ -2424,7 +2437,11 @@
             var currentDay = days.filter(function (day) { return day && day.date === selectedDate; })[0]
                 || kospiIntradayViewCache[selectedDate] && kospiIntradayViewCache[selectedDate].day
                 || null;
-            var combinedDays = (olderDays || []).concat([previousDay, currentDay].filter(Boolean));
+            var combinedDays = intradayCalculationDays(
+                (olderDays || []).concat([previousDay, currentDay].filter(Boolean)),
+                kospiWarmupDays,
+                selectedDate
+            );
             return previousDay ? setIntradayDisplaySessions(
                 window.MarketDashboardLive.buildRollingIntradayDays(combinedDays, selectedDate),
                 visibleEntries
@@ -2963,6 +2980,7 @@
     function renderKodexIntradayChart(instrument, svg, summary, readout, indexRows) {
         var liveInstrument = instrument && instrument.liveSnapshot || {};
         var liveDay = liveInstrument.liveIntradayDay || instrument && instrument.liveIntradayDay || null;
+        var indicatorWarmupDays = liveInstrument.indicatorWarmupDays || instrument && instrument.indicatorWarmupDays || [];
         var indexUrl = liveInstrument.intradayIndexUrl || instrument && instrument.intradayIndexUrl
             || (kodexIntradaySource ? new URL(kodexIntradaySource, window.location.href).href : '');
         var selectedEntry = indexRows.filter(function (row) { return row.date === selectedKodexIntradayDate; })[0];
@@ -2995,7 +3013,7 @@
             );
         });
         var dayRequest = Promise.all(dayRequests).then(function (days) {
-            var availableDays = days.filter(Boolean);
+            var availableDays = intradayCalculationDays(days.filter(Boolean), indicatorWarmupDays, selectedKodexIntradayDate);
             var day = availableDays.length > 1
                 ? window.MarketDashboardLive.buildRollingIntradayDays(availableDays, selectedKodexIntradayDate)
                 : availableDays[0] || null;

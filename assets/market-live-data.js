@@ -41,6 +41,16 @@
         expiresAt: 0,
         pending: null
     };
+    var kospiIndicatorWarmupCache = {
+        value: null,
+        expiresAt: 0,
+        pending: null
+    };
+    var kodexIndicatorWarmupCache = {
+        value: null,
+        expiresAt: 0,
+        pending: null
+    };
     var kodexVolumePressureCache = {
         value: null,
         expiresAt: 0,
@@ -648,18 +658,18 @@
         return Object.keys(rowsByDate).sort().map(function (date) { return rowsByDate[date]; });
     }
 
-    function normalizeTqqqIntradayHistory(payload, sourceInterval) {
+    function normalizeYahooIntradayHistory(payload, sourceInterval, timeZone, sourceLabel) {
         var raw = String(payload || '').trim();
         var decoded;
         try {
             decoded = JSON.parse(raw);
         } catch (error) {
-            throw new Error('TQQQ 분봉 응답이 올바르지 않습니다.');
+            throw new Error((sourceLabel || 'Yahoo') + ' 분봉 응답이 올바르지 않습니다.');
         }
         var result = decoded && decoded.chart && decoded.chart.result && decoded.chart.result[0];
         var quote = result && result.indicators && result.indicators.quote && result.indicators.quote[0];
         var timestamps = result && result.timestamp || [];
-        if (!quote || !timestamps.length) throw new Error('TQQQ 분봉 이력이 비어 있습니다.');
+        if (!quote || !timestamps.length) throw new Error((sourceLabel || 'Yahoo') + ' 분봉 이력이 비어 있습니다.');
         var dayRows = {};
         timestamps.forEach(function (timestamp, index) {
             var open = Number(quote.open[index]);
@@ -672,10 +682,10 @@
                 || high < Math.max(open, close)
                 || low > Math.min(open, close)) return;
             var dateParts = new Intl.DateTimeFormat('en-CA', {
-                timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit'
+                timeZone: timeZone, year: 'numeric', month: '2-digit', day: '2-digit'
             }).formatToParts(new Date(Number(timestamp) * 1000));
             var timeParts = new Intl.DateTimeFormat('en-GB', {
-                timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+                timeZone: timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
             }).formatToParts(new Date(Number(timestamp) * 1000));
             var dateValues = {};
             var timeValues = {};
@@ -702,7 +712,7 @@
             });
         });
         var sigma = sampleSigma(allChanges);
-        if (!Number.isFinite(sigma) || sigma <= 0) throw new Error('TQQQ 분봉 변동성을 계산할 수 없습니다.');
+        if (!Number.isFinite(sigma) || sigma <= 0) throw new Error((sourceLabel || 'Yahoo') + ' 분봉 변동성을 계산할 수 없습니다.');
         return Object.keys(dayRows).sort().map(function (date) {
             var cumulativeDelta = 0;
             var bars = dayRows[date].map(function (row, index) {
@@ -737,6 +747,14 @@
                 bars: bars
             };
         });
+    }
+
+    function normalizeTqqqIntradayHistory(payload, sourceInterval) {
+        return normalizeYahooIntradayHistory(payload, sourceInterval, 'America/New_York', 'TQQQ');
+    }
+
+    function normalizeKoreanYahooIntradayHistory(payload, sourceInterval, sourceLabel) {
+        return normalizeYahooIntradayHistory(payload, sourceInterval, 'Asia/Seoul', sourceLabel || '국내 지수');
     }
 
     function calculateCompositeDailyVolumeMomentum(kospiRows, kodexRows, options) {
@@ -1677,6 +1695,24 @@
         return cache.pending;
     }
 
+    function fetchKoreanIndicatorWarmup(fetchImpl, baseUrl, signal, nonce, now, ttlMs, type) {
+        var kospi = type === 'kospi';
+        var cache = kospi ? kospiIndicatorWarmupCache : kodexIndicatorWarmupCache;
+        if (cache.value && cache.expiresAt > now) return Promise.resolve(cache.value);
+        if (cache.pending) return cache.pending;
+        var route = kospi ? 'index/KOSPI/intraday-warmup' : 'stock/122630/intraday-warmup';
+        cache.pending = fetchText(fetchImpl, new URL(route, baseUrl).href, signal, nonce).then(function (payload) {
+            var rows = normalizeKoreanYahooIntradayHistory(payload, 5, kospi ? 'KOSPI' : 'KODEX');
+            if (!rows.length) throw new Error((kospi ? 'KOSPI' : 'KODEX') + ' 지표 준비 분봉이 비어 있습니다.');
+            cache.value = rows;
+            cache.expiresAt = now + ttlMs;
+            return rows;
+        }).finally(function () {
+            cache.pending = null;
+        });
+        return cache.pending;
+    }
+
     function fetchKodexVolumePressure(fetchImpl, url, signal, nonce, now, ttlMs) {
         if (kodexVolumePressureCache.value && kodexVolumePressureCache.expiresAt > now) {
             return Promise.resolve(kodexVolumePressureCache.value);
@@ -1764,6 +1800,8 @@
             tqqqHistoryCache.expiresAt = 0;
             tqqqIntradayOneMinuteCache.expiresAt = 0;
             tqqqIntradayFiveMinuteCache.expiresAt = 0;
+            kospiIndicatorWarmupCache.expiresAt = 0;
+            kodexIndicatorWarmupCache.expiresAt = 0;
             kodexVolumePressureCache.expiresAt = 0;
             kodexIntradayIndexCache.expiresAt = 0;
             kodexIntradayDayCache = {};
@@ -1828,6 +1866,24 @@
             Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000,
             5
         ).catch(function () { return null; });
+        var optionalKospiIndicatorWarmupRequest = fetchKoreanIndicatorWarmup(
+            fetchImpl,
+            baseUrl,
+            signal,
+            nonce,
+            now,
+            Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000,
+            'kospi'
+        ).catch(function () { return null; });
+        var optionalKodexIndicatorWarmupRequest = fetchKoreanIndicatorWarmup(
+            fetchImpl,
+            baseUrl,
+            signal,
+            nonce,
+            now,
+            Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000,
+            'kodex'
+        ).catch(function () { return null; });
         var volumePressureUrl = settings.volumePressureUrl
             || new URL('../assets/data/kodex-volume-pressure.json', baseUrl).href;
         var optionalKodexVolumePressureRequest = fetchKodexVolumePressure(
@@ -1862,6 +1918,8 @@
             optionalTqqqHistoryRequest,
             optionalTqqqIntradayOneMinuteRequest,
             optionalTqqqIntradayFiveMinuteRequest,
+            optionalKospiIndicatorWarmupRequest,
+            optionalKodexIndicatorWarmupRequest,
             optionalKodexVolumePressureRequest,
             optionalKodexIntradayIndexRequest,
             optionalKodexLiveIntradayRequest
@@ -1873,12 +1931,15 @@
             var tqqqHistory = items[INDEX_CODES.length + STOCKS.length + 2];
             var tqqqIntradayOneMinute = items[INDEX_CODES.length + STOCKS.length + 3];
             var tqqqIntradayFiveMinute = items[INDEX_CODES.length + STOCKS.length + 4];
-            var kodexVolumePressure = items[INDEX_CODES.length + STOCKS.length + 5];
-            var kodexIntradayIndex = items[INDEX_CODES.length + STOCKS.length + 6];
-            var kodexLiveIntradayRaw = items[INDEX_CODES.length + STOCKS.length + 7];
+            var kospiIndicatorWarmup = items[INDEX_CODES.length + STOCKS.length + 5];
+            var kodexIndicatorWarmup = items[INDEX_CODES.length + STOCKS.length + 6];
+            var kodexVolumePressure = items[INDEX_CODES.length + STOCKS.length + 7];
+            var kodexIntradayIndex = items[INDEX_CODES.length + STOCKS.length + 8];
+            var kodexLiveIntradayRaw = items[INDEX_CODES.length + STOCKS.length + 9];
             if (!markets.length) throw new Error('국내 지수 시세를 불러오지 못했습니다.');
             var primaryMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || markets[0];
             var kospiMarket = markets.filter(function (market) { return market.id === 'KOSPI'; })[0] || null;
+            if (kospiMarket) kospiMarket.indicatorWarmupDays = kospiIndicatorWarmup || [];
             var marketSessionDate = kospiMarket && kospiMarket.sessionDate || currentSeoulDate;
             var marketTimestamp = Date.parse(primaryMarket.asOf);
             var statuses = markets.map(function (market) { return market.marketStatus; });
@@ -1896,6 +1957,7 @@
             });
             if (!exchange) missingSources.push('달러/원');
             var kodexInstrument = instruments.filter(function (instrument) { return instrument.id === 'KODEX'; })[0];
+            if (kodexInstrument) kodexInstrument.indicatorWarmupDays = kodexIndicatorWarmup || [];
             if (kodexInstrument && kodexHistory) {
                 kodexInstrument.priceHistory = mergeKodexVolumePressure(kodexHistory, kodexVolumePressure);
             } else if (kodexInstrument) {
@@ -1990,6 +2052,7 @@
         fetchKospiMinutePressureDays: fetchKospiMinutePressureDays,
         normalizeTqqqPriceHistory: normalizeTqqqPriceHistory,
         normalizeTqqqIntradayHistory: normalizeTqqqIntradayHistory,
+        normalizeKoreanYahooIntradayHistory: normalizeKoreanYahooIntradayHistory,
         normalizeKodexVolumePressure: normalizeKodexVolumePressure,
         normalizeKodexIntradayIndex: normalizeKodexIntradayIndex,
         normalizeKodexIntradayDay: normalizeKodexIntradayDay,
