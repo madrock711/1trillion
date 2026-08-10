@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260810-6">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260810-7">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -66,7 +66,7 @@
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
     <script defer src="../assets/market-live-data.js?v=20260810-2"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260810-7"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260810-8"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -373,20 +373,17 @@
                 </div>
 
                 <div class="technical-card-stack" id="technical-card-stack">
-                <section class="market-dashboard-card kospi-flow-card technical-orderable technical-orderable--wide" data-technical-card="kospi-flow" data-technical-card-title="KOSPI 가격과 외국인 수급" aria-labelledby="kospi-flow-title">
-                    <div class="market-card-heading-row kospi-flow-heading">
-                        <div>
-                            <p class="market-card-label" id="kospi-flow-eyebrow">KOSPI 일봉 · 거래량 X-ray · CVD · 외국인 수급 MACD</p>
-                            <h3 id="kospi-flow-title">KOSPI 가격과 외국인 수급 흐름</h3>
-                        </div>
-                        <div class="kospi-flow-toolbar">
-                            <button class="kodex-chart-refresh kospi-flow-refresh" id="kospi-flow-refresh" type="button" aria-describedby="kospi-flow-refresh-status">
-                                <span aria-hidden="true">↻</span>
-                                <span>새로고침</span>
-                            </button>
-                        </div>
+                <section class="market-dashboard-card kospi-flow-card technical-orderable technical-orderable--wide" data-technical-card="kospi-flow" data-technical-card-title="KOSPI" aria-labelledby="kospi-flow-title">
+                    <div class="kodex-chart-refresh-anchor kospi-flow-refresh-anchor">
+                        <button class="kodex-chart-refresh kospi-flow-refresh" id="kospi-flow-refresh" type="button" aria-describedby="kospi-flow-refresh-status">
+                            <span aria-hidden="true">↻</span>
+                            <span>새로고침</span>
+                        </button>
+                        <span class="kodex-chart-refresh-status" id="kospi-flow-refresh-status" aria-live="polite"></span>
                     </div>
-                    <span class="kodex-chart-refresh-status kospi-flow-refresh-status" id="kospi-flow-refresh-status" aria-live="polite"></span>
+                    <div class="market-card-heading-row kospi-flow-heading">
+                        <h3 id="kospi-flow-title">KOSPI</h3>
+                    </div>
                     <div class="kospi-flow-legend" aria-label="KOSPI 수급 차트 범례">
                         <span class="is-up">상승 봉</span>
                         <span class="is-down">하락 봉</span>
@@ -402,7 +399,6 @@
                         <span class="is-macd">수급 MACD</span>
                         <span class="is-signal">Signal</span>
                     </div>
-                    <p class="kospi-flow-method" id="kospi-flow-method">거래량 X-ray와 CVD 위에 외국인 현물 순매수와 수급 MACD를 같은 거래일 기준으로 표시합니다.</p>
                     <p class="kodex-history-readout kospi-flow-readout" id="kospi-flow-readout" aria-live="polite">KOSPI 가격과 외국인 수급 이력을 불러오는 중입니다.</p>
                     <div class="kodex-history-shell kospi-flow-shell" tabindex="0" role="region" aria-label="KOSPI 일봉 또는 분봉, 거래량 X-ray, CVD, 외국인 현물 순매수와 수급 MACD 차트">
                         <svg id="kospi-flow-chart" class="kodex-history-chart kospi-flow-chart" viewBox="0 0 1000 720" role="img" aria-labelledby="kospi-flow-title kospi-flow-readout"></svg>
@@ -505,7 +501,7 @@
                         <p class="kodex-range-summary" id="kodex-range-summary"></p>
                         <div class="kodex-return-grid" id="kodex-return-grid" hidden></div>
                     </article>
-                <section class="market-dashboard-card kodex-history-card kodex-primary-history-card technical-orderable technical-orderable--wide" data-technical-card="kodex-history" data-technical-card-title="KODEX 가격 흐름" aria-labelledby="kodex-history-title">
+                <section class="market-dashboard-card kodex-history-card kodex-primary-history-card technical-orderable technical-orderable--wide" data-technical-card="kodex-history" data-technical-card-title="KODEX 레버리지" aria-labelledby="kodex-history-title">
                     <div class="kodex-chart-refresh-anchor">
                         <button class="kodex-chart-refresh" id="kodex-chart-refresh" type="button" aria-describedby="kodex-chart-refresh-status">
                             <span aria-hidden="true">↻</span>
@@ -514,10 +510,7 @@
                         <span class="kodex-chart-refresh-status" id="kodex-chart-refresh-status" aria-live="polite"></span>
                     </div>
                     <div class="market-card-heading-row kodex-history-heading">
-                        <div>
-                            <p class="market-card-label" id="kodex-history-eyebrow">일봉·거래량 X-ray·CVD</p>
-                            <h3 id="kodex-history-title">KODEX 레버리지 3개월 가격 흐름</h3>
-                        </div>
+                        <h3 id="kodex-history-title">KODEX 레버리지</h3>
                     </div>
                     <div class="kodex-history-legend" aria-label="차트 범례">
                         <span class="is-up">상승 봉</span>
@@ -529,7 +522,6 @@
                         <span class="is-ma20" data-kodex-daily-legend>20일선</span>
                         <span class="is-ma60" data-kodex-daily-legend>60일선</span>
                     </div>
-                    <p class="kodex-history-method">막대 높이는 거래량, 색이 채운 비율은 해당 구간의 상대 순압력입니다.</p>
                     <p class="kodex-history-readout" id="kodex-history-readout" aria-live="polite">3개월 가격과 거래량을 불러오는 중입니다.</p>
                     <div class="kodex-history-shell" tabindex="0" role="region" aria-label="KODEX 레버리지 일봉 또는 분봉, 거래량 X-ray와 누적 CVD 차트">
                         <svg id="kodex-history-chart" class="kodex-history-chart" viewBox="0 0 1000 500" role="img" aria-labelledby="kodex-history-title kodex-history-readout"></svg>
@@ -547,12 +539,9 @@
                     </div>
                 </section>
 
-                <section class="market-dashboard-card kodex-history-card tqqq-history-card technical-orderable technical-orderable--wide" data-technical-card="tqqq-history" data-technical-card-title="TQQQ 가격 흐름" aria-labelledby="tqqq-history-title">
+                <section class="market-dashboard-card kodex-history-card tqqq-history-card technical-orderable technical-orderable--wide" data-technical-card="tqqq-history" data-technical-card-title="TQQQ" aria-labelledby="tqqq-history-title">
                     <div class="market-card-heading-row kodex-history-heading">
-                        <div>
-                            <p class="market-card-label" id="tqqq-history-eyebrow">미국 정규장 일봉·거래량 X-ray·CVD</p>
-                            <h3 id="tqqq-history-title">TQQQ 3개월 가격 흐름</h3>
-                        </div>
+                        <h3 id="tqqq-history-title">TQQQ</h3>
                         <span class="market-method-badge">KODEX와 동일 기준</span>
                     </div>
                     <div class="kodex-history-legend" aria-label="TQQQ 차트 범례">
@@ -565,7 +554,6 @@
                         <span class="is-ma20" data-tqqq-daily-legend>20일선</span>
                         <span class="is-ma60" data-tqqq-daily-legend>60일선</span>
                     </div>
-                    <p class="kodex-history-method" id="tqqq-history-method">막대 높이는 거래량, 빨강·파랑 채움은 일봉 가격 범위와 종가 위치로 추정한 매수·매도 우위입니다.</p>
                     <p class="kodex-history-readout" id="tqqq-history-readout" aria-live="polite">TQQQ 일봉과 거래량을 불러오는 중입니다.</p>
                     <div class="kodex-history-shell" tabindex="0" role="region" aria-label="TQQQ 일봉, 거래량 X-ray와 누적 CVD 차트">
                         <svg id="tqqq-history-chart" class="kodex-history-chart tqqq-history-chart" viewBox="0 0 800 460" role="img" aria-labelledby="tqqq-history-title tqqq-history-readout"></svg>

@@ -1529,26 +1529,12 @@
     align-items: flex-end;
 }
 
-.kospi-flow-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.55rem;
-}
-
 .kospi-flow-controls {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-end;
     gap: 0.55rem;
-}
-
-.kospi-flow-refresh-status {
-    display: block;
-    margin-top: 0.4rem;
-    text-align: right;
 }
 
 .kospi-flow-legend {
@@ -1591,13 +1577,6 @@
 .kospi-flow-legend .is-ma60 { color: #59dda0; }
 .kospi-flow-legend .is-macd { color: #c084fc; }
 .kospi-flow-legend .is-signal { color: #75e8a7; }
-
-.kospi-flow-method {
-    margin: 0 0 var(--space-2);
-    color: #94a9b5;
-    font-size: 0.74rem;
-    line-height: 1.55;
-}
 
 .kospi-flow-chart {
     min-width: 760px;
@@ -2595,19 +2574,9 @@
         align-items: flex-start;
     }
 
-    .kospi-flow-toolbar {
-        width: 100%;
-        justify-content: flex-start;
-        margin-top: var(--space-3);
-    }
-
     .kospi-flow-controls {
         width: 100%;
         justify-content: flex-start;
-    }
-
-    .kospi-flow-refresh-status {
-        text-align: left;
     }
 
     .kospi-flow-readout {

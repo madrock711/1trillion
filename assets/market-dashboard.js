@@ -1972,23 +1972,13 @@
         var summary = document.getElementById('kospi-flow-summary');
         var readout = document.getElementById('kospi-flow-readout');
         var title = document.getElementById('kospi-flow-title');
-        var eyebrow = document.getElementById('kospi-flow-eyebrow');
-        var method = document.getElementById('kospi-flow-method');
         var sourceNote = document.getElementById('kospi-flow-source-note');
         if (!svg || !summary || !readout) return;
         clear(svg);
         clear(summary);
         var intraday = options.mode === 'intraday';
         svg.classList.toggle('is-intraday', intraday);
-        if (title) title.textContent = intraday
-            ? 'KOSPI 가격과 외국인 수급 · ' + formatHistoryDate(options.date) + ' ' + selectedKodexIntradayInterval + '분봉'
-            : 'KOSPI 가격과 외국인 수급 · ' + kospiPeriodLabel();
-        if (eyebrow) eyebrow.textContent = intraday
-            ? 'KOSPI 분봉 · 거래량 X-ray · CVD · 외국인 수급 MACD'
-            : 'KOSPI 일봉 · 거래량 X-ray · CVD · 외국인 수급 MACD';
-        if (method) method.textContent = intraday
-            ? '거래량 막대에는 가격 움직임으로 추정한 매수·매도 우위를 겹치고, 외국인 장중 누적 순매수의 흐름은 막대와 MACD로 함께 표시합니다.'
-            : '거래량 막대에는 일봉 가격 범위와 종가 위치로 추정한 매수·매도 우위를 겹치고, 외국인 일별 순매수의 흐름은 막대와 MACD로 함께 표시합니다.';
+        if (title) title.textContent = 'KOSPI';
         if (sourceNote) sourceNote.textContent = intraday
             ? 'KOSPI 분봉과 외국인 장중 누적 순매수는 Naver Finance의 KRX 공개 데이터 기준입니다.'
             : 'KOSPI 일봉과 외국인 현물 순매수는 Naver Finance의 KRX 공개 데이터 기준입니다.';
@@ -2036,7 +2026,7 @@
         addChartGrid(svg, margin.left, right, priceTop, priceBottom, minPrice, maxPrice, function (value) {
             return formatNumber(value, 0);
         });
-        addChartSectionLabel(svg, intraday ? selectedKodexIntradayInterval + '분봉' : '일봉', margin.left, priceTop + 12);
+        addChartSectionLabel(svg, intraday ? selectedKodexIntradayInterval + '분' : '일봉', margin.left, priceTop + 12);
         addChartSectionLabel(svg, '거래량 X-ray · CVD · 외국인 현물', margin.left, flowTop + 12);
         addChartSectionLabel(svg, '외국인 수급 MACD 12 · 26 · 9', margin.left, macdTop + 12);
 
@@ -2654,7 +2644,7 @@
         maxPrice += priceSpread * 0.04;
         function priceY(value) { return priceTop + (maxPrice - value) / (maxPrice - minPrice) * (priceBottom - priceTop); }
         addChartGrid(svg, margin.left, right, priceTop, priceBottom, minPrice, maxPrice, axisText);
-        addChartSectionLabel(svg, interval + '분봉', margin.left, priceTop + 12);
+        addChartSectionLabel(svg, interval + '분', margin.left, priceTop + 12);
         addChartSectionLabel(svg, '거래량 X-ray · CVD', margin.left, volumeTop + 12);
 
         var maxVolume = Math.max.apply(Math, rows.map(function (row) { return row.volume; }));
@@ -2837,14 +2827,8 @@
         clear(summary);
         var indexRows = setKodexChartControls(instrument);
         var title = document.getElementById('kodex-history-title');
-        var eyebrow = document.getElementById('kodex-history-eyebrow');
         svg.classList.toggle('is-intraday', selectedKodexChartMode === 'intraday');
-        if (title) title.textContent = selectedKodexChartMode === 'daily'
-            ? 'KODEX 레버리지 ' + (selectedKodexPeriod === '1m' ? '1개월' : '3개월') + ' 가격 흐름'
-            : 'KODEX 레버리지 분봉 거래량 X-ray';
-        if (eyebrow) eyebrow.textContent = selectedKodexChartMode === 'daily'
-            ? '일봉·거래량 X-ray·CVD'
-            : '분봉·거래량 X-ray·CVD';
+        if (title) title.textContent = 'KODEX 레버리지';
         if (selectedKodexChartMode === 'intraday') {
             renderKodexIntradayChart(instrument, svg, summary, readout, indexRows);
             return;
@@ -2883,12 +2867,8 @@
         clear(summary);
         svg.classList.remove('is-intraday');
         var title = document.getElementById('tqqq-history-title');
-        var eyebrow = document.getElementById('tqqq-history-eyebrow');
-        var method = document.getElementById('tqqq-history-method');
         var sourceNote = document.getElementById('tqqq-history-source-note');
-        if (title) title.textContent = 'TQQQ ' + (selectedKodexPeriod === '1m' ? '1개월' : '3개월') + ' 가격 흐름';
-        if (eyebrow) eyebrow.textContent = '미국 정규장 일봉·거래량 X-ray·CVD';
-        if (method) method.textContent = '막대 높이는 거래량, 빨강·파랑 채움은 일봉 가격 범위와 종가 위치로 추정한 매수·매도 우위입니다.';
+        if (title) title.textContent = 'TQQQ';
         if (sourceNote) sourceNote.textContent = '미국 정규장 일봉 기준이며, 순압력은 체결 Bid/Ask가 아닌 일중 가격 범위와 종가 위치를 거래량에 반영한 추정치입니다.';
         Array.prototype.forEach.call(document.querySelectorAll('[data-tqqq-daily-legend]'), function (node) { node.hidden = false; });
         var history = (rawHistory || []).filter(function (row) {
@@ -3100,12 +3080,9 @@
             || matchingTqqqIntradayDay(preferredRows, selectedKodexIntradayDate, false)
             || matchingTqqqIntradayDay(alternateRows, selectedKodexIntradayDate, false);
         var title = document.getElementById('tqqq-history-title');
-        var eyebrow = document.getElementById('tqqq-history-eyebrow');
-        var method = document.getElementById('tqqq-history-method');
         var sourceNote = document.getElementById('tqqq-history-source-note');
         if (!day) {
-            if (title) title.textContent = 'TQQQ 분봉 가격 흐름';
-            if (eyebrow) eyebrow.textContent = '미국 정규장 분봉·거래량 X-ray·CVD';
+            if (title) title.textContent = 'TQQQ';
             readout.textContent = '선택 기준에 대응하는 TQQQ 분봉을 확인하고 있습니다.';
             var empty = makeSvg('text', { x: 500, y: 300, 'class': 'kodex-history-empty', 'text-anchor': 'middle' });
             empty.textContent = 'TQQQ 분봉 데이터를 불러오는 중입니다.';
@@ -3114,9 +3091,7 @@
         }
         var sourceInterval = Number(day.interval) || 5;
         var effectiveInterval = Math.max(selectedKodexIntradayInterval, sourceInterval);
-        if (title) title.textContent = 'TQQQ ' + effectiveInterval + '분봉 가격 흐름';
-        if (eyebrow) eyebrow.textContent = '미국 정규장 분봉·거래량 X-ray·CVD';
-        if (method) method.textContent = 'KODEX와 같은 선택 기준으로 TQQQ 가격·거래량·추정 순압력과 CVD를 비교합니다.';
+        if (title) title.textContent = 'TQQQ';
         var sameDate = day.date === selectedKodexIntradayDate;
         if (sourceNote) sourceNote.textContent = sameDate
             ? formatHistoryDate(day.date) + ' 미국 정규장 ' + sourceInterval + '분 원자료를 사용했습니다.'

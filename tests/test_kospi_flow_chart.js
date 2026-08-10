@@ -25,10 +25,11 @@ async function main() {
     assert.ok(dashboardSource.includes("'분봉 수급 불러오기 중단 · 다시 시도'"), '분봉 요청 timeout 뒤 새로고침 상태를 복구해야 한다.');
     assert.ok(dashboardSource.includes("setKospiFlowRefreshState('ready', latestDaily"), '일봉 전환 뒤 새로고침 버튼을 다시 활성화해야 한다.');
     assert.ok(dashboardSource.includes("volumeGroup.setAttribute('aria-label', volumeLabel)"), '거래량 X-ray 묶음에 접근 가능한 설명이 있어야 한다.');
-    assert.ok(
-        dashboardSource.includes("'KODEX 레버리지 ' + (selectedKodexPeriod === '1m' ? '1개월' : '3개월')"),
-        '공유 기간 선택에 맞춰 KODEX 일봉 제목도 바뀌어야 한다.'
-    );
+    assert.ok(dashboardSource.includes("if (title) title.textContent = 'KOSPI';"), 'KOSPI 카드 제목은 모드가 바뀌어도 한 줄로 유지되어야 한다.');
+    assert.ok(dashboardSource.includes("if (title) title.textContent = 'KODEX 레버리지';"), 'KODEX 카드 제목은 모드가 바뀌어도 한 줄로 유지되어야 한다.');
+    assert.ok(dashboardSource.includes("if (title) title.textContent = 'TQQQ';"), 'TQQQ 카드 제목은 모드가 바뀌어도 한 줄로 유지되어야 한다.');
+    assert.ok(dashboardSource.includes("selectedKodexIntradayInterval + '분'"), 'KOSPI 분봉 간격은 짧은 분 표기를 사용해야 한다.');
+    assert.ok(dashboardSource.includes("interval + '분'"), 'KODEX와 TQQQ 분봉 간격은 짧은 분 표기를 사용해야 한다.');
     assert.ok(dashboardCss.includes('.kospi-flow-foreign.is-buy { fill: #ffb454; }'), '외국인 순매수는 X-ray와 구별되는 색이어야 한다.');
     assert.ok(dashboardCss.includes('.kospi-flow-foreign.is-sell { fill: #35d3c8; }'), '외국인 순매도는 X-ray와 구별되는 색이어야 한다.');
     assert.ok(dashboardCss.includes('.kospi-flow-readout'), 'KOSPI 상세 수치에는 전용 높이 규칙이 있어야 한다.');
@@ -36,7 +37,16 @@ async function main() {
     assert.ok(dashboardCss.includes('overflow-y: auto'), '고정 높이를 넘는 상세 수치는 영역 안에서 읽을 수 있어야 한다.');
     assert.ok(dashboardCss.includes('scrollbar-gutter: stable'), '스크롤바 출현으로 수치 줄바꿈 폭이 달라지지 않아야 한다.');
     assert.ok(marketHtml.includes('data-shared-intraday-date'), 'KOSPI와 KODEX의 분봉 거래일 선택이 동기화되어야 한다.');
-    assert.ok(marketHtml.includes('외국인 수급 MACD'), '공개 범례는 외국인 수급 MACD임을 명시해야 한다.');
+    assert.ok(marketHtml.includes('수급 MACD'), '공개 범례는 수급 MACD임을 명시해야 한다.');
+    assert.ok(marketHtml.includes('id="kospi-flow-title">KOSPI</h3>'), 'KOSPI 카드에는 종목명 한 줄만 표시해야 한다.');
+    assert.ok(marketHtml.includes('id="kodex-history-title">KODEX 레버리지</h3>'), 'KODEX 카드에는 종목명 한 줄만 표시해야 한다.');
+    assert.ok(marketHtml.includes('id="tqqq-history-title">TQQQ</h3>'), 'TQQQ 카드에는 종목명 한 줄만 표시해야 한다.');
+    assert.ok(!marketHtml.includes('id="kospi-flow-eyebrow"'), 'KOSPI 중복 분류 문구를 다시 넣으면 안 된다.');
+    assert.ok(!marketHtml.includes('id="kospi-flow-method"'), 'KOSPI 사용법 설명을 카드 상단에 다시 넣으면 안 된다.');
+    assert.ok(!marketHtml.includes('id="kodex-history-eyebrow"'), 'KODEX 중복 분류 문구를 다시 넣으면 안 된다.');
+    assert.ok(!marketHtml.includes('id="tqqq-history-eyebrow"'), 'TQQQ 중복 분류 문구를 다시 넣으면 안 된다.');
+    assert.ok(!marketHtml.includes('class="kodex-history-method"'), '가격 차트 카드의 반복 설명을 다시 넣으면 안 된다.');
+    assert.ok(marketHtml.includes('class="kodex-chart-refresh-anchor kospi-flow-refresh-anchor"'), 'KOSPI 새로고침은 카드 최상단 앵커에 있어야 한다.');
 
     const priceXml = [
         '<protocol>',
