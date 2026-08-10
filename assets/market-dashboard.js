@@ -1042,6 +1042,56 @@
         return result;
     }
 
+    function priceOverlayRows(rows) {
+        var ma5 = simpleMovingAverage(rows, 5);
+        var ma20 = simpleMovingAverage(rows, 20);
+        var ma60 = simpleMovingAverage(rows, 60);
+        var bbUpper = new Array(rows.length).fill(null);
+        var bbLower = new Array(rows.length).fill(null);
+        rows.forEach(function (row, index) {
+            if (index < 19 || !Number.isFinite(ma20[index])) return;
+            var variance = 0;
+            for (var cursor = index - 19; cursor <= index; cursor += 1) {
+                variance += Math.pow(rows[cursor].close - ma20[index], 2);
+            }
+            var deviation = Math.sqrt(variance / 20);
+            bbUpper[index] = ma20[index] + deviation * 2;
+            bbLower[index] = ma20[index] - deviation * 2;
+        });
+        return rows.map(function (row, index) {
+            return Object.assign({}, row, {
+                ma5: ma5[index],
+                ma20: ma20[index],
+                ma60: ma60[index],
+                bbUpper: bbUpper[index],
+                bbLower: bbLower[index]
+            });
+        });
+    }
+
+    function svgBandPath(rows, upperKey, lowerKey, xFor, yFor) {
+        var points = rows.map(function (row, index) {
+            return Number.isFinite(row[upperKey]) && Number.isFinite(row[lowerKey])
+                ? { x: xFor(index), upper: yFor(row[upperKey]), lower: yFor(row[lowerKey]) }
+                : null;
+        }).filter(Boolean);
+        if (points.length < 2) return '';
+        var path = points.map(function (point, index) {
+            return (index ? 'L ' : 'M ') + point.x.toFixed(2) + ' ' + point.upper.toFixed(2);
+        }).join(' ');
+        path += ' ' + points.slice().reverse().map(function (point) {
+            return 'L ' + point.x.toFixed(2) + ' ' + point.lower.toFixed(2);
+        }).join(' ') + ' Z';
+        return path;
+    }
+
+    function updatePriceOverlayLegend(intraday) {
+        Array.prototype.forEach.call(document.querySelectorAll('[data-price-ma-period]'), function (node) {
+            node.hidden = false;
+            node.textContent = node.getAttribute('data-price-ma-period') + (intraday ? '봉선' : '일선');
+        });
+    }
+
     function svgPathForSeries(values, startIndex, xFor, yFor) {
         var path = '';
         values.slice(startIndex).forEach(function (value, index) {
@@ -1188,9 +1238,7 @@
         Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-interval]'), function (button) {
             button.setAttribute('aria-pressed', Number(button.getAttribute('data-kodex-interval')) === selectedKodexIntradayInterval ? 'true' : 'false');
         });
-        Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-daily-legend]'), function (node) {
-            node.hidden = selectedKodexChartMode !== 'daily';
-        });
+        updatePriceOverlayLegend(selectedKodexChartMode === 'intraday');
         var dates = indexRows.map(function (row) { return row.date; });
         function dateOptionLabel(date) {
             var entry = indexRows.filter(function (row) { return row.date === date; })[0];
@@ -1898,9 +1946,7 @@
             return parseHistoryDate(left.date) - parseHistoryDate(right.date);
         });
         if (!history.length) return [];
-        var ma5 = simpleMovingAverage(history, 5);
-        var ma20 = simpleMovingAverage(history, 20);
-        var ma60 = simpleMovingAverage(history, 60);
+        var priceOverlays = priceOverlayRows(history);
         var flowMacd = window.MarketDashboardLive.calculateMacd(history.map(function (row) { return row.foreign; }), 12, 26, 9);
         var threshold = new Date(parseHistoryDate(history[history.length - 1].date));
         threshold.setMonth(threshold.getMonth() - kospiPeriodMonths());
@@ -1913,9 +1959,11 @@
             runningCvd += pressure.delta;
             return Object.assign({}, row, pressure, {
                 cumulativeDelta: runningCvd,
-                ma5: ma5[sourceIndex],
-                ma20: ma20[sourceIndex],
-                ma60: ma60[sourceIndex],
+                ma5: priceOverlays[sourceIndex].ma5,
+                ma20: priceOverlays[sourceIndex].ma20,
+                ma60: priceOverlays[sourceIndex].ma60,
+                bbUpper: priceOverlays[sourceIndex].bbUpper,
+                bbLower: priceOverlays[sourceIndex].bbLower,
                 flowMacd: flowMacd.macd[sourceIndex],
                 flowSignal: flowMacd.signal[sourceIndex],
                 flowHistogram: flowMacd.histogram[sourceIndex]
@@ -1979,15 +2027,14 @@
         if (sourceNote) sourceNote.textContent = intraday
             ? 'KOSPI 분봉과 외국인 장중 누적 순매수는 Naver Finance의 KRX 공개 데이터 기준입니다.'
             : 'KOSPI 일봉과 외국인 현물 순매수는 Naver Finance의 KRX 공개 데이터 기준입니다.';
-        Array.prototype.forEach.call(document.querySelectorAll('[data-kospi-daily-legend]'), function (node) {
-            node.hidden = intraday;
-        });
+        updatePriceOverlayLegend(intraday);
         if (rows.length < 5) {
             var empty = makeSvg('text', { x: 500, y: 350, 'class': 'kodex-history-empty', 'text-anchor': 'middle' });
             empty.textContent = '선택한 기준의 KOSPI 가격·수급 데이터를 확인하고 있습니다.';
             svg.appendChild(empty);
             return;
         }
+        if (intraday) rows = priceOverlayRows(rows);
         updateTechnicalRangeNavigator(rows);
         rows = technicalRangeSlice(rows);
 
@@ -2010,7 +2057,7 @@
         var priceValues = [];
         rows.forEach(function (row) {
             priceValues.push(row.high, row.low);
-            if (!intraday) [row.ma5, row.ma20, row.ma60].forEach(function (value) {
+            [row.ma5, row.ma20, row.ma60, row.bbUpper, row.bbLower].forEach(function (value) {
                 if (Number.isFinite(value)) priceValues.push(value);
             });
         });
@@ -2026,6 +2073,8 @@
         addChartSectionLabel(svg, intraday ? selectedKodexIntradayInterval + '분' : '일봉', margin.left, priceTop + 12);
         addChartSectionLabel(svg, '거래량 X-ray · CVD · 외국인 현물', margin.left, flowTop + 12);
         addChartSectionLabel(svg, '외국인 수급 MACD 12 · 26 · 9', margin.left, macdTop + 12);
+        var bollingerBandPath = svgBandPath(rows, 'bbUpper', 'bbLower', xFor, priceY);
+        if (bollingerBandPath) svg.appendChild(makeSvg('path', { d: bollingerBandPath, 'class': 'kodex-history-bollinger-band' }));
 
         var maxVolume = Math.max.apply(Math, rows.map(function (row) { return row.volume; }));
         function volumeY(value) { return flowBottom - value / Math.max(maxVolume, 1) * (flowBottom - flowPlotTop); }
@@ -2168,10 +2217,12 @@
         });
         if (cvdPath) svg.appendChild(makeSvg('path', { d: cvdPath, 'class': 'kospi-flow-cvd' }));
 
-        if (!intraday) [
+        [
             { key: 'ma5', className: 'kodex-history-line is-ma5' },
             { key: 'ma20', className: 'kodex-history-line is-ma20' },
-            { key: 'ma60', className: 'kodex-history-line is-ma60' }
+            { key: 'ma60', className: 'kodex-history-line is-ma60' },
+            { key: 'bbUpper', className: 'kodex-history-line is-bollinger' },
+            { key: 'bbLower', className: 'kodex-history-line is-bollinger' }
         ].forEach(function (series) {
             var path = svgPathForSeries(rows.map(function (row) { return row[series.key]; }), 0, xFor, priceY);
             if (path) svg.appendChild(makeSvg('path', { d: path, 'class': series.className }));
@@ -2409,9 +2460,7 @@
         var rows = technicalRangeSlice(history.slice(startIndex));
         startIndex = Math.max(0, history.indexOf(rows[0]));
         var endIndex = startIndex + rows.length;
-        var ma5 = simpleMovingAverage(history, 5);
-        var ma20 = simpleMovingAverage(history, 20);
-        var ma60 = simpleMovingAverage(history, 60);
+        var priceOverlays = priceOverlayRows(history);
 
         svg.setAttribute('viewBox', '0 0 1000 530');
         var width = 1000;
@@ -2429,8 +2478,9 @@
 
         var priceValues = [];
         rows.forEach(function (row) { priceValues.push(row.high, row.low); });
-        [ma5, ma20, ma60].forEach(function (series) {
-            series.slice(startIndex, endIndex).forEach(function (value) {
+        ['ma5', 'ma20', 'ma60', 'bbUpper', 'bbLower'].forEach(function (key) {
+            priceOverlays.slice(startIndex, endIndex).forEach(function (row) {
+                var value = row[key];
                 if (Number.isFinite(value)) priceValues.push(value);
             });
         });
@@ -2448,6 +2498,9 @@
         });
         addChartSectionLabel(svg, '일봉', margin.left, priceTop + 12);
         addChartSectionLabel(svg, '거래량 X-ray · CVD', margin.left, volumeTop + 12);
+        var bollingerRows = priceOverlays.slice(startIndex, endIndex);
+        var bollingerBandPath = svgBandPath(bollingerRows, 'bbUpper', 'bbLower', xFor, priceY);
+        if (bollingerBandPath) svg.appendChild(makeSvg('path', { d: bollingerBandPath, 'class': 'kodex-history-bollinger-band' }));
 
         var maxVolume = Math.max.apply(Math, rows.map(function (row) { return row.volume; }));
         function volumeY(value) {
@@ -2570,11 +2623,13 @@
         if (cvdPath) svg.appendChild(makeSvg('path', { d: cvdPath, 'class': 'kodex-history-cvd' }));
 
         [
-            { values: ma5, className: 'is-ma5' },
-            { values: ma20, className: 'is-ma20' },
-            { values: ma60, className: 'is-ma60' }
+            { key: 'ma5', className: 'is-ma5' },
+            { key: 'ma20', className: 'is-ma20' },
+            { key: 'ma60', className: 'is-ma60' },
+            { key: 'bbUpper', className: 'is-bollinger' },
+            { key: 'bbLower', className: 'is-bollinger' }
         ].forEach(function (series) {
-            var path = svgPathForSeries(series.values.slice(startIndex, endIndex), 0, xFor, priceY);
+            var path = svgPathForSeries(bollingerRows.map(function (row) { return row[series.key]; }), 0, xFor, priceY);
             if (path) svg.appendChild(makeSvg('path', { d: path, 'class': 'kodex-history-line ' + series.className }));
         });
 
@@ -2619,7 +2674,7 @@
         var axisText = typeof settings.axisFormatter === 'function'
             ? settings.axisFormatter
             : function (value) { return formatNumber(value, 0); };
-        var rows = technicalRangeSlice(rollingIntradayRows(day, interval));
+        var rows = technicalRangeSlice(priceOverlayRows(rollingIntradayRows(day, interval)));
         svg.setAttribute('viewBox', '0 0 1000 590');
         var width = 1000;
         var margin = { left: 24, right: 88 };
@@ -2634,8 +2689,15 @@
         var candleWidth = Math.max(2.5, Math.min(14, xStep * 0.62));
         function xFor(index) { return margin.left + xStep * index + xStep / 2; }
 
-        var minPrice = Math.min.apply(Math, rows.map(function (row) { return row.low; }));
-        var maxPrice = Math.max.apply(Math, rows.map(function (row) { return row.high; }));
+        var priceValues = [];
+        rows.forEach(function (row) {
+            priceValues.push(row.high, row.low);
+            [row.ma5, row.ma20, row.ma60, row.bbUpper, row.bbLower].forEach(function (value) {
+                if (Number.isFinite(value)) priceValues.push(value);
+            });
+        });
+        var minPrice = Math.min.apply(Math, priceValues);
+        var maxPrice = Math.max.apply(Math, priceValues);
         var priceSpread = Math.max(maxPrice - minPrice, Math.abs(maxPrice || 1) * 0.005);
         minPrice -= priceSpread * 0.04;
         maxPrice += priceSpread * 0.04;
@@ -2643,6 +2705,8 @@
         addChartGrid(svg, margin.left, right, priceTop, priceBottom, minPrice, maxPrice, axisText);
         addChartSectionLabel(svg, interval + '분', margin.left, priceTop + 12);
         addChartSectionLabel(svg, '거래량 X-ray · CVD', margin.left, volumeTop + 12);
+        var bollingerBandPath = svgBandPath(rows, 'bbUpper', 'bbLower', xFor, priceY);
+        if (bollingerBandPath) svg.appendChild(makeSvg('path', { d: bollingerBandPath, 'class': 'kodex-history-bollinger-band' }));
 
         var maxVolume = Math.max.apply(Math, rows.map(function (row) { return row.volume; }));
         var forceScale = pressureStrengthScale(rows, function (row) { return row.delta; }, function (row) { return row.volume; });
@@ -2719,6 +2783,17 @@
             cvdPath += (cvdPath ? ' L ' : 'M ') + x.toFixed(2) + ' ' + cvdY(row.cumulativeDelta).toFixed(2);
         });
         if (cvdPath) svg.appendChild(makeSvg('path', { d: cvdPath, 'class': 'kodex-history-cvd' }));
+
+        [
+            { key: 'ma5', className: 'is-ma5' },
+            { key: 'ma20', className: 'is-ma20' },
+            { key: 'ma60', className: 'is-ma60' },
+            { key: 'bbUpper', className: 'is-bollinger' },
+            { key: 'bbLower', className: 'is-bollinger' }
+        ].forEach(function (series) {
+            var path = svgPathForSeries(rows.map(function (row) { return row[series.key]; }), 0, xFor, priceY);
+            if (path) svg.appendChild(makeSvg('path', { d: path, 'class': 'kodex-history-line ' + series.className }));
+        });
 
         var tickIndexes = [0, Math.floor((rows.length - 1) / 4), Math.floor((rows.length - 1) / 2), Math.floor((rows.length - 1) * 3 / 4), rows.length - 1]
             .filter(function (value, index, values) { return values.indexOf(value) === index; });
@@ -2867,7 +2942,7 @@
         var sourceNote = document.getElementById('tqqq-history-source-note');
         if (title) title.textContent = 'TQQQ';
         if (sourceNote) sourceNote.textContent = '미국 정규장 일봉 기준이며, 순압력은 체결 Bid/Ask가 아닌 일중 가격 범위와 종가 위치를 거래량에 반영한 추정치입니다.';
-        Array.prototype.forEach.call(document.querySelectorAll('[data-tqqq-daily-legend]'), function (node) { node.hidden = false; });
+        updatePriceOverlayLegend(false);
         var history = (rawHistory || []).filter(function (row) {
             return row && Number.isFinite(parseHistoryDate(row.date))
                 && [row.open, row.high, row.low, row.close, row.volume].every(Number.isFinite);
@@ -2891,9 +2966,7 @@
         var rows = technicalRangeSlice(history.slice(startIndex));
         startIndex = Math.max(0, history.indexOf(rows[0]));
         var endIndex = startIndex + rows.length;
-        var ma5 = simpleMovingAverage(history, 5);
-        var ma20 = simpleMovingAverage(history, 20);
-        var ma60 = simpleMovingAverage(history, 60);
+        var priceOverlays = priceOverlayRows(history);
 
         svg.setAttribute('viewBox', '0 0 800 460');
         svg.classList.remove('is-intraday');
@@ -2911,8 +2984,9 @@
 
         var values = [];
         rows.forEach(function (row) { values.push(row.high, row.low); });
-        [ma5, ma20, ma60].forEach(function (series) {
-            series.slice(startIndex, endIndex).forEach(function (value) {
+        ['ma5', 'ma20', 'ma60', 'bbUpper', 'bbLower'].forEach(function (key) {
+            priceOverlays.slice(startIndex, endIndex).forEach(function (row) {
+                var value = row[key];
                 if (Number.isFinite(value)) values.push(value);
             });
         });
@@ -2925,6 +2999,9 @@
         addChartGrid(svg, margin.left, right, priceTop, priceBottom, minPrice, maxPrice, formatUsdPrice);
         addChartSectionLabel(svg, '일봉', margin.left, priceTop + 12);
         addChartSectionLabel(svg, '거래량 X-ray · CVD', margin.left, volumeTop + 12);
+        var bollingerRows = priceOverlays.slice(startIndex, endIndex);
+        var bollingerBandPath = svgBandPath(bollingerRows, 'bbUpper', 'bbLower', xFor, priceY);
+        if (bollingerBandPath) svg.appendChild(makeSvg('path', { d: bollingerBandPath, 'class': 'kodex-history-bollinger-band' }));
 
         var maxVolume = Math.max.apply(Math, rows.map(function (row) { return row.volume; }));
         function volumeY(value) { return volumeBottom - value / Math.max(maxVolume, 1) * (volumeBottom - volumePlotTop); }
@@ -3005,12 +3082,15 @@
         if (cvdPath) svg.appendChild(makeSvg('path', { d: cvdPath, 'class': 'kodex-history-cvd' }));
 
         [
-            { values: ma5, className: 'is-ma5' },
-            { values: ma20, className: 'is-ma20' },
-            { values: ma60, className: 'is-ma60' }
+            { key: 'ma5', className: 'is-ma5' },
+            { key: 'ma20', className: 'is-ma20' },
+            { key: 'ma60', className: 'is-ma60' },
+            { key: 'bbUpper', className: 'is-bollinger' },
+            { key: 'bbLower', className: 'is-bollinger' }
         ].forEach(function (line) {
             var path = '';
-            line.values.slice(startIndex, endIndex).forEach(function (value, index) {
+            bollingerRows.forEach(function (row, index) {
+                var value = row[line.key];
                 if (!Number.isFinite(value)) return;
                 path += (path ? ' L ' : 'M ') + xFor(index).toFixed(2) + ' ' + priceY(value).toFixed(2);
             });
@@ -3067,7 +3147,7 @@
         clear(svg);
         clear(summary);
         svg.classList.add('is-intraday');
-        Array.prototype.forEach.call(document.querySelectorAll('[data-tqqq-daily-legend]'), function (node) { node.hidden = true; });
+        updatePriceOverlayLegend(true);
         var oneMinuteRows = intradayHistory && intradayHistory.oneMinute || [];
         var fiveMinuteRows = intradayHistory && intradayHistory.fiveMinute || [];
         var preferredRows = selectedKodexIntradayInterval === 1 ? oneMinuteRows : fiveMinuteRows;

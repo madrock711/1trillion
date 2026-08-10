@@ -1316,6 +1316,7 @@
 .kodex-history-legend .is-ma5 { color: #ffd166; }
 .kodex-history-legend .is-ma20 { color: #66d2ff; }
 .kodex-history-legend .is-ma60 { color: #59dda0; }
+.kodex-history-legend .is-bollinger { color: #b89cff; }
 .kodex-history-legend .is-cvd { color: #f5d76e; }
 
 .kodex-history-readout {
@@ -1516,6 +1517,18 @@
 .kodex-history-line.is-ma5 { stroke: #ffd166; }
 .kodex-history-line.is-ma20 { stroke: #66d2ff; }
 .kodex-history-line.is-ma60 { stroke: #59dda0; }
+.kodex-history-line.is-bollinger {
+    stroke: #b89cff;
+    stroke-width: 1.15;
+    stroke-dasharray: 4 3;
+    opacity: 0.9;
+}
+
+.kodex-history-bollinger-band {
+    fill: rgba(184, 156, 255, 0.08);
+    stroke: none;
+    pointer-events: none;
+}
 
 .kospi-flow-card {
     position: relative;
@@ -1575,6 +1588,7 @@
 .kospi-flow-legend .is-ma5 { color: #ffd166; }
 .kospi-flow-legend .is-ma20 { color: #66d2ff; }
 .kospi-flow-legend .is-ma60 { color: #59dda0; }
+.kospi-flow-legend .is-bollinger { color: #b89cff; }
 .kospi-flow-legend .is-macd { color: #c084fc; }
 .kospi-flow-legend .is-signal { color: #75e8a7; }
 

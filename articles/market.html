@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260810-7">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260810-8">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -66,7 +66,7 @@
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
     <script defer src="../assets/market-live-data.js?v=20260810-2"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260810-9"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260810-10"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -393,9 +393,10 @@
                         <span class="is-cvd">누적 순압력 CVD</span>
                         <span class="is-foreign-buy">외국인 순매수</span>
                         <span class="is-foreign-sell">외국인 순매도</span>
-                        <span class="is-ma5" data-kospi-daily-legend>5일선</span>
-                        <span class="is-ma20" data-kospi-daily-legend>20일선</span>
-                        <span class="is-ma60" data-kospi-daily-legend>60일선</span>
+                        <span class="is-ma5" data-kospi-daily-legend data-price-ma-period="5">5일선</span>
+                        <span class="is-ma20" data-kospi-daily-legend data-price-ma-period="20">20일선</span>
+                        <span class="is-ma60" data-kospi-daily-legend data-price-ma-period="60">60일선</span>
+                        <span class="is-bollinger">볼린저밴드 20·2</span>
                         <span class="is-macd">수급 MACD</span>
                         <span class="is-signal">Signal</span>
                     </div>
@@ -518,9 +519,10 @@
                         <span class="is-estimated-buy">매수 우위 채움</span>
                         <span class="is-estimated-sell">매도 우위 채움</span>
                         <span class="is-cvd">누적 순압력 CVD</span>
-                        <span class="is-ma5" data-kodex-daily-legend>5일선</span>
-                        <span class="is-ma20" data-kodex-daily-legend>20일선</span>
-                        <span class="is-ma60" data-kodex-daily-legend>60일선</span>
+                        <span class="is-ma5" data-kodex-daily-legend data-price-ma-period="5">5일선</span>
+                        <span class="is-ma20" data-kodex-daily-legend data-price-ma-period="20">20일선</span>
+                        <span class="is-ma60" data-kodex-daily-legend data-price-ma-period="60">60일선</span>
+                        <span class="is-bollinger">볼린저밴드 20·2</span>
                     </div>
                     <p class="kodex-history-readout" id="kodex-history-readout" aria-live="polite">3개월 가격과 거래량을 불러오는 중입니다.</p>
                     <div class="kodex-history-shell" tabindex="0" role="region" aria-label="KODEX 레버리지 일봉 또는 분봉, 거래량 X-ray와 누적 CVD 차트">
@@ -550,9 +552,10 @@
                         <span class="is-estimated-buy">매수 우위 채움</span>
                         <span class="is-estimated-sell">매도 우위 채움</span>
                         <span class="is-cvd">누적 순압력 CVD</span>
-                        <span class="is-ma5" data-tqqq-daily-legend>5일선</span>
-                        <span class="is-ma20" data-tqqq-daily-legend>20일선</span>
-                        <span class="is-ma60" data-tqqq-daily-legend>60일선</span>
+                        <span class="is-ma5" data-tqqq-daily-legend data-price-ma-period="5">5일선</span>
+                        <span class="is-ma20" data-tqqq-daily-legend data-price-ma-period="20">20일선</span>
+                        <span class="is-ma60" data-tqqq-daily-legend data-price-ma-period="60">60일선</span>
+                        <span class="is-bollinger">볼린저밴드 20·2</span>
                     </div>
                     <p class="kodex-history-readout" id="tqqq-history-readout" aria-live="polite">TQQQ 일봉과 거래량을 불러오는 중입니다.</p>
                     <div class="kodex-history-shell" tabindex="0" role="region" aria-label="TQQQ 일봉, 거래량 X-ray와 누적 CVD 차트">
