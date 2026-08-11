@@ -3342,6 +3342,7 @@
 
     function renderKodexIntradayRows(day, interval, svg, summary, readout, options) {
         var settings = options || {};
+        summary.classList.add('is-intraday-compact');
         var priceText = typeof settings.priceFormatter === 'function'
             ? settings.priceFormatter
             : function (value) { return formatPrice(value, '원'); };
@@ -3499,15 +3500,10 @@
         var metricRows = currentRows.length ? currentRows : rows;
         var totalVolume = metricRows.reduce(function (total, row) { return total + row.volume; }, 0);
         var totalDelta = metricRows.reduce(function (total, row) { return total + row.delta; }, 0);
-        var firstVisibleDate = rowDate(rows[0]);
-        appendKodexMetric(summary, day.rolling ? '표시 구간' : '거래일', day.rolling
-            ? formatHistoryDate(firstVisibleDate) + ' → ' + formatHistoryDate(day.date)
-            : formatHistoryDate(day.date));
-        appendKodexMetric(summary, '봉 간격', interval + '분');
-        appendKodexMetric(summary, currentRows.length ? '오늘 수익률' : '직전 장 수익률', formatSigned((metricRows[metricRows.length - 1].close / metricRows[0].open - 1) * 100, '%', 2));
-        appendKodexMetric(summary, currentRows.length ? '오늘 거래량' : '직전 장 거래량', formatCompactVolume(totalVolume));
-        appendKodexMetric(summary, currentRows.length ? '오늘 추정 순압력' : '직전 장 추정 순압력', formatPressurePercent(totalDelta, totalVolume));
-        appendKodexMetric(summary, currentRows.length ? '오늘 CVD' : '직전 장 CVD', formatSigned(totalDelta, '주', 0));
+        appendKodexMetric(summary, '수익률', formatSigned((metricRows[metricRows.length - 1].close / metricRows[0].open - 1) * 100, '%', 2));
+        appendKodexMetric(summary, '거래량', formatCompactVolume(totalVolume));
+        appendKodexMetric(summary, '추정 순압력', formatPressurePercent(totalDelta, totalVolume));
+        appendKodexMetric(summary, 'CVD', formatSigned(totalDelta, '주', 0));
     }
 
     function renderKodexIntradayChart(instrument, svg, summary, readout, indexRows) {
@@ -3579,6 +3575,7 @@
         var indexRows = setKodexChartControls(instrument);
         var title = document.getElementById('kodex-history-title');
         svg.classList.toggle('is-intraday', selectedKodexChartMode === 'intraday');
+        summary.classList.toggle('is-intraday-compact', selectedKodexChartMode === 'intraday');
         if (title) title.textContent = 'KODEX 레버리지';
         if (selectedKodexChartMode === 'intraday') {
             renderKodexIntradayChart(instrument, svg, summary, readout, indexRows);
@@ -3616,6 +3613,7 @@
         if (!svg || !summary || !readout) return;
         clear(svg);
         clear(summary);
+        summary.classList.remove('is-intraday-compact');
         svg.classList.remove('is-intraday');
         var title = document.getElementById('tqqq-history-title');
         var sourceNote = document.getElementById('tqqq-history-source-note');

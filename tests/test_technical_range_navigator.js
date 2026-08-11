@@ -58,6 +58,16 @@ assert(amplifyRules.includes('/market-data/stock/122630/intraday-warmup'));
 assert(dashboard.includes('function effectiveIntradayInterval(day, requestedInterval)'));
 assert(dashboard.includes("return [1, 5, 15, 30, 60].indexOf(requested) !== -1 ? requested : 5;"), '네비게이터 표시 폭이 넓어져도 사용자가 고른 분 간격을 자동 변경하면 안 된다.');
 assert(!dashboard.includes('rawCount * visibleRatio / value <= maxIntradayRenderedBars'), '표시 구간에 따라 1분 선택을 5분으로 자동 승격하면 안 된다.');
+const intradaySummaryStart = dashboard.indexOf('function renderKodexIntradayRows');
+const intradaySummaryEnd = dashboard.indexOf('function renderKodexIntradayChart', intradaySummaryStart);
+const intradaySummaryBody = dashboard.slice(intradaySummaryStart, intradaySummaryEnd);
+assert(intradaySummaryBody.includes("summary.classList.add('is-intraday-compact')"));
+['수익률', '거래량', '추정 순압력', 'CVD'].forEach(function (label) {
+    assert(intradaySummaryBody.includes("appendKodexMetric(summary, '" + label + "'"), label + ' 한 줄 지표가 필요하다.');
+});
+['표시 구간', '봉 간격', '오늘 수익률', '오늘 거래량', '오늘 추정 순압력', '오늘 CVD'].forEach(function (label) {
+    assert(!intradaySummaryBody.includes("appendKodexMetric(summary, '" + label + "'"), label + ' 지표는 제거해야 한다.');
+});
 assert(dashboard.includes('selectedKodexIntradayDateExplicit = true;'));
 assert(dashboard.includes('MarketDashboardLive.preferredIntradayDate(indexRows, selectedKodexIntradayDate, selectedKodexIntradayDateExplicit)'));
 assert(dashboard.includes('if (kodex) setKodexChartControls(kodex);'));
@@ -105,6 +115,8 @@ assert(css.includes('.technical-range-input::-webkit-slider-thumb'));
 assert(css.includes('backdrop-filter: none'));
 assert(css.includes('.technical-global-chart-controls {'));
 assert(css.includes('.technical-global-chart-controls [hidden] {\n    display: none !important;'));
+assert(css.includes('.kodex-history-summary.is-intraday-compact {'));
+assert(css.includes('white-space: nowrap;'), '분봉 지표는 한 줄을 유지해야 한다.');
 assert(css.includes('padding-bottom: calc(var(--technical-navigator-height'));
 
 const navigatorSlotIndex = html.indexOf('id="technical-range-navigator-slot"');

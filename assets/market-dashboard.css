@@ -1931,6 +1931,36 @@
     margin-top: var(--space-4);
 }
 
+.kodex-history-summary.is-intraday-compact {
+    display: flex;
+    gap: 0.45rem;
+    margin-top: 0.55rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+}
+
+.kodex-history-summary.is-intraday-compact .kodex-metric-item {
+    display: flex;
+    min-width: max-content;
+    flex: 1 0 auto;
+    align-items: baseline;
+    gap: 0.35rem;
+    padding: 0.45rem 0.65rem;
+    white-space: nowrap;
+}
+
+.kodex-history-summary.is-intraday-compact .kodex-metric-item span,
+.kodex-history-summary.is-intraday-compact .kodex-metric-item strong {
+    display: inline;
+    margin: 0;
+}
+
+.kodex-history-summary.is-intraday-compact .kodex-metric-item strong {
+    font-size: 0.84rem;
+    overflow-wrap: normal;
+}
+
 .kodex-investor-card {
     margin-bottom: var(--space-4);
 }
