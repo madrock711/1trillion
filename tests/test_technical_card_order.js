@@ -9,6 +9,7 @@ const css = fs.readFileSync(path.join(__dirname, '../assets/market-dashboard.css
 const cardIds = Array.from(html.matchAll(/data-technical-card="([^"]+)"/g), (match) => match[1]);
 assert.deepStrictEqual(cardIds, [
     'kospi-flow',
+    'leading-cycle-comparison',
     'kodex-technical',
     'kodex-quote',
     'kodex-range',
@@ -21,7 +22,7 @@ assert.deepStrictEqual(cardIds, [
 ]);
 assert.strictEqual(new Set(cardIds).size, cardIds.length, 'technical card ids must be unique');
 
-assert(/'kospi-flow',\r?\n\s*'kodex-history',\r?\n\s*'composite-momentum',\r?\n\s*'tqqq-history'/.test(js), 'default order should keep KOSPI, KODEX, composite, and TQQQ charts together');
+assert(/'kospi-flow',\r?\n\s*'leading-cycle-comparison',\r?\n\s*'kodex-history',\r?\n\s*'composite-momentum',\r?\n\s*'tqqq-history'/.test(js), 'default order should keep the macro comparison ahead of KODEX, composite, and TQQQ charts');
 assert(js.includes("hpmplab-technical-card-order-v2"), 'technical order must persist in localStorage');
 assert(js.includes("data-technical-card-move"), 'technical cards need move controls');
 assert(js.includes("updateTechnicalCardOrderControls(stack)"), 'move control disabled states must be refreshed');

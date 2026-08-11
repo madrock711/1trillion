@@ -14,6 +14,7 @@
     var liveMarketSource = root.getAttribute('data-live-market-source');
     var kodexVolumeSource = root.getAttribute('data-kodex-volume-source');
     var kodexIntradaySource = root.getAttribute('data-kodex-intraday-source');
+    var leadingCycleSource = root.getAttribute('data-leading-cycle-source');
     var selectedInstrumentId = null;
     var latestLiveData = null;
     var liveRefreshTimer = null;
@@ -36,6 +37,7 @@
     var floatingDashboardControlsBound = false;
     var kodexIntradayRenderToken = 0;
     var kospiTechnicalHistory = [];
+    var leadingCycleData = null;
     var kospiHistoryRequestToken = 0;
     var kospiIntradayRenderToken = 0;
     var kospiIntradayForceRefresh = false;
@@ -51,6 +53,7 @@
     var technicalCardOrderStorageKey = 'hpmplab-technical-card-order-v2';
     var defaultTechnicalCardOrder = [
         'kospi-flow',
+        'leading-cycle-comparison',
         'kodex-history',
         'composite-momentum',
         'tqqq-history',
@@ -443,7 +446,7 @@
                         tone: flow.value > 0 ? 'positive' : flow.value < 0 ? 'negative' : 'flat'
                     };
                 });
-            } else {
+            } else if (market.breadth && [market.breadth.advance, market.breadth.flat, market.breadth.decline].every(Number.isFinite)) {
                 bodyLabel.appendChild(make('span', '', '시장 폭'));
                 bodyLabel.appendChild(make('span', '', '종목 수'));
                 rows = [
@@ -451,6 +454,10 @@
                     { label: '보합', value: market.breadth.flat, display: formatNumber(market.breadth.flat, 0) + '개', tone: 'flat' },
                     { label: '하락', value: market.breadth.decline, display: formatNumber(market.breadth.decline, 0) + '개', tone: 'negative' }
                 ];
+            } else {
+                bodyLabel.appendChild(make('span', '', '시장 세부 데이터'));
+                bodyLabel.appendChild(make('span', '', '최근 확인값'));
+                rows = [{ label: '수급·시장 폭', value: 0, display: '확인 중', tone: 'flat' }];
             }
             body.appendChild(bodyLabel);
 
@@ -1199,6 +1206,7 @@
         var kodex = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
         if (kodex) setKodexChartControls(kodex);
         if (kospi) renderKospiHistoryChart(kospi);
+        if (kospi) renderLeadingCycleComparison(kospi);
         if (kodex) {
             renderKodexHistoryChart(kodex);
             renderCompositeMomentumCard(kodex);
@@ -2026,6 +2034,7 @@
             kospiTechnicalHistory = rows;
             var market = dashboardData && findById(dashboardData.markets, 'KOSPI');
             renderKospiHistoryChart(market);
+            renderLeadingCycleComparison(market);
             var instrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
             if (instrument) renderCompositeMomentumCard(instrument);
             var displayRows = mergeCurrentKospiHistory(rows, market);
@@ -2072,6 +2081,243 @@
                 flowSignal: flowMacd.signal[sourceIndex],
                 flowHistogram: flowMacd.histogram[sourceIndex]
             });
+        });
+    }
+
+    function normalizeLeadingCycleData(payload) {
+        if (!payload || payload.schemaVersion !== 1 || payload.frequency !== 'monthly'
+            || !Array.isArray(payload.observations) || payload.observations.length < 12) {
+            throw new Error('선행지수 월별 자료가 올바르지 않습니다.');
+        }
+        var observations = payload.observations.map(function (row) {
+            return {
+                period: /^\d{4}-\d{2}$/.test(row && row.period || '') ? row.period : '',
+                value: Number(row && row.value)
+            };
+        }).filter(function (row) {
+            return row.period && Number.isFinite(row.value);
+        }).sort(function (left, right) {
+            return left.period.localeCompare(right.period);
+        });
+        if (observations.length < 12) throw new Error('선행지수 월별 관측치가 부족합니다.');
+        return Object.assign({}, payload, { observations: observations });
+    }
+
+    function monthLabel(period) {
+        var match = /^(\d{4})-(\d{2})$/.exec(period || '');
+        return match ? Number(match[1]) + '년 ' + Number(match[2]) + '월' : period || '';
+    }
+
+    function monthlyKospiCloses(market) {
+        var byMonth = {};
+        mergeCurrentKospiHistory(kospiTechnicalHistory, market).forEach(function (row) {
+            var match = /^(\d{4}-\d{2})-\d{2}$/.exec(row && row.date || '');
+            if (!match || !Number.isFinite(row.close)) return;
+            var current = byMonth[match[1]];
+            if (!current || row.date > current.date) {
+                byMonth[match[1]] = { period: match[1], date: row.date, value: row.close };
+            }
+        });
+        return Object.keys(byMonth).sort().map(function (period) { return byMonth[period]; });
+    }
+
+    function leadingCycleComparisonRows(market) {
+        if (!leadingCycleData) return [];
+        var kospi = monthlyKospiCloses(market);
+        var leadingByPeriod = {};
+        var kospiByPeriod = {};
+        leadingCycleData.observations.forEach(function (row) { leadingByPeriod[row.period] = row.value; });
+        kospi.forEach(function (row) { kospiByPeriod[row.period] = row; });
+        var common = kospi.map(function (row) { return row.period; }).filter(function (period) {
+            return Number.isFinite(leadingByPeriod[period]);
+        });
+        if (common.length < 6) return [];
+        var baselinePeriod = common[0];
+        var baselineLeading = leadingByPeriod[baselinePeriod];
+        var baselineKospi = kospiByPeriod[baselinePeriod].value;
+        var periods = Object.keys(Object.assign({}, leadingByPeriod, kospiByPeriod)).filter(function (period) {
+            return period >= baselinePeriod && period <= kospi[kospi.length - 1].period;
+        }).sort();
+        return periods.map(function (period) {
+            var leading = leadingByPeriod[period];
+            var kospiRow = kospiByPeriod[period];
+            return {
+                period: period,
+                date: kospiRow && kospiRow.date || period + '-01',
+                leading: Number.isFinite(leading) ? leading : null,
+                kospi: kospiRow ? kospiRow.value : null,
+                leadingNormalized: Number.isFinite(leading) ? leading / baselineLeading * 100 : null,
+                kospiNormalized: kospiRow ? kospiRow.value / baselineKospi * 100 : null,
+                baselinePeriod: baselinePeriod
+            };
+        });
+    }
+
+    function renderLeadingCycleComparison(market) {
+        var svg = document.getElementById('leading-cycle-chart');
+        var readout = document.getElementById('leading-cycle-readout');
+        var summary = document.getElementById('leading-cycle-summary');
+        if (!svg || !readout || !summary) return;
+        clear(svg);
+        clear(summary);
+        if (!leadingCycleData) {
+            readout.textContent = '공식 선행지수와 KOSPI 월말 종가를 불러오는 중입니다.';
+            return;
+        }
+        var rows = leadingCycleComparisonRows(market);
+        if (rows.length < 6) {
+            readout.textContent = '선행지수와 KOSPI의 공통 월별 구간을 만들지 못했습니다.';
+            return;
+        }
+
+        var width = 1000;
+        var height = 420;
+        var margin = { left: 54, right: 76, top: 38, bottom: 56 };
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+        var values = [];
+        rows.forEach(function (row) {
+            if (Number.isFinite(row.leadingNormalized)) values.push(row.leadingNormalized);
+            if (Number.isFinite(row.kospiNormalized)) values.push(row.kospiNormalized);
+        });
+        var minValue = Math.min.apply(Math, values);
+        var maxValue = Math.max.apply(Math, values);
+        var spread = Math.max(maxValue - minValue, 8);
+        minValue -= spread * 0.12;
+        maxValue += spread * 0.12;
+        var xStep = plotWidth / Math.max(rows.length - 1, 1);
+        function xFor(index) { return margin.left + xStep * index; }
+        function yFor(value) { return margin.top + (maxValue - value) / (maxValue - minValue) * plotHeight; }
+
+        for (var gridIndex = 0; gridIndex < 5; gridIndex += 1) {
+            var gridValue = maxValue - (maxValue - minValue) * gridIndex / 4;
+            var gridY = yFor(gridValue);
+            svg.appendChild(makeSvg('line', {
+                x1: margin.left,
+                x2: width - margin.right,
+                y1: gridY,
+                y2: gridY,
+                'class': Math.abs(gridValue - 100) < (maxValue - minValue) / 8
+                    ? 'leading-cycle-grid is-baseline'
+                    : 'leading-cycle-grid'
+            }));
+            var gridLabel = makeSvg('text', {
+                x: margin.left - 10,
+                y: gridY + 4,
+                'text-anchor': 'end',
+                'class': 'leading-cycle-axis-label'
+            });
+            gridLabel.textContent = formatNumber(gridValue, 1);
+            svg.appendChild(gridLabel);
+        }
+        var baselineY = yFor(100);
+        if (baselineY >= margin.top && baselineY <= height - margin.bottom) {
+            svg.appendChild(makeSvg('line', {
+                x1: margin.left,
+                x2: width - margin.right,
+                y1: baselineY,
+                y2: baselineY,
+                'class': 'leading-cycle-baseline'
+            }));
+        }
+
+        function seriesPath(key) {
+            var path = '';
+            var drawing = false;
+            rows.forEach(function (row, index) {
+                var value = row[key];
+                if (!Number.isFinite(value)) {
+                    drawing = false;
+                    return;
+                }
+                path += (drawing ? ' L ' : ' M ') + xFor(index).toFixed(2) + ' ' + yFor(value).toFixed(2);
+                drawing = true;
+            });
+            return path;
+        }
+        svg.appendChild(makeSvg('path', {
+            d: seriesPath('leadingNormalized'),
+            'class': 'leading-cycle-series is-leading'
+        }));
+        svg.appendChild(makeSvg('path', {
+            d: seriesPath('kospiNormalized'),
+            'class': 'leading-cycle-series is-kospi'
+        }));
+
+        var tickIndexes = [0, Math.floor((rows.length - 1) / 3), Math.floor((rows.length - 1) * 2 / 3), rows.length - 1];
+        tickIndexes.filter(function (value, index, all) { return all.indexOf(value) === index; }).forEach(function (index) {
+            var tick = makeSvg('text', {
+                x: xFor(index),
+                y: height - 20,
+                'text-anchor': index === 0 ? 'start' : index === rows.length - 1 ? 'end' : 'middle',
+                'class': 'leading-cycle-axis-label'
+            });
+            tick.textContent = rows[index].period.replace('-', '.');
+            svg.appendChild(tick);
+        });
+
+        function updateReadout(row) {
+            readout.textContent = monthLabel(row.period)
+                + ' · 선행지수 ' + (Number.isFinite(row.leading) ? formatNumber(row.leading, 1) + ' (' + formatSigned(row.leadingNormalized - 100, '%', 1) + ')' : '발표 전')
+                + ' · KOSPI ' + (Number.isFinite(row.kospi) ? formatNumber(row.kospi, 2) + ' (' + formatSigned(row.kospiNormalized - 100, '%', 1) + ')' : '자료 없음')
+                + ' · 괄호는 ' + monthLabel(row.baselinePeriod) + '=100 대비 변화입니다.';
+        }
+        rows.forEach(function (row, index) {
+            var hitbox = makeSvg('rect', {
+                x: Math.max(margin.left, xFor(index) - xStep / 2),
+                y: margin.top,
+                width: Math.max(8, xStep),
+                height: plotHeight,
+                'class': 'leading-cycle-hitbox',
+                tabindex: '0',
+                role: 'button',
+                'aria-label': monthLabel(row.period) + ' 비교값 보기'
+            });
+            function activate() {
+                Array.prototype.forEach.call(svg.querySelectorAll('.leading-cycle-focus'), function (node) { node.remove(); });
+                svg.insertBefore(makeSvg('line', {
+                    x1: xFor(index), x2: xFor(index), y1: margin.top, y2: height - margin.bottom,
+                    'class': 'leading-cycle-focus'
+                }), svg.querySelector('.leading-cycle-hitbox'));
+                updateReadout(row);
+            }
+            hitbox.addEventListener('mouseenter', activate);
+            hitbox.addEventListener('focus', activate);
+            hitbox.addEventListener('click', activate);
+            svg.appendChild(hitbox);
+        });
+
+        var latestLeading = rows.filter(function (row) { return Number.isFinite(row.leading); }).slice(-1)[0];
+        var latestKospi = rows.filter(function (row) { return Number.isFinite(row.kospi); }).slice(-1)[0];
+        var baseline = rows[0];
+        [
+            ['선행지수', latestLeading ? formatNumber(latestLeading.leading, 1) : '자료 없음', latestLeading ? monthLabel(latestLeading.period) + ' 확정치' : ''],
+            ['KOSPI', latestKospi ? formatNumber(latestKospi.kospi, 2) : '자료 없음', latestKospi ? formatHistoryDate(latestKospi.date) + ' 종가' : ''],
+            ['비교 기준', '100', monthLabel(baseline.baselinePeriod)],
+            ['누적 변화', latestKospi ? 'KOSPI ' + formatSigned(latestKospi.kospiNormalized - 100, '%', 1) : '자료 없음', latestLeading ? '선행지수 ' + formatSigned(latestLeading.leadingNormalized - 100, '%', 1) : '']
+        ].forEach(function (item) {
+            var card = make('div', 'leading-cycle-summary-item');
+            card.appendChild(make('span', '', item[0]));
+            card.appendChild(make('strong', '', item[1]));
+            card.appendChild(make('small', '', item[2]));
+            summary.appendChild(card);
+        });
+        updateReadout(latestKospi || latestLeading || rows[rows.length - 1]);
+    }
+
+    function loadLeadingCycleData() {
+        if (!leadingCycleSource) return Promise.resolve(false);
+        return fetch(cacheBustedUrl(leadingCycleSource), { cache: 'no-store' }).then(function (response) {
+            if (!response.ok) throw new Error('선행지수 자료를 불러오지 못했습니다.');
+            return response.json();
+        }).then(normalizeLeadingCycleData).then(function (payload) {
+            leadingCycleData = payload;
+            renderLeadingCycleComparison(dashboardData && findById(dashboardData.markets, 'KOSPI'));
+            return true;
+        }).catch(function () {
+            var readout = document.getElementById('leading-cycle-readout');
+            if (readout) readout.textContent = '선행지수 월별 자료를 불러오지 못했습니다.';
+            return false;
         });
     }
 
@@ -3583,6 +3829,7 @@
         renderEvents(data);
         renderTechnical(data);
         renderKospiHistoryChart(findById(data.markets, 'KOSPI'));
+        renderLeadingCycleComparison(findById(data.markets, 'KOSPI'));
         renderKodex(data);
         renderSources(data);
         renderLatestArticle(data);
@@ -3865,6 +4112,7 @@
         renderAnalysis(data, liveData);
         renderTechnical(data);
         renderKospiHistoryChart(displayKospi);
+        renderLeadingCycleComparison(displayKospi);
         renderKodex(data);
         var exchangeText = liveData.exchange
             ? ', 원/달러는 ' + liveData.exchange.asOfLabel + ' 기준입니다. '
@@ -4001,9 +4249,17 @@
         .then(validateData)
         .then(function (data) {
             render(data);
-            return Promise.all([refreshLiveMarketData(data), loadKodexIntradayIndex(data), loadKospiTechnicalHistory(false)]);
+            return Promise.all([
+                refreshLiveMarketData(data),
+                loadKodexIntradayIndex(data),
+                loadKospiTechnicalHistory(false),
+                loadLeadingCycleData()
+            ]);
         })
-        .catch(function () {
+        .catch(function (error) {
+            if (window.console && typeof window.console.error === 'function') {
+                window.console.error('시장 대시보드 초기화 실패', error);
+            }
             clear(loadState);
             loadState.appendChild(document.createTextNode('시장 데이터를 불러오지 못했습니다. '));
             var archiveLink = make('a', '', '최근 시황 리서치 보기');

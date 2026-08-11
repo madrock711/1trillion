@@ -11,7 +11,7 @@
   "summary": "호르무즈 해협 재개 불확실성으로 WTI가 5.03% 뛰고 미국 반도체지수는 2.94% 하락했습니다. 외국인 현물은 821억원 순매수지만 기관과 프로그램 매도가 이어져 6,213.78 방어와 6,300 회복을 나눠 봅니다.",
   "markets": [
     {"id":"KOSPI","label":"KOSPI","symbol":"K","value":6226.84,"changePercent":-1.16,"asOf":"2026-08-11T09:21:00+09:00","asOfLabel":"8월 11일 09:21 KST","stateLabel":"정규장 장중","open":6240.06,"high":6275.74,"low":6213.78,"previousClose":6299.66,"flows":[{"label":"외국인","value":821,"unit":"억원"},{"label":"기관","value":-1457,"unit":"억원"},{"label":"개인","value":752,"unit":"억원"}],"breadth":{"advance":503,"flat":45,"decline":349}},
-    {"id":"KOSDAQ","label":"KOSDAQ","symbol":"Q","value":850.76,"changePercent":-0.43,"asOf":"2026-08-11T09:21:00+09:00","asOfLabel":"8월 11일 09:21 KST","stateLabel":"정규장 장중","open":848.59,"high":849.36,"low":840.45,"previousClose":854.47,"flows":[],"breadth":null}
+    {"id":"KOSDAQ","label":"KOSDAQ","symbol":"Q","value":850.76,"changePercent":-0.43,"asOf":"2026-08-11T09:21:00+09:00","asOfLabel":"8월 11일 09:21 KST","stateLabel":"정규장 장중","open":848.59,"high":850.76,"low":840.45,"previousClose":854.47,"flows":[],"breadth":null}
   ],
   "stance":{"label":"관망 우세","attack":25,"wait":55,"defense":20,"note":"외국인 현물 매수보다 프로그램 매도 축소와 6,300선 회복을 먼저 확인합니다."},
   "checkpoints":[
