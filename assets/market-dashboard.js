@@ -52,6 +52,8 @@
     var kospiIntradayRangePreview = null;
     var kospiIntradayAbortController = null;
     var kospiIntradayRequestDate = '';
+    var kospiIntradayRequestWarmupSignature = '';
+    var kospiIntradayPendingWarmupRerender = false;
     var compositeMomentumState = { key: '', days: [], pending: null };
     var compositeMomentumRenderToken = 0;
     var compositeMomentumForceRefresh = false;
@@ -1585,6 +1587,14 @@
         }).slice(-intradayIndicatorWarmupSessionCount);
     }
 
+    function intradayWarmupSignature(days) {
+        return (days || []).map(function (day) {
+            var bars = day && Array.isArray(day.bars) ? day.bars : [];
+            var latest = bars[bars.length - 1] || {};
+            return [day && day.date || '', bars.length, latest.time || '', latest.close || ''].join(':');
+        }).join('|');
+    }
+
     function effectiveIntradayInterval(day, requestedInterval) {
         var requested = Math.max(1, Number(requestedInterval) || 1);
         return [1, 5, 15, 30, 60].indexOf(requested) !== -1 ? requested : 5;
@@ -2894,6 +2904,7 @@
         var rolling = windowEntries.length > 1;
         var kospiLive = latestLiveData && findById(latestLiveData.markets, 'KOSPI');
         var kospiWarmupDays = kospiLive && kospiLive.indicatorWarmupDays || [];
+        var kospiWarmupSignature = intradayWarmupSignature(kospiWarmupDays);
         var marketStatus = kospiLive && kospiLive.marketStatus || '';
         var includeCurrentSession = !selectedIsCurrent
             || marketStatus === 'OPEN'
@@ -2962,10 +2973,17 @@
         } else {
             renderKospiRows([], { mode: 'intraday', date: selectedDate });
         }
-        if (kospiIntradayAbortController && kospiIntradayRequestDate === selectedDate && !forceRefresh) return;
+        if (kospiIntradayAbortController && kospiIntradayRequestDate === selectedDate && !forceRefresh) {
+            if (kospiWarmupSignature !== kospiIntradayRequestWarmupSignature) {
+                kospiIntradayPendingWarmupRerender = true;
+            }
+            return;
+        }
         if (kospiIntradayAbortController) kospiIntradayAbortController.abort();
         kospiIntradayAbortController = typeof AbortController === 'function' ? new AbortController() : null;
         kospiIntradayRequestDate = selectedDate;
+        kospiIntradayRequestWarmupSignature = kospiWarmupSignature;
+        kospiIntradayPendingWarmupRerender = false;
         var token = ++kospiIntradayRenderToken;
         var controller = kospiIntradayAbortController;
         var timeoutId = window.setTimeout(function () { if (controller) controller.abort(); }, 20000);
@@ -3027,8 +3045,20 @@
         }).finally(function () {
             window.clearTimeout(timeoutId);
             if (controller === kospiIntradayAbortController) {
+                var rerenderWithWarmup = kospiIntradayPendingWarmupRerender
+                    && selectedKodexChartMode === 'intraday'
+                    && selectedKodexIntradayDate === selectedDate;
                 kospiIntradayAbortController = null;
                 kospiIntradayRequestDate = '';
+                kospiIntradayRequestWarmupSignature = '';
+                kospiIntradayPendingWarmupRerender = false;
+                if (rerenderWithWarmup) {
+                    window.setTimeout(function () {
+                        if (selectedKodexChartMode === 'intraday' && selectedKodexIntradayDate === selectedDate) {
+                            renderKospiIntradayChart();
+                        }
+                    }, 0);
+                }
             }
         });
     }
@@ -3045,6 +3075,8 @@
             kospiIntradayAbortController.abort();
             kospiIntradayAbortController = null;
             kospiIntradayRequestDate = '';
+            kospiIntradayRequestWarmupSignature = '';
+            kospiIntradayPendingWarmupRerender = false;
         }
         kospiIntradayRenderToken += 1;
         var dailyRows = prepareKospiDailyRows(market);
@@ -4252,6 +4284,10 @@
             }
             if (previous && Array.isArray(previous.priceHistory) && !Array.isArray(item.priceHistory)) {
                 item.priceHistory = previous.priceHistory;
+            }
+            if (previous && Array.isArray(previous.indicatorWarmupDays) && previous.indicatorWarmupDays.length
+                && (!Array.isArray(item.indicatorWarmupDays) || !item.indicatorWarmupDays.length)) {
+                item.indicatorWarmupDays = previous.indicatorWarmupDays;
             }
             if (previous && Array.isArray(previous.intradayIndex) && Array.isArray(item.intradayIndex)) {
                 item.intradayIndex = window.MarketDashboardLive.mergeRuntimeIntradayIndex(
