@@ -32,10 +32,10 @@ async function main() {
     const kospiSummaryEnd = dashboardSource.indexOf('function renderKospiIntradayChart', kospiSummaryStart);
     const kospiSummaryBody = dashboardSource.slice(kospiSummaryStart, kospiSummaryEnd);
     assert.ok(kospiSummaryBody.includes("summary.classList.add('is-intraday-compact')"), 'KOSPI 하단 요약은 한 줄 압축 형식을 사용해야 한다.');
-    ['KOSPI', '수익률', 'CVD', '외국인', 'MACD', '기준'].forEach(function (label) {
+    ['KOSPI', '수익률', 'CVD', '외국인', '기준'].forEach(function (label) {
         assert.ok(kospiSummaryBody.includes("appendKodexMetric(summary, '" + label + "'"), label + ' 압축 지표가 필요하다.');
     });
-    ['현재 지수', '최근 종가', '오늘 수익률', '기간 수익률', '오늘 CVD', '종료 CVD', '외국인 오늘 누적', '외국인 기간 누적', '수급 MACD', '기준 시각', '기준일'].forEach(function (label) {
+    ['현재 지수', '최근 종가', '오늘 수익률', '기간 수익률', '오늘 CVD', '종료 CVD', '외국인 오늘 누적', '외국인 기간 누적', '수급 MACD', 'MACD', '기준 시각', '기준일'].forEach(function (label) {
         assert.ok(!kospiSummaryBody.includes("appendKodexMetric(summary, '" + label + "'"), label + ' 장문 지표는 다시 넣으면 안 된다.');
     });
     assert.ok(dashboardSource.includes("(options.interval || selectedKodexIntradayInterval) + '분'"), 'KOSPI 분봉 간격은 자동 집계 간격을 짧은 분 표기로 표시해야 한다.');

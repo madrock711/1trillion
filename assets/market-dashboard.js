@@ -2853,9 +2853,6 @@
         var metricRows = currentSessionRows.length ? currentSessionRows : rows;
         var first = metricRows[0];
         var metricLatest = metricRows[metricRows.length - 1];
-        var latestMacd = rows.slice().reverse().filter(function (row) {
-            return Number.isFinite(row.flowMacd) && Number.isFinite(row.flowSignal);
-        })[0];
         appendKodexMetric(summary, 'KOSPI', formatNumber(latest.close, 2));
         appendKodexMetric(summary, '수익률', formatSigned((metricLatest.close / first.open - 1) * 100, '%', 2));
         var metricCvd = intraday ? metricRows.reduce(function (total, row) { return total + row.delta; }, 0) : latest.cumulativeDelta;
@@ -2868,9 +2865,6 @@
             }, 0);
             appendKodexMetric(summary, '외국인', formatSigned(cumulativeForeign, '억원', 0));
         }
-        appendKodexMetric(summary, 'MACD', latestMacd
-            ? (latestMacd.flowMacd >= latestMacd.flowSignal ? 'Signal 위' : 'Signal 아래')
-            : '수급 데이터 확인 중');
         appendKodexMetric(summary, '기준', rowLabel(latest));
         updateReadout(latest);
     }
