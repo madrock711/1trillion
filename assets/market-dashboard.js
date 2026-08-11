@@ -2290,9 +2290,10 @@
         var latestLeading = rows.filter(function (row) { return Number.isFinite(row.leading); }).slice(-1)[0];
         var latestKospi = rows.filter(function (row) { return Number.isFinite(row.kospi); }).slice(-1)[0];
         var baseline = rows[0];
+        var kospiValueLabel = market && /장중|개장/.test(market.stateLabel || '') ? ' 최근값' : ' 종가';
         [
             ['선행지수', latestLeading ? formatNumber(latestLeading.leading, 1) : '자료 없음', latestLeading ? monthLabel(latestLeading.period) + ' 확정치' : ''],
-            ['KOSPI', latestKospi ? formatNumber(latestKospi.kospi, 2) : '자료 없음', latestKospi ? formatHistoryDate(latestKospi.date) + ' 종가' : ''],
+            ['KOSPI', latestKospi ? formatNumber(latestKospi.kospi, 2) : '자료 없음', latestKospi ? formatHistoryDate(latestKospi.date) + kospiValueLabel : ''],
             ['비교 기준', '100', monthLabel(baseline.baselinePeriod)],
             ['누적 변화', latestKospi ? 'KOSPI ' + formatSigned(latestKospi.kospiNormalized - 100, '%', 1) : '자료 없음', latestLeading ? '선행지수 ' + formatSigned(latestLeading.leadingNormalized - 100, '%', 1) : '']
         ].forEach(function (item) {
