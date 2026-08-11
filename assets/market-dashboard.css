@@ -1391,10 +1391,7 @@
 .leading-cycle-legend .is-kospi { color: #4aa3ff; }
 
 .leading-cycle-legend .is-kospi::before {
-    height: 0;
-    border-top: 2px dashed currentColor;
-    border-radius: 0;
-    background: transparent;
+    background: currentColor;
 }
 
 .leading-cycle-readout {
@@ -1428,7 +1425,7 @@
 
 .leading-cycle-series {
     fill: none;
-    stroke-width: 2.35;
+    stroke-width: 1;
     stroke-linecap: round;
     stroke-linejoin: round;
     vector-effect: non-scaling-stroke;
@@ -1436,13 +1433,11 @@
 
 .leading-cycle-series.is-leading {
     stroke: #67efb2;
-    opacity: 0.96;
 }
 
 .leading-cycle-series.is-kospi {
     stroke: #4aa3ff;
-    stroke-width: 2.15;
-    stroke-dasharray: 8 5;
+    mix-blend-mode: screen;
 }
 
 .leading-cycle-axis-label {
