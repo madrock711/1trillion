@@ -38,6 +38,7 @@ assert(dashboard.includes('window.localStorage.getItem(technicalChartStateStorag
 assert(dashboard.includes('window.localStorage.setItem(technicalChartStateStorageKey, serialized)'));
 assert(dashboard.includes('intradayDateExplicit: Boolean(date && source.intradayDateExplicit)'));
 assert((dashboard.match(/persistTechnicalChartState\(\);/g) || []).length >= 6, '모드·기간·분 간격·거래일·표시 구간 선택을 저장해야 한다.');
+assert(dashboard.includes('if (dates.length && preferredDate !== selectedKodexIntradayDate) {'), '초기 날짜 목록이 비어 있을 때 저장된 거래일을 덮어쓰면 안 된다.');
 assert(amplifyRules.includes('TQQQ?range=2y&interval=1d'), 'TQQQ 일봉은 1년 표시 앞의 지표 계산 구간까지 확보해야 한다.');
 assert(amplifyRules.includes('count=360'), 'KOSPI 일봉은 1년 표시 앞의 60봉 계산 구간까지 확보해야 한다.');
 assert(amplifyRules.includes('/market-data/stock/122630/history/price-7'), 'KODEX 일봉은 1년 표시 앞의 지표 계산 구간까지 페이지를 확장해야 한다.');

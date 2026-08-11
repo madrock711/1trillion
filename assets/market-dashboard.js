@@ -1510,11 +1510,14 @@
             }
             return formatHistoryDate(date) + ' · 마감';
         }
-        var preferredDate = window.MarketDashboardLive && typeof window.MarketDashboardLive.preferredIntradayDate === 'function'
-            ? window.MarketDashboardLive.preferredIntradayDate(indexRows, selectedKodexIntradayDate, selectedKodexIntradayDateExplicit)
-            : dates[dates.length - 1] || '';
+        var preferredDate = selectedKodexIntradayDate;
+        if (dates.length) {
+            preferredDate = window.MarketDashboardLive && typeof window.MarketDashboardLive.preferredIntradayDate === 'function'
+                ? window.MarketDashboardLive.preferredIntradayDate(indexRows, selectedKodexIntradayDate, selectedKodexIntradayDateExplicit)
+                : dates[dates.length - 1];
+        }
         var selectionWasValid = dates.indexOf(selectedKodexIntradayDate) !== -1;
-        if (preferredDate !== selectedKodexIntradayDate) {
+        if (dates.length && preferredDate !== selectedKodexIntradayDate) {
             selectedKodexIntradayDate = preferredDate;
             if (!selectionWasValid) selectedKodexIntradayDateExplicit = false;
         }
