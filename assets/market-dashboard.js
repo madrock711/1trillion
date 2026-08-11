@@ -59,6 +59,8 @@
     var linkedChartViews = {};
     var linkedChartHoverSelection = null;
     var linkedChartLockedSelection = null;
+    var technicalChartStateStorageKey = 'hpmplab-technical-chart-state-v1';
+    var technicalChartStateSerialized = '';
     var technicalCardOrderStorageKey = 'hpmplab-technical-card-order-v2';
     var defaultTechnicalCardOrder = [
         'kospi-flow',
@@ -74,6 +76,69 @@
         'kodex-market-context'
     ];
     var technicalChartCardIds = ['kospi-flow', 'kodex-history', 'composite-momentum', 'tqqq-history'];
+
+    function normalizedTechnicalChartState(state) {
+        var source = state && typeof state === 'object' ? state : {};
+        var period = ['1m', '3m', '6m', '1y'].indexOf(source.period) !== -1 ? source.period : '1y';
+        var mode = source.mode === 'intraday' ? 'intraday' : 'daily';
+        var interval = [1, 5, 15, 30, 60].indexOf(Number(source.interval)) !== -1 ? Number(source.interval) : 5;
+        var date = /^\d{4}-\d{2}-\d{2}$/.test(String(source.intradayDate || '')) ? String(source.intradayDate) : '';
+        var start = Number(source.rangeStart);
+        var end = Number(source.rangeEnd);
+        if (!Number.isFinite(start) || !Number.isFinite(end) || start < 0 || end > 100 || end - start < 5) {
+            start = 50;
+            end = 100;
+        }
+        return {
+            mode: mode,
+            period: period,
+            interval: interval,
+            intradayDate: date,
+            intradayDateExplicit: Boolean(date && source.intradayDateExplicit),
+            rangeStart: start,
+            rangeEnd: end
+        };
+    }
+
+    function restoreTechnicalChartState() {
+        try {
+            var raw = window.localStorage.getItem(technicalChartStateStorageKey);
+            if (!raw) return;
+            var state = normalizedTechnicalChartState(JSON.parse(raw));
+            selectedKodexChartMode = state.mode;
+            selectedKodexPeriod = state.period;
+            selectedKodexIntradayInterval = state.interval;
+            selectedKodexIntradayDate = state.intradayDate;
+            selectedKodexIntradayDateExplicit = state.intradayDateExplicit;
+            technicalRangeStart = state.rangeStart;
+            technicalRangeEnd = state.rangeEnd;
+            technicalChartStateSerialized = JSON.stringify(state);
+        } catch (error) {
+            technicalChartStateSerialized = '';
+        }
+    }
+
+    function persistTechnicalChartState() {
+        var state = normalizedTechnicalChartState({
+            mode: selectedKodexChartMode,
+            period: selectedKodexPeriod,
+            interval: selectedKodexIntradayInterval,
+            intradayDate: selectedKodexIntradayDate,
+            intradayDateExplicit: selectedKodexIntradayDateExplicit,
+            rangeStart: technicalRangeStart,
+            rangeEnd: technicalRangeEnd
+        });
+        var serialized = JSON.stringify(state);
+        if (serialized === technicalChartStateSerialized) return;
+        try {
+            window.localStorage.setItem(technicalChartStateStorageKey, serialized);
+            technicalChartStateSerialized = serialized;
+        } catch (error) {
+            technicalChartStateSerialized = '';
+        }
+    }
+
+    restoreTechnicalChartState();
 
     function clear(node) {
         if (node && node.id && linkedChartViews[node.id]) delete linkedChartViews[node.id];
@@ -1045,6 +1110,7 @@
 
     function queueTechnicalRangeRender() {
         cancelTechnicalRangePreview();
+        persistTechnicalChartState();
         if (technicalRangeRenderFrame) window.cancelAnimationFrame(technicalRangeRenderFrame);
         technicalRangeRenderFrame = window.requestAnimationFrame(function () {
             technicalRangeRenderFrame = 0;
@@ -1331,6 +1397,7 @@
             button.addEventListener('click', function () {
                 clearLinkedChartSelection(false);
                 selectedKodexChartMode = button.getAttribute('data-kodex-chart-mode') === 'intraday' ? 'intraday' : 'daily';
+                persistTechnicalChartState();
                 renderSynchronizedTechnicalCharts();
             });
         });
@@ -1342,6 +1409,7 @@
                 clearLinkedChartSelection(false);
                 var period = button.getAttribute('data-kodex-period');
                 selectedKodexPeriod = ['1m', '3m', '6m', '1y'].indexOf(period) !== -1 ? period : '1y';
+                persistTechnicalChartState();
                 renderSynchronizedTechnicalCharts();
             });
         });
@@ -1352,6 +1420,7 @@
             button.addEventListener('click', function () {
                 clearLinkedChartSelection(false);
                 selectedKodexIntradayInterval = Number(button.getAttribute('data-kodex-interval')) || 5;
+                persistTechnicalChartState();
                 renderSynchronizedTechnicalCharts();
             });
         });
@@ -1362,6 +1431,7 @@
                 clearLinkedChartSelection(false);
                 selectedKodexIntradayDate = dateSelect.value;
                 selectedKodexIntradayDateExplicit = true;
+                persistTechnicalChartState();
                 renderSynchronizedTechnicalCharts();
             });
         });
@@ -1465,6 +1535,7 @@
             });
             dateSelect.value = selectedKodexIntradayDate;
         });
+        persistTechnicalChartState();
         queueFloatingDashboardControlsUpdate();
         return indexRows;
     }
