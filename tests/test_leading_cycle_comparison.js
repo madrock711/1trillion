@@ -24,13 +24,14 @@ assert.strictEqual(kospi.latestPeriod, kospi.observations[kospi.observations.len
 assert(html.includes('data-leading-cycle-source="../assets/data/korea-leading-cycle.json"'));
 assert(html.includes('data-kospi-monthly-source="../assets/data/kospi-monthly-history.json"'));
 assert(html.includes('id="leading-cycle-chart"'));
-assert(html.includes('1970년 이후 전체 기간'));
+assert(html.includes('1990년 이후 전체 기간'));
 assert(html.includes('국가지표 경기종합지수'));
 
 assert(js.includes('function monthlyKospiCloses(market)'));
 assert(js.includes('function leadingCycleComparisonRows(market)'));
 assert(js.includes('function normalizeKospiMonthlyData(payload)'));
 assert(js.includes('if (!leadingCycleData || !kospiMonthlyData) return [];'));
+assert(js.includes('period >= firstKospiPeriod'));
 assert(js.includes('function paddedExtent(values, minimumSpread)'));
 assert(js.includes("d: seriesPath('leading', leadingExtent)"));
 assert(js.includes("d: seriesPath('kospi', kospiExtent)"));

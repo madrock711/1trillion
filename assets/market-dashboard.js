@@ -2133,8 +2133,9 @@
         var kospiByPeriod = {};
         leadingCycleData.observations.forEach(function (row) { leadingByPeriod[row.period] = row.value; });
         kospi.forEach(function (row) { kospiByPeriod[row.period] = row; });
+        var firstKospiPeriod = kospi.length ? kospi[0].period : '';
         var periods = Object.keys(Object.assign({}, leadingByPeriod, kospiByPeriod)).filter(function (period) {
-            return period <= kospi[kospi.length - 1].period;
+            return firstKospiPeriod && period >= firstKospiPeriod && period <= kospi[kospi.length - 1].period;
         }).sort();
         var previousLeading = null;
         var previousKospi = null;
