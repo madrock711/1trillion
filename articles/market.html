@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260811-3">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260811-4">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -37,7 +37,7 @@
       "name": "연마 시황분석 대시보드",
       "description": "KOSPI와 KOSDAQ의 장중 흐름, 투자자 수급, 조건부 투자전략, 기술적 기준선과 시황 리서치를 모은 대시보드입니다.",
       "url": "https://www.hpmplab.com/articles/market.html",
-      "dateModified": "2026-08-11T09:23:00+09:00",
+      "dateModified": "2026-08-11T11:16:00+09:00",
       "inLanguage": "ko-KR",
       "publisher": {
         "@type": "Organization",
@@ -67,7 +67,7 @@
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
     <script defer src="../assets/market-live-data.js?v=20260811-1"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260811-5"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260811-6"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -89,7 +89,7 @@
         </div>
     </header>
 
-    <main class="content-page market-dashboard-page" id="main-content" tabindex="-1" data-dashboard-source="../assets/data/market-dashboard-latest.json" data-live-market-source="../market-data/" data-kodex-volume-source="../assets/data/kodex-volume-pressure.json" data-kodex-intraday-source="../assets/data/kodex-intraday-index.json" data-leading-cycle-source="../assets/data/korea-leading-cycle.json">
+    <main class="content-page market-dashboard-page" id="main-content" tabindex="-1" data-dashboard-source="../assets/data/market-dashboard-latest.json" data-live-market-source="../market-data/" data-kodex-volume-source="../assets/data/kodex-volume-pressure.json" data-kodex-intraday-source="../assets/data/kodex-intraday-index.json" data-leading-cycle-source="../assets/data/korea-leading-cycle.json" data-kospi-monthly-source="../assets/data/kospi-monthly-history.json">
         <section class="content-page-hero market-dashboard-hero">
             <p class="section-kicker">KOSPI · KODEX · Memory</p>
             <h1>시황분석 대시보드</h1>
@@ -458,7 +458,7 @@
                             <p class="market-card-label">월별 경기 방향</p>
                             <h3 id="leading-cycle-title">선행지수·KOSPI 비교</h3>
                         </div>
-                        <span class="leading-cycle-badge">좌축 선행지수 · 우축 KOSPI</span>
+                        <span class="leading-cycle-badge">1970년 이후 전체 기간</span>
                     </div>
                     <div class="leading-cycle-legend" aria-label="선행지수와 KOSPI 비교 차트 범례">
                         <span class="is-leading">선행지수 순환변동치</span>
@@ -469,7 +469,7 @@
                         <svg id="leading-cycle-chart" class="leading-cycle-chart" viewBox="0 0 1000 420" role="img" aria-labelledby="leading-cycle-title leading-cycle-readout"></svg>
                     </div>
                     <div class="leading-cycle-summary" id="leading-cycle-summary"></div>
-                    <p class="market-source-note" id="leading-cycle-source-note">두 선은 같은 시간축에서 방향 전환을 비교하되, 선행지수는 왼쪽 축, KOSPI는 오른쪽 축을 사용합니다. 선행지수는 <a href="https://kosis.kr/visual/economyBoard/economyJipyo.do?lang=ko&amp;listId=130&amp;unitySrvcId=641" target="_blank" rel="noopener noreferrer">국가데이터처 경기종합지수</a>의 공식 월별 자료이며 전체 시계열은 매월 수정될 수 있습니다.</p>
+                    <p class="market-source-note" id="leading-cycle-source-note">선행지수는 <a href="https://www.index.go.kr/unity/potal/main/EachDtlPageDetail.do?idx_cd=1057" target="_blank" rel="noopener noreferrer">국가지표 경기종합지수</a>의 1970년 이후 공식 월별 자료, KOSPI는 Naver Finance의 1990년 이후 월봉입니다. 선행지수 전체 시계열은 매월 수정될 수 있습니다.</p>
                 </section>
 
                 <section class="market-dashboard-card market-technical-card technical-orderable technical-orderable--wide" data-technical-card="kodex-technical" data-technical-card-title="KODEX 당일 가격 범위" aria-labelledby="technical-chart-title">

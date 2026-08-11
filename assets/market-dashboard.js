@@ -15,6 +15,7 @@
     var kodexVolumeSource = root.getAttribute('data-kodex-volume-source');
     var kodexIntradaySource = root.getAttribute('data-kodex-intraday-source');
     var leadingCycleSource = root.getAttribute('data-leading-cycle-source');
+    var kospiMonthlySource = root.getAttribute('data-kospi-monthly-source');
     var selectedInstrumentId = null;
     var latestLiveData = null;
     var liveRefreshTimer = null;
@@ -38,6 +39,7 @@
     var kodexIntradayRenderToken = 0;
     var kospiTechnicalHistory = [];
     var leadingCycleData = null;
+    var kospiMonthlyData = null;
     var kospiHistoryRequestToken = 0;
     var kospiIntradayRenderToken = 0;
     var kospiIntradayForceRefresh = false;
@@ -2110,7 +2112,10 @@
 
     function monthlyKospiCloses(market) {
         var byMonth = {};
-        mergeCurrentKospiHistory(kospiTechnicalHistory, market).forEach(function (row) {
+        var monthlyRows = kospiMonthlyData && Array.isArray(kospiMonthlyData.observations)
+            ? kospiMonthlyData.observations
+            : kospiTechnicalHistory;
+        mergeCurrentKospiHistory(monthlyRows, market).forEach(function (row) {
             var match = /^(\d{4}-\d{2})-\d{2}$/.exec(row && row.date || '');
             if (!match || !Number.isFinite(row.close)) return;
             var current = byMonth[match[1]];
@@ -2122,19 +2127,14 @@
     }
 
     function leadingCycleComparisonRows(market) {
-        if (!leadingCycleData) return [];
+        if (!leadingCycleData || !kospiMonthlyData) return [];
         var kospi = monthlyKospiCloses(market);
         var leadingByPeriod = {};
         var kospiByPeriod = {};
         leadingCycleData.observations.forEach(function (row) { leadingByPeriod[row.period] = row.value; });
         kospi.forEach(function (row) { kospiByPeriod[row.period] = row; });
-        var common = kospi.map(function (row) { return row.period; }).filter(function (period) {
-            return Number.isFinite(leadingByPeriod[period]);
-        });
-        if (common.length < 6) return [];
-        var firstPeriod = common[0];
         var periods = Object.keys(Object.assign({}, leadingByPeriod, kospiByPeriod)).filter(function (period) {
-            return period >= firstPeriod && period <= kospi[kospi.length - 1].period;
+            return period <= kospi[kospi.length - 1].period;
         }).sort();
         var previousLeading = null;
         var previousKospi = null;
@@ -2244,7 +2244,10 @@
             'class': 'leading-cycle-series is-kospi'
         }));
 
-        var tickIndexes = [0, Math.floor((rows.length - 1) / 3), Math.floor((rows.length - 1) * 2 / 3), rows.length - 1];
+        var tickIndexes = [];
+        for (var tickStep = 0; tickStep <= 6; tickStep += 1) {
+            tickIndexes.push(Math.round((rows.length - 1) * tickStep / 6));
+        }
         tickIndexes.filter(function (value, index, all) { return all.indexOf(value) === index; }).forEach(function (index) {
             var tick = makeSvg('text', {
                 x: xFor(index),
@@ -2261,30 +2264,51 @@
                 + ' · 선행지수 ' + (Number.isFinite(row.leading) ? formatNumber(row.leading, 1) + (Number.isFinite(row.leadingChange) ? ' (전월 ' + formatSigned(row.leadingChange, 'p', 1) + ')' : '') : '발표 전')
                 + ' · KOSPI ' + (Number.isFinite(row.kospi) ? formatNumber(row.kospi, 2) + (Number.isFinite(row.kospiChangePercent) ? ' (전월 ' + formatSigned(row.kospiChangePercent, '%', 1) + ')' : '') : '자료 없음');
         }
-        rows.forEach(function (row, index) {
-            var hitbox = makeSvg('rect', {
-                x: Math.max(margin.left, xFor(index) - xStep / 2),
-                y: margin.top,
-                width: Math.max(8, xStep),
-                height: plotHeight,
-                'class': 'leading-cycle-hitbox',
-                tabindex: '0',
-                role: 'button',
-                'aria-label': monthLabel(row.period) + ' 비교값 보기'
-            });
-            function activate() {
-                Array.prototype.forEach.call(svg.querySelectorAll('.leading-cycle-focus'), function (node) { node.remove(); });
-                svg.insertBefore(makeSvg('line', {
-                    x1: xFor(index), x2: xFor(index), y1: margin.top, y2: height - margin.bottom,
-                    'class': 'leading-cycle-focus'
-                }), svg.querySelector('.leading-cycle-hitbox'));
-                updateReadout(row);
-            }
-            hitbox.addEventListener('mouseenter', activate);
-            hitbox.addEventListener('focus', activate);
-            hitbox.addEventListener('click', activate);
-            svg.appendChild(hitbox);
+        var activeIndex = rows.length - 1;
+        function activate(index) {
+            activeIndex = Math.max(0, Math.min(rows.length - 1, index));
+            Array.prototype.forEach.call(svg.querySelectorAll('.leading-cycle-focus'), function (node) { node.remove(); });
+            var overlay = svg.querySelector('.leading-cycle-hitbox');
+            svg.insertBefore(makeSvg('line', {
+                x1: xFor(activeIndex), x2: xFor(activeIndex), y1: margin.top, y2: height - margin.bottom,
+                'class': 'leading-cycle-focus'
+            }), overlay);
+            updateReadout(rows[activeIndex]);
+        }
+        var hitbox = makeSvg('rect', {
+            x: margin.left,
+            y: margin.top,
+            width: plotWidth,
+            height: plotHeight,
+            'class': 'leading-cycle-hitbox',
+            tabindex: '0',
+            role: 'slider',
+            'aria-label': '월별 선행지수와 KOSPI 비교 시점',
+            'aria-valuemin': '0',
+            'aria-valuemax': String(rows.length - 1),
+            'aria-valuenow': String(activeIndex)
         });
+        function indexFromPointer(event) {
+            var bounds = svg.getBoundingClientRect();
+            var svgX = (event.clientX - bounds.left) / Math.max(bounds.width, 1) * width;
+            return Math.round((svgX - margin.left) / Math.max(xStep, 1));
+        }
+        hitbox.addEventListener('pointermove', function (event) {
+            var index = indexFromPointer(event);
+            hitbox.setAttribute('aria-valuenow', String(Math.max(0, Math.min(rows.length - 1, index))));
+            activate(index);
+        });
+        hitbox.addEventListener('click', function (event) { activate(indexFromPointer(event)); });
+        hitbox.addEventListener('keydown', function (event) {
+            if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight' && event.key !== 'Home' && event.key !== 'End') return;
+            event.preventDefault();
+            if (event.key === 'Home') activeIndex = 0;
+            else if (event.key === 'End') activeIndex = rows.length - 1;
+            else activeIndex += event.key === 'ArrowRight' ? 1 : -1;
+            hitbox.setAttribute('aria-valuenow', String(Math.max(0, Math.min(rows.length - 1, activeIndex))));
+            activate(activeIndex);
+        });
+        svg.appendChild(hitbox);
 
         var latestLeading = rows.filter(function (row) { return Number.isFinite(row.leading); }).slice(-1)[0];
         var latestKospi = rows.filter(function (row) { return Number.isFinite(row.kospi); }).slice(-1)[0];
@@ -2301,16 +2325,40 @@
             card.appendChild(make('small', '', item[2]));
             summary.appendChild(card);
         });
-        updateReadout(latestKospi || latestLeading || rows[rows.length - 1]);
+        updateReadout(latestLeading || latestKospi || rows[rows.length - 1]);
+    }
+
+    function normalizeKospiMonthlyData(payload) {
+        if (!payload || payload.schemaVersion !== 1 || payload.frequency !== 'monthly'
+            || !Array.isArray(payload.observations) || payload.observations.length < 400) {
+            throw new Error('KOSPI 장기 월봉 자료가 올바르지 않습니다.');
+        }
+        var observations = payload.observations.map(function (row) {
+            return {
+                date: /^\d{4}-\d{2}-\d{2}$/.test(row && row.date || '') ? row.date : '',
+                open: Number(row && row.open),
+                high: Number(row && row.high),
+                low: Number(row && row.low),
+                close: Number(row && row.close),
+                volume: Number(row && row.volume)
+            };
+        }).filter(function (row) {
+            return row.date && [row.open, row.high, row.low, row.close].every(Number.isFinite);
+        }).sort(function (left, right) { return left.date.localeCompare(right.date); });
+        if (observations.length < 400) throw new Error('KOSPI 장기 월봉 관측치가 부족합니다.');
+        return Object.assign({}, payload, { observations: observations });
     }
 
     function loadLeadingCycleData() {
-        if (!leadingCycleSource) return Promise.resolve(false);
-        return fetch(cacheBustedUrl(leadingCycleSource), { cache: 'no-store' }).then(function (response) {
-            if (!response.ok) throw new Error('선행지수 자료를 불러오지 못했습니다.');
-            return response.json();
-        }).then(normalizeLeadingCycleData).then(function (payload) {
-            leadingCycleData = payload;
+        if (!leadingCycleSource || !kospiMonthlySource) return Promise.resolve(false);
+        return Promise.all([leadingCycleSource, kospiMonthlySource].map(function (source) {
+            return fetch(cacheBustedUrl(source), { cache: 'no-store' }).then(function (response) {
+                if (!response.ok) throw new Error('장기 월별 자료를 불러오지 못했습니다.');
+                return response.json();
+            });
+        })).then(function (payloads) {
+            leadingCycleData = normalizeLeadingCycleData(payloads[0]);
+            kospiMonthlyData = normalizeKospiMonthlyData(payloads[1]);
             renderLeadingCycleComparison(dashboardData && findById(dashboardData.markets, 'KOSPI'));
             return true;
         }).catch(function () {
