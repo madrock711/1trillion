@@ -28,6 +28,16 @@ async function main() {
     assert.ok(dashboardSource.includes("if (title) title.textContent = 'KOSPI';"), 'KOSPI 카드 제목은 모드가 바뀌어도 한 줄로 유지되어야 한다.');
     assert.ok(dashboardSource.includes("if (title) title.textContent = 'KODEX 레버리지';"), 'KODEX 카드 제목은 모드가 바뀌어도 한 줄로 유지되어야 한다.');
     assert.ok(dashboardSource.includes("if (title) title.textContent = 'TQQQ';"), 'TQQQ 카드 제목은 모드가 바뀌어도 한 줄로 유지되어야 한다.');
+    const kospiSummaryStart = dashboardSource.indexOf('function renderKospiRows');
+    const kospiSummaryEnd = dashboardSource.indexOf('function renderKospiIntradayChart', kospiSummaryStart);
+    const kospiSummaryBody = dashboardSource.slice(kospiSummaryStart, kospiSummaryEnd);
+    assert.ok(kospiSummaryBody.includes("summary.classList.add('is-intraday-compact')"), 'KOSPI 하단 요약은 한 줄 압축 형식을 사용해야 한다.');
+    ['KOSPI', '수익률', 'CVD', '외국인', 'MACD', '기준'].forEach(function (label) {
+        assert.ok(kospiSummaryBody.includes("appendKodexMetric(summary, '" + label + "'"), label + ' 압축 지표가 필요하다.');
+    });
+    ['현재 지수', '최근 종가', '오늘 수익률', '기간 수익률', '오늘 CVD', '종료 CVD', '외국인 오늘 누적', '외국인 기간 누적', '수급 MACD', '기준 시각', '기준일'].forEach(function (label) {
+        assert.ok(!kospiSummaryBody.includes("appendKodexMetric(summary, '" + label + "'"), label + ' 장문 지표는 다시 넣으면 안 된다.');
+    });
     assert.ok(dashboardSource.includes("(options.interval || selectedKodexIntradayInterval) + '분'"), 'KOSPI 분봉 간격은 자동 집계 간격을 짧은 분 표기로 표시해야 한다.');
     assert.ok(dashboardSource.includes("interval + '분'"), 'KODEX와 TQQQ 분봉 간격은 짧은 분 표기를 사용해야 한다.');
     assert.ok(dashboardCss.includes('.kospi-flow-foreign.is-buy { fill: #ffb454; }'), '외국인 순매수는 X-ray와 구별되는 색이어야 한다.');

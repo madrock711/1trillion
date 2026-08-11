@@ -2606,6 +2606,7 @@
         if (!svg || !summary || !readout) return;
         clear(svg);
         clear(summary);
+        summary.classList.add('is-intraday-compact');
         var intraday = options.mode === 'intraday';
         svg.classList.toggle('is-intraday', intraday);
         if (title) title.textContent = 'KOSPI';
@@ -2855,22 +2856,22 @@
         var latestMacd = rows.slice().reverse().filter(function (row) {
             return Number.isFinite(row.flowMacd) && Number.isFinite(row.flowSignal);
         })[0];
-        appendKodexMetric(summary, intraday ? '현재 지수' : '최근 종가', formatNumber(latest.close, 2));
-        appendKodexMetric(summary, intraday ? (currentSessionRows.length ? '오늘 수익률' : '직전 장 수익률') : '기간 수익률', formatSigned((metricLatest.close / first.open - 1) * 100, '%', 2));
+        appendKodexMetric(summary, 'KOSPI', formatNumber(latest.close, 2));
+        appendKodexMetric(summary, '수익률', formatSigned((metricLatest.close / first.open - 1) * 100, '%', 2));
         var metricCvd = intraday ? metricRows.reduce(function (total, row) { return total + row.delta; }, 0) : latest.cumulativeDelta;
-        appendKodexMetric(summary, intraday ? (currentSessionRows.length ? '오늘 CVD' : '직전 장 CVD') : '종료 CVD', formatSigned(metricCvd, '천주', 0));
+        appendKodexMetric(summary, 'CVD', formatSigned(metricCvd, '천주', 0));
         if (intraday) {
-            appendKodexMetric(summary, currentSessionRows.length ? '외국인 오늘 누적' : '외국인 직전 장 누적', formatSigned(metricLatest.foreignActual, '억원', 0));
+            appendKodexMetric(summary, '외국인', formatSigned(metricLatest.foreignActual, '억원', 0));
         } else {
             var cumulativeForeign = rows.reduce(function (total, row) {
                 return total + (Number.isFinite(row.foreign) ? row.foreign : 0);
             }, 0);
-            appendKodexMetric(summary, '외국인 기간 누적', formatSigned(cumulativeForeign, '억원', 0));
+            appendKodexMetric(summary, '외국인', formatSigned(cumulativeForeign, '억원', 0));
         }
-        appendKodexMetric(summary, '수급 MACD', latestMacd
-            ? (latestMacd.flowMacd >= latestMacd.flowSignal ? 'MACD가 Signal 위' : 'MACD가 Signal 아래')
+        appendKodexMetric(summary, 'MACD', latestMacd
+            ? (latestMacd.flowMacd >= latestMacd.flowSignal ? 'Signal 위' : 'Signal 아래')
             : '수급 데이터 확인 중');
-        appendKodexMetric(summary, intraday ? '기준 시각' : '기준일', rowLabel(latest));
+        appendKodexMetric(summary, '기준', rowLabel(latest));
         updateReadout(latest);
     }
 
