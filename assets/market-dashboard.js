@@ -975,11 +975,13 @@
         var track = document.getElementById('technical-range-track');
         var reset = document.getElementById('technical-range-reset');
         startInput.addEventListener('input', function () {
-            setTechnicalRange(Math.min(Number(startInput.value), technicalRangeEnd - 5), technicalRangeEnd);
+            setTechnicalRange(Math.min(Number(startInput.value), technicalRangeEnd - 5), technicalRangeEnd, false);
         });
         endInput.addEventListener('input', function () {
-            setTechnicalRange(technicalRangeStart, Math.max(Number(endInput.value), technicalRangeStart + 5));
+            setTechnicalRange(technicalRangeStart, Math.max(Number(endInput.value), technicalRangeStart + 5), false);
         });
+        startInput.addEventListener('change', queueTechnicalRangeRender);
+        endInput.addEventListener('change', queueTechnicalRangeRender);
         reset.addEventListener('click', function () { setTechnicalRange(0, 100); });
         selection.addEventListener('pointerdown', function (event) {
             if (!track || event.button !== 0) return;

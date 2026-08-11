@@ -524,6 +524,8 @@
     z-index: 45;
     width: min(1120px, calc(100vw - 32px));
     transform: translateX(-50%);
+    background: rgba(9, 16, 22, 0.985);
+    backdrop-filter: none;
 }
 
 .technical-range-heading,

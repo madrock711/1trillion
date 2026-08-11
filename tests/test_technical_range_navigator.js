@@ -56,6 +56,10 @@ assert(!dashboard.includes("slot.style.height = navigatorHeight + 'px'"), '플�
 assert(dashboard.includes("tabs.classList.toggle('is-floating'"));
 assert(dashboard.includes("selection.addEventListener('pointermove'"));
 assert(dashboard.includes("selection.addEventListener('keydown'"));
+assert(dashboard.includes("setTechnicalRange(Math.min(Number(startInput.value), technicalRangeEnd - 5), technicalRangeEnd, false)"));
+assert(dashboard.includes("setTechnicalRange(technicalRangeStart, Math.max(Number(endInput.value), technicalRangeStart + 5), false)"));
+assert(dashboard.includes("startInput.addEventListener('change', queueTechnicalRangeRender)"));
+assert(dashboard.includes("endInput.addEventListener('change', queueTechnicalRangeRender)"));
 assert((dashboard.match(/technicalRangeSlice\(/g) || []).length >= 7, '모든 주요 기술적 차트가 공통 표시 범위를 사용해야 한다.');
 assert(css.includes('.technical-range-navigator {'));
 assert(css.includes('.technical-range-navigator.is-floating {\n    position: fixed;'));
@@ -65,6 +69,7 @@ assert(css.includes('.market-view-tabs {\n    --market-tabs-sticky-top: 64px;\n 
 assert(css.includes('.market-view-tabs.is-floating {'));
 assert(css.includes('.technical-range-selection.is-dragging'));
 assert(css.includes('.technical-range-input::-webkit-slider-thumb'));
+assert(css.includes('backdrop-filter: none'));
 assert(css.includes('.technical-global-chart-controls {'));
 assert(css.includes('.technical-global-chart-controls [hidden] {\n    display: none !important;'));
 assert(css.includes('padding-bottom: calc(var(--technical-navigator-height'));
