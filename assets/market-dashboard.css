@@ -1387,8 +1387,15 @@
     content: '';
 }
 
-.leading-cycle-legend .is-leading { color: #75e8a7; }
-.leading-cycle-legend .is-kospi { color: #66b7ff; }
+.leading-cycle-legend .is-leading { color: #67efb2; }
+.leading-cycle-legend .is-kospi { color: #4aa3ff; }
+
+.leading-cycle-legend .is-kospi::before {
+    height: 0;
+    border-top: 2px dashed currentColor;
+    border-radius: 0;
+    background: transparent;
+}
 
 .leading-cycle-readout {
     min-height: 1.25rem;
@@ -1421,14 +1428,22 @@
 
 .leading-cycle-series {
     fill: none;
-    stroke-width: 3;
+    stroke-width: 2.35;
     stroke-linecap: round;
     stroke-linejoin: round;
     vector-effect: non-scaling-stroke;
 }
 
-.leading-cycle-series.is-leading { stroke: #75e8a7; }
-.leading-cycle-series.is-kospi { stroke: #66b7ff; }
+.leading-cycle-series.is-leading {
+    stroke: #67efb2;
+    opacity: 0.96;
+}
+
+.leading-cycle-series.is-kospi {
+    stroke: #4aa3ff;
+    stroke-width: 2.15;
+    stroke-dasharray: 8 5;
+}
 
 .leading-cycle-axis-label {
     fill: #8fa2ad;
@@ -1437,8 +1452,8 @@
     font-variant-numeric: tabular-nums;
 }
 
-.leading-cycle-axis-label.is-leading { fill: #75e8a7; }
-.leading-cycle-axis-label.is-kospi { fill: #66b7ff; }
+.leading-cycle-axis-label.is-leading { fill: #67efb2; }
+.leading-cycle-axis-label.is-kospi { fill: #4aa3ff; }
 
 .leading-cycle-hitbox {
     fill: transparent;

@@ -43,6 +43,8 @@ assert(js.includes('renderLeadingCycleComparison(displayKospi)'));
 
 assert(css.includes('.leading-cycle-series.is-leading'));
 assert(css.includes('.leading-cycle-series.is-kospi'));
+assert(css.includes('stroke-dasharray: 8 5'));
+assert(css.includes('.leading-cycle-legend .is-kospi::before'));
 assert(css.includes('.leading-cycle-summary'));
 
 console.log('Leading-cycle and KOSPI comparison chart tests passed.');
