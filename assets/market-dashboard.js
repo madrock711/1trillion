@@ -465,6 +465,11 @@
             shell.setAttribute('data-latest-scroll-initialized', 'true');
             shell.setAttribute('data-latest-scroll-user-away', maximum - shell.scrollLeft > 32 ? 'true' : 'false');
         }, { passive: true });
+        var chart = shell.querySelector('svg');
+        if (chart && typeof MutationObserver === 'function') {
+            var observer = new MutationObserver(function () { queueTechnicalChartsToLatest(false); });
+            observer.observe(chart, { childList: true });
+        }
     }
 
     function alignTechnicalChartsToLatest(force) {
