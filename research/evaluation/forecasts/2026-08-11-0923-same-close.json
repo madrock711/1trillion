@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-11-0923-same-close",
+  "visibility": "internal",
+  "reportPath": "reports/2026-08-11.md",
+  "reportSha256": "b6daf54eda69c2ac2c9cffa8d43c84fd56d1b11e66772fc9685eb47e37c35214",
+  "issuedAt": "2026-08-11T09:23:00+09:00",
+  "dataCutoffAt": "2026-08-11T09:22:00+09:00",
+  "marketState": "intraday",
+  "marketRegime": "risk_off",
+  "evaluationBucket": "open_0900_0930",
+  "target": {"sessionDate":"2026-08-11","horizon":"session_close","instrument":"KOSPI","leadSessions":0,"previousSessionDate":"2026-08-10"},
+  "reference": {"price":6226.84,"asOf":"2026-08-11T09:21:00+09:00","kind":"live"},
+  "scenarios": {"bull":{"low":6350,"high":6475,"probability":0.20},"base":{"low":6200,"high":6350,"probability":0.55},"bear":{"low":6100,"high":6200,"probability":0.25}},
+  "closeEnvelopeCoverage": 0.90,
+  "pathEnvelope":{"low":6100,"high":6475,"coverage":0.90},
+  "drivers":[
+    {"id":"oil-yield-chip","rank":1,"claim":"유가와 미국 장기금리 상승, 미국 반도체 급락이 국내 대형 반도체를 누른다.","validationMetric":"WTI·미국 10년물·삼성전자·SK하이닉스 종가"},
+    {"id":"domestic-flow-divergence","rank":2,"claim":"외국인 현물 순매수와 프로그램 순매도의 충돌이 지수 하단을 결정한다.","validationMetric":"09:30·10:00·14:00·종가 수급과 KOSPI"},
+    {"id":"memory-tightness","rank":3,"claim":"서버 DRAM 공급 제약이 반도체 중기 하단을 지지한다.","validationMetric":"DRAM 현물가와 삼성전자·SK하이닉스 종가"}
+  ],
+  "scenarioTriggers": {
+    "bull":{"logic":"AND","observeBy":"2026-08-11T15:20:00+09:00","conditions":[{"id":"bull-price","description":"KOSPI 6,350 상회","metricId":"kospi_price","operator":"gte","threshold":6350,"source":"Naver Finance KOSPI"},{"id":"bull-program","description":"프로그램 전체 순매수","metricId":"program_total","operator":"gt","threshold":0,"source":"Naver Finance 프로그램 매매동향"}]},
+    "base":{"logic":"AND","observeBy":"2026-08-11T15:20:00+09:00","conditions":[{"id":"base-support","description":"KOSPI 6,200 상회","metricId":"kospi_price","operator":"gte","threshold":6200,"source":"Naver Finance KOSPI"}]},
+    "bear":{"logic":"OR","observeBy":"2026-08-11T15:20:00+09:00","conditions":[{"id":"bear-price","description":"KOSPI 6,200 하회","metricId":"kospi_price","operator":"lt","threshold":6200,"source":"Naver Finance KOSPI"},{"id":"bear-foreign","description":"외국인 현물 순매도","metricId":"foreign_cash","operator":"lt","threshold":0,"source":"Naver Finance 투자자별 매매동향"}]}
+  },
+  "hypothesisTrials": [{"hypothesisId":"us-chip-signal-overweight","regime":"risk_off","candidatePrediction":6175,"baselineId":"reference_carry","predictorVersion":"us-chip-signal-overweight-v1"}],
+  "posture":{"attack":25,"wait":55,"defense":20},
+  "supersedes":null,
+  "contentHash":"2d2591ae6b0cc21fec7dad8e9e2da6927b965ef518449c50b79b2a1794083317"
+}
