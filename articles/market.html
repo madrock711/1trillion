@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260811-2">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260811-3">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -67,7 +67,7 @@
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
     <script defer src="../assets/market-live-data.js?v=20260811-1"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260811-4"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260811-5"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -458,19 +458,18 @@
                             <p class="market-card-label">월별 경기 방향</p>
                             <h3 id="leading-cycle-title">선행지수·KOSPI 비교</h3>
                         </div>
-                        <span class="leading-cycle-badge">첫 공통월 = 100</span>
+                        <span class="leading-cycle-badge">좌축 선행지수 · 우축 KOSPI</span>
                     </div>
                     <div class="leading-cycle-legend" aria-label="선행지수와 KOSPI 비교 차트 범례">
                         <span class="is-leading">선행지수 순환변동치</span>
                         <span class="is-kospi">KOSPI 월말 종가</span>
-                        <span class="is-baseline">기준선 100</span>
                     </div>
                     <p class="leading-cycle-readout" id="leading-cycle-readout" aria-live="polite">공식 선행지수와 KOSPI 월말 종가를 불러오는 중입니다.</p>
-                    <div class="leading-cycle-shell" tabindex="0" role="region" aria-label="경기선행종합지수 순환변동치와 KOSPI 월말 종가 정규화 비교 차트">
+                    <div class="leading-cycle-shell" tabindex="0" role="region" aria-label="경기선행종합지수 순환변동치와 KOSPI 월말 종가의 이중 축 비교 차트">
                         <svg id="leading-cycle-chart" class="leading-cycle-chart" viewBox="0 0 1000 420" role="img" aria-labelledby="leading-cycle-title leading-cycle-readout"></svg>
                     </div>
                     <div class="leading-cycle-summary" id="leading-cycle-summary"></div>
-                    <p class="market-source-note" id="leading-cycle-source-note">선행지수는 <a href="https://kosis.kr/visual/economyBoard/economyJipyo.do?lang=ko&amp;listId=130&amp;unitySrvcId=641" target="_blank" rel="noopener noreferrer">국가데이터처 경기종합지수</a>의 공식 월별 자료입니다. KOSPI는 완료월의 마지막 거래일 종가와 진행 중인 달의 최근 지수 값을 연결했습니다. 선행지수 전체 시계열은 매월 수정될 수 있습니다.</p>
+                    <p class="market-source-note" id="leading-cycle-source-note">두 선은 같은 시간축에서 방향 전환을 비교하되, 선행지수는 왼쪽 축, KOSPI는 오른쪽 축을 사용합니다. 선행지수는 <a href="https://kosis.kr/visual/economyBoard/economyJipyo.do?lang=ko&amp;listId=130&amp;unitySrvcId=641" target="_blank" rel="noopener noreferrer">국가데이터처 경기종합지수</a>의 공식 월별 자료이며 전체 시계열은 매월 수정될 수 있습니다.</p>
                 </section>
 
                 <section class="market-dashboard-card market-technical-card technical-orderable technical-orderable--wide" data-technical-card="kodex-technical" data-technical-card-title="KODEX 당일 가격 범위" aria-labelledby="technical-chart-title">

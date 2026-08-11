@@ -17,15 +17,16 @@ assert.strictEqual(data.latestValue, data.observations[data.observations.length 
 
 assert(html.includes('data-leading-cycle-source="../assets/data/korea-leading-cycle.json"'));
 assert(html.includes('id="leading-cycle-chart"'));
-assert(html.includes('첫 공통월 = 100'));
+assert(html.includes('좌축 선행지수 · 우축 KOSPI'));
 assert(html.includes('국가데이터처 경기종합지수'));
 
 assert(js.includes('function monthlyKospiCloses(market)'));
 assert(js.includes('function leadingCycleComparisonRows(market)'));
-assert(js.includes('leading / baselineLeading * 100'));
-assert(js.includes('kospiRow.value / baselineKospi * 100'));
-assert(js.includes("d: seriesPath('leadingNormalized')"));
-assert(js.includes("d: seriesPath('kospiNormalized')"));
+assert(js.includes('function paddedExtent(values, minimumSpread)'));
+assert(js.includes("d: seriesPath('leading', leadingExtent)"));
+assert(js.includes("d: seriesPath('kospi', kospiExtent)"));
+assert(js.includes("'class': 'leading-cycle-axis-label is-leading'"));
+assert(js.includes("'class': 'leading-cycle-axis-label is-kospi'"));
 assert(js.includes('renderLeadingCycleComparison(displayKospi)'));
 
 assert(css.includes('.leading-cycle-series.is-leading'));

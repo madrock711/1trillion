@@ -2132,24 +2132,26 @@
             return Number.isFinite(leadingByPeriod[period]);
         });
         if (common.length < 6) return [];
-        var baselinePeriod = common[0];
-        var baselineLeading = leadingByPeriod[baselinePeriod];
-        var baselineKospi = kospiByPeriod[baselinePeriod].value;
+        var firstPeriod = common[0];
         var periods = Object.keys(Object.assign({}, leadingByPeriod, kospiByPeriod)).filter(function (period) {
-            return period >= baselinePeriod && period <= kospi[kospi.length - 1].period;
+            return period >= firstPeriod && period <= kospi[kospi.length - 1].period;
         }).sort();
+        var previousLeading = null;
+        var previousKospi = null;
         return periods.map(function (period) {
             var leading = leadingByPeriod[period];
             var kospiRow = kospiByPeriod[period];
-            return {
+            var row = {
                 period: period,
                 date: kospiRow && kospiRow.date || period + '-01',
                 leading: Number.isFinite(leading) ? leading : null,
                 kospi: kospiRow ? kospiRow.value : null,
-                leadingNormalized: Number.isFinite(leading) ? leading / baselineLeading * 100 : null,
-                kospiNormalized: kospiRow ? kospiRow.value / baselineKospi * 100 : null,
-                baselinePeriod: baselinePeriod
+                leadingChange: Number.isFinite(leading) && Number.isFinite(previousLeading) ? leading - previousLeading : null,
+                kospiChangePercent: kospiRow && Number.isFinite(previousKospi) ? (kospiRow.value / previousKospi - 1) * 100 : null
             };
+            if (Number.isFinite(leading)) previousLeading = leading;
+            if (kospiRow) previousKospi = kospiRow.value;
+            return row;
         });
     }
 
@@ -2175,53 +2177,51 @@
         var margin = { left: 54, right: 76, top: 38, bottom: 56 };
         var plotWidth = width - margin.left - margin.right;
         var plotHeight = height - margin.top - margin.bottom;
-        var values = [];
-        rows.forEach(function (row) {
-            if (Number.isFinite(row.leadingNormalized)) values.push(row.leadingNormalized);
-            if (Number.isFinite(row.kospiNormalized)) values.push(row.kospiNormalized);
-        });
-        var minValue = Math.min.apply(Math, values);
-        var maxValue = Math.max.apply(Math, values);
-        var spread = Math.max(maxValue - minValue, 8);
-        minValue -= spread * 0.12;
-        maxValue += spread * 0.12;
+        var leadingValues = rows.filter(function (row) { return Number.isFinite(row.leading); }).map(function (row) { return row.leading; });
+        var kospiValues = rows.filter(function (row) { return Number.isFinite(row.kospi); }).map(function (row) { return row.kospi; });
+        function paddedExtent(values, minimumSpread) {
+            var minimum = Math.min.apply(Math, values);
+            var maximum = Math.max.apply(Math, values);
+            var spread = Math.max(maximum - minimum, minimumSpread);
+            return { minimum: minimum - spread * 0.12, maximum: maximum + spread * 0.12 };
+        }
+        var leadingExtent = paddedExtent(leadingValues, 1);
+        var kospiExtent = paddedExtent(kospiValues, 100);
         var xStep = plotWidth / Math.max(rows.length - 1, 1);
         function xFor(index) { return margin.left + xStep * index; }
-        function yFor(value) { return margin.top + (maxValue - value) / (maxValue - minValue) * plotHeight; }
+        function yFor(value, extent) { return margin.top + (extent.maximum - value) / (extent.maximum - extent.minimum) * plotHeight; }
 
         for (var gridIndex = 0; gridIndex < 5; gridIndex += 1) {
-            var gridValue = maxValue - (maxValue - minValue) * gridIndex / 4;
-            var gridY = yFor(gridValue);
+            var ratio = gridIndex / 4;
+            var leadingGridValue = leadingExtent.maximum - (leadingExtent.maximum - leadingExtent.minimum) * ratio;
+            var kospiGridValue = kospiExtent.maximum - (kospiExtent.maximum - kospiExtent.minimum) * ratio;
+            var gridY = margin.top + plotHeight * ratio;
             svg.appendChild(makeSvg('line', {
                 x1: margin.left,
                 x2: width - margin.right,
                 y1: gridY,
                 y2: gridY,
-                'class': Math.abs(gridValue - 100) < (maxValue - minValue) / 8
-                    ? 'leading-cycle-grid is-baseline'
-                    : 'leading-cycle-grid'
+                'class': 'leading-cycle-grid'
             }));
-            var gridLabel = makeSvg('text', {
+            var leadingGridLabel = makeSvg('text', {
                 x: margin.left - 10,
                 y: gridY + 4,
                 'text-anchor': 'end',
-                'class': 'leading-cycle-axis-label'
+                'class': 'leading-cycle-axis-label is-leading'
             });
-            gridLabel.textContent = formatNumber(gridValue, 1);
-            svg.appendChild(gridLabel);
-        }
-        var baselineY = yFor(100);
-        if (baselineY >= margin.top && baselineY <= height - margin.bottom) {
-            svg.appendChild(makeSvg('line', {
-                x1: margin.left,
-                x2: width - margin.right,
-                y1: baselineY,
-                y2: baselineY,
-                'class': 'leading-cycle-baseline'
-            }));
+            leadingGridLabel.textContent = formatNumber(leadingGridValue, 1);
+            svg.appendChild(leadingGridLabel);
+            var kospiGridLabel = makeSvg('text', {
+                x: width - margin.right + 10,
+                y: gridY + 4,
+                'text-anchor': 'start',
+                'class': 'leading-cycle-axis-label is-kospi'
+            });
+            kospiGridLabel.textContent = formatNumber(kospiGridValue, 0);
+            svg.appendChild(kospiGridLabel);
         }
 
-        function seriesPath(key) {
+        function seriesPath(key, extent) {
             var path = '';
             var drawing = false;
             rows.forEach(function (row, index) {
@@ -2230,17 +2230,17 @@
                     drawing = false;
                     return;
                 }
-                path += (drawing ? ' L ' : ' M ') + xFor(index).toFixed(2) + ' ' + yFor(value).toFixed(2);
+                path += (drawing ? ' L ' : ' M ') + xFor(index).toFixed(2) + ' ' + yFor(value, extent).toFixed(2);
                 drawing = true;
             });
             return path;
         }
         svg.appendChild(makeSvg('path', {
-            d: seriesPath('leadingNormalized'),
+            d: seriesPath('leading', leadingExtent),
             'class': 'leading-cycle-series is-leading'
         }));
         svg.appendChild(makeSvg('path', {
-            d: seriesPath('kospiNormalized'),
+            d: seriesPath('kospi', kospiExtent),
             'class': 'leading-cycle-series is-kospi'
         }));
 
@@ -2258,9 +2258,8 @@
 
         function updateReadout(row) {
             readout.textContent = monthLabel(row.period)
-                + ' · 선행지수 ' + (Number.isFinite(row.leading) ? formatNumber(row.leading, 1) + ' (' + formatSigned(row.leadingNormalized - 100, '%', 1) + ')' : '발표 전')
-                + ' · KOSPI ' + (Number.isFinite(row.kospi) ? formatNumber(row.kospi, 2) + ' (' + formatSigned(row.kospiNormalized - 100, '%', 1) + ')' : '자료 없음')
-                + ' · 괄호는 ' + monthLabel(row.baselinePeriod) + '=100 대비 변화입니다.';
+                + ' · 선행지수 ' + (Number.isFinite(row.leading) ? formatNumber(row.leading, 1) + (Number.isFinite(row.leadingChange) ? ' (전월 ' + formatSigned(row.leadingChange, 'p', 1) + ')' : '') : '발표 전')
+                + ' · KOSPI ' + (Number.isFinite(row.kospi) ? formatNumber(row.kospi, 2) + (Number.isFinite(row.kospiChangePercent) ? ' (전월 ' + formatSigned(row.kospiChangePercent, '%', 1) + ')' : '') : '자료 없음');
         }
         rows.forEach(function (row, index) {
             var hitbox = makeSvg('rect', {
@@ -2289,13 +2288,12 @@
 
         var latestLeading = rows.filter(function (row) { return Number.isFinite(row.leading); }).slice(-1)[0];
         var latestKospi = rows.filter(function (row) { return Number.isFinite(row.kospi); }).slice(-1)[0];
-        var baseline = rows[0];
         var kospiValueLabel = market && /장중|개장/.test(market.stateLabel || '') ? ' 최근값' : ' 종가';
         [
             ['선행지수', latestLeading ? formatNumber(latestLeading.leading, 1) : '자료 없음', latestLeading ? monthLabel(latestLeading.period) + ' 공식값' : ''],
             ['KOSPI', latestKospi ? formatNumber(latestKospi.kospi, 2) : '자료 없음', latestKospi ? formatHistoryDate(latestKospi.date) + kospiValueLabel : ''],
-            ['비교 기준', '100', monthLabel(baseline.baselinePeriod)],
-            ['누적 변화', latestKospi ? 'KOSPI ' + formatSigned(latestKospi.kospiNormalized - 100, '%', 1) : '자료 없음', latestLeading ? '선행지수 ' + formatSigned(latestLeading.leadingNormalized - 100, '%', 1) : '']
+            ['선행지수 방향', latestLeading && Number.isFinite(latestLeading.leadingChange) ? formatSigned(latestLeading.leadingChange, 'p', 1) : '자료 없음', '직전 발표월 대비'],
+            ['KOSPI 방향', latestKospi && Number.isFinite(latestKospi.kospiChangePercent) ? formatSigned(latestKospi.kospiChangePercent, '%', 1) : '자료 없음', '직전 월말 대비']
         ].forEach(function (item) {
             var card = make('div', 'leading-cycle-summary-item');
             card.appendChild(make('span', '', item[0]));
