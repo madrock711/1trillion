@@ -1549,8 +1549,7 @@
     pointer-events: none;
 }
 
-.kodex-analysis-level-line,
-.kodex-analysis-level-connector {
+.kodex-analysis-level-line {
     stroke: currentColor;
     stroke-width: 1.15;
     stroke-dasharray: 7 5;
@@ -1570,18 +1569,27 @@
     color: #ff7580;
 }
 
-.kodex-analysis-level-label-bg {
-    fill: #10171b;
-    stroke: currentColor;
-    stroke-width: 0.75;
-    opacity: 0.94;
-}
-
 .kodex-analysis-level-label {
     fill: currentColor;
+    stroke: #0c1217;
+    stroke-width: 3px;
+    paint-order: stroke fill;
     font-family: inherit;
     font-size: 10.5px;
     font-weight: 800;
+}
+
+.kodex-history-legend .is-analysis-support { color: #67a8ff; }
+.kodex-history-legend .is-analysis-pivot { color: #f2c94c; }
+.kodex-history-legend .is-analysis-resistance { color: #ff7580; }
+
+.kodex-history-legend .is-analysis-support::before,
+.kodex-history-legend .is-analysis-pivot::before,
+.kodex-history-legend .is-analysis-resistance::before {
+    height: 0;
+    border-top: 1px dashed currentColor;
+    border-radius: 0;
+    background: transparent;
 }
 
 .intraday-session-divider {

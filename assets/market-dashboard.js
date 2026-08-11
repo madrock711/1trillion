@@ -1889,21 +1889,10 @@
                 tone: level.tone,
                 lineY: Math.max(top, Math.min(bottom, priceY(level.value)))
             };
-        }).sort(function (a, b) { return a.lineY - b.lineY; });
+        });
         if (!normalized.length) return;
 
-        var labelGap = 20;
-        normalized.forEach(function (level, index) {
-            level.labelY = index === 0 ? Math.max(top + 10, level.lineY) : Math.max(level.lineY, normalized[index - 1].labelY + labelGap);
-        });
-        for (var index = normalized.length - 1; index >= 0; index -= 1) {
-            var maximumY = bottom - 5 - (normalized.length - 1 - index) * labelGap;
-            normalized[index].labelY = Math.min(normalized[index].labelY, maximumY);
-        }
-
         normalized.forEach(function (level) {
-            var text = level.label + ' ' + formatPrice(level.value, '원');
-            var labelWidth = Math.min(164, Math.max(82, 18 + text.length * 7));
             var group = makeSvg('g', {
                 'class': 'kodex-analysis-level is-' + level.tone,
                 role: 'img',
@@ -1919,30 +1908,13 @@
                 y2: level.lineY,
                 'class': 'kodex-analysis-level-line'
             }));
-            if (Math.abs(level.labelY - level.lineY) > 2) {
-                group.appendChild(makeSvg('line', {
-                    x1: right - labelWidth - 5,
-                    y1: level.lineY,
-                    x2: right - labelWidth - 5,
-                    y2: level.labelY,
-                    'class': 'kodex-analysis-level-connector'
-                }));
-            }
-            group.appendChild(makeSvg('rect', {
-                x: right - labelWidth,
-                y: level.labelY - 11,
-                width: labelWidth,
-                height: 18,
-                rx: 4,
-                'class': 'kodex-analysis-level-label-bg'
-            }));
             var label = makeSvg('text', {
-                x: right - 7,
-                y: level.labelY + 3,
+                x: right + 10,
+                y: level.lineY + 4,
                 'class': 'kodex-analysis-level-label',
-                'text-anchor': 'end'
+                'text-anchor': 'start'
             });
-            label.textContent = text;
+            label.textContent = formatNumber(level.value, 0);
             group.appendChild(label);
             svg.appendChild(group);
         });
