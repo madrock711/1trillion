@@ -33,6 +33,10 @@
     var technicalRangeEnd = 100;
     var technicalRangeRows = [];
     var technicalRangeRenderFrame = 0;
+    var technicalRangePreviewFrame = 0;
+    var technicalRangePreviewDirty = false;
+    var technicalRangePreviewLastAt = 0;
+    var technicalRangePreviewInterval = 48;
     var technicalRangeDrag = null;
     var floatingDashboardControlsFrame = 0;
     var floatingDashboardControlsBound = false;
@@ -44,11 +48,14 @@
     var kospiIntradayRenderToken = 0;
     var kospiIntradayForceRefresh = false;
     var kospiIntradayViewCache = {};
+    var kospiIntradayRangePreview = null;
     var kospiIntradayAbortController = null;
     var kospiIntradayRequestDate = '';
     var compositeMomentumState = { key: '', days: [], pending: null };
     var compositeMomentumRenderToken = 0;
     var compositeMomentumForceRefresh = false;
+    var kodexIntradayRangePreview = null;
+    var kodexIntradayRenderOptions = { showStochasticSlow: true };
     var linkedChartViews = {};
     var linkedChartHoverSelection = null;
     var linkedChartLockedSelection = null;
@@ -942,7 +949,102 @@
         updateTechnicalRangeUi();
     }
 
+    function technicalCardNearViewport(cardId) {
+        var card = document.querySelector('[data-technical-card="' + cardId + '"]');
+        if (!card || card.hidden) return false;
+        var rect = card.getBoundingClientRect();
+        var viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+        return rect.bottom >= -120 && rect.top <= viewportHeight + 120;
+    }
+
+    function renderTechnicalRangePreview() {
+        if (!dashboardData || selectedKodexChartMode === 'intraday' && !selectedKodexIntradayDate) return;
+        clearLinkedChartSelection(false);
+        var kospi = findById(dashboardData.markets, 'KOSPI');
+        var kodex = findById(dashboardData.technical.instruments, 'KODEX');
+
+        if (kospi && technicalCardNearViewport('kospi-flow')) {
+            if (selectedKodexChartMode === 'daily') {
+                renderKospiHistoryChart(kospi);
+            } else if (kospiIntradayRangePreview && kospiIntradayRangePreview.day
+                && kospiIntradayRangePreview.date === selectedKodexIntradayDate) {
+                var kospiInterval = effectiveIntradayInterval(
+                    kospiIntradayRangePreview.day,
+                    selectedKodexIntradayInterval
+                );
+                renderKospiRows(prepareKospiIntradayRows(kospiIntradayRangePreview.day, kospiInterval), {
+                    mode: 'intraday',
+                    date: kospiIntradayRangePreview.date,
+                    rolling: kospiIntradayRangePreview.rolling,
+                    interval: kospiInterval,
+                    day: kospiIntradayRangePreview.day
+                });
+            }
+        }
+
+        if (kodex && technicalCardNearViewport('kodex-history')) {
+            if (selectedKodexChartMode === 'daily') {
+                renderKodexHistoryChart(kodex);
+            } else if (kodexIntradayRangePreview && kodexIntradayRangePreview.day
+                && kodexIntradayRangePreview.day.date === selectedKodexIntradayDate) {
+                var kodexSvg = document.getElementById('kodex-history-chart');
+                var kodexSummary = document.getElementById('kodex-history-summary');
+                var kodexReadout = document.getElementById('kodex-history-readout');
+                if (kodexSvg && kodexSummary && kodexReadout) {
+                    clear(kodexSvg);
+                    clear(kodexSummary);
+                    renderKodexIntradayRows(
+                        kodexIntradayRangePreview.day,
+                        effectiveIntradayInterval(kodexIntradayRangePreview.day, selectedKodexIntradayInterval),
+                        kodexSvg,
+                        kodexSummary,
+                        kodexReadout,
+                        kodexIntradayRenderOptions
+                    );
+                }
+            }
+        }
+
+        if (technicalCardNearViewport('composite-momentum') && compositeMomentumState.days.length) {
+            renderCompositeMomentumChart(compositeMomentumState.days);
+        }
+        if (technicalCardNearViewport('tqqq-history')) renderTqqqSynchronized();
+    }
+
+    function queueTechnicalRangePreview() {
+        if (technicalRangeRenderFrame) {
+            window.cancelAnimationFrame(technicalRangeRenderFrame);
+            technicalRangeRenderFrame = 0;
+        }
+        technicalRangePreviewDirty = true;
+        if (technicalRangePreviewFrame) return;
+        function paint(timestamp) {
+            if (!technicalRangePreviewDirty) {
+                technicalRangePreviewFrame = 0;
+                return;
+            }
+            if (timestamp - technicalRangePreviewLastAt < technicalRangePreviewInterval) {
+                technicalRangePreviewFrame = window.requestAnimationFrame(paint);
+                return;
+            }
+            technicalRangePreviewDirty = false;
+            technicalRangePreviewLastAt = timestamp;
+            technicalRangePreviewFrame = 0;
+            renderTechnicalRangePreview();
+            if (technicalRangePreviewDirty) queueTechnicalRangePreview();
+        }
+        technicalRangePreviewFrame = window.requestAnimationFrame(paint);
+    }
+
+    function cancelTechnicalRangePreview() {
+        technicalRangePreviewDirty = false;
+        if (!technicalRangePreviewFrame) return;
+        window.cancelAnimationFrame(technicalRangePreviewFrame);
+        technicalRangePreviewFrame = 0;
+    }
+
     function queueTechnicalRangeRender() {
+        cancelTechnicalRangePreview();
         if (technicalRangeRenderFrame) window.cancelAnimationFrame(technicalRangeRenderFrame);
         technicalRangeRenderFrame = window.requestAnimationFrame(function () {
             technicalRangeRenderFrame = 0;
@@ -976,9 +1078,11 @@
         var reset = document.getElementById('technical-range-reset');
         startInput.addEventListener('input', function () {
             setTechnicalRange(Math.min(Number(startInput.value), technicalRangeEnd - 5), technicalRangeEnd, false);
+            queueTechnicalRangePreview();
         });
         endInput.addEventListener('input', function () {
             setTechnicalRange(technicalRangeStart, Math.max(Number(endInput.value), technicalRangeStart + 5), false);
+            queueTechnicalRangePreview();
         });
         startInput.addEventListener('change', queueTechnicalRangeRender);
         endInput.addEventListener('change', queueTechnicalRangeRender);
@@ -1002,6 +1106,7 @@
             var delta = (event.clientX - technicalRangeDrag.startX) / technicalRangeDrag.width * 100;
             var nextStart = Math.max(0, Math.min(100 - span, technicalRangeDrag.start + delta));
             setTechnicalRange(nextStart, nextStart + span, false);
+            queueTechnicalRangePreview();
         });
         function finishDrag(event) {
             if (!technicalRangeDrag || technicalRangeDrag.pointerId !== event.pointerId) return;
@@ -2746,6 +2851,11 @@
 
         function renderVisibleDay(day) {
             if (!day) return false;
+            kospiIntradayRangePreview = {
+                day: day,
+                date: selectedDate,
+                rolling: rolling
+            };
             var interval = effectiveIntradayInterval(day, selectedKodexIntradayInterval);
             renderKospiRows(prepareKospiIntradayRows(day, interval), {
                 mode: 'intraday',
@@ -3317,12 +3427,11 @@
         });
         dayRequest.then(function (day) {
             if (token !== kodexIntradayRenderToken || selectedKodexChartMode !== 'intraday') return;
+            kodexIntradayRangePreview = { day: day };
             clear(svg);
             clear(summary);
             var interval = effectiveIntradayInterval(day, selectedKodexIntradayInterval);
-            renderKodexIntradayRows(day, interval, svg, summary, readout, {
-                showStochasticSlow: true
-            });
+            renderKodexIntradayRows(day, interval, svg, summary, readout, kodexIntradayRenderOptions);
         }).catch(function () {
             if (token !== kodexIntradayRenderToken) return;
             readout.textContent = '선택한 거래일의 분봉을 불러오지 못했습니다.';
