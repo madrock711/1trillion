@@ -2030,8 +2030,53 @@
         });
     }
 
+    function liveRefreshDelay(liveData) {
+        if (!liveData) return 60 * 1000;
+        var markets = Array.isArray(liveData.markets) ? liveData.markets : [];
+        if (!markets.length) return 60 * 1000;
+        var active = markets.some(function (market) {
+            return market && (market.marketStatus === 'OPEN' || market.marketStatus === 'PREOPEN');
+        });
+        var allClosed = markets.every(function (market) {
+            return market && market.marketStatus === 'CLOSE';
+        });
+        return active || Boolean(liveData.partial && !allClosed) ? 60 * 1000 : null;
+    }
+
+    function liveObservationSignature(liveData) {
+        if (!liveData) return '';
+        return JSON.stringify({
+            markets: liveData.markets || [],
+            instruments: liveData.instruments || [],
+            exchange: liveData.exchange || null,
+            program: liveData.program || null,
+            tqqqHistory: liveData.tqqqHistory || [],
+            tqqqIntraday: liveData.tqqqIntraday || {},
+            partial: Boolean(liveData.partial),
+            missingSources: liveData.missingSources || [],
+            delayedSources: liveData.delayedSources || []
+        });
+    }
+
+    function shouldRefreshLiveDataOnAttention(liveData, now) {
+        if (liveRefreshDelay(liveData) !== null) return true;
+        var markets = liveData && Array.isArray(liveData.markets) ? liveData.markets : [];
+        var latestMarketTime = markets.reduce(function (latest, market) {
+            var timestamp = Date.parse(market && market.asOf);
+            return Number.isFinite(timestamp) ? Math.max(latest, timestamp) : latest;
+        }, 0);
+        if (!latestMarketTime) return false;
+        var currentKstDate = new Date((Number.isFinite(now) ? now : Date.now()) + 9 * 60 * 60 * 1000)
+            .toISOString().slice(0, 10);
+        var marketKstDate = new Date(latestMarketTime + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+        return currentKstDate > marketKstDate;
+    }
+
     return {
         fetchLatest: fetchLatest,
+        liveRefreshDelay: liveRefreshDelay,
+        liveObservationSignature: liveObservationSignature,
+        shouldRefreshLiveDataOnAttention: shouldRefreshLiveDataOnAttention,
         normalizeIndex: normalizeIndex,
         normalizeStock: normalizeStock,
         normalizeExchange: normalizeExchange,
