@@ -10,7 +10,6 @@ const cardIds = Array.from(html.matchAll(/data-technical-card="([^"]+)"/g), (mat
 assert.deepStrictEqual(cardIds, [
     'kospi-flow',
     'leading-cycle-comparison',
-    'kodex-technical',
     'kodex-quote',
     'kodex-range',
     'kodex-history',
@@ -21,6 +20,7 @@ assert.deepStrictEqual(cardIds, [
     'kodex-market-context'
 ]);
 assert.strictEqual(new Set(cardIds).size, cardIds.length, 'technical card ids must be unique');
+assert(!html.includes('market-technical-chart'), '별도 KODEX OHLC 비교 카드는 제거되어야 한다.');
 
 assert(/'kospi-flow',\r?\n\s*'leading-cycle-comparison',\r?\n\s*'kodex-history',\r?\n\s*'composite-momentum',\r?\n\s*'tqqq-history'/.test(js), 'default order should keep the macro comparison ahead of KODEX, composite, and TQQQ charts');
 assert(js.includes("hpmplab-technical-card-order-v2"), 'technical order must persist in localStorage');

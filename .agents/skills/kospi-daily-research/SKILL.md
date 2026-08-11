@@ -100,6 +100,7 @@ py -3 scripts/update_yield_spreads.py --output-dir charts
 - 공개 시황을 발행할 때 `assets/data/market-dashboard-YYYYMMDD-HHMM.json`에 같은 기준 시각의 대시보드 스냅샷을 새 파일로 저장한다.
 - 스냅샷의 필수 메타데이터는 `snapshotId`, `asOf`, `marketState`, 독자용 `sourceLabel`이다. 서로 다른 기준 시각을 섞어야 하면 해당 수치에 별도의 시각 라벨을 붙인다.
 - 스냅샷 검증이 끝난 뒤에만 `assets/data/market-dashboard-latest.json`의 포인터를 새 파일로 갱신한다. 이 포인터는 최신판 연결 파일이므로 덮어쓸 수 있지만, 날짜·시각이 붙은 스냅샷은 덮어쓰지 않는다.
+- 스냅샷의 KODEX `technical.instruments[].levels`에는 이번 리서치가 확정한 숫자형 `1차 지지`, `반등 기준`, `저항`을 넣고 `strategyLevels`와 같은 가격을 사용한다. 기술적 분석의 KODEX 일봉·분봉 가로 기준선은 이 발행값을 읽으므로, 후속 리서치에서 기준이 바뀌면 새 스냅샷과 최신 포인터를 함께 갱신한다.
 - 공개 대시보드는 페이지 로드·새로고침 때 동일 출처 읽기 전용 경로에서 KOSPI·KOSDAQ 지수, 국내 투자자·프로그램 수급, 시장 폭, KODEX 레버리지·삼성전자·SK하이닉스 당일 가격과 USD/KRW 고시환율을 다시 조회한다. 코드·거래일·시각·OHLC 검증에 실패하면 불변 스냅샷으로 안전하게 복귀한다.
 - 화면에는 최신 조회값을 `시세 기준`, 발행 당시의 해석·대응 점수·시나리오·기준선을 `분석 기준`으로 분리한다. 가격 갱신만으로 전략 문장을 자동 변경하거나 현재 판단처럼 보이게 만들지 않는다.
 - `articles/market.html`의 시황분석 탭에는 새 공개 글을 최신순으로 추가하고, 오늘 시황 전문 링크와 구조화 데이터도 같은 글을 가리키게 한다.

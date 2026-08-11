@@ -16,7 +16,6 @@
     var kodexIntradaySource = root.getAttribute('data-kodex-intraday-source');
     var leadingCycleSource = root.getAttribute('data-leading-cycle-source');
     var kospiMonthlySource = root.getAttribute('data-kospi-monthly-source');
-    var selectedInstrumentId = null;
     var latestLiveData = null;
     var liveRefreshTimer = null;
     var liveRefreshPromise = null;
@@ -70,7 +69,6 @@
         'kodex-history',
         'composite-momentum',
         'tqqq-history',
-        'kodex-technical',
         'kodex-quote',
         'kodex-range',
         'kodex-investor',
@@ -873,107 +871,6 @@
             item.appendChild(make('span', '', event.path));
             list.appendChild(item);
         });
-    }
-
-    function renderTechnicalInstrument(instrument) {
-        document.getElementById('technical-chart-title').textContent = instrument.label + ' 당일 OHLC·현재가 비교';
-        document.getElementById('market-technical-interpretation').textContent = instrument.interpretation;
-        var technicalTime = instrument.asOfLabel || (dashboardData && dashboardData.asOfDisplay) || '작성 시점';
-        var technicalState = instrument.delayed
-            ? '마지막 확인 시세'
-            : instrument.liveUpdated ? '최근 시세' : '시황분석 작성 당시 시세';
-        document.getElementById('market-technical-note').textContent = technicalTime + ' ' + technicalState
-            + '와 당일 가격 범위, 지지·저항 기준선입니다.';
-
-        var svg = document.getElementById('market-technical-chart');
-        clear(svg);
-        var width = 760;
-        var height = 320;
-        var margin = { top: 28, right: 112, bottom: 58, left: 68 };
-        var innerWidth = width - margin.left - margin.right;
-        var innerHeight = height - margin.top - margin.bottom;
-        var values = instrument.points.map(function (point) { return point.value; })
-            .concat(instrument.levels.map(function (level) { return level.value; }));
-        var minValue = Math.min.apply(Math, values);
-        var maxValue = Math.max.apply(Math, values);
-        var spread = Math.max(maxValue - minValue, Math.abs(maxValue || 1) * 0.01);
-        minValue -= spread * 0.08;
-        maxValue += spread * 0.08;
-
-        function xFor(index) {
-            if (instrument.points.length === 1) return margin.left + innerWidth / 2;
-            return margin.left + index * (innerWidth / (instrument.points.length - 1));
-        }
-
-        function yFor(value) {
-            return margin.top + (maxValue - value) / (maxValue - minValue) * innerHeight;
-        }
-
-        for (var gridIndex = 0; gridIndex <= 4; gridIndex += 1) {
-            var gridY = margin.top + innerHeight * gridIndex / 4;
-            svg.appendChild(makeSvg('line', { x1: margin.left, y1: gridY, x2: margin.left + innerWidth, y2: gridY, 'class': 'market-chart-grid' }));
-            var gridValue = maxValue - (maxValue - minValue) * gridIndex / 4;
-            var axisLabel = makeSvg('text', { x: margin.left - 10, y: gridY + 4, 'class': 'market-chart-axis-label', 'text-anchor': 'end' });
-            axisLabel.textContent = formatPrice(gridValue, instrument.unit);
-            svg.appendChild(axisLabel);
-        }
-
-        instrument.levels.forEach(function (level) {
-            var levelY = yFor(level.value);
-            svg.appendChild(makeSvg('line', { x1: margin.left, y1: levelY, x2: margin.left + innerWidth, y2: levelY, 'class': 'market-chart-level' }));
-            var levelLabel = makeSvg('text', { x: width - 8, y: levelY + 4, 'class': 'market-chart-level-label' });
-            levelLabel.textContent = level.label + ' ' + formatPrice(level.value, instrument.unit);
-            svg.appendChild(levelLabel);
-        });
-
-        var baseline = margin.top + innerHeight;
-        instrument.points.forEach(function (point, index) {
-            var pointX = xFor(index);
-            var pointY = yFor(point.value);
-            svg.appendChild(makeSvg('line', {
-                x1: pointX,
-                y1: pointY,
-                x2: pointX,
-                y2: baseline,
-                'class': 'market-chart-observation-guide'
-            }));
-            svg.appendChild(makeSvg('circle', {
-                cx: pointX,
-                cy: pointY,
-                r: index === instrument.points.length - 1 ? 7 : 5,
-                'class': index === instrument.points.length - 1 ? 'market-chart-point is-current' : 'market-chart-point'
-            }));
-            var pointLabel = makeSvg('text', { x: pointX, y: height - 24, 'class': 'market-chart-point-label' });
-            pointLabel.textContent = point.label;
-            svg.appendChild(pointLabel);
-        });
-
-        var levels = document.getElementById('market-technical-levels');
-        clear(levels);
-        instrument.levels.forEach(function (level) {
-            var item = make('div', 'market-technical-level');
-            item.appendChild(make('span', '', level.label));
-            item.appendChild(make('strong', '', formatPrice(level.value, instrument.unit)));
-            levels.appendChild(item);
-        });
-
-        var table = document.getElementById('market-technical-table');
-        clear(table);
-        instrument.points.forEach(function (point) {
-            var row = make('tr');
-            row.appendChild(make('td', '', point.label));
-            row.appendChild(make('td', '', formatPrice(point.value, instrument.unit)));
-            table.appendChild(row);
-        });
-    }
-
-    function renderTechnical(data) {
-        var selectedInstrument = data.technical.instruments.filter(function (instrument) {
-            return instrument.id === 'KODEX';
-        })[0];
-        if (!selectedInstrument) return;
-        selectedInstrumentId = selectedInstrument.id;
-        renderTechnicalInstrument(selectedInstrument);
     }
 
     function pointValue(instrument, matcher) {
@@ -1965,6 +1862,90 @@
             label.textContent = formatter(maxValue - (maxValue - minValue) * index / 4);
             svg.appendChild(label);
         }
+    }
+
+    function kodexAnalysisLevels(instrumentOrLevels) {
+        var levels = Array.isArray(instrumentOrLevels)
+            ? instrumentOrLevels
+            : instrumentOrLevels && Array.isArray(instrumentOrLevels.levels) ? instrumentOrLevels.levels : [];
+        return levels.filter(function (level) {
+            return level && Number.isFinite(level.value) && /지지|반등|중심|저항/.test(String(level.label || ''));
+        }).map(function (level) {
+            var label = String(level.label || '기준선');
+            var tone = /지지/.test(label) ? 'support' : /저항/.test(label) ? 'resistance' : 'pivot';
+            return { label: label, value: level.value, tone: tone };
+        }).filter(function (level, index, values) {
+            return values.findIndex(function (candidate) {
+                return candidate.label === level.label && candidate.value === level.value;
+            }) === index;
+        });
+    }
+
+    function appendKodexAnalysisLevels(svg, levels, priceY, left, right, top, bottom) {
+        var normalized = kodexAnalysisLevels(levels).map(function (level) {
+            return {
+                label: level.label,
+                value: level.value,
+                tone: level.tone,
+                lineY: Math.max(top, Math.min(bottom, priceY(level.value)))
+            };
+        }).sort(function (a, b) { return a.lineY - b.lineY; });
+        if (!normalized.length) return;
+
+        var labelGap = 20;
+        normalized.forEach(function (level, index) {
+            level.labelY = index === 0 ? Math.max(top + 10, level.lineY) : Math.max(level.lineY, normalized[index - 1].labelY + labelGap);
+        });
+        for (var index = normalized.length - 1; index >= 0; index -= 1) {
+            var maximumY = bottom - 5 - (normalized.length - 1 - index) * labelGap;
+            normalized[index].labelY = Math.min(normalized[index].labelY, maximumY);
+        }
+
+        normalized.forEach(function (level) {
+            var text = level.label + ' ' + formatPrice(level.value, '원');
+            var labelWidth = Math.min(164, Math.max(82, 18 + text.length * 7));
+            var group = makeSvg('g', {
+                'class': 'kodex-analysis-level is-' + level.tone,
+                role: 'img',
+                'aria-label': level.label + ' ' + formatPrice(level.value, '원')
+            });
+            var title = makeSvg('title');
+            title.textContent = level.label + ' ' + formatPrice(level.value, '원') + ' · 최신 시황분석 발행 기준';
+            group.appendChild(title);
+            group.appendChild(makeSvg('line', {
+                x1: left,
+                y1: level.lineY,
+                x2: right,
+                y2: level.lineY,
+                'class': 'kodex-analysis-level-line'
+            }));
+            if (Math.abs(level.labelY - level.lineY) > 2) {
+                group.appendChild(makeSvg('line', {
+                    x1: right - labelWidth - 5,
+                    y1: level.lineY,
+                    x2: right - labelWidth - 5,
+                    y2: level.labelY,
+                    'class': 'kodex-analysis-level-connector'
+                }));
+            }
+            group.appendChild(makeSvg('rect', {
+                x: right - labelWidth,
+                y: level.labelY - 11,
+                width: labelWidth,
+                height: 18,
+                rx: 4,
+                'class': 'kodex-analysis-level-label-bg'
+            }));
+            var label = makeSvg('text', {
+                x: right - 7,
+                y: level.labelY + 3,
+                'class': 'kodex-analysis-level-label',
+                'text-anchor': 'end'
+            });
+            label.textContent = text;
+            group.appendChild(label);
+            svg.appendChild(group);
+        });
     }
 
     function addChartSectionLabel(svg, text, x, y) {
@@ -3149,7 +3130,8 @@
 
         function xFor(index) { return margin.left + xStep * index + xStep / 2; }
 
-        var priceValues = [];
+        var analysisLevels = kodexAnalysisLevels(instrument);
+        var priceValues = analysisLevels.map(function (level) { return level.value; });
         rows.forEach(function (row) { priceValues.push(row.high, row.low); });
         ['ma5', 'ma20', 'ma60', 'bbUpper', 'bbLower'].forEach(function (key) {
             priceOverlays.slice(startIndex, endIndex).forEach(function (row) {
@@ -3307,6 +3289,8 @@
             if (path) svg.appendChild(makeSvg('path', { d: path, 'class': 'kodex-history-line ' + series.className }));
         });
 
+        appendKodexAnalysisLevels(svg, analysisLevels, priceY, margin.left, width - margin.right, priceTop, priceBottom);
+
         var tickIndexes = [0, Math.floor((rows.length - 1) / 4), Math.floor((rows.length - 1) / 2), Math.floor((rows.length - 1) * 3 / 4), rows.length - 1]
             .filter(function (value, index, values) { return values.indexOf(value) === index; });
         tickIndexes.forEach(function (index) {
@@ -3366,7 +3350,8 @@
         var candleWidth = Math.max(2.5, Math.min(14, xStep * 0.62));
         function xFor(index) { return margin.left + xStep * index + xStep / 2; }
 
-        var priceValues = [];
+        var analysisLevels = kodexAnalysisLevels(settings.analysisLevels);
+        var priceValues = analysisLevels.map(function (level) { return level.value; });
         rows.forEach(function (row) {
             priceValues.push(row.high, row.low);
             [row.ma5, row.ma20, row.ma60, row.bbUpper, row.bbLower].forEach(function (value) {
@@ -3473,6 +3458,8 @@
             if (path) svg.appendChild(makeSvg('path', { d: path, 'class': 'kodex-history-line ' + series.className }));
         });
 
+        appendKodexAnalysisLevels(svg, analysisLevels, priceY, margin.left, right, priceTop, priceBottom);
+
         var tickIndexes = [0, Math.floor((rows.length - 1) / 4), Math.floor((rows.length - 1) / 2), Math.floor((rows.length - 1) * 3 / 4), rows.length - 1]
             .filter(function (value, index, values) { return values.indexOf(value) === index; });
         tickIndexes.forEach(function (index) {
@@ -3577,6 +3564,7 @@
         svg.classList.toggle('is-intraday', selectedKodexChartMode === 'intraday');
         summary.classList.toggle('is-intraday-compact', selectedKodexChartMode === 'intraday');
         if (title) title.textContent = 'KODEX 레버리지';
+        kodexIntradayRenderOptions.analysisLevels = kodexAnalysisLevels(instrument);
         if (selectedKodexChartMode === 'intraday') {
             renderKodexIntradayChart(instrument, svg, summary, readout, indexRows);
             return;
@@ -4111,7 +4099,6 @@
         renderStrategyLevels(data);
         renderChecklist(data);
         renderEvents(data);
-        renderTechnical(data);
         renderKospiHistoryChart(findById(data.markets, 'KOSPI'));
         renderLeadingCycleComparison(findById(data.markets, 'KOSPI'));
         renderKodex(data);
@@ -4399,7 +4386,6 @@
         renderMarketCards(data, false);
         renderCheckpoints(data);
         renderAnalysis(data, liveData);
-        renderTechnical(data);
         renderKospiHistoryChart(displayKospi);
         renderLeadingCycleComparison(displayKospi);
         renderKodex(data);

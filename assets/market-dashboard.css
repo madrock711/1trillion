@@ -1545,6 +1545,45 @@
     stroke-width: 1;
 }
 
+.kodex-analysis-level {
+    pointer-events: none;
+}
+
+.kodex-analysis-level-line,
+.kodex-analysis-level-connector {
+    stroke: currentColor;
+    stroke-width: 1.15;
+    stroke-dasharray: 7 5;
+    opacity: 0.78;
+    vector-effect: non-scaling-stroke;
+}
+
+.kodex-analysis-level.is-support {
+    color: #67a8ff;
+}
+
+.kodex-analysis-level.is-pivot {
+    color: #f2c94c;
+}
+
+.kodex-analysis-level.is-resistance {
+    color: #ff7580;
+}
+
+.kodex-analysis-level-label-bg {
+    fill: #10171b;
+    stroke: currentColor;
+    stroke-width: 0.75;
+    opacity: 0.94;
+}
+
+.kodex-analysis-level-label {
+    fill: currentColor;
+    font-family: inherit;
+    font-size: 10.5px;
+    font-weight: 800;
+}
+
 .intraday-session-divider {
     stroke: rgba(255, 211, 91, 0.62);
     stroke-width: 1.25;

@@ -121,7 +121,7 @@ assert(css.includes('padding-bottom: calc(var(--technical-navigator-height'));
 
 const navigatorSlotIndex = html.indexOf('id="technical-range-navigator-slot"');
 const firstChartEndIndex = html.indexOf('</section>', html.indexOf('data-technical-card="kospi-flow"'));
-const nextCardIndex = html.indexOf('data-technical-card="kodex-technical"');
+const nextCardIndex = html.indexOf('data-technical-card="leading-cycle-comparison"');
 assert(firstChartEndIndex < navigatorSlotIndex && navigatorSlotIndex < nextCardIndex, '표시구간 네비게이터는 첫 차트 바로 뒤에 있어야 한다.');
 
 console.log('Technical range navigator and live-date selection tests passed.');

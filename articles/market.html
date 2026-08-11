@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260811-8">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260811-9">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -67,7 +67,7 @@
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
     <script defer src="../assets/market-live-data.js?v=20260811-2"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260811-16"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260811-17"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -470,31 +470,6 @@
                     </div>
                     <div class="leading-cycle-summary" id="leading-cycle-summary"></div>
                     <p class="market-source-note" id="leading-cycle-source-note">선행지수는 <a href="https://www.index.go.kr/unity/potal/main/EachDtlPageDetail.do?idx_cd=1057" target="_blank" rel="noopener noreferrer">국가지표 경기종합지수</a>의 공식 월별 자료, KOSPI는 Naver Finance의 월봉입니다. 두 자료가 함께 존재하는 1990년 1월부터 비교하며, 선행지수 전체 시계열은 매월 수정될 수 있습니다.</p>
-                </section>
-
-                <section class="market-dashboard-card market-technical-card technical-orderable technical-orderable--wide" data-technical-card="kodex-technical" data-technical-card-title="KODEX 당일 가격 범위" aria-labelledby="technical-chart-title">
-                    <div class="market-card-heading-row market-card-heading-row--technical">
-                        <div>
-                            <p class="market-card-label">KODEX 레버리지 당일 가격 범위</p>
-                            <h3 id="technical-chart-title">KODEX 레버리지 당일 OHLC·현재가 비교</h3>
-                        </div>
-                    </div>
-                    <p class="market-technical-note" id="market-technical-note"></p>
-                    <div class="market-chart-shell">
-                        <svg id="market-technical-chart" class="market-technical-chart" viewBox="0 0 760 320" role="img" aria-labelledby="technical-chart-title technical-chart-description"></svg>
-                        <p class="sr-only" id="technical-chart-description">KODEX 레버리지의 전일 종가, 시가, 고가, 저가와 현재가를 항목별로 비교합니다. 같은 데이터는 아래 표에서도 확인할 수 있습니다.</p>
-                    </div>
-                    <p class="market-technical-interpretation" id="market-technical-interpretation" aria-live="polite"></p>
-                    <div class="market-technical-levels" id="market-technical-levels"></div>
-                    <details class="market-data-details">
-                        <summary>가격 데이터를 표로 보기</summary>
-                        <div class="market-table-wrap" tabindex="0" role="region" aria-label="기술적 분석 가격 데이터">
-                            <table class="market-data-table">
-                                <thead><tr><th>구간</th><th>가격</th></tr></thead>
-                                <tbody id="market-technical-table"></tbody>
-                            </table>
-                        </div>
-                    </details>
                 </section>
 
                     <article class="market-dashboard-card kodex-quote-card technical-orderable" data-technical-card="kodex-quote" data-technical-card-title="KODEX 현재 시세">
