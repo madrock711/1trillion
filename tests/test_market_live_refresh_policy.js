@@ -42,6 +42,6 @@ assert.ok(dashboard.includes('if (!shouldPollLiveData(latestLiveData)) return;')
 assert.ok(dashboard.includes('liveSignature === lastAppliedLiveSignature'), '같은 데이터의 SVG 재생성을 막아야 한다.');
 assert.ok(!dashboard.includes('5 * 60 * 1000'), '마감 뒤 5분 재렌더 경로가 남으면 안 된다.');
 assert.ok(html.includes('market-live-data.js?v=20260811-2'));
-assert.ok(html.includes('market-dashboard.js?v=20260811-14'));
+assert.ok(html.includes('market-dashboard.js?v=20260811-15'));
 
 console.log('Market live refresh policy tests passed.');

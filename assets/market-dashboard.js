@@ -29,7 +29,6 @@
     var selectedKodexIntradayInterval = 5;
     var intradayNavigatorSessionCount = 4;
     var intradayIndicatorWarmupSessionCount = 14;
-    var maxIntradayRenderedBars = 800;
     var technicalRangeStart = 50;
     var technicalRangeEnd = 100;
     var technicalRangeRows = [];
@@ -1691,15 +1690,7 @@
 
     function effectiveIntradayInterval(day, requestedInterval) {
         var requested = Math.max(1, Number(requestedInterval) || 1);
-        var visibleRatio = Math.max(0.05, (technicalRangeEnd - technicalRangeStart) / 100);
-        var displayDates = day && Array.isArray(day.displaySessionDates) ? day.displaySessionDates : [];
-        var rawCount = day && Array.isArray(day.bars) ? day.bars.filter(function (bar) {
-            return !displayDates.length || displayDates.indexOf(bar.sessionDate || bar.date) !== -1;
-        }).length : 0;
-        var candidates = [1, 5, 15, 30, 60].filter(function (value) { return value >= requested; });
-        return candidates.filter(function (value) {
-            return rawCount * visibleRatio / value <= maxIntradayRenderedBars;
-        })[0] || candidates[candidates.length - 1] || requested;
+        return [1, 5, 15, 30, 60].indexOf(requested) !== -1 ? requested : 5;
     }
 
     function rollingIntradayRows(day, interval) {
