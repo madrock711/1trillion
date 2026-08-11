@@ -33,6 +33,8 @@
     var technicalRangeEnd = 100;
     var technicalRangeRows = [];
     var technicalRangeRenderFrame = 0;
+    var technicalChartLatestScrollFrame = 0;
+    var technicalChartLatestScrollForce = false;
     var technicalRangePreviewFrame = 0;
     var technicalRangePreviewDirty = false;
     var technicalRangePreviewLastAt = 0;
@@ -271,6 +273,7 @@
         });
 
         setTechnicalNavigatorVisibility(selected === 'technical');
+        if (selected === 'technical') queueTechnicalChartsToLatest(false);
 
         if (historyMode) {
             var nextUrl = new URL(window.location.href);
@@ -450,6 +453,53 @@
         queueFloatingDashboardControlsUpdate();
     }
 
+    function technicalHorizontalChartShells() {
+        return Array.prototype.slice.call(document.querySelectorAll('.kodex-history-shell, .leading-cycle-shell'));
+    }
+
+    function bindTechnicalChartLatestScroll(shell) {
+        if (!shell || shell.getAttribute('data-latest-scroll-bound') === 'true') return;
+        shell.setAttribute('data-latest-scroll-bound', 'true');
+        shell.addEventListener('scroll', function () {
+            var maximum = Math.max(0, shell.scrollWidth - shell.clientWidth);
+            shell.setAttribute('data-latest-scroll-initialized', 'true');
+            shell.setAttribute('data-latest-scroll-user-away', maximum - shell.scrollLeft > 32 ? 'true' : 'false');
+        }, { passive: true });
+    }
+
+    function alignTechnicalChartsToLatest(force) {
+        technicalHorizontalChartShells().forEach(function (shell) {
+            bindTechnicalChartLatestScroll(shell);
+            var maximum = Math.max(0, shell.scrollWidth - shell.clientWidth);
+            if (maximum <= 1) return;
+            var initialized = shell.getAttribute('data-latest-scroll-initialized') === 'true';
+            var userAway = shell.getAttribute('data-latest-scroll-user-away') === 'true';
+            if (!force && initialized && userAway) return;
+            shell.scrollLeft = maximum;
+            shell.setAttribute('data-latest-scroll-initialized', 'true');
+            shell.setAttribute('data-latest-scroll-user-away', 'false');
+        });
+    }
+
+    function queueTechnicalChartsToLatest(force) {
+        technicalChartLatestScrollForce = technicalChartLatestScrollForce || Boolean(force);
+        if (technicalChartLatestScrollFrame) return;
+        technicalChartLatestScrollFrame = window.requestAnimationFrame(function () {
+            var shouldForce = technicalChartLatestScrollForce;
+            technicalChartLatestScrollFrame = 0;
+            technicalChartLatestScrollForce = false;
+            alignTechnicalChartsToLatest(shouldForce);
+        });
+    }
+
+    function resetTechnicalChartHorizontalScroll() {
+        technicalHorizontalChartShells().forEach(function (shell) {
+            shell.removeAttribute('data-latest-scroll-initialized');
+            shell.removeAttribute('data-latest-scroll-user-away');
+        });
+        queueTechnicalChartsToLatest(true);
+    }
+
     viewLinks.forEach(function (link) {
         link.addEventListener('click', function (event) {
             if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -470,6 +520,7 @@
 
     initializeTechnicalCardOrdering();
     bindFloatingDashboardControls();
+    window.addEventListener('resize', function () { queueTechnicalChartsToLatest(false); });
     setView(currentViewFromUrl());
 
     function isStaleSnapshot(data) {
@@ -1387,6 +1438,7 @@
             renderCompositeMomentumCard(kodex);
         }
         renderTqqqSynchronized();
+        queueTechnicalChartsToLatest(false);
     }
 
     function bindKodexChartControls() {
@@ -1398,6 +1450,7 @@
                 clearLinkedChartSelection(false);
                 selectedKodexChartMode = button.getAttribute('data-kodex-chart-mode') === 'intraday' ? 'intraday' : 'daily';
                 persistTechnicalChartState();
+                resetTechnicalChartHorizontalScroll();
                 renderSynchronizedTechnicalCharts();
             });
         });
@@ -1410,6 +1463,7 @@
                 var period = button.getAttribute('data-kodex-period');
                 selectedKodexPeriod = ['1m', '3m', '6m', '1y'].indexOf(period) !== -1 ? period : '1y';
                 persistTechnicalChartState();
+                resetTechnicalChartHorizontalScroll();
                 renderSynchronizedTechnicalCharts();
             });
         });
@@ -1421,6 +1475,7 @@
                 clearLinkedChartSelection(false);
                 selectedKodexIntradayInterval = Number(button.getAttribute('data-kodex-interval')) || 5;
                 persistTechnicalChartState();
+                resetTechnicalChartHorizontalScroll();
                 renderSynchronizedTechnicalCharts();
             });
         });
@@ -1432,6 +1487,7 @@
                 selectedKodexIntradayDate = dateSelect.value;
                 selectedKodexIntradayDateExplicit = true;
                 persistTechnicalChartState();
+                resetTechnicalChartHorizontalScroll();
                 renderSynchronizedTechnicalCharts();
             });
         });

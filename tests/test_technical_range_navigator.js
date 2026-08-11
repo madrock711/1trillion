@@ -39,6 +39,12 @@ assert(dashboard.includes('window.localStorage.setItem(technicalChartStateStorag
 assert(dashboard.includes('intradayDateExplicit: Boolean(date && source.intradayDateExplicit)'));
 assert((dashboard.match(/persistTechnicalChartState\(\);/g) || []).length >= 6, '모드·기간·분 간격·거래일·표시 구간 선택을 저장해야 한다.');
 assert(dashboard.includes('if (dates.length && preferredDate !== selectedKodexIntradayDate) {'), '초기 날짜 목록이 비어 있을 때 저장된 거래일을 덮어쓰면 안 된다.');
+assert(dashboard.includes("document.querySelectorAll('.kodex-history-shell, .leading-cycle-shell')"), '가로 스크롤이 필요한 시계열 차트를 한 경로에서 관리해야 한다.');
+assert(dashboard.includes('function alignTechnicalChartsToLatest(force)'));
+assert(dashboard.includes('shell.scrollLeft = maximum;'), '좁은 화면의 첫 진입은 최신 시점인 오른쪽 끝을 보여줘야 한다.');
+assert(dashboard.includes("data-latest-scroll-user-away', maximum - shell.scrollLeft > 32 ? 'true' : 'false'"), '사용자가 과거 구간을 보고 있으면 자동 스크롤을 멈춰야 한다.');
+assert(dashboard.includes('function resetTechnicalChartHorizontalScroll()'));
+assert((dashboard.match(/resetTechnicalChartHorizontalScroll\(\);/g) || []).length >= 4, '모드·기간·분 간격·거래일 변경 시 최신 시점으로 다시 맞춰야 한다.');
 assert(amplifyRules.includes('TQQQ?range=2y&interval=1d'), 'TQQQ 일봉은 1년 표시 앞의 지표 계산 구간까지 확보해야 한다.');
 assert(amplifyRules.includes('count=360'), 'KOSPI 일봉은 1년 표시 앞의 60봉 계산 구간까지 확보해야 한다.');
 assert(amplifyRules.includes('/market-data/stock/122630/history/price-7'), 'KODEX 일봉은 1년 표시 앞의 지표 계산 구간까지 페이지를 확장해야 한다.');
