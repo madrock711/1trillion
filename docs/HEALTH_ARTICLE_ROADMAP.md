@@ -39,6 +39,7 @@
 | HC-005 | published | PUB-006 | `articles/visualization-goal-achievement.html` |
 | HC-006 | published | PUB-007 | `articles/subliminal-audio-messages.html` |
 | HC-007 | published | PUB-008 | `articles/hypnosis-mind-control.html` |
+| HC-008 | published | PUB-009 | `articles/automatic-thought-record.html` |
 | HC-026 | private-draft | PUB-002 발행 후 비공개 전환 | `docs/drafts/health/HC-026-how-to-meditate-5-minute-breathing.draft.html` |
 
 `PUB-002`는 발행 순서 기록일 뿐 연재 2편을 뜻하지 않는다. `HC-026`은 전체 목차 26편을 작성·검토하는 시점에 공개한다.
@@ -47,11 +48,11 @@
 
 | 우선순위 | 콘텐츠 ID | 가제 | 현재 상태 |
 |---|---|---|---|
-| 1 | HC-008 | 자동적 사고 기록법: 생각·사실·감정을 구분하기 | backlog |
-| 2 | HC-009 | 삶의 의미는 건강에 어떤 영향을 줄까? | backlog |
-| 3 | HC-010 | 경외감은 스트레스를 줄일까? | backlog |
-| 4 | HC-011 | 영적 경험과 정신건강: 위안과 위험을 함께 보기 | backlog |
-| 5 | HC-012 | 채널링·예언·임사체험 주장을 읽는 법 | backlog |
+| 1 | HC-009 | 삶의 의미는 건강에 어떤 영향을 줄까? | backlog |
+| 2 | HC-010 | 경외감은 스트레스를 줄일까? | backlog |
+| 3 | HC-011 | 영적 경험과 정신건강: 위안과 위험을 함께 보기 | backlog |
+| 4 | HC-012 | 채널링·예언·임사체험 주장을 읽는 법 | backlog |
+| 5 | HC-013 | UFO·외계인 증언을 평가하는 최소 기준 | backlog |
 
 ## 전체 목차
 
@@ -66,7 +67,7 @@
 | HC-005 | 시각화만으로 목표를 이룰 수 있을까? | 시각화 효과, 멘탈 리허설 | 결과 환상과 과정 시뮬레이션, 실제 연습의 필요 | published |
 | HC-006 | 잠재음원과 무의식 메시지는 효과가 있을까? | 잠재의식 음원, subliminal 효과 | 비의식적 처리와 자기계발 상품 주장을 분리 | published |
 | HC-007 | 최면은 마음을 조종할까? | 최면 효과, 최면 치료 | 임상 적용 가능성과 기억 회복·통제 상실 오해 | published |
-| HC-008 | 자동적 사고 기록법: 생각·사실·감정을 구분하기 | 자동적 사고, 생각 기록지 | CBT의 일부와 자가 기록의 한계 | backlog |
+| HC-008 | 자동적 사고 기록법: 생각·사실·감정을 구분하기 | 자동적 사고, 생각 기록지 | CBT의 일부와 자가 기록의 한계 | published |
 
 ### 2부. 우주적 진리와 근원의 탐구
 
@@ -199,6 +200,21 @@
 | [APA: Trauma and memory](https://www.apa.org/topics/trauma/memories) | 늦게 떠오른 기억의 진위를 독립 자료로 확인해야 하는 이유 | 기억의 선명함과 감정 강도를 사실 판정 기준으로 삼지 않는다. |
 | [Mayo Clinic: Hypnosis](https://www.mayoclinic.org/tests-procedures/hypnosis/about/pac-20394405) | 세션 중 통제와 기억, 시술자 자격과 가능한 불편 반응 | 환자 안내 자료이므로 질환별 효과 크기의 근거로 사용하지 않는다. |
 
+## 자료팩 HC-008
+
+| 자료 | 사용 범위 | 주의 |
+|---|---|---|
+| [APA Dictionary: Automatic thoughts](https://dictionary.apa.org/automatic-thoughts) | 자동적 사고의 즉각성·습관성과 기분·행동의 관계 | 자동적 사고를 항상 틀린 생각이나 잠재의식의 명령으로 바꾸지 않는다. |
+| [NIMH: Psychotherapies](https://www.nimh.nih.gov/health/topics/psychotherapies) | 자동적 사고를 알아차리고 질문하는 CBT의 역할 | 질환별 치료와 생각 기록지 한 장의 효과는 따로 판단한다. |
+| [Beck Institute: Cognitive Model](https://beckinstitute.org/wp-content/uploads/2024/05/Cognitive-Model.pdf) | 생각이 타당할 때 문제 해결·결론 검토·수용으로 이어 가는 기준 | 모든 감정의 원인을 생각 하나로 환원하지 않는다. |
+| [NHS: Thought record](https://www.nhs.uk/every-mind-matters/mental-wellbeing-tips/self-help-cbt-techniques/thought-record/) | 상황·감정·생각·근거·현실적인 생각·재평가의 일곱 문항 | 일반 자기관리 안내이며 독립적인 치료 효과 시험이 아니다. |
+| [CCI: Thought Diary](https://www.cci.health.wa.gov.au/-/media/CCI/Mental-Health-Professionals/Social-Anxiety/Social-Anxiety---Worksheets/Social-Anxiety-Worksheet---10---Thought-Diary-Tri-Fold.pdf) | 상황을 카메라가 기록하듯 적고 생각과 감정을 구분하는 기준 | 특정 사회불안 워크시트를 모든 진단의 치료법으로 확대하지 않는다. |
+| [McManus, Van Doorn & Yiend, 2012](https://doi.org/10.1016/j.jbtep.2011.07.003) | 비임상 성인 91명의 생각 기록·행동 실험·중립 과제 대조군 비교 | 한 번의 비임상 실험을 장기 치료 효과로 해석하지 않는다. |
+| [Ciharova 외, 2021](https://pubmed.ncbi.nlm.nih.gov/34264703/) | 우울증 개인치료 45편에서 인지 재구성·행동 활성화·결합 CBT 비교 | 생각 기록지를 유일한 치료 성분으로 제시하지 않는다. |
+| [Haeffel, 2010](https://doi.org/10.1016/j.brat.2009.09.016) | 반추와 스트레스가 높은 일부 참가자가 인지 워크북 뒤 다른 두 워크북 집단보다 높은 우울 증상을 보인 결과 | 작은 대학생 예방 표본이며 생각 기록지가 일반적으로 해롭다는 근거가 아니다. |
+| [NICE: OCD and BDD](https://www.nice.org.uk/guidance/cg31/chapter/Recommendations) | 반복적인 확인·중화 반응과 노출 및 반응방지의 필요 | 일반적인 걱정을 강박증으로 진단하지 않는다. |
+| [보건복지부 자살예방 정책](https://www.mohw.go.kr/menu.es?mid=a10716040000) | 24시간 자살예방 상담전화 109 | 자기 기록으로 급박한 위험 대응을 대신하지 않는다. |
+
 ## 자료팩 HC-026 — 비공개 초안
 
 | 자료 | 사용 범위 | 주의 |
@@ -231,9 +247,13 @@
 | HC-006 | HC-001 | 잠재음원에서 자동반응 기록으로 이어가기 | live |
 | HC-006 | HC-007 | 상단 다음 글에서 최면의 통제감으로 이어가기 | live |
 | HC-007 | HC-006 | 상단 이전 글과 잠재음원 심화 안내 | live |
+| HC-007 | HC-008 | 상단 다음 글에서 자동적 사고 기록법으로 이어가기 | live |
+| HC-008 | HC-007 | 상단 이전 글에서 최면의 통제감으로 돌아가기 | live |
+| HC-008 | HC-001 | 자동적 사고가 행동으로 이어지는 전체 흐름 | live |
 
 ## 변경 기록
 
+- 2026-08-13: `HC-008` 「자동적 사고 기록법: 생각·사실·감정을 구분하기」를 발행했다. 짧은 답장 사례로 확인된 사실·해석·감정을 나누고, 양쪽 근거와 아직 모르는 부분을 반영한 문장, 다음 행동, 반추로 바뀔 때의 중단 기준을 자료팩에 반영했다. 대표 이미지는 특정 인물 없이 빈 노트와 질감이 다른 카드 세 장으로 구성했다.
 - 2026-08-13: `HC-007` 「최면은 마음을 조종할까?」를 발행했다. 비자발적으로 느껴지는 반응과 실제 통제권을 구분하고, 통증·과민성장증후군·금연의 서로 다른 근거 수준과 기억 회복의 위험, 시술자 선택 기준을 자료팩에 반영했다. 대표 이미지는 특정 인물 없이 빈 상담 공간과 눈금 없는 도구로 구성했다.
 - 2026-08-12: `HC-006` 「잠재음원과 무의식 메시지는 효과가 있을까?」를 발행했다. 실험실의 짧은 프라이밍과 상업용 음원의 장기 주장을 분리하고, 기억력·자존감·학업·체중 시험과 주관적 느낌·생활 속 결과를 나누는 기록법을 자료팩에 반영했다. `HC-005` 대표 이미지는 특정 인물을 직접 보여 주지 않는 빈 발표 연습 공간으로 교체했다.
 - 2026-08-12: 공개 카테고리명을 `몸과 마음의 건강`으로 바꾸고 `HC-005` 「시각화만으로 목표를 이룰 수 있을까?」를 발행했다. 결과 상상·과정 시뮬레이션·수행 리허설을 구분하고, 시각화 유형 간 우열이 확정되지 않았다는 최신 종합 근거와 실제 연습의 필요를 자료팩에 반영했다.
