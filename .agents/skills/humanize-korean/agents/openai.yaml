@@ -1,4 +1,4 @@
 interface:
-  display_name: "한글 AI 문체 윤문"
-  short_description: "의미를 보존하며 번역투와 AI 문체 흔적을 덜어냅니다"
-  default_prompt: "Use $humanize-korean to polish this Korean draft without changing its facts, claims, numbers, or genre."
+  display_name: "자연스러운 한국어 윤문"
+  short_description: "뜻을 먼저 확인하고 어색한 압축과 번역투를 바로잡습니다"
+  default_prompt: "Use $humanize-korean to make this Korean draft clear and natural without changing its facts, claims, numbers, or genre."
