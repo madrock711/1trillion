@@ -145,9 +145,11 @@ assert.ok(dashboard.includes('kospiWarmupSignature !== kospiIntradayRequestWarmu
 assert.ok(dashboard.includes('renderKospiIntradayChart();'), '보강된 선행 분봉으로 KOSPI 차트를 다시 그려야 한다.');
 assert.ok(dashboard.includes('item.indicatorWarmupDays = previous.indicatorWarmupDays'), '일시적인 갱신 실패가 이미 받은 선행 분봉을 지우면 안 된다.');
 assert.ok(css.includes('.intraday-session-divider'), '두 거래일의 경계를 차트에서 구분해야 한다.');
-assert.ok(html.includes('market-live-data.js?v=20260812-2'), '현재 세션 선행 로드는 이전 live-data 캐시를 우회해야 한다.');
-assert.ok(html.includes('market-dashboard.js?v=20260812-2'), '최신 거래일 자동 선택은 이전 dashboard 캐시를 우회해야 한다.');
+assert.ok(html.includes('market-live-data.js?v=20260812-3'), '현재 세션 선행 로드는 이전 live-data 캐시를 우회해야 한다.');
+assert.ok(html.includes('market-dashboard.js?v=20260812-3'), '최신 거래일 자동 선택은 이전 dashboard 캐시를 우회해야 한다.');
 assert.ok(html.includes('data-kospi-intraday-source="../assets/data/kospi-intraday-index.json"'), 'KOSPI 완료 세션은 정적 보존 색인을 사용해야 한다.');
 assert.ok(dashboard.includes('fetchKospiIntradayArchiveDay('), '완료된 KOSPI 세션은 반복 원격 조회 대신 저장본을 사용해야 한다.');
+assert.ok(dashboard.includes('return request.catch(function (error)'), '저장본이 없는 오래된 선행 거래일 한 건의 실패가 전체 KOSPI 렌더를 취소하면 안 된다.');
+assert.ok(dashboard.includes("if (error && error.name === 'AbortError') throw error;\n                    return null;"), '사용자 취소는 전파하되 개별 선행 거래일 조회 실패는 격리해야 한다.');
 
 console.log('Intraday current-session continuity tests passed.');

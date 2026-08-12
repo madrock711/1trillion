@@ -3056,11 +3056,14 @@
                 );
             }
             var olderRequests = olderDates.map(function (date) {
-                if (archivedDates[date]) return fetchArchivedDay(date);
-                return window.MarketDashboardLive.fetchKospiMinutePressureDays(
+                var request = archivedDates[date] ? fetchArchivedDay(date) : window.MarketDashboardLive.fetchKospiMinutePressureDays(
                     window.fetch.bind(window), sourceBaseUrl, [date],
                     { concurrencyLimit: 1, signal: controller && controller.signal }
                 ).then(function (days) { return days[0] || null; });
+                return request.catch(function (error) {
+                    if (error && error.name === 'AbortError') throw error;
+                    return null;
+                });
             });
             var focusedRequests = requestDates.map(function (date) {
                 var needsLive = selectedIsCurrent && date === selectedDate;
