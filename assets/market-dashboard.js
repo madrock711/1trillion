@@ -3137,11 +3137,8 @@
                     : '분봉 수급 불러오기 중단 · 다시 시도');
                 return;
             }
-            window.__kospiIntradayLastError = {
-                name: error && error.name || 'Error',
-                message: error && error.message || String(error || ''),
-                at: new Date().toISOString()
-            };
+            readout.dataset.loadError = (error && error.name || 'Error') + ': '
+                + (error && error.message || String(error || ''));
             readout.textContent = '선택한 거래일의 KOSPI 분봉·외국인 수급을 불러오지 못했습니다.';
             setKospiFlowRefreshState('error', '분봉 수급 불러오기 실패');
         }).finally(function () {
