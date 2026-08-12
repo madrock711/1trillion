@@ -37,18 +37,23 @@ jobs:
       - name: Accumulate completed sessions
         run: python scripts/update_kodex_volume_pressure.py --recent 6
 
+      - name: Archive completed KOSPI prices and investor flows
+        run: python scripts/update_kospi_intraday_archive.py --recent 6
+
       - name: Validate updated archive and browser merge
-        run: node tests/test_kodex_volume_pressure.js
+        run: |
+          node tests/test_kodex_volume_pressure.js
+          node tests/test_kospi_intraday_archive.js
 
       - name: Commit a new trading day
         shell: bash
         run: |
-          if git diff --quiet -- assets/data/kodex-volume-pressure.json assets/data/kodex-intraday-index.json assets/data/kodex-intraday/; then
+          if git diff --quiet -- assets/data/kodex-volume-pressure.json assets/data/kodex-intraday-index.json assets/data/kodex-intraday/ assets/data/kospi-intraday-index.json assets/data/kospi-intraday/; then
             echo "No new completed trading day."
             exit 0
           fi
           git config user.name "hpmplab-market-data"
           git config user.email "actions@users.noreply.github.com"
-          git add assets/data/kodex-volume-pressure.json assets/data/kodex-intraday-index.json assets/data/kodex-intraday/
-          git commit -m "Update KODEX intraday pressure archive"
+          git add assets/data/kodex-volume-pressure.json assets/data/kodex-intraday-index.json assets/data/kodex-intraday/ assets/data/kospi-intraday-index.json assets/data/kospi-intraday/
+          git commit -m "Update Korean intraday market archives"
           git push origin HEAD:main

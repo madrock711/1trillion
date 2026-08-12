@@ -14,6 +14,7 @@
     var liveMarketSource = root.getAttribute('data-live-market-source');
     var kodexVolumeSource = root.getAttribute('data-kodex-volume-source');
     var kodexIntradaySource = root.getAttribute('data-kodex-intraday-source');
+    var kospiIntradaySource = root.getAttribute('data-kospi-intraday-source');
     var leadingCycleSource = root.getAttribute('data-leading-cycle-source');
     var kospiMonthlySource = root.getAttribute('data-kospi-monthly-source');
     var latestLiveData = null;
@@ -1563,17 +1564,17 @@
         day.displaySessionDates = (entries || []).map(function (entry) {
             return entry && entry.date;
         }).filter(Boolean);
+        day.displaySessionCount = day.displaySessionDates.length;
         return day;
     }
 
     function intradayDisplayRows(rows, day) {
-        var displayDates = day && Array.isArray(day.displaySessionDates)
-            ? day.displaySessionDates
-            : [];
-        if (!displayDates.length) return (rows || []).slice();
-        return (rows || []).filter(function (row) {
-            return displayDates.indexOf(row.sessionDate || row.date) !== -1;
-        });
+        if (window.MarketDashboardLive && typeof window.MarketDashboardLive.stableIntradayWindow === 'function') {
+            return window.MarketDashboardLive.stableIntradayWindow(
+                rows || [], day && day.date, Number(day && day.displaySessionCount) || 0
+            );
+        }
+        return (rows || []).slice();
     }
 
     function intradayCalculationDays(primaryDays, warmupDays, targetDate) {
@@ -2942,12 +2943,21 @@
 
         function makeVisibleDay(days, olderDays) {
             if (!rolling) return days[0] || null;
-            var previousDay = days.filter(function (day) { return day && day.date === previousEntry.date; })[0];
-            var currentDay = days.filter(function (day) { return day && day.date === selectedDate; })[0]
+            var primaryByDate = {};
+            (olderDays || []).concat(days || []).filter(Boolean).forEach(function (day) {
+                primaryByDate[day.date] = day;
+            });
+            var requiredDates = visibleEntries.map(function (entry) { return entry.date; }).filter(function (date) {
+                return date !== selectedDate || includeCurrentSession;
+            });
+            if (requiredDates.some(function (date) { return !primaryByDate[date]; })) return null;
+            var previousDay = primaryByDate[previousEntry.date] || null;
+            var currentDay = primaryByDate[selectedDate]
                 || kospiIntradayViewCache[selectedDate] && kospiIntradayViewCache[selectedDate].day
                 || null;
             var combinedDays = intradayCalculationDays(
-                (olderDays || []).concat([previousDay, currentDay].filter(Boolean)),
+                Object.keys(primaryByDate).sort().map(function (date) { return primaryByDate[date]; })
+                    .concat([previousDay, currentDay].filter(Boolean)),
                 kospiWarmupDays,
                 selectedDate
             );
@@ -2975,10 +2985,14 @@
             return true;
         }
 
+        var olderDates = olderEntries.map(function (entry) { return entry.date; });
         var cachedDays = requestDates.map(function (date) {
             return kospiIntradayViewCache[date] && kospiIntradayViewCache[date].day || null;
         });
-        var cached = cachedDays.every(Boolean) ? makeVisibleDay(cachedDays, []) : null;
+        var cachedOlderDays = olderDates.map(function (date) {
+            return kospiIntradayViewCache[date] && kospiIntradayViewCache[date].day || null;
+        }).filter(Boolean);
+        var cached = cachedDays.every(Boolean) ? makeVisibleDay(cachedDays, cachedOlderDays) : null;
         var forceRefresh = kospiIntradayForceRefresh;
         kospiIntradayForceRefresh = false;
         if (cached) {
@@ -2986,7 +3000,7 @@
             var freshestReceivedAt = Math.min.apply(Math, requestDates.map(function (date) {
                 return kospiIntradayViewCache[date] && kospiIntradayViewCache[date].receivedAt || 0;
             }));
-            if (!forceRefresh && !olderEntries.length && Date.now() - freshestReceivedAt < 60 * 1000) {
+            if (!forceRefresh && Date.now() - freshestReceivedAt < 60 * 1000) {
                 setKospiFlowRefreshState('ready', cached.flowSourceLastAt
                     ? formatHistoryDate(window.MarketDashboardLive.intradaySourceDate(cached.flowSourceLastAt, selectedDate)) + ' ' + cached.flowSourceLastAt.slice(11, 16) + ' 수급 기준'
                     : formatHistoryDate(selectedDate) + (rolling && !cached.currentBarCount ? ' 장전 · 직전 장 연결' : ' 가격 기준'));
@@ -3015,19 +3029,44 @@
             : formatHistoryDate(selectedDate) + ' 분봉과 외국인 수급을 불러오는 중입니다.';
         setKospiFlowRefreshState('loading', formatHistoryDate(selectedDate) + ' 분봉 수급 확인 중');
         var sourceBaseUrl = new URL(liveMarketSource, window.location.href).href;
-        var olderDates = olderEntries.map(function (entry) { return entry.date; });
-        Promise.all([
-            olderDates.length ? window.MarketDashboardLive.fetchKospiMinutePressureDays(
+        var archiveIndexUrl = kospiIntradaySource
+            ? new URL(kospiIntradaySource, window.location.href).href
+            : '';
+        var archiveIndexRequest = archiveIndexUrl
+            && typeof window.MarketDashboardLive.fetchKospiIntradayArchiveIndex === 'function'
+            ? window.MarketDashboardLive.fetchKospiIntradayArchiveIndex(
                 window.fetch.bind(window),
-                sourceBaseUrl,
-                olderDates,
-                { concurrencyLimit: 2, signal: controller && controller.signal }
-            ) : Promise.resolve([]),
-            Promise.all(requestDates.map(function (date) {
-                return window.MarketDashboardLive.fetchKospiIntradayDay(
-                    window.fetch.bind(window),
-                    sourceBaseUrl,
+                archiveIndexUrl,
+                { signal: controller && controller.signal, nonce: String(Date.now()) }
+            ).catch(function () { return []; })
+            : Promise.resolve([]);
+        archiveIndexRequest.then(function (archiveIndexRows) {
+            var archivedDates = {};
+            (archiveIndexRows || []).forEach(function (entry) { archivedDates[entry.date] = true; });
+            function fetchArchivedDay(date) {
+                return window.MarketDashboardLive.fetchKospiIntradayArchiveDay(
+                    archiveIndexUrl,
                     date,
+                    window.fetch.bind(window),
+                    {
+                        indexRows: archiveIndexRows,
+                        signal: controller && controller.signal,
+                        nonce: String(Date.now())
+                    }
+                );
+            }
+            var olderRequests = olderDates.map(function (date) {
+                if (archivedDates[date]) return fetchArchivedDay(date);
+                return window.MarketDashboardLive.fetchKospiMinutePressureDays(
+                    window.fetch.bind(window), sourceBaseUrl, [date],
+                    { concurrencyLimit: 1, signal: controller && controller.signal }
+                ).then(function (days) { return days[0] || null; });
+            });
+            var focusedRequests = requestDates.map(function (date) {
+                var needsLive = selectedIsCurrent && date === selectedDate;
+                if (!needsLive && archivedDates[date]) return fetchArchivedDay(date);
+                return window.MarketDashboardLive.fetchKospiIntradayDay(
+                    window.fetch.bind(window), sourceBaseUrl, date,
                     {
                         now: Date.now(),
                         nonce: String(Date.now()),
@@ -3039,16 +3078,19 @@
                     if (selectedIsCurrent && date === selectedDate && (!error || error.name !== 'AbortError')) return null;
                     throw error;
                 });
-            }))
-        ]).then(function (parts) {
+            });
+            return Promise.all([Promise.all(olderRequests), Promise.all(focusedRequests)]);
+        }).then(function (parts) {
             if (token !== kospiIntradayRenderToken || selectedKodexChartMode !== 'intraday') return;
-            var olderDays = parts[0] || [];
+            var olderDays = (parts[0] || []).filter(Boolean);
             var days = parts[1] || [];
-            days.filter(Boolean).forEach(function (day) {
+            olderDays.concat(days.filter(Boolean)).forEach(function (day) {
                 kospiIntradayViewCache[day.date] = { day: day, receivedAt: Date.now() };
             });
             var visibleDay = makeVisibleDay(days.filter(Boolean), olderDays);
-            renderVisibleDay(visibleDay);
+            if (!renderVisibleDay(visibleDay) && !cached) {
+                readout.textContent = '표시할 거래일의 동일한 1분 단위 원자료를 확인하고 있습니다.';
+            }
             setKospiFlowRefreshState('ready', visibleDay && visibleDay.flowSourceLastAt
                 ? formatHistoryDate(window.MarketDashboardLive.intradaySourceDate(visibleDay.flowSourceLastAt, selectedDate)) + ' ' + visibleDay.flowSourceLastAt.slice(11, 16) + ' 수급 기준'
                 : formatHistoryDate(selectedDate) + (rolling && (!visibleDay || !visibleDay.currentBarCount)

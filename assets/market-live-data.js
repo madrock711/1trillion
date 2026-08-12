@@ -31,6 +31,12 @@
     var kospiForeignFlowPageCache = {};
     var kospiIntradayDayCache = {};
     var kospiMinutePressureDayCache = {};
+    var kospiIntradayArchiveIndexCache = {
+        value: null,
+        expiresAt: 0,
+        pending: null
+    };
+    var kospiIntradayArchiveDayCache = {};
     var tqqqIntradayOneMinuteCache = {
         value: null,
         expiresAt: 0,
@@ -1140,6 +1146,27 @@
         return buildRollingIntradayDays([previousDay, currentDay].filter(Boolean), targetDate);
     }
 
+    function stableIntradayWindow(rows, targetDate, sessionCount) {
+        var target = normalizeIsoDate(targetDate);
+        var source = (rows || []).filter(function (row) {
+            var date = normalizeIsoDate(row && (row.sessionDate || row.date));
+            return row && date && (!target || date <= target);
+        });
+        var count = Math.max(0, Number(sessionCount) || 0);
+        if (!count || source.length < 2) return source.slice();
+        var counts = {};
+        source.forEach(function (row) {
+            var date = normalizeIsoDate(row.sessionDate || row.date);
+            counts[date] = (counts[date] || 0) + 1;
+        });
+        var completedCounts = Object.keys(counts).filter(function (date) {
+            return !target || date < target;
+        }).map(function (date) { return counts[date]; }).filter(function (value) { return value > 1; });
+        var referenceCount = completedCounts.length ? Math.max.apply(Math, completedCounts) : 0;
+        var capacity = referenceCount * count;
+        return capacity > 0 && source.length > capacity ? source.slice(-capacity) : source.slice();
+    }
+
     function mergeRuntimeIntradayIndex(previousRows, incomingRows) {
         var incoming = Array.isArray(incomingRows) ? incomingRows : [];
         var incomingLiveEntry = incoming.filter(function (row) {
@@ -1695,6 +1722,95 @@
         return cache.pending;
     }
 
+    function normalizeKospiIntradayArchiveIndex(payload) {
+        if (!payload || payload.schemaVersion !== 1 || String(payload.symbol) !== 'KOSPI' || !Array.isArray(payload.days)) {
+            throw new Error('KOSPI 분봉 보존 색인이 올바르지 않습니다.');
+        }
+        var rowsByDate = {};
+        payload.days.forEach(function (row) {
+            var date = row && String(row.date || '');
+            var path = row && String(row.path || '');
+            var normalized = {
+                date: date,
+                path: path,
+                minuteBars: parseNumber(row && row.minuteBars),
+                flowSnapshotCount: parseNumber(row && row.flowSnapshotCount),
+                sourceLastAt: row && String(row.sourceLastAt || ''),
+                flowSourceLastAt: row && String(row.flowSourceLastAt || ''),
+                collectedAt: row && String(row.collectedAt || '')
+            };
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(date)
+                || !/^kospi-intraday\/\d{4}-\d{2}-\d{2}\.json$/.test(path)
+                || !Number.isFinite(normalized.minuteBars)
+                || normalized.minuteBars < 300
+                || !Number.isFinite(normalized.flowSnapshotCount)
+                || normalized.flowSnapshotCount < 0
+                || !Number.isFinite(Date.parse(normalized.sourceLastAt))
+                || normalized.flowSourceLastAt && !Number.isFinite(Date.parse(normalized.flowSourceLastAt))
+                || rowsByDate[date]) {
+                throw new Error('KOSPI 분봉 보존 색인에 유효하지 않은 행이 있습니다.');
+            }
+            rowsByDate[date] = normalized;
+        });
+        return Object.keys(rowsByDate).sort().map(function (date) { return rowsByDate[date]; });
+    }
+
+    function normalizeKospiIntradayArchiveDay(payload) {
+        if (!payload || payload.schemaVersion !== 1 || String(payload.symbol) !== 'KOSPI'
+            || !/^\d{4}-\d{2}-\d{2}$/.test(String(payload.date || ''))
+            || payload.interval !== '1m' || !Array.isArray(payload.bars) || payload.bars.length < 300) {
+            throw new Error('KOSPI 분봉 보존 데이터가 올바르지 않습니다.');
+        }
+        var date = String(payload.date);
+        var bars = payload.bars.map(function (row) {
+            var normalized = {
+                date: date,
+                timestamp: date.replace(/-/g, '') + String(row && row.time || '').replace(':', '') + '00',
+                time: row && String(row.time || ''),
+                open: parseNumber(row && row.open),
+                high: parseNumber(row && row.high),
+                low: parseNumber(row && row.low),
+                close: parseNumber(row && row.close),
+                volume: parseNumber(row && row.volume),
+                foreign: parseNumber(row && row.foreign),
+                institution: parseNumber(row && row.institution),
+                personal: parseNumber(row && row.personal),
+                flowObservedAt: row && String(row.flowObservedAt || ''),
+                flowCarriedForward: Boolean(row && row.flowCarriedForward),
+                flowUnit: '억원'
+            };
+            if (!/^\d{2}:\d{2}$/.test(normalized.time)
+                || ![normalized.open, normalized.high, normalized.low, normalized.close, normalized.volume].every(Number.isFinite)
+                || normalized.volume < 0
+                || normalized.high < Math.max(normalized.open, normalized.close)
+                || normalized.low > Math.min(normalized.open, normalized.close)) {
+                throw new Error('KOSPI 분봉 보존 데이터에 유효하지 않은 봉이 있습니다.');
+            }
+            if (![normalized.foreign, normalized.institution, normalized.personal].every(Number.isFinite)) {
+                normalized.foreign = null;
+                normalized.institution = null;
+                normalized.personal = null;
+                normalized.flowObservedAt = '';
+                normalized.flowCarriedForward = false;
+            }
+            return normalized;
+        });
+        if (bars[0].time < '09:00' || bars[bars.length - 1].time !== '15:30') {
+            throw new Error('KOSPI 분봉 보존 데이터가 정규장 전체를 포함하지 않습니다.');
+        }
+        return {
+            date: date,
+            interval: '1m',
+            sourceLastAt: String(payload.sourceLastAt || ''),
+            flowSourceLastAt: String(payload.flowSourceLastAt || ''),
+            flowPageCount: parseNumber(payload.flowPageCount),
+            flowSnapshotCount: parseNumber(payload.flowSnapshotCount),
+            minuteVolume: parseNumber(payload.minuteVolume),
+            archived: true,
+            bars: bars
+        };
+    }
+
     function fetchKoreanIndicatorWarmup(fetchImpl, baseUrl, signal, nonce, now, ttlMs, type) {
         var kospi = type === 'kospi';
         var cache = kospi ? kospiIndicatorWarmupCache : kodexIndicatorWarmupCache;
@@ -1745,6 +1861,60 @@
             kodexIntradayIndexCache.pending = null;
         });
         return kodexIntradayIndexCache.pending;
+    }
+
+    function fetchKospiIntradayArchiveIndex(fetchImpl, url, options) {
+        var settings = options || {};
+        var now = Number.isFinite(settings.now) ? settings.now : Date.now();
+        var ttlMs = Number.isFinite(settings.ttlMs) ? settings.ttlMs : 30 * 60 * 1000;
+        if (kospiIntradayArchiveIndexCache.value && kospiIntradayArchiveIndexCache.expiresAt > now) {
+            return Promise.resolve(kospiIntradayArchiveIndexCache.value);
+        }
+        if (kospiIntradayArchiveIndexCache.pending) return kospiIntradayArchiveIndexCache.pending;
+        kospiIntradayArchiveIndexCache.pending = fetchJson(
+            fetchImpl,
+            url,
+            settings.signal,
+            settings.nonce || String(now)
+        ).then(function (payload) {
+            var rows = normalizeKospiIntradayArchiveIndex(payload);
+            kospiIntradayArchiveIndexCache.value = rows;
+            kospiIntradayArchiveIndexCache.expiresAt = now + ttlMs;
+            return rows;
+        }).finally(function () {
+            kospiIntradayArchiveIndexCache.pending = null;
+        });
+        return kospiIntradayArchiveIndexCache.pending;
+    }
+
+    function fetchKospiIntradayArchiveDay(indexUrl, date, fetchImpl, options) {
+        var settings = options || {};
+        var day = normalizeIsoDate(date);
+        var now = Number.isFinite(settings.now) ? settings.now : Date.now();
+        var ttlMs = Number.isFinite(settings.ttlMs) ? settings.ttlMs : 24 * 60 * 60 * 1000;
+        var state = kospiIntradayArchiveDayCache[day] || { value: null, expiresAt: 0, pending: null };
+        kospiIntradayArchiveDayCache[day] = state;
+        if (!day) return Promise.reject(new Error('KOSPI 보존 분봉 날짜가 올바르지 않습니다.'));
+        if (state.value && state.expiresAt > now) return Promise.resolve(state.value);
+        if (state.pending) return state.pending;
+        var indexRows = settings.indexRows || kospiIntradayArchiveIndexCache.value || [];
+        var entry = indexRows.filter(function (row) { return row.date === day; })[0];
+        if (!entry) return Promise.reject(new Error('선택한 거래일의 KOSPI 보존 분봉이 없습니다.'));
+        state.pending = fetchJson(
+            fetchImpl,
+            new URL(entry.path, indexUrl).href,
+            settings.signal,
+            settings.nonce || String(now)
+        ).then(function (payload) {
+            var normalized = normalizeKospiIntradayArchiveDay(payload);
+            if (normalized.date !== day) throw new Error('선택한 거래일과 KOSPI 보존 분봉 날짜가 다릅니다.');
+            state.value = normalized;
+            state.expiresAt = now + ttlMs;
+            return normalized;
+        }).finally(function () {
+            state.pending = null;
+        });
+        return state.pending;
     }
 
     function fetchKodexIntradayDay(indexUrl, date, fetchImpl, options) {
@@ -2204,15 +2374,20 @@
         normalizeKodexVolumePressure: normalizeKodexVolumePressure,
         normalizeKodexIntradayIndex: normalizeKodexIntradayIndex,
         normalizeKodexIntradayDay: normalizeKodexIntradayDay,
+        normalizeKospiIntradayArchiveIndex: normalizeKospiIntradayArchiveIndex,
+        normalizeKospiIntradayArchiveDay: normalizeKospiIntradayArchiveDay,
         normalizeKodexLiveIntradayDay: normalizeKodexLiveIntradayDay,
         ensureCurrentIntradayIndex: ensureCurrentIntradayIndex,
         preferredIntradayDate: preferredIntradayDate,
         buildRollingIntradayDay: buildRollingIntradayDay,
         buildRollingIntradayDays: buildRollingIntradayDays,
+        stableIntradayWindow: stableIntradayWindow,
         mergeRuntimeIntradayIndex: mergeRuntimeIntradayIndex,
         intradaySourceDate: intradaySourceDate,
         mergeKodexVolumePressure: mergeKodexVolumePressure,
         fetchKodexIntradayDay: fetchKodexIntradayDay,
+        fetchKospiIntradayArchiveIndex: fetchKospiIntradayArchiveIndex,
+        fetchKospiIntradayArchiveDay: fetchKospiIntradayArchiveDay,
         parseNumber: parseNumber,
         formatAsOfDisplay: formatAsOfDisplay
     };
