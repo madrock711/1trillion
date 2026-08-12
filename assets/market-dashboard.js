@@ -3068,6 +3068,36 @@
             var focusedRequests = requestDates.map(function (date) {
                 var needsLive = selectedIsCurrent && date === selectedDate;
                 if (!needsLive && archivedDates[date]) return fetchArchivedDay(date);
+                if (needsLive) {
+                    window.MarketDashboardLive.fetchKospiIntradayDay(
+                        window.fetch.bind(window), sourceBaseUrl, date,
+                        {
+                            now: Date.now(),
+                            nonce: String(Date.now()),
+                            forceRefresh: forceRefresh,
+                            concurrencyLimit: 6
+                        }
+                    ).then(function (enrichedDay) {
+                        var previousCached = kospiIntradayViewCache[date] && kospiIntradayViewCache[date].day;
+                        kospiIntradayViewCache[date] = { day: enrichedDay, receivedAt: Date.now() };
+                        var flowChanged = enrichedDay && enrichedDay.flowSnapshotCount > 0
+                            && (!previousCached
+                                || previousCached.flowSourceLastAt !== enrichedDay.flowSourceLastAt
+                                || previousCached.flowSnapshotCount !== enrichedDay.flowSnapshotCount);
+                        if (flowChanged && selectedKodexChartMode === 'intraday' && selectedKodexIntradayDate === date) {
+                            renderKospiIntradayChart();
+                        }
+                    }).catch(function () {});
+                    return window.MarketDashboardLive.fetchKospiMinutePressureDays(
+                        window.fetch.bind(window), sourceBaseUrl, [date],
+                        {
+                            concurrencyLimit: 1,
+                            signal: controller && controller.signal,
+                            forceRefresh: forceRefresh,
+                            nonce: String(Date.now())
+                        }
+                    ).then(function (priceDays) { return priceDays[0] || null; });
+                }
                 return window.MarketDashboardLive.fetchKospiIntradayDay(
                     window.fetch.bind(window), sourceBaseUrl, date,
                     {

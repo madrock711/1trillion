@@ -1423,6 +1423,10 @@
             if (index >= targets.length) return Promise.resolve();
             return fetchText(fetchImpl, targets[index], signal, nonce).then(function (payload) {
                 results[index] = payload;
+            }).catch(function (error) {
+                if (error && error.name === 'AbortError') throw error;
+                results[index] = null;
+            }).then(function () {
                 return runWorker();
             });
         }
