@@ -1609,7 +1609,7 @@
         var now = Number.isFinite(settings.now) ? settings.now : Date.now();
         var ttlMs = Number.isFinite(settings.ttlMs) ? settings.ttlMs : 15 * 60 * 1000;
         var cacheKey = String(baseUrl || '') + '|' + day;
-        var state = kospiMinutePressureDayCache[cacheKey] || { value: null, expiresAt: 0, pending: null };
+        var state = kospiMinutePressureDayCache[cacheKey] || { value: null, expiresAt: 0, pending: null, pendingSignal: null };
         kospiMinutePressureDayCache[cacheKey] = state;
         if (settings.forceRefresh) state.expiresAt = 0;
         if (state.value && state.expiresAt > now) return Promise.resolve(state.value);
@@ -1904,10 +1904,21 @@
         kospiIntradayArchiveDayCache[day] = state;
         if (!day) return Promise.reject(new Error('KOSPI 보존 분봉 날짜가 올바르지 않습니다.'));
         if (state.value && state.expiresAt > now) return Promise.resolve(state.value);
-        if (state.pending) return state.pending;
+        if (state.pending) {
+            var shouldRestart = Boolean(settings.forceRefresh)
+                || Boolean(settings.signal && state.pendingSignal && settings.signal !== state.pendingSignal);
+            if (!shouldRestart) return state.pending;
+            return state.pending.catch(function () { return null; }).then(function () {
+                return fetchKospiMinutePriceDay(fetchImpl, baseUrl, day, Object.assign({}, settings, {
+                    forceRefresh: true,
+                    nonce: String(Date.now())
+                }));
+            });
+        }
         var indexRows = settings.indexRows || kospiIntradayArchiveIndexCache.value || [];
         var entry = indexRows.filter(function (row) { return row.date === day; })[0];
         if (!entry) return Promise.reject(new Error('선택한 거래일의 KOSPI 보존 분봉이 없습니다.'));
+        state.pendingSignal = settings.signal || null;
         state.pending = fetchJson(
             fetchImpl,
             new URL(entry.path, indexUrl).href,
@@ -1921,6 +1932,7 @@
             return normalized;
         }).finally(function () {
             state.pending = null;
+            state.pendingSignal = null;
         });
         return state.pending;
     }
