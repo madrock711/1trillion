@@ -3078,8 +3078,8 @@
                         concurrencyLimit: 6
                     }
                 ).catch(function (error) {
-                    if (selectedIsCurrent && date === selectedDate && (!error || error.name !== 'AbortError')) return null;
-                    throw error;
+                    if (error && error.name === 'AbortError') throw error;
+                    return null;
                 });
             });
             return Promise.all([Promise.all(olderRequests), Promise.all(focusedRequests)]);
