@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-13-0814-same-close",
+  "visibility": "internal",
+  "reportPath": "reports/2026-08-13.md",
+  "reportSha256": "e5725d4b763b00a3364ef6e77177a04366f90b8b0091c86fb78a71bdbd92673b",
+  "issuedAt": "2026-08-13T08:14:00+09:00",
+  "dataCutoffAt": "2026-08-13T08:11:00+09:00",
+  "marketState": "preopen",
+  "marketRegime": "event_shock",
+  "evaluationBucket": "preopen",
+  "target": {
+    "sessionDate": "2026-08-13",
+    "horizon": "session_close",
+    "instrument": "KOSPI",
+    "leadSessions": 0,
+    "previousSessionDate": "2026-08-12"
+  },
+  "reference": {
+    "price": 6579.04,
+    "asOf": "2026-08-12T15:30:00+09:00",
+    "kind": "previous_close"
+  },
+  "scenarios": {
+    "bull": {
+      "low": 6700,
+      "high": 6820,
+      "probability": 0.3
+    },
+    "base": {
+      "low": 6550,
+      "high": 6700,
+      "probability": 0.5
+    },
+    "bear": {
+      "low": 6400,
+      "high": 6550,
+      "probability": 0.2
+    }
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {
+    "low": 6400,
+    "high": 6820,
+    "coverage": 0.9
+  },
+  "drivers": [
+    {
+      "id": "cpi-chip-confirmation",
+      "rank": 1,
+      "claim": "예상에 부합한 CPI와 미국 반도체 상대강도가 국내 반도체의 강한 출발을 지지한다.",
+      "validationMetric": "삼성전자·SK하이닉스·KOSPI 종가"
+    },
+    {
+      "id": "domestic-flow-continuity",
+      "rank": 2,
+      "claim": "전일 대규모 외국인 현물 순매수의 개장 30분·60분 지속 여부가 6,668 돌파의 질을 결정한다.",
+      "validationMetric": "09:30·10:00·14:00·종가 외국인 및 프로그램 수급"
+    },
+    {
+      "id": "fx-ppi-risk",
+      "rank": 3,
+      "claim": "원/달러 1,419원과 미국 PPI 대기가 전일 급등 뒤 추격 상단을 제한한다.",
+      "validationMetric": "USD/KRW·미국 10년물·KOSPI 종가"
+    }
+  ],
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-08-13T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "description": "KOSPI 6,668 이상",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 6668.43,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "bull-foreign",
+          "description": "외국인 현물 순매수",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance 투자자별 매매동향"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-08-13T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-support",
+          "description": "KOSPI 6,550 이상",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 6550,
+          "source": "Naver Finance KOSPI"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "OR",
+      "observeBy": "2026-08-13T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "description": "KOSPI 6,550 미만",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 6550,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "bear-foreign",
+          "description": "외국인 현물 순매도",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance 투자자별 매매동향"
+        }
+      ]
+    }
+  },
+  "hypothesisTrials": [
+    {
+      "hypothesisId": "us-chip-signal-overweight",
+      "regime": "event_shock",
+      "candidatePrediction": 6640,
+      "baselineId": "reference_carry",
+      "predictorVersion": "us-chip-signal-overweight-v1"
+    }
+  ],
+  "posture": {
+    "attack": 30,
+    "wait": 50,
+    "defense": 20
+  },
+  "supersedes": null,
+  "contentHash": "208231cbf6345b170870ed0aa71079ac2336f3738579be4692f0344cbaab9232"
+}
