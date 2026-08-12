@@ -111,7 +111,7 @@
             selectedKodexPeriod = state.period;
             selectedKodexIntradayInterval = state.interval;
             selectedKodexIntradayDate = state.intradayDate;
-            selectedKodexIntradayDateExplicit = state.intradayDateExplicit;
+            selectedKodexIntradayDateExplicit = false;
             technicalRangeStart = state.rangeStart;
             technicalRangeEnd = state.rangeEnd;
             technicalChartStateSerialized = JSON.stringify(state);
@@ -1478,6 +1478,7 @@
         }
         var selectionWasValid = dates.indexOf(selectedKodexIntradayDate) !== -1;
         if (dates.length && preferredDate !== selectedKodexIntradayDate) {
+            clearLinkedChartSelection(false);
             selectedKodexIntradayDate = preferredDate;
             if (!selectionWasValid) selectedKodexIntradayDateExplicit = false;
         }
@@ -1756,6 +1757,20 @@
         updateReadout(latest);
     }
 
+    function showCompositeMomentumStatus(message) {
+        var svg = document.getElementById('composite-momentum-chart');
+        if (!svg) return;
+        clear(svg);
+        var status = makeSvg('text', {
+            x: 500,
+            y: 100,
+            'class': 'kodex-history-empty',
+            'text-anchor': 'middle'
+        });
+        status.textContent = message;
+        svg.appendChild(status);
+    }
+
     function renderCompositeMomentumCard(instrument) {
         var readout = document.getElementById('composite-momentum-readout');
         if (!readout || !instrument || !window.MarketDashboardLive) return;
@@ -1779,6 +1794,7 @@
             }
             if (kospiRows.length < 5 || kodexHistory.length < 5) {
                 readout.textContent = 'KOSPI와 KODEX의 ' + kospiPeriodLabel() + ' 일봉을 불러오는 중입니다.';
+                showCompositeMomentumStatus('거래량 모멘텀 계산 중');
                 return;
             }
             var dailyKey = 'daily|' + selectedKodexPeriod + '|'
@@ -1804,7 +1820,11 @@
         var dates = indexRows.filter(function (row) { return Boolean(row && row.path); })
             .map(function (row) { return row.date; }).filter(Boolean).slice(-12);
         if (liveDay && dates.indexOf(liveDay.date) === -1) dates.push(liveDay.date);
-        if (!dates.length || !indexUrl || !liveMarketSource) return;
+        if (!dates.length || !indexUrl || !liveMarketSource) {
+            readout.textContent = '거래량 모멘텀 원자료를 불러오는 중입니다.';
+            showCompositeMomentumStatus('거래량 모멘텀 계산 중');
+            return;
+        }
         var key = 'intraday|' + dates.join(',') + '|' + (liveDay && liveDay.sourceLastAt || 'archive');
         if (compositeMomentumState.key === key && compositeMomentumState.days.length) {
             renderCompositeMomentumChart(compositeMomentumState.days);
@@ -1814,6 +1834,7 @@
         var token = ++compositeMomentumRenderToken;
         compositeMomentumState.key = key;
         readout.textContent = '공통 거래일의 1분봉을 정규화하고 있습니다.';
+        if (!compositeMomentumState.days.length) showCompositeMomentumStatus('거래량 모멘텀 계산 중');
         var kodexRequests = dates.map(function (date) {
             if (liveDay && liveDay.date === date) return Promise.resolve(liveDay);
             return api.fetchKodexIntradayDay(indexUrl, date, window.fetch.bind(window), { indexRows: indexRows });
@@ -1836,6 +1857,7 @@
         }).catch(function () {
             if (token !== compositeMomentumRenderToken) return;
             readout.textContent = '합성 거래량 모멘텀 데이터를 불러오지 못했습니다.';
+            showCompositeMomentumStatus('거래량 모멘텀을 불러오지 못했습니다');
         }).finally(function () {
             if (token === compositeMomentumRenderToken) compositeMomentumState.pending = null;
         });
@@ -4481,6 +4503,33 @@
         return liveRefreshPromise;
     }
 
+    function primeCurrentSession(data) {
+        if (!liveMarketSource || !window.MarketDashboardLive
+            || typeof window.MarketDashboardLive.fetchCurrentSession !== 'function') return Promise.resolve(false);
+        var controller = typeof AbortController === 'function' ? new AbortController() : null;
+        var timeoutId = window.setTimeout(function () {
+            if (controller) controller.abort();
+        }, 7000);
+        var absoluteBase = new URL(liveMarketSource, window.location.href).href;
+        return window.MarketDashboardLive.fetchCurrentSession(
+            absoluteBase,
+            window.fetch.bind(window),
+            {
+                signal: controller ? controller.signal : undefined,
+                volumePressureUrl: kodexVolumeSource ? new URL(kodexVolumeSource, window.location.href).href : undefined,
+                intradayIndexUrl: kodexIntradaySource ? new URL(kodexIntradaySource, window.location.href).href : undefined
+            }
+        ).then(function (liveData) {
+            window.clearTimeout(timeoutId);
+            latestLiveData = mergeLiveResponse(latestLiveData, liveData);
+            applyLiveMarketData(data, latestLiveData, false);
+            return true;
+        }).catch(function () {
+            window.clearTimeout(timeoutId);
+            return false;
+        });
+    }
+
     function loadKodexIntradayIndex(data) {
         if (!kodexIntradaySource || !window.MarketDashboardLive
             || typeof window.MarketDashboardLive.normalizeKodexIntradayIndex !== 'function') return Promise.resolve(false);
@@ -4528,7 +4577,7 @@
         .then(function (data) {
             render(data);
             return Promise.all([
-                refreshLiveMarketData(data),
+                primeCurrentSession(data).then(function () { return refreshLiveMarketData(data); }),
                 loadKodexIntradayIndex(data),
                 loadKospiTechnicalHistory(false),
                 loadLeadingCycleData()

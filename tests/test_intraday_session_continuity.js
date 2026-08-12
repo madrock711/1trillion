@@ -133,6 +133,9 @@ assert.ok(dashboard.includes('setIntradayDisplaySessions(day, visibleEntries)'),
 assert.ok(dashboard.includes("formatHistoryDate(date) + ' · 오늘 장전'"), '장전 오늘 라벨이 유지되어야 한다.');
 assert.ok(dashboard.includes("formatHistoryDate(date) + ' · 당일 마감'"), '장 마감 뒤 런타임 거래일 라벨이 유지되어야 한다.');
 assert.ok(dashboard.includes('MarketDashboardLive.preferredIntradayDate(indexRows, selectedKodexIntradayDate, selectedKodexIntradayDateExplicit)'), '모든 차트는 같은 최신 거래일 선택 helper를 사용해야 한다.');
+assert.ok(dashboard.includes('clearLinkedChartSelection(false);'), '자동으로 최신 거래일로 넘어갈 때 전일 고정 하이라이트를 지워야 한다.');
+assert.ok(dashboard.includes("showCompositeMomentumStatus('거래량 모멘텀 계산 중')"), '합성 지표 계산 중에는 빈 카드 대신 상태를 보여야 한다.');
+assert.ok(dashboard.includes('primeCurrentSession(data).then(function () { return refreshLiveMarketData(data); })'), '현재 세션을 먼저 그린 뒤 무거운 전체 데이터를 보강해야 한다.');
 assert.ok(dashboard.includes("marketStatus === 'CLOSE' && selectedEntry && selectedEntry.closed"), '장 마감 런타임 항목도 KOSPI 당일 분봉·수급을 요청해야 한다.');
 assert.ok(dashboard.includes("row && row.path"), '장전 placeholder를 합성 모멘텀 원자료로 요청하면 안 된다.');
 assert.ok(dashboard.includes('MarketDashboardLive.intradaySourceDate(cached.flowSourceLastAt, selectedDate)'), '장전 수급 기준일은 전 거래일 실제 날짜를 표시해야 한다.');
@@ -142,7 +145,7 @@ assert.ok(dashboard.includes('kospiWarmupSignature !== kospiIntradayRequestWarmu
 assert.ok(dashboard.includes('renderKospiIntradayChart();'), '보강된 선행 분봉으로 KOSPI 차트를 다시 그려야 한다.');
 assert.ok(dashboard.includes('item.indicatorWarmupDays = previous.indicatorWarmupDays'), '일시적인 갱신 실패가 이미 받은 선행 분봉을 지우면 안 된다.');
 assert.ok(css.includes('.intraday-session-divider'), '두 거래일의 경계를 차트에서 구분해야 한다.');
-assert.ok(html.includes('market-live-data.js?v=20260811-2'), '마감 후 자동 갱신 정책은 이전 live-data 캐시를 우회해야 한다.');
-assert.ok(html.includes('market-dashboard.js?v=20260811-21'), 'KOSPI 초기 선행 지표 재렌더는 이전 dashboard 캐시를 우회해야 한다.');
+assert.ok(html.includes('market-live-data.js?v=20260812-1'), '현재 세션 선행 로드는 이전 live-data 캐시를 우회해야 한다.');
+assert.ok(html.includes('market-dashboard.js?v=20260812-1'), '최신 거래일 자동 선택은 이전 dashboard 캐시를 우회해야 한다.');
 
 console.log('Intraday current-session continuity tests passed.');

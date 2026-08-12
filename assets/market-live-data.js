@@ -1590,7 +1590,7 @@
             settings.nonce || String(now)
         ).then(function (payload) {
             var bars = normalizeKospiIntradayMinute(payload, day);
-            if (bars.length < 2) throw new Error(day + ' KOSPI 분봉이 비어 있습니다.');
+            if (bars.length < 1) throw new Error(day + ' KOSPI 분봉이 비어 있습니다.');
             var value = {
                 date: day,
                 interval: '1m',
@@ -1786,6 +1786,108 @@
         return fetchJson(fetchImpl, url.href, signal, nonce).then(function (payload) {
             if (!Array.isArray(payload) || payload.length < 1) throw new Error('오늘 KODEX 분봉이 아직 없습니다.');
             return payload;
+        });
+    }
+
+    function fetchCurrentSession(baseUrl, fetchImpl, options) {
+        var settings = options || {};
+        var now = Number.isFinite(settings.now) ? settings.now : Date.now();
+        var nonce = settings.nonce || String(now);
+        var signal = settings.signal;
+        var volumePressureUrl = settings.volumePressureUrl
+            || new URL('../assets/data/kodex-volume-pressure.json', baseUrl).href;
+        var intradayIndexUrl = settings.intradayIndexUrl
+            || new URL('../assets/data/kodex-intraday-index.json', baseUrl).href;
+        var ttlMs = Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000;
+
+        var kospiRequest = fetchPair(fetchImpl, baseUrl, 'index', 'KOSPI', signal, nonce).then(function (parts) {
+            return normalizeIndex('KOSPI', parts[0], parts[1], now);
+        });
+        var kodexRequest = fetchPair(fetchImpl, baseUrl, 'stock', '122630', signal, nonce).then(function (parts) {
+            return normalizeStock(STOCKS.filter(function (stock) { return stock.id === 'KODEX'; })[0], parts[0], parts[1], now);
+        }).catch(function () { return null; });
+        var pressureRequest = fetchKodexVolumePressure(
+            fetchImpl,
+            volumePressureUrl,
+            signal,
+            nonce,
+            now,
+            ttlMs
+        ).catch(function () { return null; });
+        var indexRequest = fetchKodexIntradayIndex(
+            fetchImpl,
+            intradayIndexUrl,
+            signal,
+            nonce,
+            now,
+            ttlMs
+        ).catch(function () { return null; });
+
+        return Promise.all([kospiRequest, kodexRequest, pressureRequest, indexRequest]).then(function (parts) {
+            var kospi = parts[0];
+            var kodex = parts[1];
+            var pressureRows = parts[2];
+            var indexRows = parts[3] || [];
+            var sessionDate = kospi.sessionDate || seoulDate(now);
+            var liveRequest = kodex ? fetchKodexLiveIntraday(
+                fetchImpl,
+                baseUrl,
+                sessionDate,
+                signal,
+                nonce
+            ).catch(function () { return null; }) : Promise.resolve(null);
+
+            return liveRequest.then(function (livePayload) {
+                var liveDay = null;
+                if (livePayload && pressureRows && pressureRows.length) {
+                    var referencePressure = pressureRows[pressureRows.length - 1];
+                    try {
+                        liveDay = normalizeKodexLiveIntradayDay(
+                            livePayload,
+                            sessionDate,
+                            referencePressure.sigma,
+                            referencePressure.sigmaSampleSize
+                        );
+                    } catch (error) {
+                        liveDay = null;
+                    }
+                }
+                if (kodex) {
+                    kodex.intradayIndex = ensureCurrentIntradayIndex(
+                        indexRows,
+                        sessionDate,
+                        kospi.marketStatus,
+                        liveDay,
+                        now
+                    );
+                    kodex.intradayIndexUrl = intradayIndexUrl;
+                    kodex.liveIntradayDay = liveDay;
+                }
+                var marketTimestamp = Date.parse(kospi.asOf);
+                return {
+                    asOf: kospi.asOf,
+                    asOfDisplay: formatAsOfDisplay(marketTimestamp),
+                    marketState: kospi.marketStatus === 'CLOSE'
+                        ? '한국 정규장 마감'
+                        : kospi.marketStatus === 'OPEN'
+                            ? '한국 정규장 장중'
+                            : '최근 거래일 시세',
+                    markets: [kospi],
+                    instruments: kodex ? [kodex] : [],
+                    exchange: null,
+                    program: kospi.program || null,
+                    tqqqHistory: [],
+                    tqqqIntraday: { oneMinute: [], fiveMinute: [] },
+                    partial: true,
+                    missingSources: [
+                        'KOSDAQ',
+                        '달러/원'
+                    ].concat(kodex ? [] : ['KODEX 레버리지']),
+                    delayedSources: [],
+                    retrievedAt: new Date(now).toISOString(),
+                    sourceLabel: 'Naver Finance의 KRX 공개 시세·수급'
+                };
+            });
         });
     }
 
@@ -2073,6 +2175,7 @@
     }
 
     return {
+        fetchCurrentSession: fetchCurrentSession,
         fetchLatest: fetchLatest,
         liveRefreshDelay: liveRefreshDelay,
         liveObservationSignature: liveObservationSignature,

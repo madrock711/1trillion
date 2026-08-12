@@ -37,6 +37,7 @@ assert(dashboard.includes('restoreTechnicalChartState();'));
 assert(dashboard.includes('window.localStorage.getItem(technicalChartStateStorageKey)'));
 assert(dashboard.includes('window.localStorage.setItem(technicalChartStateStorageKey, serialized)'));
 assert(dashboard.includes('intradayDateExplicit: Boolean(date && source.intradayDateExplicit)'));
+assert(dashboard.includes('selectedKodexIntradayDateExplicit = false;'), '새 페이지에서는 전 거래일 직접 선택 상태를 이어받지 않아야 한다.');
 assert((dashboard.match(/persistTechnicalChartState\(\);/g) || []).length >= 6, '모드·기간·분 간격·거래일·표시 구간 선택을 저장해야 한다.');
 assert(dashboard.includes('if (dates.length && preferredDate !== selectedKodexIntradayDate) {'), '초기 날짜 목록이 비어 있을 때 저장된 거래일을 덮어쓰면 안 된다.');
 assert(dashboard.includes("document.querySelectorAll('.kodex-history-shell, .leading-cycle-shell')"), '가로 스크롤이 필요한 시계열 차트를 한 경로에서 관리해야 한다.');
