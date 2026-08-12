@@ -4,6 +4,8 @@ var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
 var live = require('../assets/market-live-data.js');
+var liveSource = fs.readFileSync(path.join(__dirname, '../assets/market-live-data.js'), 'utf8');
+assert.ok(liveSource.includes('return fetchKospiIntradayArchiveDay(indexUrl, day, fetchImpl'), '취소된 저장본 요청은 원격 가격 함수가 아니라 저장본 함수로 재시작해야 한다.');
 
 var root = path.join(__dirname, '..');
 var indexPath = path.join(root, 'assets', 'data', 'kospi-intraday-index.json');

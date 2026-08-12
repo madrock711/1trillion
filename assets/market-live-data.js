@@ -1909,7 +1909,7 @@
                 || Boolean(settings.signal && state.pendingSignal && settings.signal !== state.pendingSignal);
             if (!shouldRestart) return state.pending;
             return state.pending.catch(function () { return null; }).then(function () {
-                return fetchKospiMinutePriceDay(fetchImpl, baseUrl, day, Object.assign({}, settings, {
+                return fetchKospiIntradayArchiveDay(indexUrl, day, fetchImpl, Object.assign({}, settings, {
                     forceRefresh: true,
                     nonce: String(Date.now())
                 }));
