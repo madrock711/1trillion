@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
+    <loc>https://www.hpmplab.com/articles/physical-ai-human-motion-data.html</loc>
+    <lastmod>2026-08-12</lastmod>
+    <image:image><image:loc>https://www.hpmplab.com/assets/images/articles/physical-ai-human-motion-data-1200x630.webp</image:loc></image:image>
+  </url>
+  <url>
     <loc>https://www.hpmplab.com/articles/market-2026-08-12.html</loc>
     <lastmod>2026-08-12</lastmod>
     <image:image><image:loc>https://www.hpmplab.com/assets/images/articles/market-2026-08-12-cpi-chip-balance-1200x630.webp</image:loc></image:image>

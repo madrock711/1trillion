@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공짜 청소가 끝난 뒤, 노동은 데이터로 남았다 | 피지컬 AI 에세이</title>
+    <meta name="description" content="뉴욕의 무료 청소 서비스가 인간의 몸짓을 로봇 학습 데이터로 바꾸고 있습니다. 피지컬 AI 시대에 숙련의 가치와 데이터 재사용의 몫이 누구에게 돌아가야 하는지 짚습니다.">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta name="author" content="HPMPLab">
+    <link rel="canonical" href="https://www.hpmplab.com/articles/physical-ai-human-motion-data.html">
+    <meta property="og:title" content="공짜 청소가 끝난 뒤, 노동은 데이터로 남았다">
+    <meta property="og:description" content="뉴욕의 무료 청소 서비스는 로봇이 가장 필요로 하는 인간의 몸짓을 수집합니다. 문제는 그 숙련이 누구의 자산이 되고, 반복 사용의 몫이 누구에게 돌아가느냐입니다.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://www.hpmplab.com/articles/physical-ai-human-motion-data.html">
+    <meta property="og:site_name" content="연마 · HPMPLab">
+    <meta property="og:locale" content="ko_KR">
+    <meta property="og:image" content="https://www.hpmplab.com/assets/images/articles/physical-ai-human-motion-data-1200x630.webp">
+    <meta property="og:image:secure_url" content="https://www.hpmplab.com/assets/images/articles/physical-ai-human-motion-data-1200x630.webp">
+    <meta property="og:image:type" content="image/webp">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="카메라를 쓴 청소 작업자가 수건을 개고 유리 너머 로봇팔이 같은 동작을 따라 하는 장면">
+    <meta property="article:section" content="에세이">
+    <meta property="article:published_time" content="2026-08-12T14:13:48+09:00">
+    <meta property="article:modified_time" content="2026-08-12T14:13:48+09:00">
+    <meta property="article:tag" content="피지컬 AI">
+    <meta property="article:tag" content="로봇">
+    <meta property="article:tag" content="노동 데이터">
+    <meta property="article:tag" content="숙련">
+    <meta property="article:tag" content="데이터 권리">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="공짜 청소가 끝난 뒤, 노동은 데이터로 남았다">
+    <meta name="twitter:description" content="무료 청소와 로봇 학습이 한 집 안에서 만났습니다. 피지컬 AI의 진짜 희소 자원인 인간의 숙련과 그 반복 사용의 몫을 들여다봅니다.">
+    <meta name="twitter:image" content="https://www.hpmplab.com/assets/images/articles/physical-ai-human-motion-data-1200x630.webp">
+    <meta name="twitter:image:alt" content="카메라를 쓴 청소 작업자가 수건을 개고 유리 너머 로봇팔이 같은 동작을 따라 하는 장면">
+    <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
+    <link rel="stylesheet" href="../style.css?v=20260801-2">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Article",
+          "@id": "https://www.hpmplab.com/articles/physical-ai-human-motion-data.html#article",
+          "headline": "공짜 청소가 끝난 뒤, 노동은 데이터로 남았다",
+          "alternativeHeadline": "피지컬 AI는 누구의 몸으로 배우는가",
+          "description": "뉴욕의 무료 청소 서비스가 인간의 몸짓을 로봇 학습 데이터로 바꾸는 장면에서 피지컬 AI 시대의 숙련, 노동, 데이터 권리를 살펴본 에세이입니다.",
+          "datePublished": "2026-08-12T14:13:48+09:00",
+          "dateModified": "2026-08-12T14:13:48+09:00",
+          "articleSection": "에세이",
+          "inLanguage": "ko-KR",
+          "isAccessibleForFree": true,
+          "keywords": ["피지컬 AI", "로봇", "노동 데이터", "숙련", "데이터 권리", "Shift", "MicroAGI"],
+          "mainEntityOfPage": {"@id": "https://www.hpmplab.com/articles/physical-ai-human-motion-data.html#webpage"},
+          "image": {"@id": "https://www.hpmplab.com/assets/images/articles/physical-ai-human-motion-data-1200x630.webp#image"},
+          "citation": [
+            "https://www.shiftapp.nyc/",
+            "https://www.shiftapp.nyc/privacy",
+            "https://droid-dataset.github.io/",
+            "https://deepmind.google/blog/scaling-up-learning-across-many-different-robot-types/",
+            "https://www.nist.gov/programs-projects/physical-ai-and-data-generation-robotics",
+            "https://www.kostat.go.kr/board.es?act=view&bid=207&list_no=428476&mid=a10301020100",
+            "https://ifr.org/post/automation-is-a-cornerstone-of-modern-manufacturing",
+            "https://aws.amazon.com/blogs/physical-ai/putting-dexterous-robots-to-work-how-rlwrld-builds-physical-ai-with-aws/"
+          ],
+          "author": {
+            "@type": "Organization",
+            "name": "HPMPLab",
+            "url": "https://www.hpmplab.com/about.html"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "HPMPLab",
+            "url": "https://www.hpmplab.com/"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://www.hpmplab.com/articles/physical-ai-human-motion-data.html#webpage",
+          "url": "https://www.hpmplab.com/articles/physical-ai-human-motion-data.html",
+          "name": "공짜 청소가 끝난 뒤, 노동은 데이터로 남았다",
+          "inLanguage": "ko-KR",
+          "mainEntity": {"@id": "https://www.hpmplab.com/articles/physical-ai-human-motion-data.html#article"}
+        },
+        {
+          "@type": "ImageObject",
+          "@id": "https://www.hpmplab.com/assets/images/articles/physical-ai-human-motion-data-1200x630.webp#image",
+          "url": "https://www.hpmplab.com/assets/images/articles/physical-ai-human-motion-data-1200x630.webp",
+          "width": 1200,
+          "height": 630,
+          "caption": "카메라를 쓴 청소 작업자와 동작을 따라 배우는 로봇"
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "홈", "item": "https://www.hpmplab.com/"},
+            {"@type": "ListItem", "position": 2, "name": "아티클", "item": "https://www.hpmplab.com/articles/"},
+            {"@type": "ListItem", "position": 3, "name": "공짜 청소가 끝난 뒤, 노동은 데이터로 남았다", "item": "https://www.hpmplab.com/articles/physical-ai-human-motion-data.html"}
+          ]
+        }
+      ]
+    }
+    </script>
+    <script defer src="../analytics.js?v=20260731-1"></script>
+</head>
+<body>
+    <a class="skip-link" href="#article-body">본문으로 건너뛰기</a>
+    <header>
+        <div class="container">
+            <div class="header-left">
+                <a class="home-link" href="../" aria-label="연마 홈으로 이동">
+                    <img class="home-link-icon" src="../assets/icons/favicon-32x32.png" alt="">
+                </a>
+                <p class="header-title"><a href="../" aria-label="연마 홈으로 이동">연마</a></p>
+                <nav aria-label="주요 이동">
+                    <a href="../app.html">도구</a>
+                    <a href="./" aria-current="page">아티클</a>
+                    <a href="../guides/">가이드</a>
+                    <a href="../about.html">소개</a>
+                    <a href="../contact.html">문의</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="content-page article-page reading-shell">
+        <nav class="content-page-nav" aria-label="상단 이동">
+            <a href="./">아티클 목록</a>
+            <a href="./?category=essay">에세이</a>
+            <a href="../about.html">소개</a>
+        </nav>
+
+        <article class="editorial-article reading-article">
+            <header class="article-hero">
+                <a class="article-category-badge" href="./?category=essay">에세이</a>
+                <h1>공짜 청소가 끝난 뒤,<br>노동은 데이터로 남았다</h1>
+                <p class="article-dek">뉴욕의 무료 청소 서비스는 로봇이 가장 필요로 하는 인간의 몸짓을 수집한다. 문제는 그 숙련이 누구의 자산이 되고, 반복 사용의 몫이 누구에게 돌아가느냐다.</p>
+                <div class="article-meta">
+                    <strong>작성·편집: HPMPLab</strong>
+                    <time datetime="2026-08-12T14:13:48+09:00">2026년 8월 12일</time>
+                    <span>의견 글</span>
+                </div>
+            </header>
+
+            <div class="article-body" id="article-body">
+                <section aria-labelledby="door">
+                    <h2 id="door">현관에 들어온 보이지 않는 견습생</h2>
+                    <p class="article-lead">현관문이 열리고 청소 작업자가 들어온다. 설거지를 하고, 수건을 개고, 화장실을 닦는다. 청소비는 0원이다. 대신 이 사람의 머리에는 작은 카메라가 켜져 있다.</p>
+                    <p>뉴욕의 <a href="https://www.shiftapp.nyc/" target="_blank" rel="noopener noreferrer">Shift</a>는 촬영에 동의한 가정에 기간 한정 무료 청소를 제공한다. 작업과 주변 공간을 담은 1인칭 영상과 동작 정보는 로봇 학습용 데이터가 된다. 방 안에는 사람 눈에 보이지 않는 견습생이 한 명 더 있는 셈이다. 언젠가 같은 집안일을 할 로봇이다.</p>
+                    <p>한 집에서 두 가지 일이 동시에 벌어진다. 눈앞의 집은 깨끗해지고, 청소하는 몸은 미래 기계의 교과서로 바뀐다. 첫 번째 일은 작업자가 문을 닫고 나가면 끝난다. 두 번째 일은 그때부터 시작된다.</p>
+                    <figure class="article-hero-media">
+                        <img src="../assets/images/articles/physical-ai-human-motion-data-1200x630.webp" width="1200" height="630" decoding="async" fetchpriority="high" alt="카메라를 쓴 청소 작업자가 수건을 개고 유리 너머 로봇팔이 같은 동작을 따라 하는 장면">
+                    </figure>
+                </section>
+            </div>
+
+            <nav class="article-toc reading-toc" aria-label="글 목차">
+                <strong>목차</strong>
+                <ol>
+                    <li><a href="#trade">공짜 청소에는 세 명의 거래자가 있다</a></li>
+                    <li><a href="#towel">로봇에게 수건 한 장이 어려운 이유</a></li>
+                    <li><a href="#skill">단순 노동이라 부르던 일이 비싼 교과서가 됐다</a></li>
+                    <li><a href="#second-contract">사람은 한 번 일하고 데이터는 계속 일한다</a></li>
+                    <li><a href="#korea">이 질문은 이미 서울에 도착했다</a></li>
+                    <li><a href="#rights">새 계약은 카메라를 켜기 전에 시작돼야 한다</a></li>
+                </ol>
+            </nav>
+
+            <div class="article-body">
+                <section aria-labelledby="trade">
+                    <h2 id="trade">공짜 청소에는 세 명의 거래자가 있다</h2>
+                    <p>‘무료’라는 말만 보면 거주자와 청소 서비스 사이의 거래처럼 보인다. 카메라가 켜지는 순간 거주자, 작업자, 데이터 기업이라는 세 당사자가 드러난다. 거주자는 청소를 받고 집 안의 장면을 내준다. 작업자는 임금을 받고 자신의 노동과 판단 순서를 보여 준다. 회사는 청소비를 부담하고 재사용할 수 있는 학습 자료를 얻는다.</p>
+
+                    <div class="article-scenario-grid" role="list" aria-label="무료 청소에 참여하는 세 주체가 얻고 내놓는 것">
+                        <article role="listitem">
+                            <span>거주자</span>
+                            <strong>깨끗해진 집</strong>
+                            <p>비용 대신 촬영을 허용한다. 집의 구조와 물건, 생활의 맥락이 작업 영상에 함께 담긴다.</p>
+                        </article>
+                        <article role="listitem">
+                            <span>작업자</span>
+                            <strong>한 번의 임금</strong>
+                            <p>노동뿐 아니라 순서 선택, 힘 조절, 실수 수습처럼 몸에 밴 숙련을 시연한다.</p>
+                        </article>
+                        <article role="listitem">
+                            <span>데이터 기업</span>
+                            <strong>반복 가능한 자산</strong>
+                            <p>청소비를 지불하고 현실의 다양한 행동 기록과 이를 묶어 라이선스할 권리를 확보한다.</p>
+                        </article>
+                    </div>
+
+                    <p>셋 모두 당장 원하는 것을 얻는다. 문제는 각자 손에 쥔 것의 수명이 다르다는 데 있다. 청소의 효용과 임금은 지금 소비되지만 데이터는 다른 영상과 합쳐지고, 다음 모델에 다시 쓰이고, 여러 기업에 제공될 수 있다. ‘공짜’가 감추는 것은 비용이 아니라 시간의 차이다.</p>
+                </section>
+
+                <section aria-labelledby="towel">
+                    <h2 id="towel">로봇에게 수건 한 장이 어려운 이유</h2>
+                    <p>언어 AI는 이미 인터넷에 쌓여 있던 글과 그림을 먹고 자랐다. 피지컬 AI는 사정이 다르다. 현실에서 보고, 움직이고, 물체에 닿고, 실패한 뒤 고쳐야 한다. 휴머노이드뿐 아니라 로봇팔과 이동형 조작기, 자율주행차와 드론까지 몸을 가진 AI가 모두 이 문제를 겪는다.</p>
+                    <p>수건 한 장을 개는 일만 봐도 그렇다. 수건은 집을 때마다 모양이 달라지고, 한쪽 끝이 미끄러지며, 힘을 너무 주면 주름이 생긴다. 사람은 모서리를 찾고, 장력을 느끼고, 어긋난 면을 보자마자 손목을 고친다. 영상은 동작의 겉모양을 보여 주지만 손끝의 힘과 마찰, 관절 상태, 순간적인 보정까지 그대로 담아내지는 못한다. 게다가 사람과 로봇은 팔의 구조부터 다르다.</p>
+
+                    <figure class="article-inline-media ai-capital-diagram">
+                        <div class="ai-flow-diagram" role="group" aria-labelledby="physical-flow-title" aria-describedby="physical-flow-desc">
+                            <header class="ai-flow-header">
+                                <p class="ai-flow-kicker">보는 것에서 해내는 것까지</p>
+                                <h3 id="physical-flow-title">몸짓이 기계의 행동이 되기까지</h3>
+                                <p id="physical-flow-desc">영상은 입구다. 힘·접촉·제어·실패 데이터가 합쳐져야 로봇이 현실에서 행동할 수 있다.</p>
+                            </header>
+                            <ol class="ai-flow-stages">
+                                <li class="ai-flow-stage ai-flow-stage--capital">
+                                    <div class="ai-flow-stage-heading">
+                                        <span>01</span>
+                                        <div>
+                                            <strong>현실의 시연</strong>
+                                            <small>사람이 다양한 환경에서 일한다</small>
+                                        </div>
+                                    </div>
+                                    <div class="ai-flow-relation">
+                                        <div class="ai-flow-node">
+                                            <strong>사람의 몸짓</strong>
+                                            <span>순서 · 시선 · 판단 · 실수 수습</span>
+                                        </div>
+                                        <div class="ai-flow-connector" aria-label="영상과 센서 정보로 기록">
+                                            <span>영상 · 동작 센서 · 공간</span>
+                                            <b aria-hidden="true">→</b>
+                                        </div>
+                                        <div class="ai-flow-node">
+                                            <strong>현장 기록</strong>
+                                            <span>집과 물건이 다른 수많은 사례</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="ai-flow-stage ai-flow-stage--capacity">
+                                    <div class="ai-flow-stage-heading">
+                                        <span>02</span>
+                                        <div>
+                                            <strong>로봇의 언어로 번역</strong>
+                                            <small>보이는 동작을 실행 가능한 궤적으로</small>
+                                        </div>
+                                    </div>
+                                    <div class="ai-flow-relation">
+                                        <div class="ai-flow-node">
+                                            <strong>사람 영상</strong>
+                                            <span>넓고 다양한 현실의 장면</span>
+                                        </div>
+                                        <div class="ai-flow-connector" aria-label="로봇 시연과 힘, 촉각, 시뮬레이션 정보를 결합">
+                                            <span>로봇 시연 · 힘 · 촉각 · 시뮬레이션</span>
+                                            <b aria-hidden="true">＋</b>
+                                        </div>
+                                        <div class="ai-flow-node">
+                                            <strong>행동 데이터</strong>
+                                            <span>관절 · 속도 · 접촉 · 결과</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="ai-flow-stage ai-flow-stage--demand">
+                                    <div class="ai-flow-stage-heading">
+                                        <span>03</span>
+                                        <div>
+                                            <strong>현장에 배치하고 다시 배운다</strong>
+                                            <small>성공보다 실패와 개입이 다음 교재가 된다</small>
+                                        </div>
+                                    </div>
+                                    <div class="ai-flow-relation">
+                                        <div class="ai-flow-node">
+                                            <strong>행동 모델</strong>
+                                            <span>상황을 보고 다음 동작을 선택</span>
+                                        </div>
+                                        <div class="ai-flow-connector" aria-label="실행 결과와 실패, 인간 개입을 다시 학습">
+                                            <span>실행 · 실패 · 인간 개입</span>
+                                            <b aria-hidden="true">⇄</b>
+                                        </div>
+                                        <div class="ai-flow-node ai-flow-node--customer">
+                                            <strong>현장의 로봇</strong>
+                                            <span>낯선 집과 물건에서 검증</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ol>
+                            <p class="ai-flow-risk">
+                                <strong>진짜 희소 자원</strong>
+                                <span>성공 장면의 양보다 상황 판단, 힘 조절, 실패 복구가 이어진 숙련의 궤적이다.</span>
+                            </p>
+                        </div>
+                        <figcaption>피지컬 AI 학습 순환.</figcaption>
+                    </figure>
+
+                    <p><a href="https://droid-dataset.github.io/" target="_blank" rel="noopener noreferrer">DROID 데이터셋</a>은 18개 기관이 12개월 동안 모았는데도 350시간, 7만6천 개 궤적이었다. 로봇을 직접 움직여 얻는 데이터가 얼마나 비싸고 느린지 보여 준다. 사람의 1인칭 영상은 이 좁은 입구를 넓힐 수 있다. 그러나 영상만 많이 모으면 가정용 로봇이 완성되는 것은 아니다. <a href="https://www.nist.gov/programs-projects/physical-ai-and-data-generation-robotics" target="_blank" rel="noopener noreferrer">미국 국립표준기술연구소</a>가 피지컬 AI의 데이터·측정·검증 공백을 별도 과제로 다루는 이유도 여기에 있다.</p>
+                </section>
+
+                <section aria-labelledby="skill">
+                    <h2 id="skill">단순 노동이라 부르던 일이 비싼 교과서가 됐다</h2>
+                    <p>청소와 정리, 조리와 수리에는 오랫동안 ‘단순’이라는 꼬리표가 붙었다. 하지만 단순했던 것은 숙련이 아니라 숙련을 보지 않는 가격표였다. 어느 컵부터 옮겨야 덜 깨지는지, 젖은 바닥에서 어디에 발을 디뎌야 하는지, 아이와 반려동물이 오갈 때 동선을 어떻게 바꿔야 하는지는 매뉴얼 한 줄로 옮기기 어렵다.</p>
+                    <p>피지컬 AI 경쟁은 지금 일하는 사람의 몸에 밴 요령을 경제적 자원으로 바꾼다. 기업이 사는 것은 손의 움직임 몇 분이 아니라 상황을 읽고 결과를 만들어 낸 숙련의 궤적이다.</p>
+
+                    <div class="market-snapshot" aria-label="피지컬 AI 데이터와 한국 노동·로봇 환경의 핵심 수치">
+                        <article>
+                            <span>DROID</span>
+                            <strong>350시간</strong>
+                            <small>7만6천 궤적 · 564개 장면</small>
+                        </article>
+                        <article>
+                            <span>Open X-Embodiment</span>
+                            <strong>100만+</strong>
+                            <small>에피소드 · 22종 로봇 · 500개 이상 기술</small>
+                        </article>
+                        <article>
+                            <span>한국 생산연령인구</span>
+                            <strong>−332만 명</strong>
+                            <small>2022~2032년 통계청 전망</small>
+                        </article>
+                        <article>
+                            <span>한국 제조업 로봇 밀도</span>
+                            <strong>1만 명당 1,220대</strong>
+                            <small>2024년 · 세계 최고</small>
+                        </article>
+                    </div>
+
+                    <p>구글 딥마인드가 여러 기관의 데이터를 합친 <a href="https://deepmind.google/blog/scaling-up-learning-across-many-different-robot-types/" target="_blank" rel="noopener noreferrer">Open X-Embodiment</a>도 22종 로봇과 100만 회가 넘는 에피소드를 모은 결과다. 웹의 글과 이미지에 비하면 여전히 작은 세계다. 그래서 로봇 기업은 실험실의 같은 컵을 반복해 집는 대신, 저마다 구조와 물건이 다른 실제 집과 일터로 향한다. 실제 집과 일터에는 예외가 끝없이 나오기 때문이다.</p>
+                </section>
+
+                <section aria-labelledby="second-contract">
+                    <h2 id="second-contract">사람은 한 번 일하고 데이터는 계속 일한다</h2>
+                    <p>작업자가 받은 임금은 그날의 노동에 대한 대가다. 하지만 노동에서 나온 기록은 데이터셋으로 합쳐져 새 모델을 훈련하고 제품을 개선하며 다시 라이선스될 수 있다. 한 번의 노동에서 현재의 서비스와 미래의 자산, 두 거래가 갈라져 나온다.</p>
+
+                    <figure class="article-inline-media position-information-diagram">
+                        <div class="position-map" role="group" aria-labelledby="second-trade-title">
+                            <header class="position-map-header">
+                                <p class="position-map-kicker">하나의 작업, 두 개의 시간</p>
+                                <h3 id="second-trade-title">청소는 끝나도 학습 자산은 남는다</h3>
+                            </header>
+                            <div class="position-lanes">
+                                <article class="position-lane position-lane--public">
+                                    <span class="position-lane-clock">청소가 끝나는 순간</span>
+                                    <h4>오늘의 노동</h4>
+                                    <p>한 집이 깨끗해지고 작업자는 한 번의 임금을 받는다. 서비스의 효용은 그 자리에서 소비된다.</p>
+                                </article>
+                                <article class="position-lane position-lane--broker">
+                                    <span class="position-lane-clock">청소가 끝난 뒤</span>
+                                    <h4>내일의 자산</h4>
+                                    <p>기록은 결합·재학습·제품 개선·라이선스를 거치며 여러 번 가치를 만들 수 있다.</p>
+                                </article>
+                            </div>
+                            <p class="position-map-conclusion"><strong>두 번째 계약</strong><span>한 번 지급되는 임금과 반복 사용되는 자산 사이의 몫을 정하는 일이다.</span></p>
+                        </div>
+                        <figcaption>노동의 두 번째 거래.</figcaption>
+                    </figure>
+
+                    <p>로봇이 당장 직업 전체를 없애는 것은 아니다. 먼저 자동화되는 것은 반복적이고 위험한 과업이고, 감독과 정비 같은 새 업무도 생긴다. 일자리 변화의 규모는 아직 알 수 없다. 그러나 오늘의 계약이 누군가의 숙련을 장기 자산으로 바꾸는 일은 이미 벌어지고 있다.</p>
+                    <p><a href="https://www.shiftapp.nyc/privacy" target="_blank" rel="noopener noreferrer">Shift의 개인정보처리방침</a>은 1인칭 영상뿐 아니라 동작 센서, 위치와 기기 정보도 수집한다고 밝힌다. 처리된 데이터셋은 MicroAGI로 이전돼 라이선스될 수 있으며, 완전하고 영구적인 익명화를 보장하지 않는다. 이미 공유된 데이터셋은 삭제가 제한될 수 있다. 얼굴을 흐리더라도 집의 구조, 물건, 생활 습관까지 모두 사라지는 것은 아니다.</p>
+                    <p class="article-pullquote">피지컬 AI 시대의 격차는 누가 로봇을 소유하느냐보다 먼저, 누가 로봇의 교과서를 쓰고 그 판권을 갖느냐에서 벌어질 수 있다.</p>
+                </section>
+
+                <section aria-labelledby="korea">
+                    <h2 id="korea">이 질문은 이미 서울에 도착했다</h2>
+                    <p>한국에서 비슷한 장면은 이미 촬영되고 있다. <a href="https://aws.amazon.com/blogs/physical-ai/putting-dexterous-robots-to-work-how-rlwrld-builds-physical-ai-with-aws/" target="_blank" rel="noopener noreferrer">AWS가 소개한 RLWRLD 사례</a>에서 서울 롯데호텔 작업자들은 머리와 가슴, 손에 카메라를 달고 청소 업무를 기록했다. 회사는 40개가 넘는 직무군, 400개가 넘는 작업과 4,500개 이상의 기본 동작을 데이터 라이브러리로 만들고 있다.</p>
+                    <p>한국은 이 기술을 외면하기 어려운 곳이기도 하다. <a href="https://www.kostat.go.kr/board.es?act=view&amp;bid=207&amp;list_no=428476&amp;mid=a10301020100" target="_blank" rel="noopener noreferrer">통계청 전망</a>에서 생산연령인구는 2022년부터 2032년까지 332만 명 줄어든다. 국제로봇연맹에 따르면 한국 제조업의 로봇 밀도는 2024년 노동자 1만 명당 1,220대로 세계에서 가장 높다. 일손 부족을 메우고 위험한 일을 줄이는 데 피지컬 AI가 필요한 이유다.</p>
+                    <p>그러나 필요하다는 말은 분배 방식까지 정당하게 만들지 않는다. 외국 플랫폼이 한국 노동자의 움직임을 모아 독점 자산으로 만들면, 우리는 로봇을 잘 만드는 나라가 되고도 숙련 데이터의 사용료는 놓칠 수 있다. 한국이 가진 강점은 반도체와 공장만이 아니다. 오래된 현장과 그곳에서 일해 온 사람들의 몸에도 있다.</p>
+                </section>
+
+                <section aria-labelledby="rights">
+                    <h2 id="rights">새 계약은 카메라를 켜기 전에 시작돼야 한다</h2>
+                    <p>피지컬 AI는 부족한 일손을 채우고 위험하고 고된 작업을 줄이며 돌봄과 생활 보조의 범위를 넓힐 수 있다. 그래서 데이터가 만들어지는 순간부터 각자의 몫을 정하는 계약이 필요하다.</p>
+                    <ol class="article-question-list">
+                        <li><strong>촬영 범위:</strong> 작업자의 몸과 주변인의 얼굴, 집 안의 어떤 정보까지 기록되는가?</li>
+                        <li><strong>재사용 범위:</strong> 누가 얼마 동안 보관하고, 어떤 모델과 기업에 다시 제공할 수 있는가?</li>
+                        <li><strong>통제 권한:</strong> 원본 접근 기록을 확인하고, 삭제·정정·감사를 요구할 수 있는가?</li>
+                        <li><strong>반복 사용의 몫:</strong> 데이터가 계속 수익을 만들 때 추가 보상과 직무 전환 기회가 돌아오는가?</li>
+                    </ol>
+                    <p>몸짓 데이터에는 여러 권리가 겹친다. 얼굴과 목소리에는 개인정보의 권리가 있고, 영상 이용에는 계약이 있으며, 모델에는 기업의 영업비밀이 얽힌다. 중요한 것은 이 복잡함을 핑계로 두 번째 거래를 보이지 않게 두지 않는 일이다. 촬영 동의서에는 목적과 보유기간, 제공받는 곳, 재사용 방식과 보상이 읽을 수 있는 말로 적혀야 한다.</p>
+                    <p>청소가 끝나면 바닥은 반짝이고 수건은 가지런해진다. 작업자는 다음 집으로 떠난다. 그러나 그날의 시선과 손놀림은 서버에 남아 수없이 다시 일할 수 있다. 로봇이 우리의 일자리를 빼앗을지만 묻는다면 이미 늦다. 오늘 누가 로봇의 교과서를 쓰고 있으며, 그 판권은 누구에게 돌아가는가.</p>
+                </section>
+
+                <section class="article-sources" aria-labelledby="article-sources-title">
+                    <h2 id="article-sources-title">근거 자료</h2>
+                    <ul>
+                        <li><a href="https://www.shiftapp.nyc/" target="_blank" rel="noopener noreferrer">Shift, 뉴욕 무료 청소 서비스 안내</a> 및 <a href="https://www.shiftapp.nyc/privacy" target="_blank" rel="noopener noreferrer">개인정보처리방침</a></li>
+                        <li><a href="https://droid-dataset.github.io/" target="_blank" rel="noopener noreferrer">DROID, 대규모 실제 로봇 조작 데이터셋</a></li>
+                        <li><a href="https://deepmind.google/blog/scaling-up-learning-across-many-different-robot-types/" target="_blank" rel="noopener noreferrer">Google DeepMind, Open X-Embodiment 데이터셋</a></li>
+                        <li><a href="https://www.nist.gov/programs-projects/physical-ai-and-data-generation-robotics" target="_blank" rel="noopener noreferrer">미국 국립표준기술연구소, Physical AI and Data Generation for Robotics</a></li>
+                        <li><a href="https://www.kostat.go.kr/board.es?act=view&amp;bid=207&amp;list_no=428476&amp;mid=a10301020100" target="_blank" rel="noopener noreferrer">통계청, 장래인구추계: 2022~2072년</a></li>
+                        <li><a href="https://ifr.org/post/automation-is-a-cornerstone-of-modern-manufacturing" target="_blank" rel="noopener noreferrer">International Federation of Robotics, 2024년 국가별 로봇 밀도</a></li>
+                        <li><a href="https://aws.amazon.com/blogs/physical-ai/putting-dexterous-robots-to-work-how-rlwrld-builds-physical-ai-with-aws/" target="_blank" rel="noopener noreferrer">AWS, RLWRLD의 서울 롯데호텔 피지컬 AI 데이터 수집 사례</a></li>
+                    </ul>
+                    <p>자료 기준일: 2026년 8월 12일.</p>
+                </section>
+
+                <aside class="article-related" aria-labelledby="related-title">
+                    <h2 id="related-title">다음 읽을거리</h2>
+                    <ul>
+                        <li><a href="ai-circular-deals-last-customer.html">AI 시대, 마지막 고객은 누구인가</a></li>
+                    </ul>
+                </aside>
+            </div>
+        </article>
+    </main>
+
+    <footer class="container">
+        <nav class="footer-links" aria-label="Footer">
+            <a href="../">홈</a>
+            <a href="../app.html">도구</a>
+            <a href="./">아티클</a>
+            <a href="../guides/">가이드</a>
+            <a href="../about.html">소개</a>
+            <a href="../contact.html">문의</a>
+            <a href="../privacy.html">개인정보처리방침</a>
+            <a href="../terms.html">이용 약관</a>
+            <a href="../affiliate-disclosure.html">제휴 고지</a>
+        </nav>
+        <p>© 2026 HPMPLab. 연마.</p>
+    </footer>
+</body>
+</html>
