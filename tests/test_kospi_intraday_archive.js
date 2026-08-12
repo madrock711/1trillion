@@ -8,6 +8,8 @@ var liveSource = fs.readFileSync(path.join(__dirname, '../assets/market-live-dat
 assert.ok(liveSource.includes('return fetchKospiIntradayArchiveDay(indexUrl, day, fetchImpl'), '취소된 저장본 요청은 원격 가격 함수가 아니라 저장본 함수로 재시작해야 한다.');
 
 var root = path.join(__dirname, '..');
+var amplifyConfig = fs.readFileSync(path.join(root, 'amplify.yml'), 'utf8');
+assert.ok(amplifyConfig.includes("'assets/data/kospi-intraday/*.json'"), 'KOSPI 분봉 저장본 폴더가 Amplify 산출물에 포함되어야 한다.');
 var indexPath = path.join(root, 'assets', 'data', 'kospi-intraday-index.json');
 var indexRows = live.normalizeKospiIntradayArchiveIndex(JSON.parse(fs.readFileSync(indexPath, 'utf8')));
 
