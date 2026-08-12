@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.join(__dirname, '..');
-const dashboard = fs.readFileSync(path.join(root, 'assets', 'market-dashboard.js'), 'utf8');
-const css = fs.readFileSync(path.join(root, 'assets', 'market-dashboard.css'), 'utf8');
+const dashboard = fs.readFileSync(path.join(root, 'assets', 'market-dashboard.js'), 'utf8').replace(/\r\n/g, '\n');
+const css = fs.readFileSync(path.join(root, 'assets', 'market-dashboard.css'), 'utf8').replace(/\r\n/g, '\n');
 const html = fs.readFileSync(path.join(root, 'articles', 'market.html'), 'utf8');
 
 assert(dashboard.includes('var linkedChartLockedSelection = null;'));
@@ -27,7 +27,7 @@ assert(css.includes('fill: var(--linked-highlight-hover'));
 assert(css.includes('fill: var(--linked-highlight-locked'));
 assert(css.includes('.kospi-flow-hitbox.is-linked-selected {\n    fill: var(--linked-highlight-hover'));
 assert(css.includes('.kospi-flow-hitbox.is-linked-selected.is-locked {\n    fill: var(--linked-highlight-locked'));
-assert(html.includes('market-dashboard.css?v=20260811-10'));
-assert(html.includes('market-dashboard.js?v=20260812-10'));
+assert(html.includes('market-dashboard.css?v=20260812-11'));
+assert(html.includes('market-dashboard.js?v=20260812-11'));
 
 console.log('Synchronized hover and click-lock chart highlight tests passed.');

@@ -5,8 +5,8 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.join(__dirname, '..');
-const dashboard = fs.readFileSync(path.join(root, 'assets', 'market-dashboard.js'), 'utf8');
-const css = fs.readFileSync(path.join(root, 'assets', 'market-dashboard.css'), 'utf8');
+const dashboard = fs.readFileSync(path.join(root, 'assets', 'market-dashboard.js'), 'utf8').replace(/\r\n/g, '\n');
+const css = fs.readFileSync(path.join(root, 'assets', 'market-dashboard.css'), 'utf8').replace(/\r\n/g, '\n');
 const html = fs.readFileSync(path.join(root, 'articles', 'market.html'), 'utf8');
 const amplifyRules = fs.readFileSync(path.join(root, 'infra', 'amplify-custom-rules.json'), 'utf8');
 
@@ -109,7 +109,9 @@ assert(css.includes('.technical-range-navigator {'));
 assert(css.includes('.technical-range-navigator.is-floating {\n    position: fixed;'));
 assert(css.includes('.technical-range-navigator-slot {'));
 assert(css.includes('.technical-range-navigator-slot.is-floating {\n    display: contents;'));
-assert(css.includes('.market-view-tabs {\n    --market-tabs-sticky-top: 64px;\n    position: sticky;'));
+assert(css.includes('.market-view-tabs {\n    --market-tabs-sticky-top: 0px;\n    position: sticky;'));
+assert(css.includes('@media (max-width: 720px)') && css.includes('.market-view-tabs {\n        top: 0;'), '모바일 플로팅 탭은 정적 헤더가 사라진 뒤 뷰포트 상단에 바로 붙어야 한다.');
+assert(dashboard.includes("var desktopTop = stickyHeader ? Math.ceil(header.getBoundingClientRect().height) : 0;"), '고정 헤더가 있으면 바로 아래에, 없으면 뷰포트 상단에 탭을 붙여야 한다.');
 assert(css.includes('.market-view-tabs.is-floating {'));
 assert(css.includes('.technical-range-selection.is-dragging'));
 assert(css.includes('.technical-range-input::-webkit-slider-thumb'));

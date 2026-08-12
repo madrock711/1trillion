@@ -405,7 +405,7 @@
         if (tabs && tabsSentinel) {
             var header = document.querySelector('body > header');
             var stickyHeader = header && window.getComputedStyle(header).position === 'sticky';
-            var desktopTop = stickyHeader ? Math.ceil(header.getBoundingClientRect().height) + 8 : 12;
+            var desktopTop = stickyHeader ? Math.ceil(header.getBoundingClientRect().height) : 0;
             tabs.style.setProperty('--market-tabs-sticky-top', desktopTop + 'px');
             var resolvedTop = parseFloat(window.getComputedStyle(tabs).top) || desktopTop;
             tabs.classList.toggle('is-floating', tabsSentinel.getBoundingClientRect().top <= resolvedTop);

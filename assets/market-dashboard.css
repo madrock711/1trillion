@@ -456,7 +456,7 @@
 }
 
 .market-view-tabs {
-    --market-tabs-sticky-top: 64px;
+    --market-tabs-sticky-top: 0px;
     position: sticky;
     top: var(--market-tabs-sticky-top);
     z-index: 30;
@@ -2758,7 +2758,7 @@
     .market-dashboard-hero { order: 1; }
     .market-dashboard-load { order: 2; }
     .market-view-tabs {
-        top: 112px;
+        top: 0;
         z-index: 30;
         order: 3;
         grid-template-columns: repeat(3, minmax(112px, 1fr));

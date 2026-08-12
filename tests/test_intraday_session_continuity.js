@@ -122,8 +122,8 @@ assert.strictEqual(multiSession.currentBarCount, 1);
 assert.strictEqual(multiSession.bars[0].sessionDate, '2026-08-06');
 assert.strictEqual(multiSession.bars[8].sessionDate, '2026-08-10');
 
-const dashboard = fs.readFileSync(path.join(__dirname, '../assets/market-dashboard.js'), 'utf8');
-const css = fs.readFileSync(path.join(__dirname, '../assets/market-dashboard.css'), 'utf8');
+const dashboard = fs.readFileSync(path.join(__dirname, '../assets/market-dashboard.js'), 'utf8').replace(/\r\n/g, '\n');
+const css = fs.readFileSync(path.join(__dirname, '../assets/market-dashboard.css'), 'utf8').replace(/\r\n/g, '\n');
 const html = fs.readFileSync(path.join(__dirname, '../articles/market.html'), 'utf8');
 assert.ok(dashboard.includes("var bucketKey = sessionDate + '|' + bucket"), '서로 다른 거래일의 같은 시각 봉을 합치면 안 된다.');
 assert.ok(!dashboard.includes('rows.slice(-previousCount)'), '두 거래일 원자료를 한 거래일로 다시 잘라내면 안 된다.');
@@ -146,7 +146,7 @@ assert.ok(dashboard.includes('renderKospiIntradayChart();'), '보강된 선행 �
 assert.ok(dashboard.includes('item.indicatorWarmupDays = previous.indicatorWarmupDays'), '일시적인 갱신 실패가 이미 받은 선행 분봉을 지우면 안 된다.');
 assert.ok(css.includes('.intraday-session-divider'), '두 거래일의 경계를 차트에서 구분해야 한다.');
 assert.ok(html.includes('market-live-data.js?v=20260812-10'), '현재 세션 선행 로드는 이전 live-data 캐시를 우회해야 한다.');
-assert.ok(html.includes('market-dashboard.js?v=20260812-10'), '최신 거래일 자동 선택은 이전 dashboard 캐시를 우회해야 한다.');
+assert.ok(html.includes('market-dashboard.js?v=20260812-11'), '최신 거래일 자동 선택은 이전 dashboard 캐시를 우회해야 한다.');
 assert.ok(html.includes('data-kospi-intraday-source="../assets/data/kospi-intraday-index.json"'), 'KOSPI 완료 세션은 정적 보존 색인을 사용해야 한다.');
 assert.ok(dashboard.includes('fetchKospiIntradayArchiveDay('), '완료된 KOSPI 세션은 반복 원격 조회 대신 저장본을 사용해야 한다.');
 assert.ok(dashboard.includes('return request.catch(function (error)'), '저장본이 없는 오래된 선행 거래일 한 건의 실패가 전체 KOSPI 렌더를 취소하면 안 된다.');
