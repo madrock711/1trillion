@@ -1538,13 +1538,17 @@
         firstFlowUrl.searchParams.set('page', '1');
 
         state.pendingSignal = signal || null;
+        var firstFlowRequest = fetchText(fetchImpl, firstFlowUrl.href, signal, nonce).catch(function (error) {
+            if (error && error.name === 'AbortError') throw error;
+            return null;
+        });
         state.pending = Promise.all([
             fetchJson(fetchImpl, minuteUrl.href, signal, nonce),
-            fetchText(fetchImpl, firstFlowUrl.href, signal, nonce)
+            firstFlowRequest
         ]).then(function (initialParts) {
             var priceRows = normalizeKospiIntradayMinute(initialParts[0], day);
             if (!priceRows.length) throw new Error('선택한 거래일의 KOSPI 분봉이 없습니다.');
-            var pageCount = extractKospiIntradayForeignFlowPageCount(initialParts[1]);
+            var pageCount = initialParts[1] ? extractKospiIntradayForeignFlowPageCount(initialParts[1]) : 1;
             var maxPages = Number.isFinite(settings.maxPages) ? Math.max(1, Math.floor(settings.maxPages)) : 100;
             if (pageCount > maxPages) throw new Error('KOSPI 장중 수급 페이지 수가 허용 범위를 넘었습니다.');
             var remainingUrls = [];
@@ -1563,7 +1567,7 @@
                 settings.concurrencyLimit
             ).then(function (remainingPayloads) {
                 var flowRows = [];
-                [initialParts[1]].concat(remainingPayloads).forEach(function (payload) {
+                [initialParts[1]].concat(remainingPayloads).filter(Boolean).forEach(function (payload) {
                     flowRows = flowRows.concat(normalizeKospiIntradayForeignFlowHtml(payload, day));
                 });
                 var uniqueFlows = {};
