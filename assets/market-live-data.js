@@ -1730,6 +1730,57 @@
         return cache.pending;
     }
 
+    function newYorkClock(now) {
+        var parts = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'America/New_York',
+            weekday: 'short',
+            hour: '2-digit',
+            minute: '2-digit',
+            hourCycle: 'h23'
+        }).formatToParts(new Date(Number.isFinite(now) ? now : Date.now()));
+        var values = {};
+        parts.forEach(function (part) {
+            if (part.type !== 'literal') values[part.type] = part.value;
+        });
+        return {
+            weekday: values.weekday || '',
+            minutes: Number(values.hour) * 60 + Number(values.minute)
+        };
+    }
+
+    function isUsRegularMarketOpen(now) {
+        var clock = newYorkClock(now);
+        if (clock.weekday === 'Sat' || clock.weekday === 'Sun') return false;
+        return clock.minutes >= 9 * 60 + 30 && clock.minutes < 16 * 60;
+    }
+
+    function fetchTqqqLatest(baseUrl, fetchImpl, options) {
+        var settings = options || {};
+        var now = Number.isFinite(settings.now) ? settings.now : Date.now();
+        var nonce = settings.nonce || String(now);
+        var signal = settings.signal;
+        var regularSession = isUsRegularMarketOpen(now);
+        if (settings.forceRefresh) {
+            tqqqHistoryCache.expiresAt = 0;
+            tqqqIntradayOneMinuteCache.expiresAt = 0;
+            tqqqIntradayFiveMinuteCache.expiresAt = 0;
+        }
+        return Promise.all([
+            fetchTqqqHistory(fetchImpl, baseUrl, signal, nonce, now, 15 * 60 * 1000),
+            fetchTqqqIntradayHistory(fetchImpl, baseUrl, signal, nonce, now, regularSession ? 60 * 1000 : 15 * 60 * 1000, 1),
+            fetchTqqqIntradayHistory(fetchImpl, baseUrl, signal, nonce, now, regularSession ? 5 * 60 * 1000 : 15 * 60 * 1000, 5)
+        ]).then(function (items) {
+            return {
+                tqqqHistory: items[0],
+                tqqqIntraday: {
+                    oneMinute: items[1],
+                    fiveMinute: items[2]
+                },
+                retrievedAt: new Date(now).toISOString()
+            };
+        });
+    }
+
     function normalizeKospiIntradayArchiveIndex(payload) {
         if (!payload || payload.schemaVersion !== 1 || String(payload.symbol) !== 'KOSPI' || !Array.isArray(payload.days)) {
             throw new Error('KOSPI 분봉 보존 색인이 올바르지 않습니다.');
@@ -2140,13 +2191,14 @@
             now,
             Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000
         ).catch(function () { return null; });
+        var usRegularMarketOpen = isUsRegularMarketOpen(now);
         var optionalTqqqIntradayOneMinuteRequest = fetchTqqqIntradayHistory(
             fetchImpl,
             baseUrl,
             signal,
             nonce,
             now,
-            Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000,
+            Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : usRegularMarketOpen ? 60 * 1000 : 15 * 60 * 1000,
             1
         ).catch(function () { return null; });
         var optionalTqqqIntradayFiveMinuteRequest = fetchTqqqIntradayHistory(
@@ -2155,7 +2207,7 @@
             signal,
             nonce,
             now,
-            Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : 15 * 60 * 1000,
+            Number.isFinite(settings.historyTtlMs) ? settings.historyTtlMs : usRegularMarketOpen ? 5 * 60 * 1000 : 15 * 60 * 1000,
             5
         ).catch(function () { return null; });
         var optionalKospiIndicatorWarmupRequest = fetchKoreanIndicatorWarmup(
@@ -2322,7 +2374,8 @@
         });
     }
 
-    function liveRefreshDelay(liveData) {
+    function liveRefreshDelay(liveData, now) {
+        if (isUsRegularMarketOpen(now)) return 60 * 1000;
         if (!liveData) return 60 * 1000;
         var markets = Array.isArray(liveData.markets) ? liveData.markets : [];
         if (!markets.length) return 60 * 1000;
@@ -2351,7 +2404,7 @@
     }
 
     function shouldRefreshLiveDataOnAttention(liveData, now) {
-        if (liveRefreshDelay(liveData) !== null) return true;
+        if (liveRefreshDelay(liveData, now) !== null) return true;
         var markets = liveData && Array.isArray(liveData.markets) ? liveData.markets : [];
         var latestMarketTime = markets.reduce(function (latest, market) {
             var timestamp = Date.parse(market && market.asOf);
@@ -2367,6 +2420,8 @@
     return {
         fetchCurrentSession: fetchCurrentSession,
         fetchLatest: fetchLatest,
+        fetchTqqqLatest: fetchTqqqLatest,
+        isUsRegularMarketOpen: isUsRegularMarketOpen,
         liveRefreshDelay: liveRefreshDelay,
         liveObservationSignature: liveObservationSignature,
         shouldRefreshLiveDataOnAttention: shouldRefreshLiveDataOnAttention,

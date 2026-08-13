@@ -20,8 +20,10 @@
     var latestLiveData = null;
     var liveRefreshTimer = null;
     var liveRefreshPromise = null;
+    var tqqqRefreshPromise = null;
     var lastAppliedLiveSignature = '';
     var lastLiveRefreshAt = 0;
+    var lastTqqqRefreshAt = 0;
     var selectedKodexPeriod = '1y';
     var selectedKodexChartMode = 'daily';
     var selectedKodexIntradayDate = '';
@@ -1403,6 +1405,13 @@
                 refreshTimeSensitiveData();
             });
         }
+        var tqqqRefreshButton = document.getElementById('tqqq-chart-refresh');
+        if (tqqqRefreshButton && tqqqRefreshButton.getAttribute('data-chart-bound') !== 'true') {
+            tqqqRefreshButton.setAttribute('data-chart-bound', 'true');
+            tqqqRefreshButton.addEventListener('click', function () {
+                refreshTqqqData();
+            });
+        }
     }
 
     function setChartRefreshState(state, message) {
@@ -1434,6 +1443,36 @@
             return applied;
         }).catch(function () {
             setChartRefreshState('error', '갱신 실패 · 다시 시도');
+            return false;
+        });
+    }
+
+    function setTqqqRefreshState(state, message) {
+        var button = document.getElementById('tqqq-chart-refresh');
+        var status = document.getElementById('tqqq-chart-refresh-status');
+        if (!button || !status) return;
+        var loading = state === 'loading';
+        button.disabled = loading;
+        button.classList.toggle('is-loading', loading);
+        button.setAttribute('aria-busy', loading ? 'true' : 'false');
+        status.textContent = message || '';
+    }
+
+    function refreshTqqqData() {
+        if (!dashboardData) return Promise.resolve(false);
+        setTqqqRefreshState('loading', '미국 시세 확인 중');
+        return refreshTqqqLiveData({ force: true, reportError: true }).then(function (applied) {
+            var time = new Intl.DateTimeFormat('ko-KR', {
+                timeZone: 'Asia/Seoul',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hourCycle: 'h23'
+            }).format(new Date());
+            setTqqqRefreshState('ready', applied ? time + ' 갱신' : time + ' 기존 데이터 유지');
+            return applied;
+        }).catch(function () {
+            setTqqqRefreshState('error', '갱신 실패 · 다시 시도');
             return false;
         });
     }
@@ -4512,9 +4551,22 @@
 
     function shouldPollLiveData(liveData) {
         if (window.MarketDashboardLive && typeof window.MarketDashboardLive.liveRefreshDelay === 'function') {
-            return window.MarketDashboardLive.liveRefreshDelay(liveData) !== null;
+            return window.MarketDashboardLive.liveRefreshDelay(liveData, Date.now()) !== null;
         }
         return !liveData;
+    }
+
+    function domesticMarketActive(liveData) {
+        var markets = liveData && Array.isArray(liveData.markets) ? liveData.markets : [];
+        return markets.some(function (market) {
+            return market && (market.marketStatus === 'OPEN' || market.marketStatus === 'PREOPEN');
+        });
+    }
+
+    function usRegularMarketActive() {
+        return Boolean(window.MarketDashboardLive
+            && typeof window.MarketDashboardLive.isUsRegularMarketOpen === 'function'
+            && window.MarketDashboardLive.isUsRegularMarketOpen(Date.now()));
     }
 
     function scheduleLiveRefresh(data, retrySoon) {
@@ -4523,8 +4575,56 @@
         if (!shouldPollLiveData(latestLiveData)) return;
         var delay = 60 * 1000;
         liveRefreshTimer = window.setTimeout(function () {
+            if (usRegularMarketActive() && !domesticMarketActive(latestLiveData)) {
+                refreshTqqqLiveData();
+                return;
+            }
             refreshLiveMarketData(data, { silent: true });
         }, delay);
+    }
+
+    function refreshTqqqLiveData(options) {
+        if (!liveMarketSource || !window.MarketDashboardLive
+            || typeof window.MarketDashboardLive.fetchTqqqLatest !== 'function') return Promise.resolve(false);
+        var settings = options || {};
+        if (tqqqRefreshPromise) {
+            if (settings.force) {
+                return tqqqRefreshPromise.then(function () { return refreshTqqqLiveData(settings); });
+            }
+            return tqqqRefreshPromise;
+        }
+        var controller = typeof AbortController === 'function' ? new AbortController() : null;
+        var timeoutId = window.setTimeout(function () {
+            if (controller) controller.abort();
+        }, 9000);
+        var absoluteBase = new URL(liveMarketSource, window.location.href).href;
+        lastTqqqRefreshAt = Date.now();
+        tqqqRefreshPromise = window.MarketDashboardLive.fetchTqqqLatest(
+            absoluteBase,
+            window.fetch.bind(window),
+            {
+                signal: controller ? controller.signal : undefined,
+                forceRefresh: Boolean(settings.force)
+            }
+        ).then(function (result) {
+            window.clearTimeout(timeoutId);
+            latestLiveData = Object.assign({}, latestLiveData || {}, result);
+            if (technicalCardNearViewport('tqqq-history')) renderTqqqSynchronized();
+            scheduleLiveRefresh(dashboardData);
+            return true;
+        }).catch(function (error) {
+            window.clearTimeout(timeoutId);
+            scheduleLiveRefresh(dashboardData, true);
+            if (settings.reportError) throw error;
+            return false;
+        }).then(function (result) {
+            tqqqRefreshPromise = null;
+            return result;
+        }, function (error) {
+            tqqqRefreshPromise = null;
+            throw error;
+        });
+        return tqqqRefreshPromise;
     }
 
     function refreshLiveMarketData(data, options) {
@@ -4683,12 +4783,22 @@
             ? window.MarketDashboardLive.shouldRefreshLiveDataOnAttention(latestLiveData, Date.now())
             : shouldPollLiveData(latestLiveData);
         if (!shouldRefresh) return;
+        if (usRegularMarketActive() && !domesticMarketActive(latestLiveData)) {
+            if (Date.now() - lastTqqqRefreshAt >= 60 * 1000) refreshTqqqLiveData();
+            else scheduleLiveRefresh(dashboardData);
+            return;
+        }
         if (Date.now() - lastLiveRefreshAt >= 60 * 1000) refreshLiveMarketData(dashboardData, { silent: true });
         else scheduleLiveRefresh(dashboardData);
     });
 
     window.addEventListener('focus', function () {
-        if (!dashboardData || Date.now() - lastLiveRefreshAt < 60 * 1000) return;
+        if (!dashboardData) return;
+        if (usRegularMarketActive() && !domesticMarketActive(latestLiveData)) {
+            if (Date.now() - lastTqqqRefreshAt >= 60 * 1000) refreshTqqqLiveData();
+            return;
+        }
+        if (Date.now() - lastLiveRefreshAt < 60 * 1000) return;
         if (window.MarketDashboardLive
             && typeof window.MarketDashboardLive.shouldRefreshLiveDataOnAttention === 'function'
             && !window.MarketDashboardLive.shouldRefreshLiveDataOnAttention(latestLiveData, Date.now())) return;
