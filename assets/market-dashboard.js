@@ -48,6 +48,8 @@
     var kospiTechnicalHistory = [];
     var leadingCycleData = null;
     var kospiMonthlyData = null;
+    var leadingCycleRangeStart = 0;
+    var leadingCycleRangeEnd = 100;
     var kospiHistoryRequestToken = 0;
     var kospiIntradayRenderToken = 0;
     var kospiIntradayForceRefresh = false;
@@ -2415,6 +2417,64 @@
         });
     }
 
+    function leadingCycleVisibleRows(rows) {
+        if (!Array.isArray(rows) || rows.length < 2) return rows || [];
+        var lastIndex = rows.length - 1;
+        var startIndex = Math.floor(lastIndex * leadingCycleRangeStart / 100);
+        var endIndex = Math.ceil(lastIndex * leadingCycleRangeEnd / 100);
+        return rows.slice(startIndex, Math.max(startIndex + 2, endIndex + 1));
+    }
+
+    function updateLeadingCycleRangeUi(rows) {
+        var startInput = document.getElementById('leading-cycle-range-start');
+        var endInput = document.getElementById('leading-cycle-range-end');
+        var selection = document.getElementById('leading-cycle-range-selection');
+        var badge = document.getElementById('leading-cycle-range-badge');
+        if (startInput) startInput.value = String(leadingCycleRangeStart);
+        if (endInput) endInput.value = String(leadingCycleRangeEnd);
+        if (selection) {
+            selection.style.left = leadingCycleRangeStart + '%';
+            selection.style.width = (leadingCycleRangeEnd - leadingCycleRangeStart) + '%';
+        }
+        if (!badge || !rows || !rows.length) return;
+        var visible = leadingCycleVisibleRows(rows);
+        var first = visible[0];
+        var last = visible[visible.length - 1];
+        badge.textContent = first && last
+            ? first.period.replace('-', '.') + '–' + last.period.replace('-', '.')
+            : '1990년 이후 전체 기간';
+    }
+
+    function setLeadingCycleRange(start, end) {
+        var minimum = 5;
+        var nextStart = Math.max(0, Math.min(100 - minimum, Number(start) || 0));
+        var nextEnd = Math.max(minimum, Math.min(100, Number(end) || 100));
+        if (nextEnd - nextStart < minimum) {
+            if (nextStart !== leadingCycleRangeStart) nextStart = nextEnd - minimum;
+            else nextEnd = nextStart + minimum;
+        }
+        leadingCycleRangeStart = Math.max(0, nextStart);
+        leadingCycleRangeEnd = Math.min(100, nextEnd);
+        var market = dashboardData && findById(dashboardData.markets, 'KOSPI');
+        updateLeadingCycleRangeUi(leadingCycleComparisonRows(market));
+        renderLeadingCycleComparison(market);
+    }
+
+    function bindLeadingCycleRangeNavigator() {
+        var navigator = document.getElementById('leading-cycle-range');
+        if (!navigator || navigator.getAttribute('data-bound') === 'true') return;
+        navigator.setAttribute('data-bound', 'true');
+        var startInput = document.getElementById('leading-cycle-range-start');
+        var endInput = document.getElementById('leading-cycle-range-end');
+        startInput.addEventListener('input', function () {
+            setLeadingCycleRange(Math.min(Number(startInput.value), leadingCycleRangeEnd - 5), leadingCycleRangeEnd);
+        });
+        endInput.addEventListener('input', function () {
+            setLeadingCycleRange(leadingCycleRangeStart, Math.max(Number(endInput.value), leadingCycleRangeStart + 5));
+        });
+        updateLeadingCycleRangeUi([]);
+    }
+
     function renderLeadingCycleComparison(market) {
         var svg = document.getElementById('leading-cycle-chart');
         var readout = document.getElementById('leading-cycle-readout');
@@ -2426,7 +2486,9 @@
             readout.textContent = '공식 선행지수와 KOSPI 월말 종가를 불러오는 중입니다.';
             return;
         }
-        var rows = leadingCycleComparisonRows(market);
+        var allRows = leadingCycleComparisonRows(market);
+        updateLeadingCycleRangeUi(allRows);
+        var rows = leadingCycleVisibleRows(allRows);
         if (rows.length < 6) {
             readout.textContent = '선행지수와 KOSPI의 공통 월별 구간을 만들지 못했습니다.';
             return;
@@ -4213,6 +4275,7 @@
 
     function render(data) {
         dashboardData = data;
+        bindLeadingCycleRangeNavigator();
         var stale = isStaleSnapshot(data);
         data.markets.forEach(function (market) {
             if (!market.asOf) market.asOf = kstTimestampFromLabel(market.asOfLabel, data.asOf);

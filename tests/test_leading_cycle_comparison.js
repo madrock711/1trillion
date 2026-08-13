@@ -24,11 +24,20 @@ assert.strictEqual(kospi.latestPeriod, kospi.observations[kospi.observations.len
 assert(html.includes('data-leading-cycle-source="../assets/data/korea-leading-cycle.json"'));
 assert(html.includes('data-kospi-monthly-source="../assets/data/kospi-monthly-history.json"'));
 assert(html.includes('id="leading-cycle-chart"'));
+assert(html.includes('id="leading-cycle-range"'));
+assert(html.includes('id="leading-cycle-range-start"'));
+assert(html.includes('id="leading-cycle-range-end"'));
+assert(html.includes('id="leading-cycle-range-selection"'));
 assert(html.includes('1990년 이후 전체 기간'));
 assert(html.includes('국가지표 경기종합지수'));
 
 assert(js.includes('function monthlyKospiCloses(market)'));
 assert(js.includes('function leadingCycleComparisonRows(market)'));
+assert(js.includes('function leadingCycleVisibleRows(rows)'));
+assert(js.includes('function bindLeadingCycleRangeNavigator()'));
+assert(js.includes('var leadingCycleRangeStart = 0;'));
+assert(js.includes('var leadingCycleRangeEnd = 100;'));
+assert(js.includes('renderLeadingCycleComparison(market);'));
 assert(js.includes('function normalizeKospiMonthlyData(payload)'));
 assert(js.includes('if (!leadingCycleData || !kospiMonthlyData) return [];'));
 assert(js.includes('period >= firstKospiPeriod'));
@@ -48,5 +57,8 @@ assert(css.includes('mix-blend-mode: screen'));
 assert(!css.includes('stroke-dasharray: 8 5'));
 assert(css.includes('.leading-cycle-legend .is-kospi::before'));
 assert(css.includes('.leading-cycle-summary'));
+assert(css.includes('.leading-cycle-range {'));
+assert(css.includes('.leading-cycle-range-input::-webkit-slider-thumb'));
+assert(css.includes('height: 22px;'));
 
 console.log('Leading-cycle and KOSPI comparison chart tests passed.');

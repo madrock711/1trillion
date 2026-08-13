@@ -29,7 +29,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260804-2">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260813-01">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20260813-02">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -69,7 +69,7 @@
     </script>
     <script defer src="../analytics.js?v=20260731-1"></script>
     <script defer src="../assets/market-live-data.js?v=20260813-01"></script>
-    <script defer src="../assets/market-dashboard.js?v=20260813-01"></script>
+    <script defer src="../assets/market-dashboard.js?v=20260813-02"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">시장 대시보드로 건너뛰기</a>
@@ -468,7 +468,7 @@
                             <p class="market-card-label">월별 경기 방향</p>
                             <h3 id="leading-cycle-title">선행지수·KOSPI 비교</h3>
                         </div>
-                        <span class="leading-cycle-badge">1990년 이후 전체 기간</span>
+                        <span class="leading-cycle-badge" id="leading-cycle-range-badge">1990년 이후 전체 기간</span>
                     </div>
                     <div class="leading-cycle-legend" aria-label="선행지수와 KOSPI 비교 차트 범례">
                         <span class="is-leading">선행지수 순환변동치</span>
@@ -477,6 +477,13 @@
                     <p class="leading-cycle-readout" id="leading-cycle-readout" aria-live="polite">공식 선행지수와 KOSPI 월말 종가를 불러오는 중입니다.</p>
                     <div class="leading-cycle-shell" tabindex="0" role="region" aria-label="경기선행종합지수 순환변동치와 KOSPI 월말 종가의 이중 축 비교 차트">
                         <svg id="leading-cycle-chart" class="leading-cycle-chart" viewBox="0 0 1000 420" role="img" aria-labelledby="leading-cycle-title leading-cycle-readout"></svg>
+                    </div>
+                    <div class="leading-cycle-range" id="leading-cycle-range" aria-label="선행지수 비교 차트 기간 선택">
+                        <div class="leading-cycle-range-track" aria-hidden="true">
+                            <span class="leading-cycle-range-selection" id="leading-cycle-range-selection"></span>
+                        </div>
+                        <input id="leading-cycle-range-start" class="leading-cycle-range-input is-start" type="range" min="0" max="100" step="1" value="0" aria-label="선행지수 비교 시작 시점">
+                        <input id="leading-cycle-range-end" class="leading-cycle-range-input is-end" type="range" min="0" max="100" step="1" value="100" aria-label="선행지수 비교 종료 시점">
                     </div>
                     <div class="leading-cycle-summary" id="leading-cycle-summary"></div>
                     <p class="market-source-note" id="leading-cycle-source-note">선행지수는 <a href="https://www.index.go.kr/unity/potal/main/EachDtlPageDetail.do?idx_cd=1057" target="_blank" rel="noopener noreferrer">국가지표 경기종합지수</a>의 공식 월별 자료, KOSPI는 Naver Finance의 월봉입니다. 두 자료가 함께 존재하는 1990년 1월부터 비교하며, 선행지수 전체 시계열은 매월 수정될 수 있습니다.</p>
