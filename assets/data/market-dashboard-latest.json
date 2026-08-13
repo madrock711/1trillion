@@ -1,67 +1,28 @@
 {
   "schemaVersion": 1,
-  "snapshotId": "20260813-0814",
-  "generatedAt": "2026-08-13T08:14:00+09:00",
-  "asOf": "2026-08-13T08:11:00+09:00",
-  "asOfDisplay": "2026년 8월 13일 08:11 KST",
+  "snapshotId": "20260814-0824",
+  "generatedAt": "2026-08-14T08:28:18+09:00",
+  "asOf": "2026-08-14T08:24:07+09:00",
+  "asOfDisplay": "2026년 8월 14일 08:24 KST",
   "marketState": "한국 정규장 개장 전",
-  "sourceLabel": "국내 지수·수급은 8월 12일 정규장 마감, 원/달러는 8월 13일 07:54 KST, 장전 호가는 08:11 KST, 미국 주가는 8월 12일 정규장 마감 기준입니다.",
-  "latestArticle": {"title":"2026년 8월 13일 KOSPI 장전: CPI 안도 뒤 반도체 재상승","href":"market-2026-08-13.html"},
-  "headline": "CPI 안도와 미국 반도체 강세가 이어졌지만 KOSPI는 전날 급등분을 안고 출발합니다.",
-  "summary": "전일 외국인 현물 2조7,377억원 순매수와 미국 Micron 4.92% 상승이 반도체를 받칩니다. 삼성전자·SK하이닉스 NXT는 4~5%대 강세지만 원/달러 1,419원과 오늘 밤 PPI가 추격 부담입니다.",
+  "sourceLabel": "국내 지수·수급은 8월 13일 정규장 마감, 원/달러·미국 선물·NXT 호가는 8월 14일 08:24 KST, 미국 주가는 8월 13일 정규장 기준입니다.",
+  "latestArticle": {"title":"PPI 안도와 메모리 강세, KOSPI 6,896 돌파 시험","href":"market-2026-08-14.html"},
+  "headline": "PPI 안도와 Micron 강세는 우호적이지만, KOSPI는 이틀 급등 뒤 6,896선의 수급을 시험합니다.",
+  "summary": "전일 외국인 현물 2조1,102억원 순매수와 Micron 4.23% 상승이 반도체를 받칩니다. 삼성전자·SK하이닉스 NXT는 강세지만 원/달러 1,420원대와 이틀 급등분은 추격 부담입니다.",
   "markets": [
-    {"id":"KOSPI","label":"KOSPI","symbol":"K","value":6579.04,"changePercent":3.68,"asOf":"2026-08-12T15:30:00+09:00","asOfLabel":"8월 12일 정규장 마감","stateLabel":"직전 정규장","open":6438.50,"high":6668.43,"low":6413.50,"previousClose":6345.53,"flows":[{"label":"외국인","value":27377,"unit":"억원"},{"label":"기관","value":6157,"unit":"억원"},{"label":"개인","value":-31782,"unit":"억원"}]},
-    {"id":"KOSDAQ","label":"KOSDAQ","symbol":"Q","value":858.91,"changePercent":0.12,"asOf":"2026-08-12T15:30:00+09:00","asOfLabel":"8월 12일 정규장 마감","stateLabel":"직전 정규장","open":854.85,"high":860.76,"low":839.86,"previousClose":857.84,"flows":[]}
+    {"id":"KOSPI","label":"KOSPI","symbol":"K","value":6813.34,"changePercent":3.56,"asOf":"2026-08-13T15:30:00+09:00","asOfLabel":"8월 13일 정규장 마감","stateLabel":"직전 정규장","open":6773.92,"high":6895.63,"low":6748.13,"previousClose":6579.04,"flows":[{"label":"외국인","value":21102,"unit":"억원"},{"label":"기관","value":6834,"unit":"억원"},{"label":"개인","value":-27410,"unit":"억원"}]},
+    {"id":"KOSDAQ","label":"KOSDAQ","symbol":"Q","value":861.37,"changePercent":0.29,"asOf":"2026-08-13T15:30:00+09:00","asOfLabel":"8월 13일 정규장 마감","stateLabel":"직전 정규장","open":861.18,"high":866.80,"low":850.76,"previousClose":858.91,"flows":[]}
   ],
-  "stance":{"label":"관망 우세","attack":30,"wait":50,"defense":20,"note":"장전 반도체 호가보다 6,668 돌파 뒤 외국인 매수 속도의 지속을 확인합니다."},
-  "checkpoints":[
-    {"label":"외국인 현물","value":"전일 +2조7,377억원","detail":"개장 30분·60분 매수 속도 유지 여부","tone":"positive"},
-    {"label":"반도체 NXT","value":"삼성 +4.50% · 하이닉스 +5.25%","detail":"정규장 시초가 이후 상승분 유지","tone":"positive"},
-    {"label":"KOSPI 기준선","value":"6,550 / 6,668","detail":"하단 방어와 전일 고점 돌파","tone":"info"},
-    {"label":"달러/원","value":"1,419원","detail":"1,420원 돌파 여부","tone":"warning"}
-  ],
-  "changes":[
-    {"label":"KOSPI","before":"8월 11일 종가 6,345.53","after":"8월 12일 6,579.04","meaning":"외국인 대규모 순매수로 3.68% 급등했습니다."},
-    {"label":"미국 반도체","before":"SOXX +0.91%","after":"SOXX +2.32%","meaning":"CPI 안도와 AI 인프라 수요가 반도체로 집중됐습니다."},
-    {"label":"미국 10년물","before":"8월 11일 4.70%","after":"8월 12일 4.68%","meaning":"CPI 뒤 2bp 내렸지만 절대 수준은 높습니다."}
-  ],
-  "factors":[
-    {"label":"수급","metric":"외국인 +2조7,377억","detail":"전일 급등의 핵심 동력이었습니다.","tone":"positive"},
-    {"label":"반도체","metric":"SOXX +2.32% · MU +4.92%","detail":"메모리주에 직접적인 상방 신호입니다.","tone":"positive"},
-    {"label":"장전 호가","metric":"삼성 +4.50% · 하이닉스 +5.25%","detail":"시초가 이후 유지 여부가 첫 시험입니다.","tone":"positive"},
-    {"label":"메모리","metric":"DDR5 +0.70% · DDR4 +0.56%","detail":"현물 공급 제약이 이어졌습니다.","tone":"positive"},
-    {"label":"환율·금리","metric":"원/달러 1,419원 · 10년물 4.68%","detail":"외국인 수급과 성장주 상단의 부담입니다.","tone":"warning"},
-    {"label":"오늘 일정","metric":"미국 PPI·실업수당 21:30 KST","detail":"CPI 뒤 금리 하락을 재확인합니다.","tone":"warning"}
-  ],
+  "stance":{"label":"관망 우세","attack":25,"wait":55,"defense":20,"note":"6,895.63 돌파 뒤 외국인 현물 매수와 메모리주 장전 상승분이 함께 유지되는지 확인합니다."},
+  "checkpoints":[{"label":"외국인 현물","value":"전일 +2조1,102억원","detail":"개장 30분·60분 매수 속도 유지","tone":"positive"},{"label":"반도체 NXT","value":"삼성 +3.17% · 하이닉스 +5.96%","detail":"정규장 시초가 이후 상승분 유지","tone":"positive"},{"label":"KOSPI 기준선","value":"6,748 / 6,895.63","detail":"전일 저가 방어와 고점 돌파","tone":"info"},{"label":"달러/원","value":"1,420.20원","detail":"1,420원대 방향","tone":"warning"}],
+  "changes":[{"label":"KOSPI","before":"8월 12일 종가 6,579.04","after":"8월 13일 6,813.34","meaning":"외국인·기관 동반 매수로 3.56% 올랐습니다."},{"label":"미국 반도체","before":"전일 SOXX +2.32%","after":"SOXX +0.76%","meaning":"상승은 이어졌지만 속도는 둔화했습니다."},{"label":"미국 10년물","before":"8월 12일 4.68%","after":"8월 13일 4.63%","meaning":"PPI 안도 뒤 5bp 내렸습니다."}],
+  "factors":[{"label":"수급","metric":"외국인 +2조1,102억","detail":"전일 상승의 핵심 동력이었습니다.","tone":"positive"},{"label":"반도체","metric":"SOXX +0.76% · MU +4.23%","detail":"메모리 리더십이 이어졌습니다.","tone":"positive"},{"label":"장전 호가","metric":"삼성 +3.17% · 하이닉스 +5.96%","detail":"시초가 이후 유지 여부가 첫 시험입니다.","tone":"positive"},{"label":"메모리","metric":"DDR5 +0.38% · DDR4 +0.42%","detail":"DRAM 현물 강세가 이어졌습니다.","tone":"positive"},{"label":"환율·금리","metric":"원/달러 1,420.20원 · 10년물 4.63%","detail":"금리는 내렸지만 환율은 추격 부담입니다.","tone":"warning"},{"label":"오늘 일정","metric":"미국 소매판매 21:30 KST","detail":"소비 강도와 금리 경로를 다시 확인합니다.","tone":"warning"}],
   "flows":{"program":{"arbitrage":null,"nonArbitrage":null,"total":null,"unit":"억원"},"kospi200FuturesForeign":null,"futuresUnit":"계약","futuresAsOfLabel":"장전 확인값 없음"},
-  "memory":[{"label":"DDR5 16Gb 4800/5600","value":"$52.500","change":"+0.70%"},{"label":"DDR4 16Gb 3200","value":"$87.354","change":"+0.56%"},{"label":"DDR5 RDIMM 32GB","value":"$1,565.00","change":"+1.29%"}],
-  "scenarios":[
-    {"id":"base","label":"기본 · 50%","range":"KOSPI 6,550~6,699","summary":"반도체가 강하게 출발하지만 전일 고점 6,668 부근에서 차익실현과 맞섭니다.","conditions":["6,550 방어","외국인 현물 순매수","반도체 갭 유지"],"invalidation":"6,700선 위에서 외국인 현물·선물 매수가 함께 늘면 강세 범위로 이동합니다."},
-    {"id":"bull","label":"강세 · 30%","range":"KOSPI 6,700~6,820","summary":"6,668을 회복한 뒤 외국인 현물·선물이 함께 늘어나는 경우입니다.","conditions":["KOSPI 6,668 돌파","삼성·하이닉스 장전 호가 유지","외국인 현·선물 동반 매수"],"invalidation":"6,668 아래로 밀리고 외국인 매수가 둔화하면 강세 시나리오는 약해집니다."},
-    {"id":"bear","label":"약세 · 20%","range":"KOSPI 6,400~6,549","summary":"반도체가 갭상승분을 반납하고 외국인이 순매도로 돌아서는 경우입니다.","conditions":["KOSPI 6,550 이탈","외국인 현물 순매도","원/달러 1,420원 상향"],"invalidation":"6,550을 회복하고 외국인이 순매수를 유지하면 약세 시나리오는 약해집니다."}
-  ],
-  "strategyLevels":[
-    {"asset":"KOSPI","support":"6,550 / 6,413.50","pivot":"6,668.43","resistance":"6,700 / 6,820"},
-    {"asset":"KODEX 레버리지","support":"98,000원","pivot":"100,300원","resistance":"103,500원"},
-    {"asset":"삼성전자","support":"255,500원","pivot":"267,000원","resistance":"275,000원"},
-    {"asset":"SK하이닉스","support":"1,504,000원","pivot":"1,583,000원","resistance":"1,620,000원"},
-    {"asset":"USD/KRW","support":"1,410원","pivot":"1,419원","resistance":"1,420원"}
-  ],
-  "events":[
-    {"time":"8월 13일 21:30 KST","name":"미국 7월 PPI·신규 실업수당","path":"기업 물가와 고용이 CPI 안도를 이어가는지 확인"},
-    {"time":"8월 14일 21:30 KST","name":"미국 7월 소매판매","path":"소비 강도와 금리 경로 확인"},
-    {"time":"8월 18일 22:15 KST","name":"미국 7월 산업생산","path":"제조업·설비 가동 흐름 확인"}
-  ],
-  "checklist":[{"id":"kospi-6550","label":"KOSPI가 6,550선을 지켰다"},{"id":"foreign-speed","label":"외국인 매수 속도가 개장 60분까지 유지됐다"},{"id":"chip-leaders","label":"삼성전자·SK하이닉스가 장전 상승분을 지켰다"}],
-  "technical":{"note":"8월 12일 정규장 확정값과 8월 13일 고정 기준선을 비교합니다.","instruments":[
-    {"id":"KOSPI","label":"KOSPI","unit":"pt","asOf":"2026-08-12T15:30:00+09:00","asOfLabel":"8월 12일 정규장 마감","points":[{"label":"시가","value":6438.50},{"label":"고가","value":6668.43},{"label":"저가","value":6413.50},{"label":"종가","value":6579.04}],"levels":[{"label":"2차 지지","value":6413.50},{"label":"1차 지지","value":6550},{"label":"반등 기준","value":6668.43},{"label":"저항","value":6700}],"interpretation":"6,550을 지키고 6,668.43을 넘어야 전일 급등이 이어집니다."},
-    {"id":"KODEX","label":"KODEX 레버리지","unit":"원","asOf":"2026-08-12T15:30:00+09:00","asOfLabel":"8월 12일 정규장 마감","points":[{"label":"시가","value":95000},{"label":"고가","value":103500},{"label":"저가","value":94530},{"label":"종가","value":100300}],"levels":[{"label":"1차 지지","value":98000},{"label":"반등 기준","value":100300},{"label":"저항","value":103500}],"interpretation":"98,000원 방어와 100,300원 유지, 103,500원 돌파를 차례로 봅니다."}
-  ]},
-  "sources":[
-    {"label":"KOSPI","href":"https://m.stock.naver.com/domestic/index/KOSPI/total"},
-    {"label":"KODEX 레버리지","href":"https://finance.naver.com/item/main.naver?code=122630"},
-    {"label":"TrendForce DRAM spot","href":"https://www.trendforce.com/price/dram/module_spot"},
-    {"label":"미국 CPI·PPI 일정","href":"https://www.bls.gov/schedule/2026/08_sched_list.htm"},
-    {"label":"미 재무부","href":"https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?field_tdr_date_value=2026&type=daily_treasury_yield_curve"}
-  ]
+  "memory":[{"label":"DDR5 16Gb 4800/5600","value":"$52.700","change":"+0.38%"},{"label":"DDR4 16Gb 3200","value":"$87.720","change":"+0.42%"},{"label":"DDR5 RDIMM 32GB","value":"$1,565.00","change":"+1.29%"}],
+  "scenarios":[{"id":"base","label":"기본 · 45%","range":"KOSPI 6,780~6,949","summary":"전일 고점 6,895.63을 오가며 이틀 급등분의 차익실현을 소화합니다.","conditions":["6,780 방어","외국인 현물 순매수","반도체 갭 유지"],"invalidation":"6,950 위에서 외국인 매수가 늘면 강세 범위로 이동합니다."},{"id":"bull","label":"강세 · 35%","range":"KOSPI 6,950~7,100","summary":"메모리주가 장전 상승분을 지키고 외국인 현물 매수가 함께 늘어나는 경우입니다.","conditions":["KOSPI 6,895.63 돌파","삼성·하이닉스 장전 호가 유지","외국인 현물 순매수"],"invalidation":"6,895.63 아래로 밀리고 외국인 매수가 둔화하면 강세 시나리오는 약해집니다."},{"id":"bear","label":"약세 · 20%","range":"KOSPI 6,600~6,779","summary":"메모리주가 갭상승분을 반납하고 외국인이 현물 순매도로 돌아서는 경우입니다.","conditions":["KOSPI 6,780 이탈","외국인 현물 순매도","원/달러 상승"],"invalidation":"6,780을 회복하고 외국인이 순매수를 유지하면 약세 시나리오는 약해집니다."}],
+  "strategyLevels":[{"asset":"KOSPI","support":"6,748.13 / 6,600","pivot":"6,895.63","resistance":"6,950 / 7,100"},{"asset":"KODEX 레버리지","support":"106,415원","pivot":"107,975원","resistance":"111,180 / 115,000원"},{"asset":"삼성전자","support":"268,000원","pivot":"276,500원","resistance":"278,000원"},{"asset":"SK하이닉스","support":"1,593,000원","pivot":"1,688,000원","resistance":"1,700,000원"},{"asset":"USD/KRW","support":"1,410원","pivot":"1,420.20원","resistance":"1,430원"}],
+  "events":[{"time":"8월 14일 21:30 KST","name":"미국 7월 소매판매","path":"소비 강도와 금리·달러 경로 확인"},{"time":"8월 18일 22:15 KST","name":"미국 7월 산업생산","path":"제조업·설비 가동 흐름 확인"}],
+  "checklist":[{"id":"kospi-6896","label":"KOSPI가 6,895.63을 넘고 지켰다"},{"id":"foreign-speed","label":"외국인 매수 속도가 개장 60분까지 유지됐다"},{"id":"chip-leaders","label":"삼성전자·SK하이닉스가 장전 상승분을 지켰다"}],
+  "technical":{"note":"8월 13일 정규장 확정값과 8월 14일 고정 기준선을 비교합니다.","instruments":[{"id":"KOSPI","label":"KOSPI","unit":"pt","asOf":"2026-08-13T15:30:00+09:00","asOfLabel":"8월 13일 정규장 마감","points":[{"label":"시가","value":6773.92},{"label":"고가","value":6895.63},{"label":"저가","value":6748.13},{"label":"종가","value":6813.34}],"levels":[{"label":"2차 지지","value":6600},{"label":"1차 지지","value":6748.13},{"label":"돌파 기준","value":6895.63},{"label":"저항","value":6950}],"interpretation":"6,748을 지키고 6,895.63을 넘어야 이틀 급등이 한 번 더 이어집니다."},{"id":"KODEX","label":"KODEX 레버리지","unit":"원","asOf":"2026-08-13T15:30:00+09:00","asOfLabel":"8월 13일 정규장 마감","points":[{"label":"시가","value":107465},{"label":"고가","value":111180},{"label":"저가","value":106415},{"label":"종가","value":107975}],"levels":[{"label":"1차 지지","value":106415},{"label":"반등 기준","value":107975},{"label":"저항","value":111180},{"label":"강세 확장","value":115000}],"interpretation":"106,415원 방어와 107,975원 유지, 111,180원 돌파를 차례로 봅니다."}]},
+  "sources":[{"label":"KOSPI","href":"https://m.stock.naver.com/domestic/index/KOSPI/total"},{"label":"KODEX 레버리지","href":"https://finance.naver.com/item/main.naver?code=122630"},{"label":"TrendForce DRAM spot","href":"https://www.trendforce.com/price/dram/dram_spot"},{"label":"미국 PPI","href":"https://www.bls.gov/news.release/ppi.nr0.htm"},{"label":"미 재무부","href":"https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?field_tdr_date_value=2026&type=daily_treasury_yield_curve"}]
 }

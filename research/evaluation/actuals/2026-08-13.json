@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-08-13",
+  "bizdate": "20260813",
+  "fetchedAt": "2026-08-14T08:15:12+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6773.92,
+    "high": 6895.63,
+    "low": 6748.13,
+    "close": 6813.34,
+    "asOf": "2026-08-13T15:30:00+09:00",
+    "source": "Naver Finance KOSPI daily chart",
+    "rawHash": "ff1b17d6e76046a8228dffb9634136d4bab189e58788cc956b3595698c577ba8"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "KODEX와 현물 수급은 확인했지만 프로그램 차익·비차익과 시장 폭을 같은 종가 원천으로 완결하지 못해 전체 스냅샷을 비워 둔다.",
+  "flowTrajectory": null,
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "incomplete",
+    "source": "Naver Finance 투자자별 매매동향 보관 화면",
+    "asOf": "2026-08-13T15:30:00+09:00",
+    "fetchedAt": "2026-08-14T08:15:12+09:00",
+    "missingReason": "09:30·10:00·14:00 외국인 현물 및 프로그램 누적값의 시점별 원문이 보관되지 않아 종가에서 역산하지 않았다.",
+    "rawHash": "c1a8fa1772ae33cd016c301497a38a9b2db93c9b4f57f4218a4da7813841554e"
+  }
+}
