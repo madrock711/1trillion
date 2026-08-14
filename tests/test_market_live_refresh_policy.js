@@ -53,7 +53,7 @@ assert.ok(dashboard.includes("if (usRegularMarketActive() && !domesticMarketActi
 assert.ok(liveSource.includes('fetchTqqqLatest: fetchTqqqLatest'), 'TQQQ 독립 데이터 요청 함수를 공개해야 한다.');
 assert.ok(liveSource.includes('usRegularMarketOpen ? 60 * 1000 : 15 * 60 * 1000'), '미국 정규장 중 TQQQ 1분봉 캐시는 1분이어야 한다.');
 assert.ok(liveSource.includes('usRegularMarketOpen ? 5 * 60 * 1000 : 15 * 60 * 1000'), '미국 정규장 중 TQQQ 5분 원자료 캐시는 5분이어야 한다.');
-assert.ok(html.includes('market-live-data.js?v=20260813-01'));
-assert.ok(html.includes('market-dashboard.js?v=20260813-02'));
+assert.ok(html.includes('market-live-data.js?v=20260814-01'));
+assert.ok(html.includes('market-dashboard.js?v=20260814-01'));
 
 console.log('Market live refresh policy tests passed.');

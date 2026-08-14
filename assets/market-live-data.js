@@ -499,6 +499,17 @@
         }).filter(function (day) { return day.bars.length > 1; });
     }
 
+    function selectCompositeMomentumDay(days, selectedDate, allowPrevious) {
+        var ordered = (days || []).filter(function (day) {
+            return day && normalizeIsoDate(day.date) && Array.isArray(day.bars);
+        }).slice().sort(function (left, right) {
+            return left.date.localeCompare(right.date);
+        });
+        var exact = ordered.filter(function (day) { return day.date === selectedDate; })[0] || null;
+        if (exact || !allowPrevious) return exact;
+        return ordered.filter(function (day) { return day.date < selectedDate; }).slice(-1)[0] || null;
+    }
+
     function normalizeKospiIntradayForeignFlowHtml(payload, expectedDate) {
         var raw = String(payload || '');
         var expected = normalizeIsoDate(expectedDate);
@@ -2441,6 +2452,7 @@
         fetchKospiIntradayDay: fetchKospiIntradayDay,
         estimateBvcPressureDays: estimateBvcPressureDays,
         calculateCompositeVolumeMomentum: calculateCompositeVolumeMomentum,
+        selectCompositeMomentumDay: selectCompositeMomentumDay,
         calculateCompositeDailyVolumeMomentum: calculateCompositeDailyVolumeMomentum,
         fetchKospiMinutePressureDays: fetchKospiMinutePressureDays,
         normalizeTqqqPriceHistory: normalizeTqqqPriceHistory,

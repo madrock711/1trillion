@@ -54,6 +54,7 @@ function dailyRows(count, offset) {
     assert.strictEqual(typeof live.estimateBvcPressureDays, 'function');
     assert.strictEqual(typeof live.calculateCompositeVolumeMomentum, 'function');
     assert.strictEqual(typeof live.calculateCompositeDailyVolumeMomentum, 'function');
+    assert.strictEqual(typeof live.selectCompositeMomentumDay, 'function');
     assert.strictEqual(typeof live.fetchKospiMinutePressureDays, 'function');
 
     const ratios = Array(40).fill(-0.12).concat(Array(40).fill(0.28));
@@ -101,6 +102,26 @@ function dailyRows(count, offset) {
         dailyBefore.map(row => [row.summary.direction, row.summary.momentum, row.summary.signal, row.summary.divergence]),
         dailyComposite.slice(0, 60).map(row => [row.summary.direction, row.summary.momentum, row.summary.signal, row.summary.divergence]),
         'future daily bars must not change previously calculated scores'
+    );
+
+    const availableCompositeDays = [
+        { date: '2026-08-12', bars: [{}, {}] },
+        { date: '2026-08-13', bars: [{}, {}] }
+    ];
+    assert.strictEqual(
+        live.selectCompositeMomentumDay(availableCompositeDays, '2026-08-14', true).date,
+        '2026-08-13',
+        '장전 live placeholder는 가장 최근 계산 가능한 거래일을 이어서 보여줘야 한다.'
+    );
+    assert.strictEqual(
+        live.selectCompositeMomentumDay(availableCompositeDays, '2026-08-14', false),
+        null,
+        '과거 거래일 원자료가 없을 때는 다른 날짜로 조용히 대체하면 안 된다.'
+    );
+    assert.strictEqual(
+        live.selectCompositeMomentumDay(availableCompositeDays, '2026-08-12', true).date,
+        '2026-08-12',
+        '선택 거래일 자료가 있으면 정확히 그 날짜를 사용해야 한다.'
     );
 
     const minutePayload = [
@@ -154,6 +175,7 @@ function dailyRows(count, offset) {
     assert(dashboard.includes('effectiveIntradayInterval(compositeDay, selectedKodexIntradayInterval)'));
     assert(!dashboard.includes('rows = rows.slice(-previousCount);'), '합성 모멘텀도 네 거래일 원자료를 유지해야 한다.');
     assert(dashboard.includes("title.textContent = 'KOSPI·KODEX 거래량 모멘텀';"));
+    assert(dashboard.includes("showCompositeMomentumStatus('공통 분봉 데이터가 부족합니다')"));
     assert(!dashboard.includes("formatHistoryDate(previousDay.date) + ' → ' + formatHistoryDate(selectedDay.date) + ' KOSPI·KODEX 거래량 모멘텀'"));
     assert(!dashboard.includes("'KOSPI·KODEX 합성 거래량 모멘텀 · ' + kospiPeriodLabel()"));
     console.log('composite volume momentum tests passed');

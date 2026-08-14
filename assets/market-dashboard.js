@@ -1686,7 +1686,7 @@
         return momentum >= 0 ? '중립권 상향' : '중립권 하향';
     }
 
-    function renderCompositeMomentumChart(days) {
+    function renderCompositeMomentumChart(days, options) {
         var svg = document.getElementById('composite-momentum-chart');
         var title = document.getElementById('composite-momentum-title');
         var readout = document.getElementById('composite-momentum-readout');
@@ -1695,9 +1695,15 @@
         title.textContent = 'KOSPI·KODEX 거래량 모멘텀';
         var rows;
         if (selectedKodexChartMode === 'intraday') {
-            var selectedDay = (days || []).filter(function (day) { return day.date === selectedKodexIntradayDate; })[0];
+            var settings = options || {};
+            var selectedDay = window.MarketDashboardLive.selectCompositeMomentumDay(
+                days,
+                selectedKodexIntradayDate,
+                Boolean(settings.allowPrevious)
+            );
             if (!selectedDay) {
                 readout.textContent = '선택한 거래일은 두 시장의 공통 1분봉이 부족합니다.';
+                showCompositeMomentumStatus('공통 분봉 데이터가 부족합니다');
                 return;
             }
             var visibleDays = (days || []).filter(function (day) {
@@ -1720,6 +1726,7 @@
         rows = technicalRangeSlice(rows);
         if (rows.length < 2) {
             readout.textContent = '합성 거래량 모멘텀을 계산할 공통 구간이 부족합니다.';
+            showCompositeMomentumStatus('공통 구간 데이터가 부족합니다');
             return;
         }
 
@@ -1859,6 +1866,8 @@
         var indexUrl = liveInstrument.intradayIndexUrl || instrument.intradayIndexUrl
             || (kodexIntradaySource ? new URL(kodexIntradaySource, window.location.href).href : '');
         var liveDay = liveInstrument.liveIntradayDay || instrument.liveIntradayDay || null;
+        var selectedEntry = indexRows.filter(function (row) { return row && row.date === selectedKodexIntradayDate; })[0] || null;
+        var allowPrevious = Boolean(selectedEntry && selectedEntry.live && !selectedEntry.path);
         var dates = indexRows.filter(function (row) { return Boolean(row && row.path); })
             .map(function (row) { return row.date; }).filter(Boolean).slice(-12);
         if (liveDay && dates.indexOf(liveDay.date) === -1) dates.push(liveDay.date);
@@ -1869,7 +1878,7 @@
         }
         var key = 'intraday|' + dates.join(',') + '|' + (liveDay && liveDay.sourceLastAt || 'archive');
         if (compositeMomentumState.key === key && compositeMomentumState.days.length) {
-            renderCompositeMomentumChart(compositeMomentumState.days);
+            renderCompositeMomentumChart(compositeMomentumState.days, { allowPrevious: allowPrevious });
             return;
         }
         if (compositeMomentumState.pending && compositeMomentumState.key === key) return;
@@ -1895,7 +1904,7 @@
             if (token !== compositeMomentumRenderToken) return;
             var days = api.calculateCompositeVolumeMomentum(parts[0], parts[1]);
             compositeMomentumState.days = days;
-            renderCompositeMomentumChart(days);
+            renderCompositeMomentumChart(days, { allowPrevious: allowPrevious });
         }).catch(function () {
             if (token !== compositeMomentumRenderToken) return;
             readout.textContent = '합성 거래량 모멘텀 데이터를 불러오지 못했습니다.';
