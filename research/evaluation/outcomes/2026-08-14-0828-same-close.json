@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-14-0828-same-close",
+  "recordedAt": "2026-08-15T08:55:00+09:00",
+  "actualRef": "2026-08-14",
+  "realizedScenario": "bull",
+  "errorCodes": [],
+  "triggerResults": [
+    {"id":"bull-price","status":"unavailable","reason":"15:20 시점 KOSPI 값이 평가 원천에 보관되지 않았다."},
+    {"id":"bull-foreign","status":"unavailable","reason":"15:20 시점 외국인 현물 누적값이 평가 원천에 보관되지 않았다."},
+    {"id":"base-support","status":"unavailable","reason":"15:20 시점 KOSPI 값이 평가 원천에 보관되지 않았다."},
+    {"id":"bear-price","status":"unavailable","reason":"15:20 시점 KOSPI 값이 평가 원천에 보관되지 않았다."},
+    {"id":"bear-foreign","status":"unavailable","reason":"15:20 시점 외국인 현물 누적값이 평가 원천에 보관되지 않았다."}
+  ],
+  "driverAssessment": [
+    {"id":"ppi-yield-relief","status":"partial"},
+    {"id":"memory-leadership-nxt","status":"confirmed"},
+    {"id":"two-day-gain-flow-test","status":"confirmed"}
+  ],
+  "hypothesisTests": [
+    {"hypothesisId":"us-chip-signal-overweight","result":"supported"}
+  ]
+}
