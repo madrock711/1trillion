@@ -50,35 +50,54 @@
 
     var activeParagraph = null;
     var centerFrame = 0;
-    var keylineAnimations = typeof WeakMap === 'function' ? new WeakMap() : null;
+    var keylineEffects = typeof WeakMap === 'function' ? new WeakMap() : null;
 
     function replayKeyline(keyline) {
-        keyline.classList.add('is-highlighted');
-
-        if (typeof keyline.animate === 'function') {
-            if (keylineAnimations) {
-                var previousAnimation = keylineAnimations.get(keyline);
-                if (previousAnimation) previousAnimation.cancel();
-            }
-
-            var animation = keyline.animate([
-                { backgroundSize: '0% 100%' },
-                { backgroundSize: '100% 100%' }
-            ], {
-                duration: 1100,
-                easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
-            });
-
-            if (keylineAnimations) keylineAnimations.set(keyline, animation);
-            return;
+        var previousEffect = keylineEffects ? keylineEffects.get(keyline) : null;
+        if (previousEffect) {
+            window.clearTimeout(previousEffect.timer);
+            if (previousEffect.animation) previousEffect.animation.cancel();
         }
 
-        keyline.classList.remove('is-sweeping');
-        window.requestAnimationFrame(function () {
+        keyline.style.backgroundImage = 'none';
+        keyline.style.backgroundColor = 'rgba(68, 209, 122, 0)';
+        keyline.classList.add('is-highlighted');
+
+        var effect = {
+            animation: null,
+            timer: 0
+        };
+        if (keylineEffects) keylineEffects.set(keyline, effect);
+
+        effect.timer = window.setTimeout(function () {
+            if (typeof keyline.animate === 'function') {
+                effect.animation = keyline.animate([
+                    { backgroundColor: 'rgba(68, 209, 122, 0)' },
+                    { backgroundColor: 'rgba(68, 209, 122, 0.28)' }
+                ], {
+                    duration: 1000,
+                    easing: 'ease-out',
+                    fill: 'forwards'
+                });
+
+                effect.animation.onfinish = function () {
+                    keyline.style.removeProperty('background-image');
+                    keyline.style.removeProperty('background-color');
+                    effect.animation.cancel();
+                    if (keylineEffects && keylineEffects.get(keyline) === effect) {
+                        keylineEffects.delete(keyline);
+                    }
+                };
+                return;
+            }
+
+            keyline.classList.remove('is-sweeping');
             window.requestAnimationFrame(function () {
                 keyline.classList.add('is-sweeping');
+                keyline.style.removeProperty('background-image');
+                keyline.style.removeProperty('background-color');
             });
-        });
+        }, 90);
     }
 
     function getCenterCandidate() {
