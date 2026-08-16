@@ -31,97 +31,92 @@
     updateProgress();
 
     var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var keylines = Array.prototype.slice.call(article.querySelectorAll('.article-keyline'));
+    var readingParagraphs = Array.prototype.slice.call(article.querySelectorAll('.article-body section > p'));
+    var keylines = [];
 
-    function revealKeyline(element) {
-        element.classList.add('is-revealed');
-    }
-
-    if (reducedMotion || !('IntersectionObserver' in window)) {
-        keylines.forEach(revealKeyline);
-    } else {
-        var keylineObserver = new IntersectionObserver(function (entries, observer) {
-            entries.forEach(function (entry) {
-                if (!entry.isIntersecting) return;
-                revealKeyline(entry.target);
-                observer.unobserve(entry.target);
-            });
-        }, {
-            root: null,
-            rootMargin: '-42% 0px -42% 0px',
-            threshold: 0
+    readingParagraphs.forEach(function (paragraph) {
+        Array.prototype.forEach.call(paragraph.querySelectorAll('strong, b'), function (keyline) {
+            keyline.classList.add('article-keyline');
+            keylines.push(keyline);
         });
+    });
 
+    if (reducedMotion) {
         keylines.forEach(function (keyline) {
-            keylineObserver.observe(keyline);
+            keyline.classList.add('is-highlighted');
         });
+        return;
     }
 
-    var toc = article.querySelector('.reading-toc');
-    var targetTimer = 0;
-    var destinationScrollHandler = null;
-    var destinationFallback = 0;
+    var activeParagraph = null;
+    var centerFrame = 0;
+    var keylineAnimations = typeof WeakMap === 'function' ? new WeakMap() : null;
 
-    function emphasizeHeading(heading) {
-        if (!heading) return;
+    function replayKeyline(keyline) {
+        keyline.classList.add('is-highlighted');
 
-        window.clearTimeout(targetTimer);
-        article.querySelectorAll('.is-reading-target').forEach(function (element) {
-            element.classList.remove('is-reading-target');
-        });
+        if (typeof keyline.animate === 'function') {
+            if (keylineAnimations) {
+                var previousAnimation = keylineAnimations.get(keyline);
+                if (previousAnimation) previousAnimation.cancel();
+            }
 
-        heading.setAttribute('data-reading-target-seen', 'true');
-        heading.classList.add('is-reading-target');
-        targetTimer = window.setTimeout(function () {
-            heading.classList.remove('is-reading-target');
-        }, reducedMotion ? 3500 : 5200);
-    }
+            var animation = keyline.animate([
+                { backgroundSize: '0% 100%' },
+                { backgroundSize: '100% 100%' }
+            ], {
+                duration: 1100,
+                easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
+            });
 
-    function emphasizeWhenVisible(heading) {
-        if (!heading) return;
-
-        window.clearTimeout(destinationFallback);
-        if (destinationScrollHandler) {
-            window.removeEventListener('scroll', destinationScrollHandler);
-            destinationScrollHandler = null;
-        }
-
-        if (reducedMotion) {
-            emphasizeHeading(heading);
+            if (keylineAnimations) keylineAnimations.set(keyline, animation);
             return;
         }
 
-        function finishArrival() {
-            window.clearTimeout(destinationFallback);
-            if (destinationScrollHandler) {
-                window.removeEventListener('scroll', destinationScrollHandler);
-                destinationScrollHandler = null;
-            }
-            emphasizeHeading(heading);
-        }
-
-        destinationScrollHandler = function () {
-            window.clearTimeout(destinationFallback);
-            destinationFallback = window.setTimeout(finishArrival, 140);
-        };
-
-        window.addEventListener('scroll', destinationScrollHandler, { passive: true });
-        destinationFallback = window.setTimeout(finishArrival, 3000);
-    }
-
-    if (toc) {
-        toc.addEventListener('click', function (event) {
-            var link = event.target.closest('a[href^="#"]');
-            if (!link) return;
-
-            var target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
-            emphasizeWhenVisible(target);
+        keyline.classList.remove('is-sweeping');
+        window.requestAnimationFrame(function () {
+            window.requestAnimationFrame(function () {
+                keyline.classList.add('is-sweeping');
+            });
         });
     }
 
-    if (window.location.hash) {
-        window.setTimeout(function () {
-            emphasizeWhenVisible(document.getElementById(decodeURIComponent(window.location.hash.slice(1))));
-        }, reducedMotion ? 0 : 100);
+    function getCenterCandidate() {
+        var viewportHeight = window.innerHeight;
+        var centerY = viewportHeight / 2;
+        var best = null;
+        var bestDistance = Infinity;
+
+        readingParagraphs.forEach(function (paragraph) {
+            var rect = paragraph.getBoundingClientRect();
+            if (rect.height < 10 || rect.bottom < 0 || rect.top > viewportHeight) return;
+
+            var paragraphCenter = rect.top + rect.height / 2;
+            var distance = Math.abs(paragraphCenter - centerY);
+            if (distance >= bestDistance) return;
+
+            bestDistance = distance;
+            best = paragraph;
+        });
+
+        return best;
     }
+
+    function updateCenterHighlight() {
+        centerFrame = 0;
+        var candidate = getCenterCandidate();
+        if (!candidate || candidate === activeParagraph) return;
+
+        activeParagraph = candidate;
+        Array.prototype.forEach.call(candidate.querySelectorAll('.article-keyline'), replayKeyline);
+    }
+
+    function requestCenterUpdate() {
+        if (centerFrame) return;
+        centerFrame = window.requestAnimationFrame(updateCenterHighlight);
+    }
+
+    window.addEventListener('scroll', requestCenterUpdate, { passive: true });
+    window.addEventListener('resize', requestCenterUpdate);
+    updateCenterHighlight();
 })();
