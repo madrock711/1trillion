@@ -74,7 +74,7 @@
         heading.classList.add('is-reading-target');
         targetTimer = window.setTimeout(function () {
             heading.classList.remove('is-reading-target');
-        }, reducedMotion ? 400 : 1500);
+        }, reducedMotion ? 3500 : 5200);
     }
 
     function emphasizeWhenVisible(heading) {

@@ -10,10 +10,10 @@ const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
 
 assert.match(article, /data-reading-enhancements/);
 assert.match(article, /class="article-reading-progress" aria-hidden="true"/);
-assert.match(article, /assets\/article-reading\.js\?v=20260816-2/);
+assert.match(article, /assets\/article-reading\.js\?v=20260816-4/);
 assert.equal((article.match(/class="article-keyline"/g) || []).length, 5);
-assert.match(article, /article:modified_time" content="2026-08-16T11:31:15\+09:00"/);
-assert.match(article, /"dateModified": "2026-08-16T11:31:15\+09:00"/);
+assert.match(article, /article:modified_time" content="2026-08-16T11:54:47\+09:00"/);
+assert.match(article, /"dateModified": "2026-08-16T11:54:47\+09:00"/);
 
 assert.match(script, /IntersectionObserver/);
 assert.match(script, /rootMargin: '-42% 0px -42% 0px'/);
@@ -21,6 +21,7 @@ assert.match(script, /requestAnimationFrame\(updateProgress\)/);
 assert.match(script, /prefers-reduced-motion: reduce/);
 assert.match(script, /function emphasizeWhenVisible\(heading\)/);
 assert.match(script, /window\.setTimeout\(finishArrival, 140\)/);
+assert.match(script, /reducedMotion \? 3500 : 5200/);
 assert.match(script, /data-reading-target-seen/);
 assert.doesNotMatch(script, /localStorage/);
 assert.doesNotMatch(script, /querySelectorAll\(['"](?:strong|b)/);
@@ -29,6 +30,8 @@ assert.match(styles, /\.article-keyline\.is-revealed/);
 assert.match(styles, /@keyframes article-keyline-sweep/);
 assert.match(styles, /\.article-reading-progress span/);
 assert.match(styles, /\.reading-article h2\.is-reading-target/);
+assert.match(styles, /box-shadow: -0\.5rem 0 0 -0\.12rem var\(--accent-color\)/);
+assert.match(styles, /transition: background-color 320ms ease, box-shadow 320ms ease/);
 assert.match(styles, /@media \(prefers-reduced-motion: reduce\)/);
 
 assert.match(
