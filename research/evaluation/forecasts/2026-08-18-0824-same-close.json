@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-18-0824-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-08-18.md",
+  "reportSha256": "e129ce55a9e3eae12c23973e15b9beb83fcff6b6cebee6c877b9fddb70c23973",
+  "issuedAt": "2026-08-18T08:24:09+09:00",
+  "dataCutoffAt": "2026-08-18T08:21:33+09:00",
+  "marketState": "preopen",
+  "marketRegime": "event_shock",
+  "evaluationBucket": "preopen",
+  "target": {"sessionDate":"2026-08-18","horizon":"session_close","instrument":"KOSPI","leadSessions":0,"previousSessionDate":"2026-08-14"},
+  "reference": {"price":6977.94,"asOf":"2026-08-14T15:30:00+09:00","kind":"previous_close"},
+  "scenarios": {
+    "bull": {"low":7150,"high":7350,"probability":0.40},
+    "base": {"low":6950,"high":7150,"probability":0.40},
+    "bear": {"low":6700,"high":6950,"probability":0.20}
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {"low":6650,"high":7450,"coverage":0.9},
+  "drivers": [
+    {"id":"memory-nxt-leadership","rank":1,"claim":"Micron·SOXX 강세와 삼성전자·SK하이닉스 NXT 상승이 국내 메모리 리더십을 지지한다.","validationMetric":"삼성전자·SK하이닉스·KOSPI 종가"},
+    {"id":"oil-yield-cap","rank":2,"claim":"Brent 90달러대와 미국 10년물 4.72%가 성장주 밸류에이션과 추격 매수 상단을 제한한다.","validationMetric":"Brent·미국 10년물·KOSPI 종가"},
+    {"id":"holiday-ewy-flow-test","rank":3,"claim":"한국 휴장일 EWY 상승은 새 신호지만 7,010.86 돌파의 지속성은 외국인 현물 수급이 결정한다.","validationMetric":"09:30·10:00·14:00·종가 외국인 및 KOSPI"}
+  ],
+  "scenarioTriggers": {
+    "bull": {"logic":"AND","observeBy":"2026-08-18T15:20:00+09:00","conditions":[{"id":"bull-price","description":"KOSPI 7,010.86 이상","metricId":"kospi_price","operator":"gte","threshold":7010.86,"source":"Naver Finance KOSPI"},{"id":"bull-foreign","description":"외국인 현물 순매수","metricId":"foreign_cash","operator":"gt","threshold":0,"source":"Naver Finance 투자자별 매매동향"}]},
+    "base": {"logic":"AND","observeBy":"2026-08-18T15:20:00+09:00","conditions":[{"id":"base-support","description":"KOSPI 6,950 이상","metricId":"kospi_price","operator":"gte","threshold":6950,"source":"Naver Finance KOSPI"}]},
+    "bear": {"logic":"OR","observeBy":"2026-08-18T15:20:00+09:00","conditions":[{"id":"bear-price","description":"KOSPI 6,848.43 미만","metricId":"kospi_price","operator":"lt","threshold":6848.43,"source":"Naver Finance KOSPI"},{"id":"bear-foreign","description":"외국인 현물 순매도","metricId":"foreign_cash","operator":"lt","threshold":0,"source":"Naver Finance 투자자별 매매동향"}]}
+  },
+  "hypothesisTrials": [{"hypothesisId":"us-chip-signal-overweight","regime":"event_shock","candidatePrediction":7100,"baselineId":"reference_carry","predictorVersion":"us-chip-signal-overweight-v1"}],
+  "posture": {"attack":30,"wait":50,"defense":20},
+  "supersedes": null,
+  "contentHash": "ab08565d5f9acf9ffd5a5bfbcab93859f725bc364a5d7e0bc6c0ad1f8d3a387c"
+}
