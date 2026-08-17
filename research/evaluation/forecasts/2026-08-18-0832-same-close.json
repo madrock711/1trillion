@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "forecastId": "2026-08-18-0824-same-close",
-  "visibility": "internal",
+  "forecastId": "2026-08-18-0832-same-close",
+  "visibility": "public",
   "reportPath": "reports/2026-08-18.md",
   "reportSha256": "000934566cc9c4382197ceccb0846f610692b0d0c336f3f4cdb8ab3326053d94",
-  "issuedAt": "2026-08-18T08:24:09+09:00",
-  "dataCutoffAt": "2026-08-18T08:21:33+09:00",
+  "issuedAt": "2026-08-18T08:32:02+09:00",
+  "dataCutoffAt": "2026-08-18T08:31:49+09:00",
   "marketState": "preopen",
   "marketRegime": "event_shock",
   "evaluationBucket": "preopen",
@@ -30,6 +30,6 @@
   },
   "hypothesisTrials": [{"hypothesisId":"us-chip-signal-overweight","regime":"event_shock","candidatePrediction":7100,"baselineId":"reference_carry","predictorVersion":"us-chip-signal-overweight-v1"}],
   "posture": {"attack":30,"wait":50,"defense":20},
-  "supersedes": null,
-  "contentHash": "508cf86cca81a77516ecf858cc5148d6416adbc0200d6b52a3c35bd098348716"
+  "supersedes": "2026-08-18-0824-same-close",
+  "contentHash": "a075ed3fc80bf268809247ff1bb389e596d13481cec0bc608f53e938cb075725"
 }
