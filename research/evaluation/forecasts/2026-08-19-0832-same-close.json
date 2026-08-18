@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "forecastId": "2026-08-19-0832-same-close",
-  "visibility": "public",
+  "visibility": "internal",
   "reportPath": "reports/2026-08-19.md",
-  "reportSha256": "bd9efb0eeef9313fec862a0d398e1f96dc4cea4a51ffab620686e92dee343de9",
+  "reportSha256": "21ac22ec0a69b71adb34b8098936ddef0c6eb4e9df2b0c444906ee4b64ab6b0d",
   "issuedAt": "2026-08-19T08:32:00+09:00",
   "dataCutoffAt": "2026-08-19T08:18:15+09:00",
   "marketState": "preopen",
@@ -31,5 +31,5 @@
   "hypothesisTrials": [],
   "posture": {"attack":15,"wait":45,"defense":40},
   "supersedes": "2026-08-19-0825-same-close",
-  "contentHash": "20a112e8701ead8dc9d413f7e5da49543c06f36e47c7050aada6653f077712eb"
+  "contentHash": "c58c3e44c6719510c3d22e12577c4b1bd7bd5c2a71cb1d7c9fc12321f6ca77ec"
 }
