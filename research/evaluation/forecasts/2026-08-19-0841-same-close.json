@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "forecastId": "2026-08-19-0832-same-close",
+  "forecastId": "2026-08-19-0841-same-close",
   "visibility": "internal",
   "reportPath": "reports/2026-08-19.md",
   "reportSha256": "7bb8b664e4ee37bcbb08a8974c48975c200cfe56e77909034ce9e2bfb196d0c6",
-  "issuedAt": "2026-08-19T08:32:00+09:00",
-  "dataCutoffAt": "2026-08-19T08:18:15+09:00",
+  "issuedAt": "2026-08-19T08:42:00+09:00",
+  "dataCutoffAt": "2026-08-19T08:41:32+09:00",
   "marketState": "preopen",
   "marketRegime": "risk_off",
   "evaluationBucket": "preopen",
@@ -28,8 +28,8 @@
     "base": {"logic":"AND","observeBy":"2026-08-19T15:20:00+09:00","conditions":[{"id":"base-support","description":"KOSPI 6,600 이상","metricId":"kospi_price","operator":"gte","threshold":6600,"source":"Naver Finance KOSPI"}]},
     "bear": {"logic":"OR","observeBy":"2026-08-19T15:20:00+09:00","conditions":[{"id":"bear-price","description":"KOSPI 6,600 미만","metricId":"kospi_price","operator":"lt","threshold":6600,"source":"Naver Finance KOSPI"},{"id":"bear-foreign","description":"외국인 현물 순매도","metricId":"foreign_cash","operator":"lt","threshold":0,"source":"Naver Finance 투자자별 매매동향"}]}
   },
-  "hypothesisTrials": [],
+  "hypothesisTrials": [{"hypothesisId":"us-chip-signal-overweight","regime":"risk_off","candidatePrediction":6656.25,"baselineId":"reference_carry","predictorVersion":"us-chip-signal-overweight-v1"}],
   "posture": {"attack":15,"wait":45,"defense":40},
-  "supersedes": "2026-08-19-0825-same-close",
-  "contentHash": "4a57f9c632eb6060a0872470e4039575c1618280eed932ec9ddbfb5cde7f5ad6"
+  "supersedes": "2026-08-19-0836-same-close",
+  "contentHash": "85b56246acec9fdcdbffcd120be2e5d19cc1ae13aaa47ea873ab79033ea0481e"
 }
