@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-18-0832-same-close",
+  "recordedAt": "2026-08-19T08:08:00+09:00",
+  "actualRef": "2026-08-18",
+  "realizedScenario": "bear",
+  "errorCodes": [],
+  "triggerResults": [
+    {"id":"bull-price","status":"unavailable","reason":"15:20 시점 KOSPI 값이 평가 원천에 보관되지 않았다."},
+    {"id":"bull-foreign","status":"unavailable","reason":"15:20 시점 외국인 현물 누적값이 평가 원천에 보관되지 않았다."},
+    {"id":"base-support","status":"unavailable","reason":"15:20 시점 KOSPI 값이 평가 원천에 보관되지 않았다."},
+    {"id":"bear-price","status":"unavailable","reason":"15:20 시점 KOSPI 값이 평가 원천에 보관되지 않았다."},
+    {"id":"bear-foreign","status":"unavailable","reason":"15:20 시점 외국인 현물 누적값이 평가 원천에 보관되지 않았다."}
+  ],
+  "driverAssessment": [
+    {"id":"memory-nxt-leadership","status":"partial"},
+    {"id":"oil-yield-cap","status":"confirmed"},
+    {"id":"holiday-ewy-flow-test","status":"partial"}
+  ],
+  "hypothesisTests": [
+    {"hypothesisId":"us-chip-signal-overweight","result":"refuted"}
+  ]
+}

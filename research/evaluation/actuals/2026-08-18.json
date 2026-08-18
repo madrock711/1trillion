@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-08-18",
+  "bizdate": "20260818",
+  "fetchedAt": "2026-08-19T08:06:30+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 7127.77,
+    "high": 7216.62,
+    "low": 6788.78,
+    "close": 6869.83,
+    "asOf": "2026-08-18T15:30:00+09:00",
+    "source": "Naver Finance KOSPI daily chart",
+    "rawHash": "8c4b071e08f7db47e280cb5dd1c19c83f676100cc19b1a589791c7ed44192622"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "KOSPI 종가와 투자자별 현물 수급은 확인했지만 평가 계약이 요구하는 프로그램·시장 폭을 포함한 동일 원천의 완결된 종가 스냅샷으로 보존되지 않아 비워 둔다.",
+  "flowTrajectory": null,
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "incomplete",
+    "source": "Naver Finance 투자자별 매매동향 보관 화면",
+    "asOf": "2026-08-18T15:30:00+09:00",
+    "fetchedAt": "2026-08-19T08:06:30+09:00",
+    "missingReason": "종가 외국인 현물 +914억원은 확인했지만 09:30·10:00·14:00의 외국인 현물과 프로그램 비차익·전체 누적값을 함께 보존한 원문이 없어 궤적을 만들지 않았다.",
+    "rawHash": "cef598eb20902d231917b70ec2714ca513f7c05153443d19dd474f7f672f25b6"
+  }
+}
