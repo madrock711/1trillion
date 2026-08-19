@@ -4267,10 +4267,17 @@
             throw new Error('최신 시황 글 정보가 부족합니다.');
         }
         data.markets.forEach(function (market) {
-            if (![market.value, market.open, market.high, market.low].every(function (value) { return typeof value === 'number' && Number.isFinite(value); })) {
+            var ohlc = [market.value, market.open, market.high, market.low];
+            var availableOhlcCount = ohlc.filter(function (value) {
+                return typeof value === 'number' && Number.isFinite(value);
+            }).length;
+            var requiresOhlc = market.id === 'KOSPI' || availableOhlcCount > 0;
+            if (requiresOhlc && availableOhlcCount !== ohlc.length) {
                 throw new Error(market.label + ' OHLC 데이터가 올바르지 않습니다.');
             }
-            if (market.high < market.low || market.value < market.low || market.value > market.high || market.open < market.low || market.open > market.high) {
+            if (availableOhlcCount === ohlc.length
+                && (market.high < market.low || market.value < market.low || market.value > market.high
+                    || market.open < market.low || market.open > market.high)) {
                 throw new Error(market.label + ' 현재가가 장중 범위를 벗어났습니다.');
             }
         });
