@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-20-0822-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-08-20.md",
+  "reportSha256": "8d87be070495b5f544ff9f32ad427fc8bdf3ac2fa9bdf4d5e44ade23a50f57ac",
+  "issuedAt": "2026-08-20T08:22:00+09:00",
+  "dataCutoffAt": "2026-08-20T08:20:54+09:00",
+  "marketState": "preopen",
+  "marketRegime": "event_shock",
+  "evaluationBucket": "preopen",
+  "target": {"sessionDate":"2026-08-20","horizon":"session_close","instrument":"KOSPI","leadSessions":0,"previousSessionDate":"2026-08-19"},
+  "reference": {"price":6471.17,"asOf":"2026-08-19T15:30:00+09:00","kind":"previous_close"},
+  "scenarios": {
+    "bull": {"low":6750,"high":7050,"probability":0.30},
+    "base": {"low":6450,"high":6750,"probability":0.50},
+    "bear": {"low":6100,"high":6450,"probability":0.20}
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {"low":6000,"high":7150,"coverage":0.9},
+  "drivers": [
+    {"id":"hynix-buyback-cancel","rank":1,"claim":"SK하이닉스의 2,407만 주 취득·소각과 NXT 8.13% 상승이 전일 급락 뒤 메모리주의 직접 반등 동력이다.","validationMetric":"SK하이닉스·삼성전자·KOSPI 종가"},
+    {"id":"us-chip-flow-overhang","rank":2,"claim":"SOXX·SMH 하락과 전일 외국인·비차익 대량 매도가 반등의 상단을 제한한다.","validationMetric":"SOXX·외국인 현물·프로그램 비차익·KOSPI 종가"},
+    {"id":"dram-yield-fx-relief","rank":3,"claim":"DRAM 현물 동반 상승, 미국 장기금리 하락과 달러/원 1,390원은 반도체 반등의 하단을 지지한다.","validationMetric":"TrendForce DRAM·미국 10년물·달러/원·KOSPI 종가"}
+  ],
+  "scenarioTriggers": {
+    "bull": {"logic":"AND","observeBy":"2026-08-20T15:20:00+09:00","conditions":[{"id":"bull-price","description":"KOSPI 6,750 이상","metricId":"kospi_price","operator":"gte","threshold":6750,"source":"Naver Finance KOSPI"},{"id":"bull-foreign","description":"외국인 현물 순매수","metricId":"foreign_cash","operator":"gt","threshold":0,"source":"Naver Finance 투자자별 매매동향"}]},
+    "base": {"logic":"AND","observeBy":"2026-08-20T15:20:00+09:00","conditions":[{"id":"base-support","description":"KOSPI 6,450 이상","metricId":"kospi_price","operator":"gte","threshold":6450,"source":"Naver Finance KOSPI"}]},
+    "bear": {"logic":"OR","observeBy":"2026-08-20T15:20:00+09:00","conditions":[{"id":"bear-price","description":"KOSPI 6,450 미만","metricId":"kospi_price","operator":"lt","threshold":6450,"source":"Naver Finance KOSPI"},{"id":"bear-foreign","description":"외국인 현물 순매도","metricId":"foreign_cash","operator":"lt","threshold":0,"source":"Naver Finance 투자자별 매매동향"}]}
+  },
+  "hypothesisTrials": [
+    {"hypothesisId":"us-chip-signal-overweight","regime":"event_shock","candidatePrediction":6374.10,"baselineId":"reference_carry","predictorVersion":"us-chip-signal-overweight-v1"}
+  ],
+  "posture": {"attack":35,"wait":45,"defense":20},
+  "supersedes": null,
+  "contentHash": "a9dce485e6ab1a04dce6fd59231249027844f519978f3e7e87dc61324198546d"
+}
