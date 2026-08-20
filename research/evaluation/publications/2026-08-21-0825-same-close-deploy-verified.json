@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-21-0825-same-close",
+  "eventType": "deploy_verified",
+  "occurredAt": "2026-08-21T08:30:49+09:00",
+  "contentHash": "95b2c2b1f020ac12db7ecaec161be731cd23ecf12dbed87fd70c2e10738d0e38",
+  "commitSha": "b2b87d87f4a97b3a429bba58e2f69494d3da1089",
+  "availabilityStatus": "available",
+  "publicUrl": "https://www.hpmplab.com/articles/market-2026-08-21.html"
+}
