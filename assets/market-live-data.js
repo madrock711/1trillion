@@ -1078,6 +1078,7 @@
         var rows = (indexRows || []).map(function (row) { return Object.assign({}, row); });
         var date = normalizeIsoDate(currentDate);
         var status = String(marketStatus || '').toUpperCase();
+        var hasCurrentLiveDay = Boolean(liveDay && normalizeIsoDate(liveDay.date) === date);
         var latestArchivedDate = rows.filter(function (row) {
             return row && row.path && normalizeIsoDate(row.date);
         }).map(function (row) {
@@ -1085,7 +1086,7 @@
         }).sort().slice(-1)[0] || '';
         var keepClosingSession = status === 'CLOSE'
             && (Boolean(liveDay) || !latestArchivedDate || date > latestArchivedDate);
-        if (!date || (status !== 'PREOPEN' && status !== 'OPEN' && !keepClosingSession)) return rows;
+        if (!date || (status !== 'PREOPEN' && status !== 'OPEN' && !keepClosingSession && !hasCurrentLiveDay)) return rows;
         var current = rows.filter(function (row) { return row.date === date; })[0];
         var values = {
             date: date,
@@ -1179,19 +1180,34 @@
     }
 
     function mergeRuntimeIntradayIndex(previousRows, incomingRows) {
+        var previous = Array.isArray(previousRows) ? previousRows : [];
         var incoming = Array.isArray(incomingRows) ? incomingRows : [];
         var incomingLiveEntry = incoming.filter(function (row) {
             return row && row.live && !row.path;
         }).slice(-1)[0] || null;
+        var previousLiveEntry = previous.filter(function (row) {
+            return row && row.live && !row.path;
+        }).slice(-1)[0] || null;
+        var latestIncomingArchiveDate = incoming.filter(function (row) {
+            return row && row.path && normalizeIsoDate(row.date);
+        }).map(function (row) {
+            return row.date;
+        }).sort().slice(-1)[0] || '';
+        var retainedLiveEntry = incomingLiveEntry || (
+            previousLiveEntry
+            && (!latestIncomingArchiveDate || latestIncomingArchiveDate < previousLiveEntry.date)
+                ? previousLiveEntry
+                : null
+        );
         var byDate = {};
-        (Array.isArray(previousRows) ? previousRows : []).concat(incoming).forEach(function (row) {
+        previous.concat(incoming).forEach(function (row) {
             if (row && normalizeIsoDate(row.date)) byDate[row.date] = row;
         });
         return Object.keys(byDate).sort().map(function (date) {
             return byDate[date];
         }).filter(function (row) {
             return !row.live || Boolean(row.path)
-                || Boolean(incomingLiveEntry && row.date === incomingLiveEntry.date);
+                || Boolean(retainedLiveEntry && row.date === retainedLiveEntry.date);
         });
     }
 

@@ -54,6 +54,18 @@ const openIndex = live.ensureCurrentIntradayIndex(
 );
 assert.strictEqual(openIndex[2].minuteBars, 1);
 assert.strictEqual(openIndex[2].pending, false);
+const statuslessOpenIndex = live.ensureCurrentIntradayIndex(
+    archiveIndex,
+    '2026-08-10',
+    '',
+    firstLiveDay,
+    Date.parse('2026-08-10T09:00:35+09:00')
+);
+assert.strictEqual(
+    statuslessOpenIndex[2].date,
+    '2026-08-10',
+    'KOSPI 상태 응답이 잠깐 빠져도 실제 당일 분봉이 있으면 오늘 거래일을 유지해야 한다.'
+);
 assert.strictEqual(
     live.preferredIntradayDate(openIndex, '2026-08-07', false),
     '2026-08-10',
@@ -86,6 +98,18 @@ assert.deepStrictEqual(
     'OPEN에서 CLOSE로 바뀌는 새로고침에도 당일 런타임 거래일이 사라지면 안 된다.'
 );
 assert.strictEqual(postCloseRuntimeIndex[2].closed, true);
+const transientArchiveOnlyIndex = live.mergeRuntimeIntradayIndex(openIndex, archiveIndex);
+assert.deepStrictEqual(
+    transientArchiveOnlyIndex.map((row) => row.date),
+    ['2026-08-06', '2026-08-07', '2026-08-10'],
+    '자동 갱신 한 번이 정적 색인만 반환해도 진행 중인 오늘 실시간 날짜를 지우면 안 된다.'
+);
+const archivedCurrentIndex = live.mergeRuntimeIntradayIndex(
+    openIndex,
+    archiveIndex.concat([{ date: '2026-08-10', path: 'kodex-intraday/2026-08-10.json', minuteBars: 391 }])
+);
+assert.strictEqual(archivedCurrentIndex[2].path, 'kodex-intraday/2026-08-10.json');
+assert.strictEqual(archivedCurrentIndex[2].live, undefined, '당일 보존 파일이 생기면 임시 live 항목을 확정 색인으로 교체해야 한다.');
 assert.strictEqual(
     live.intradaySourceDate('2026-08-07T15:30:00+09:00', '2026-08-10'),
     '2026-08-07',
@@ -145,7 +169,7 @@ assert.ok(dashboard.includes('kospiWarmupSignature !== kospiIntradayRequestWarmu
 assert.ok(dashboard.includes('renderKospiIntradayChart();'), '보강된 선행 분봉으로 KOSPI 차트를 다시 그려야 한다.');
 assert.ok(dashboard.includes('item.indicatorWarmupDays = previous.indicatorWarmupDays'), '일시적인 갱신 실패가 이미 받은 선행 분봉을 지우면 안 된다.');
 assert.ok(css.includes('.intraday-session-divider'), '두 거래일의 경계를 차트에서 구분해야 한다.');
-assert.ok(html.includes('market-live-data.js?v=20260814-01'), '현재 세션 선행 로드는 이전 live-data 캐시를 우회해야 한다.');
+assert.ok(html.includes('market-live-data.js?v=20260820-01'), '현재 세션 선행 로드는 이전 live-data 캐시를 우회해야 한다.');
 assert.ok(html.includes('market-dashboard.js?v=20260819-01'), '최신 거래일 자동 선택은 이전 dashboard 캐시를 우회해야 한다.');
 assert.ok(html.includes('data-kospi-intraday-source="../assets/data/kospi-intraday-index.json"'), 'KOSPI 완료 세션은 정적 보존 색인을 사용해야 한다.');
 assert.ok(dashboard.includes('fetchKospiIntradayArchiveDay('), '완료된 KOSPI 세션은 반복 원격 조회 대신 저장본을 사용해야 한다.');
