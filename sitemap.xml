@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
+    <loc>https://www.hpmplab.com/articles/market-2026-08-21.html</loc>
+    <lastmod>2026-08-21</lastmod>
+    <image:image><image:loc>https://www.hpmplab.com/assets/images/articles/market-2026-08-21-oil-yields-memory-1200x630.webp</image:loc></image:image>
+    <image:image><image:loc>https://www.hpmplab.com/charts/us_yield_spreads_90d_2026-08-21.png</image:loc></image:image>
+    <image:image><image:loc>https://www.hpmplab.com/charts/us_yield_spreads_long_term_2026-08-21.png</image:loc></image:image>
+  </url>
+  <url>
     <loc>https://www.hpmplab.com/articles/market-2026-08-20.html</loc>
     <lastmod>2026-08-20</lastmod>
     <image:image><image:loc>https://www.hpmplab.com/assets/images/articles/market-2026-08-20-hynix-buyback-1200x630.webp</image:loc></image:image>

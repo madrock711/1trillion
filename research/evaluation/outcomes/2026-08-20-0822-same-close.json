@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-20-0822-same-close",
+  "recordedAt": "2026-08-21T08:11:14+09:00",
+  "actualRef": "2026-08-20",
+  "realizedScenario": "bull",
+  "errorCodes": [],
+  "triggerResults": [
+    {"id":"bull-price","status":"observed","observedAt":"2026-08-20T15:20:00+09:00","observedValue":6854.57,"source":"Naver Finance KOSPI"},
+    {"id":"bull-foreign","status":"observed","observedAt":"2026-08-20T15:19:00+09:00","observedValue":15795,"source":"Naver Finance 투자자별 매매동향"},
+    {"id":"base-support","status":"observed","observedAt":"2026-08-20T15:20:00+09:00","observedValue":6854.57,"source":"Naver Finance KOSPI"},
+    {"id":"bear-price","status":"not_observed","observedAt":"2026-08-20T15:20:00+09:00","observedValue":6854.57,"source":"Naver Finance KOSPI"},
+    {"id":"bear-foreign","status":"not_observed","observedAt":"2026-08-20T15:19:00+09:00","observedValue":15795,"source":"Naver Finance 투자자별 매매동향"}
+  ],
+  "driverAssessment": [
+    {"id":"hynix-buyback-cancel","status":"confirmed"},
+    {"id":"us-chip-flow-overhang","status":"rejected"},
+    {"id":"dram-yield-fx-relief","status":"confirmed"}
+  ],
+  "hypothesisTests": [
+    {"hypothesisId":"us-chip-signal-overweight","result":"refuted"}
+  ]
+}

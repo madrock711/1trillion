@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-21-0825-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-08-21.md",
+  "reportSha256": "0637990546bda95825971eaf79c898b087f16340a4e415c51198f958eae3c5c5",
+  "issuedAt": "2026-08-21T08:25:00+09:00",
+  "dataCutoffAt": "2026-08-21T08:23:22+09:00",
+  "marketState": "preopen",
+  "marketRegime": "mixed",
+  "evaluationBucket": "preopen",
+  "target": {"sessionDate":"2026-08-21","horizon":"session_close","instrument":"KOSPI","leadSessions":0,"previousSessionDate":"2026-08-20"},
+  "reference": {"price":6852.58,"asOf":"2026-08-20T15:30:00+09:00","kind":"previous_close"},
+  "scenarios": {
+    "bull": {"low":6950,"high":7200,"probability":0.25},
+    "base": {"low":6700,"high":6950,"probability":0.45},
+    "bear": {"low":6400,"high":6700,"probability":0.30}
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {"low":6350,"high":7250,"coverage":0.9},
+  "drivers": [
+    {"id":"oil-yield-reset","rank":1,"claim":"Brent 93.78달러와 미국 10년물 4.69%가 전일 급반등 뒤 지수 상단을 제한한다.","validationMetric":"Brent·미국 10년물·KOSPI 종가"},
+    {"id":"memory-relative-strength","rank":2,"claim":"SOXX와 Micron 상승, DRAM 현물 강세가 국내 메모리주의 하단을 지지한다.","validationMetric":"SOXX·Micron·TrendForce DRAM·삼성전자·SK하이닉스 종가"},
+    {"id":"profit-taking-flow","rank":3,"claim":"전일 KOSPI 5.89% 급반등 뒤 외국인 현물과 비차익 매수의 연속성이 조정 폭을 결정한다.","validationMetric":"외국인 현물·프로그램 비차익·KOSPI 종가"}
+  ],
+  "scenarioTriggers": {
+    "bull": {"logic":"AND","observeBy":"2026-08-21T15:20:00+09:00","conditions":[{"id":"bull-price","description":"KOSPI 6,950 이상","metricId":"kospi_price","operator":"gte","threshold":6950,"source":"Naver Finance KOSPI"},{"id":"bull-foreign","description":"외국인 현물 순매수","metricId":"foreign_cash","operator":"gt","threshold":0,"source":"Naver Finance 투자자별 매매동향"}]},
+    "base": {"logic":"AND","observeBy":"2026-08-21T15:20:00+09:00","conditions":[{"id":"base-support","description":"KOSPI 6,700 이상","metricId":"kospi_price","operator":"gte","threshold":6700,"source":"Naver Finance KOSPI"},{"id":"base-cap","description":"KOSPI 6,950 미만","metricId":"kospi_price","operator":"lt","threshold":6950,"source":"Naver Finance KOSPI"}]},
+    "bear": {"logic":"OR","observeBy":"2026-08-21T15:20:00+09:00","conditions":[{"id":"bear-price","description":"KOSPI 6,700 미만","metricId":"kospi_price","operator":"lt","threshold":6700,"source":"Naver Finance KOSPI"},{"id":"bear-foreign","description":"외국인 현물 순매도","metricId":"foreign_cash","operator":"lt","threshold":0,"source":"Naver Finance 투자자별 매매동향"}]}
+  },
+  "hypothesisTrials": [
+    {"hypothesisId":"us-chip-signal-overweight","regime":"mixed","candidatePrediction":6921.11,"baselineId":"reference_carry","predictorVersion":"us-chip-signal-overweight-v1"}
+  ],
+  "posture": {"attack":25,"wait":50,"defense":25},
+  "supersedes": null,
+  "contentHash": "95b2c2b1f020ac12db7ecaec161be731cd23ecf12dbed87fd70c2e10738d0e38"
+}
