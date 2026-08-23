@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-08-21",
+  "bizdate": "20260821",
+  "fetchedAt": "2026-08-24T08:12:00+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6759.95,
+    "high": 6954.12,
+    "low": 6742.44,
+    "close": 6912.95,
+    "asOf": "2026-08-21T15:30:00+09:00",
+    "source": "Naver Finance KOSPI daily price and minute archive",
+    "rawHash": "81c8a303c016326fe8ba8c4369dae175fc953ffa81a341bb003661dfd8eac30b"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "KOSPI 종가와 현물·프로그램 수급은 확인했지만 8월 21일 종목 상승·보합·하락 수를 담은 동일 원천 응답을 원문으로 보존하지 못해 완결된 종가 스냅샷을 만들지 않았다.",
+  "flowTrajectory": {
+    "contract": "flow_trajectory_v1",
+    "unit": "억원",
+    "anchors": {
+      "open30": {
+        "status": "available",
+        "asOf": "2026-08-21T09:30:00+09:00",
+        "foreignCash": -940,
+        "programNonArbitrage": -2884,
+        "programTotal": -2841,
+        "source": "Naver Finance KOSPI minute archive and program trend page 38",
+        "rawHash": "ab468fc749696374e4e2d01ab297ca7424621457cf8dceaf0d076580e2bece07"
+      },
+      "open60": {
+        "status": "available",
+        "asOf": "2026-08-21T10:00:00+09:00",
+        "foreignCash": 1063,
+        "programNonArbitrage": -1501,
+        "programTotal": -1356,
+        "source": "Naver Finance KOSPI minute archive and program trend page 35",
+        "rawHash": "7e954dcdbf18418b8f5a3051d3da22f54639e76b52e2a1e8eed588e21e43d1d1"
+      },
+      "at1400": {
+        "status": "missing",
+        "expectedAsOf": "2026-08-21T14:00:00+09:00",
+        "attemptedAt": "2026-08-24T08:11:30+09:00",
+        "sourceStatus": "incomplete",
+        "source": "Naver Finance KOSPI minute archive and program trend page 11",
+        "missingReason": "외국인 현물 14:00 값은 보존했지만 프로그램 페이지의 가장 가까운 행이 14:01이라 평가 계약의 정확한 14:00 앵커로 대체하지 않았다.",
+        "rawHash": "435e32ff400cfaa61514901361ab951262fb3bcf04f0ccc4999baba5f24402a7"
+      },
+      "close": {
+        "status": "missing",
+        "expectedAsOf": "2026-08-21T15:30:00+09:00",
+        "attemptedAt": "2026-08-24T08:12:00+09:00",
+        "sourceStatus": "incomplete",
+        "source": "Naver Finance KOSPI minute archive and program trend page 3",
+        "missingReason": "15:30 현물·프로그램 수급은 확인했지만 종가 스냅샷의 시장 폭 원문이 빠져 평가 계약상 종가 앵커도 함께 비웠다.",
+        "rawHash": "37a4813218d0150bdeae5ef4b21796e0d1c3bb77488e18597794e3d9c846dbaa"
+      }
+    }
+  },
+  "flowTrajectoryMissingEvidence": null
+}

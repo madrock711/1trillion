@@ -9,7 +9,7 @@ const css = fs.readFileSync(path.join(root, 'assets', 'market-dashboard.css'), '
 
 assert.match(
     html,
-    /<a class="market-dashboard-card market-summary-card" id="market-summary-article-link" href="market-2026-08-21\.html">/,
+    /<a class="market-dashboard-card market-summary-card" id="market-summary-article-link" href="market-2026-08-24\.html">/,
     '오늘 시장 요약 카드는 최신 시황 글로 이동하는 네이티브 링크여야 합니다.'
 );
 assert(

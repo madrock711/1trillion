@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-21-0825-same-close",
+  "recordedAt": "2026-08-24T08:12:00+09:00",
+  "actualRef": "2026-08-21",
+  "realizedScenario": "base",
+  "errorCodes": [],
+  "triggerResults": [
+    {"id":"bull-price","status":"not_observed","observedAt":"2026-08-21T15:20:00+09:00","observedValue":6906.80,"source":"Naver Finance KOSPI"},
+    {"id":"bull-foreign","status":"observed","observedAt":"2026-08-21T15:19:00+09:00","observedValue":220,"source":"Naver Finance 투자자별 매매동향"},
+    {"id":"base-support","status":"observed","observedAt":"2026-08-21T15:20:00+09:00","observedValue":6906.80,"source":"Naver Finance KOSPI"},
+    {"id":"base-cap","status":"observed","observedAt":"2026-08-21T15:20:00+09:00","observedValue":6906.80,"source":"Naver Finance KOSPI"},
+    {"id":"bear-price","status":"not_observed","observedAt":"2026-08-21T15:20:00+09:00","observedValue":6906.80,"source":"Naver Finance KOSPI"},
+    {"id":"bear-foreign","status":"not_observed","observedAt":"2026-08-21T15:19:00+09:00","observedValue":220,"source":"Naver Finance 투자자별 매매동향"}
+  ],
+  "driverAssessment": [
+    {"id":"oil-yield-reset","status":"confirmed"},
+    {"id":"memory-relative-strength","status":"confirmed"},
+    {"id":"profit-taking-flow","status":"confirmed"}
+  ],
+  "hypothesisTests": [
+    {"hypothesisId":"us-chip-signal-overweight","result":"supported"}
+  ]
+}
