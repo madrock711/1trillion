@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "symbol": "KOSPI",
   "displayName": "KOSPI",
-  "updatedAt": "2026-08-21T17:01:05+09:00",
+  "updatedAt": "2026-08-24T17:07:28+09:00",
   "days": [
     {
       "date": "2026-08-04",
@@ -120,6 +120,15 @@
       "sourceLastAt": "2026-08-21T15:30:00+09:00",
       "flowSourceLastAt": "2026-08-21T15:30:00+09:00",
       "collectedAt": "2026-08-21T17:01:05+09:00"
+    },
+    {
+      "date": "2026-08-24",
+      "path": "kospi-intraday/2026-08-24.json",
+      "minuteBars": 382,
+      "flowSnapshotCount": 260,
+      "sourceLastAt": "2026-08-24T15:30:00+09:00",
+      "flowSourceLastAt": "2026-08-24T15:30:00+09:00",
+      "collectedAt": "2026-08-24T17:07:28+09:00"
     }
   ]
 }
