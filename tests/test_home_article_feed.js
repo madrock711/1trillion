@@ -14,13 +14,14 @@ const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
 assert.match(home, /<title>연마 아티클 \| 사람과 사회, 몸과 마음에 관한 글<\/title>/);
 assert.match(home, /<link rel="canonical" href="https:\/\/www\.hpmplab\.com\/">/);
 assert.match(home, /<meta name="twitter:card" content="summary_large_image">/);
-assert.match(home, /<meta property="og:image" content="https:\/\/www\.hpmplab\.com\/assets\/images\/articles\/placebo-effect-symptoms-disease-1200x630\.webp">/);
+assert.match(home, /<meta property="og:image" content="https:\/\/www\.hpmplab\.com\/assets\/images\/articles\/market-2026-08-24-ai-server-memory-cost-1200x630\.webp">/);
 assert.match(home, /<a class="skip-link" href="#main-content">최신 아티클로 건너뛰기<\/a>/);
 assert.match(home, /<main class="content-page article-index-page article-home-page" id="main-content" tabindex="-1">/);
 
 assert.match(home, /var allowed = \['breathing', 'co2', 'foot', 'sequence', 'lottery', 'abrahang'\]/);
 assert.match(home, /window\.location\.replace\('\/app\.html\?tab=' \+ encodeURIComponent\(tab\)\)/);
-assert.match(home, /if \(requested === 'market'\)[\s\S]*window\.location\.replace\('\/articles\/market\.html\?view=analysis'\)/);
+assert.match(home, /var validCategories = \['all', 'essay', 'market', 'health'\]/);
+assert.doesNotMatch(home, /requested === 'market'/);
 
 const homeHeader = home.match(/<header>[\s\S]*?<\/header>/)?.[0] || '';
 const articleNavIndex = homeHeader.indexOf('href="/" aria-current="page">아티클');
@@ -29,25 +30,27 @@ const marketNavIndex = homeHeader.indexOf('href="articles/market.html">시황');
 assert.ok(articleNavIndex >= 0 && articleNavIndex < toolsNavIndex && toolsNavIndex < marketNavIndex);
 
 const cardTags = [...home.matchAll(/<article class="article-card home-article-card" data-category="([^"]+)" data-published="([^"]+)">/g)];
-assert.equal(cardTags.length, 8);
-assert.equal((home.match(/<h3 class="home-article-title">/g) || []).length, 8);
-assert.deepEqual(cardTags.map((match) => match[1]).sort(), ['essay', 'essay', 'essay', 'health', 'health', 'health', 'health', 'health']);
+assert.equal(cardTags.length, 36);
+assert.equal((home.match(/<h3 class="home-article-title">/g) || []).length, 36);
+assert.deepEqual(
+    cardTags.reduce((counts, match) => ({...counts, [match[1]]: (counts[match[1]] || 0) + 1}), {}),
+    {market: 21, health: 9, essay: 6}
+);
 assert.ok(cardTags.every((match, index) => index === 0 || Date.parse(cardTags[index - 1][2]) >= Date.parse(match[2])));
 assert.equal((home.match(/loading="eager"/g) || []).length, 1);
 assert.equal((home.match(/fetchpriority="high"/g) || []).length, 1);
-assert.equal((home.match(/loading="lazy"/g) || []).length, 7);
+assert.equal((home.match(/loading="lazy"/g) || []).length, 35);
 
 for (const match of home.matchAll(/class="home-article-link" href="([^"]+)"/g)) {
     assert.ok(fs.existsSync(path.join(root, ...match[1].split('/'))), `missing article: ${match[1]}`);
 }
 const homeArticlePaths = [...home.matchAll(/class="home-article-link" href="articles\/([^"]+)"/g)].map((match) => match[1]);
-const latestArchiveArticles = [...archive.matchAll(/<article class="article-card" data-category="(essay|health)" data-published="([^"]+)">([\s\S]*?)<\/article>/g)]
+const latestArchiveArticles = [...archive.matchAll(/<article class="article-card" data-category="(essay|market|health)" data-published="([^"]+)">([\s\S]*?)<\/article>/g)]
     .map((match) => ({
         published: match[2],
         href: match[3].match(/<h3><a href="([^"]+)"/)?.[1]
     }))
     .sort((a, b) => Date.parse(b.published) - Date.parse(a.published))
-    .slice(0, 8)
     .map((item) => item.href);
 assert.deepEqual(homeArticlePaths, latestArchiveArticles);
 for (const match of home.matchAll(/class="article-card-image" src="([^"]+)"/g)) {
@@ -60,7 +63,7 @@ const collection = jsonBlocks[0]['@graph'].find((item) => item['@type'] === 'Col
 assert.ok(collection);
 assert.equal(collection.mainEntity.numberOfItems, cardTags.length);
 assert.equal(collection.mainEntity.itemListElement.length, cardTags.length);
-assert.deepEqual(collection.mainEntity.itemListElement.map((item) => item.position), [1, 2, 3, 4, 5, 6, 7, 8]);
+assert.deepEqual(collection.mainEntity.itemListElement.map((item) => item.position), Array.from({length: 36}, (_, index) => index + 1));
 assert.deepEqual(
     collection.mainEntity.itemListElement.map((item) => item.url),
     homeArticlePaths.map((pathname) => `https://www.hpmplab.com/articles/${pathname}`)
@@ -80,6 +83,10 @@ assert.match(app, /href="\/" data-i18n="nav\.articles">아티클<\/a>[\s\S]*href
 assert.equal((i18n.match(/'nav\.market':/g) || []).length, 2);
 assert.match(archive, /href="\.\/" aria-current="page">아티클<\/a>[\s\S]*href="\.\.\/app\.html">도구<\/a>[\s\S]*href="market\.html">시황<\/a>/);
 assert.match(market, /href="\.\.\/">아티클<\/a>[\s\S]*href="\.\.\/app\.html">도구<\/a>[\s\S]*href="market\.html" aria-current="page">시황<\/a>/);
+const marketHero = market.match(/<section class="content-page-hero market-dashboard-hero">([\s\S]*?)<\/section>/)?.[1] || '';
+assert.match(marketHero, /aria-label="시황 글"[\s\S]*>일일시황 <span class="article-category-count">21<\/span>/);
+assert.doesNotMatch(marketHero, />전체 |\?category=essay|\?category=health/);
+assert.equal((market.match(/<article class="market-article-item">/g) || []).length, 21);
 
 const detailFiles = fs.readdirSync(path.join(root, 'articles'))
     .filter((name) => name.endsWith('.html') && name !== 'index.html' && name !== 'market.html');
