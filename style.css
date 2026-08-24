@@ -145,8 +145,8 @@ body > header .container {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
     border-radius: var(--radius-control);
     background: var(--surface-elevated);
     border: 1px solid var(--border-color);
@@ -5479,6 +5479,131 @@ a.article-category-badge {
     text-align: center;
 }
 
+/* The root page is an editorial front page, while /articles/ remains the full archive. */
+.article-home-page {
+    max-width: 1180px;
+}
+
+.article-home-hero {
+    padding: clamp(1.75rem, 4vw, 3.25rem) 0 clamp(1.35rem, 3vw, 2.25rem);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.article-home-hero h1 {
+    margin: 0 0 0.55rem;
+    color: var(--text-primary);
+    font-size: clamp(2.25rem, 6vw, 4.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.045em;
+}
+
+.article-home-hero > p {
+    max-width: 660px;
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: clamp(1rem, 2vw, 1.12rem);
+    line-height: 1.7;
+    word-break: keep-all;
+}
+
+.article-home-hero .article-category-nav {
+    margin-top: 1.15rem;
+}
+
+.article-home-feed-section {
+    padding-top: clamp(1.35rem, 3vw, 2.25rem);
+    border-bottom: 0;
+}
+
+.article-archive-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--text-secondary);
+    font-weight: 700;
+}
+
+.article-archive-link:hover,
+.article-archive-link:focus-visible {
+    color: var(--text-primary);
+}
+
+.article-home-page .article-feed {
+    gap: 0;
+    border-top: 1px solid var(--border-color);
+}
+
+.article-home-page .home-article-card,
+.article-home-page .article-feed .home-article-card:first-child {
+    display: block;
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 0;
+    background: transparent;
+}
+
+.home-article-link {
+    display: grid;
+    grid-template-columns: minmax(240px, 360px) minmax(0, 1fr);
+    gap: clamp(1.25rem, 3vw, 2.25rem);
+    align-items: center;
+    padding: clamp(1.35rem, 3vw, 2rem) 0;
+    color: inherit;
+}
+
+.home-article-link:hover {
+    color: inherit;
+}
+
+.home-article-link .article-card-media {
+    grid-row: auto;
+    border-radius: 4px;
+}
+
+.home-article-copy {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.home-article-link .article-card-meta {
+    display: flex;
+    grid-column: auto;
+    margin-bottom: 0.7rem;
+}
+
+.home-article-copy .home-article-title {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: clamp(1.4rem, 3.2vw, 2rem);
+    font-weight: 760;
+    line-height: 1.32;
+    letter-spacing: -0.025em;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    transition: color var(--motion-fast) var(--ease-standard);
+}
+
+.home-article-link:hover .home-article-title,
+.home-article-link:focus-visible .home-article-title {
+    color: #86efac;
+}
+
+.home-article-copy .home-article-summary {
+    margin: 0.7rem 0 0;
+    color: var(--text-secondary);
+    line-height: 1.72;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+}
+
+.article-home-more {
+    margin: 2rem 0 0;
+    text-align: center;
+}
+
 .ai-flow-connector span {
     color: #bdc8cc;
     font-size: 0.69rem;
@@ -6082,6 +6207,61 @@ a.article-category-badge {
     .article-card-media {
         grid-row: auto;
         margin-bottom: 1rem;
+    }
+
+    .article-home-page {
+        padding-top: 0.25rem;
+    }
+
+    .article-home-hero {
+        padding: 1.1rem 0 1rem;
+    }
+
+    .article-home-hero h1 {
+        margin-bottom: 0.4rem;
+        font-size: 2.35rem;
+    }
+
+    .article-home-hero .article-category-nav {
+        gap: 0.45rem;
+        margin-top: 0.9rem;
+    }
+
+    .article-home-hero .article-category-nav a {
+        padding-inline: 0.75rem;
+    }
+
+    .article-home-feed-section {
+        padding-top: 0.95rem;
+    }
+
+    .article-home-page .article-feed-heading {
+        display: flex;
+        align-items: center;
+    }
+
+    .article-home-page .article-feed-heading .article-archive-link {
+        min-height: 36px;
+    }
+
+    .home-article-link {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+        padding: 1.1rem 0 1.5rem;
+    }
+
+    .home-article-link .article-card-media {
+        margin-bottom: 0.9rem;
+    }
+
+    .home-article-copy .home-article-title {
+        font-size: 1.45rem;
+    }
+
+    .home-article-copy .home-article-summary {
+        margin-top: 0.55rem;
+        font-size: 0.95rem;
+        line-height: 1.65;
     }
 
     .article-toc ol {
