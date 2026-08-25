@@ -1,12 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-26T08:06:00+09:00",
+  "generatedAt": "2026-08-26T08:33:35+09:00",
   "selectedSettledForecastCount": 8,
   "independentSessionCount": 8,
   "unsettledForecastIds": [
     "2026-08-10-0852-same-close",
     "2026-08-11-0923-same-close",
-    "2026-08-12-0816-same-close"
+    "2026-08-12-0816-same-close",
+    "2026-08-26-0827-same-close"
   ],
   "overall": {
     "sampleCount": 8,
@@ -139,13 +140,13 @@
       "promotionBlocked": false,
       "promotionGateSatisfied": true,
       "promotionBlockReason": null,
-      "eligibleSessionCount": 11,
-      "verifiedInputSessionCount": 11,
-      "outcomeFeatureSessionCount": 11,
+      "eligibleSessionCount": 12,
+      "verifiedInputSessionCount": 12,
+      "outcomeFeatureSessionCount": 12,
       "evaluableSessionCount": 8,
-      "evidenceCoverageRate": 0.7272727272727273,
+      "evidenceCoverageRate": 0.6666666666666666,
       "evidenceStatusCounts": {
-        "missing_outcome": 3,
+        "missing_outcome": 4,
         "verified": 8
       },
       "independentSessionCount": 8,
