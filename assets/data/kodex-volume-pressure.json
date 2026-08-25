@@ -9,7 +9,7 @@
     "buyColor": "#ff4f5e",
     "sellColor": "#4f8dff"
   },
-  "updatedAt": "2026-08-24T17:07:20+09:00",
+  "updatedAt": "2026-08-25T17:02:04+09:00",
   "days": [
     {
       "date": "2026-07-29",
@@ -316,6 +316,23 @@
       "sigma": 266.585801,
       "sigmaSampleSize": 2278,
       "collectedAt": "2026-08-24T17:07:20+09:00"
+    },
+    {
+      "date": "2026-08-25",
+      "dailyVolume": 20718858,
+      "minuteVolume": 20702934,
+      "estimatedBuyVolume": 11137279,
+      "estimatedSellVolume": 9581579,
+      "buyShare": 0.537543,
+      "sellShare": 0.462457,
+      "minuteBars": 381,
+      "coverageRatio": 0.999231,
+      "neutralVolume": 395691,
+      "sourceLastAt": "2026-08-25T15:30:00+09:00",
+      "method": "bvc-normal-1m-v1",
+      "sigma": 276.832403,
+      "sigmaSampleSize": 2278,
+      "collectedAt": "2026-08-25T17:02:04+09:00"
     }
   ]
 }
