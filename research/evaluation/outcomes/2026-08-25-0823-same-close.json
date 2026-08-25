@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-25-0823-same-close",
+  "recordedAt": "2026-08-26T08:06:00+09:00",
+  "actualRef": "2026-08-25",
+  "realizedScenario": "base",
+  "errorCodes": ["trigger_false_positive"],
+  "triggerResults": [
+    {"id":"bull-price","status":"not_observed","observedAt":"2026-08-25T15:20:00+09:00","observedValue":6746.37,"source":"Naver Finance KOSPI"},
+    {"id":"bull-foreign","status":"not_observed","observedAt":"2026-08-25T15:19:00+09:00","observedValue":-33556,"source":"Naver Finance 투자자별 매매동향"},
+    {"id":"base-support","status":"observed","observedAt":"2026-08-25T15:20:00+09:00","observedValue":6746.37,"source":"Naver Finance KOSPI"},
+    {"id":"base-cap","status":"observed","observedAt":"2026-08-25T15:20:00+09:00","observedValue":6746.37,"source":"Naver Finance KOSPI"},
+    {"id":"bear-price","status":"not_observed","observedAt":"2026-08-25T15:20:00+09:00","observedValue":6746.37,"source":"Naver Finance KOSPI"},
+    {"id":"bear-foreign","status":"observed","observedAt":"2026-08-25T15:19:00+09:00","observedValue":-33556,"source":"Naver Finance 투자자별 매매동향"}
+  ],
+  "driverAssessment": [
+    {"id":"second-wave-chip-selling","status":"partial"},
+    {"id":"already-priced-domestic-shock","status":"confirmed"},
+    {"id":"dram-rate-oil-buffer","status":"confirmed"}
+  ],
+  "hypothesisTests": [
+    {"hypothesisId":"us-chip-signal-overweight","result":"refuted"}
+  ]
+}
