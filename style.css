@@ -5888,7 +5888,7 @@ a.article-category-badge {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 2px;
     margin: 0 auto;
-    padding: 3px;
+    padding: 1px;
     overflow: hidden;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-panel);
@@ -5909,8 +5909,8 @@ a.article-category-badge {
     justify-content: center;
     gap: 0.4rem;
     min-width: 0;
-    min-height: var(--control-min-height);
-    padding: 0.55rem 0.7rem;
+    min-height: 30px;
+    padding: 0.15rem 0.6rem;
     border-radius: calc(var(--radius-panel) - 4px);
     color: var(--text-secondary);
     font-weight: 800;
@@ -5937,7 +5937,8 @@ a.article-category-badge {
 @media (max-width: 520px) {
     .market-article-view-tabs a {
         gap: 0.25rem;
-        padding-inline: 0.35rem;
+        min-height: 30px;
+        padding: 0.15rem 0.35rem;
         font-size: 0.9rem;
     }
 
