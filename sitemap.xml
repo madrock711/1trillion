@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
+    <loc>https://www.hpmplab.com/articles/market-2026-08-28.html</loc>
+    <lastmod>2026-08-28</lastmod>
+    <image:image><image:loc>https://www.hpmplab.com/assets/images/articles/market-2026-08-28-ai-memory-divergence-1200x630.webp</image:loc></image:image>
+    <image:image><image:loc>https://www.hpmplab.com/charts/us_yield_spreads_90d_2026-08-28.png</image:loc></image:image>
+    <image:image><image:loc>https://www.hpmplab.com/charts/us_yield_spreads_long_term_2026-08-28.png</image:loc></image:image>
+  </url>
+  <url>
     <loc>https://www.hpmplab.com/articles/market-2026-08-27.html</loc>
     <lastmod>2026-08-27</lastmod>
     <image:image><image:loc>https://www.hpmplab.com/assets/images/articles/market-2026-08-27-nvidia-hbm-demand-1200x630.webp</image:loc></image:image>
@@ -122,9 +129,9 @@
     <image:image><image:loc>https://www.hpmplab.com/charts/us_yield_spreads_long_term_2026-08-12.png</image:loc></image:image>
   </url>
   <url><loc>https://www.hpmplab.com/articles/market-2026-08-11.html</loc><lastmod>2026-08-11</lastmod><image:image><image:loc>https://www.hpmplab.com/assets/images/articles/market-2026-08-11-oil-chip-cpi-1200x630.webp</image:loc></image:image></url>
-  <url><loc>https://www.hpmplab.com/</loc><lastmod>2026-08-27</lastmod></url>
-  <url><loc>https://www.hpmplab.com/articles/</loc><lastmod>2026-08-27</lastmod></url>
-  <url><loc>https://www.hpmplab.com/articles/market.html</loc><lastmod>2026-08-27</lastmod></url>
+  <url><loc>https://www.hpmplab.com/</loc><lastmod>2026-08-28</lastmod></url>
+  <url><loc>https://www.hpmplab.com/articles/</loc><lastmod>2026-08-28</lastmod></url>
+  <url><loc>https://www.hpmplab.com/articles/market.html</loc><lastmod>2026-08-28</lastmod></url>
   <url>
     <loc>https://www.hpmplab.com/articles/market-2026-08-10.html</loc>
     <lastmod>2026-08-10</lastmod>

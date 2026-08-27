@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-27-0936-same-close",
+  "recordedAt": "2026-08-28T08:06:47+09:00",
+  "actualRef": "2026-08-27",
+  "realizedScenario": "base",
+  "postForecastPathStatus": "missing",
+  "postForecastPathMissingReason": "발행 시각 09:36 이후의 1분 가격 경로가 저장소에 보존되지 않았고 다음 날 공개 경로도 빈 응답을 반환했다.",
+  "postForecastPathMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "HPMPLab Naver Finance KOSPI minute proxy",
+    "asOf": "2026-08-27T15:30:00+09:00",
+    "fetchedAt": "2026-08-28T08:06:47+09:00",
+    "rawHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "errorCodes": [],
+  "triggerResults": [
+    {"id":"bull-price","status":"not_observed","observedAt":"2026-08-27T15:20:00+09:00","observedValue":6894.05,"source":"Naver Finance KOSPI"},
+    {"id":"bull-foreign","status":"observed","observedAt":"2026-08-27T15:19:00+09:00","observedValue":911,"source":"Naver Finance 투자자별 매매동향"},
+    {"id":"base-support","status":"observed","observedAt":"2026-08-27T15:20:00+09:00","observedValue":6894.05,"source":"Naver Finance KOSPI"},
+    {"id":"base-cap","status":"observed","observedAt":"2026-08-27T15:20:00+09:00","observedValue":6894.05,"source":"Naver Finance KOSPI"},
+    {"id":"bear-price","status":"not_observed","observedAt":"2026-08-27T15:20:00+09:00","observedValue":6894.05,"source":"Naver Finance KOSPI"},
+    {"id":"bear-program","status":"not_observed","observedAt":"2026-08-27T15:20:00+09:00","observedValue":2446,"source":"Naver Finance 프로그램 매매동향"}
+  ],
+  "driverAssessment": [
+    {"id":"nvidia-ai-demand","status":"confirmed"},
+    {"id":"yield-fx-cap","status":"confirmed"},
+    {"id":"domestic-flow-confirmation","status":"partial"}
+  ],
+  "hypothesisTests": []
+}
