@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-08-26",
+  "bizdate": "20260826",
+  "fetchedAt": "2026-08-27T08:15:37+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6727.25,
+    "high": 6887.18,
+    "low": 6704.10,
+    "close": 6808.21,
+    "asOf": "2026-08-26T15:30:00+09:00",
+    "source": "Naver Finance KOSPI daily price and minute archive",
+    "rawHash": "b8c45b0a6c659532c7b7e8f3849f032f3794eb2663ecd38b2293e766db7c6a14"
+  },
+  "closeSnapshot": {
+    "kodex": {
+      "open": 105005,
+      "high": 110190,
+      "low": 103700,
+      "close": 107495,
+      "volume": 17469943,
+      "asOf": "2026-08-26T15:30:00+09:00",
+      "source": "Naver Finance KODEX Leveraged daily price and minute archive",
+      "rawHash": "629c86e1f2abaa65b8ae629588809b7a887708dd148b6e333740af480ae7e5f9",
+      "unit": "원"
+    },
+    "cashFlow": {
+      "foreign": 131,
+      "institution": 6794,
+      "personal": -22918,
+      "asOf": "2026-08-26T15:30:00+09:00",
+      "source": "Naver Finance KOSPI intraday archive",
+      "rawHash": "b8c45b0a6c659532c7b7e8f3849f032f3794eb2663ecd38b2293e766db7c6a14",
+      "unit": "억원"
+    },
+    "program": {
+      "arbitrage": 221,
+      "nonArbitrage": -11921,
+      "total": -11700,
+      "asOf": "2026-08-26T15:30:00+09:00",
+      "source": "Naver Finance program trading historical page",
+      "rawHash": "c667429bbd63276fba4c2592a6cfddcdae95136748d9ae4ac587018aeb1051e2",
+      "unit": "억원"
+    },
+    "breadth": {
+      "up": 572,
+      "flat": 33,
+      "down": 302,
+      "asOf": "2026-08-26T15:30:00+09:00",
+      "source": "SBS KRX close report",
+      "rawHash": "a3565a585e1e84f9a1d8de9937816aeafdc1864d6348877ebe4022a3091a610c",
+      "unit": "종목"
+    }
+  },
+  "closeSnapshotMissingReason": null,
+  "flowTrajectory": {
+    "contract": "flow_trajectory_v1",
+    "unit": "억원",
+    "anchors": {
+      "open30": {"status":"missing","expectedAsOf":"2026-08-26T09:30:00+09:00","attemptedAt":"2026-08-27T08:15:37+09:00","sourceStatus":"incomplete","source":"Naver Finance KOSPI intraday archive and program trading historical page","missingReason":"외국인 현물 앵커는 보존됐지만 같은 시각의 비차익·전체 프로그램 원문을 완전하게 고정하지 못했다.","rawHash":"b8c45b0a6c659532c7b7e8f3849f032f3794eb2663ecd38b2293e766db7c6a14"},
+      "open60": {"status":"missing","expectedAsOf":"2026-08-26T10:00:00+09:00","attemptedAt":"2026-08-27T08:15:37+09:00","sourceStatus":"incomplete","source":"Naver Finance KOSPI intraday archive and program trading historical page","missingReason":"외국인 현물 앵커는 보존됐지만 같은 시각의 비차익·전체 프로그램 원문을 완전하게 고정하지 못했다.","rawHash":"b8c45b0a6c659532c7b7e8f3849f032f3794eb2663ecd38b2293e766db7c6a14"},
+      "at1400": {"status":"missing","expectedAsOf":"2026-08-26T14:00:00+09:00","attemptedAt":"2026-08-27T08:15:37+09:00","sourceStatus":"incomplete","source":"Naver Finance KOSPI intraday archive and program trading historical page","missingReason":"외국인 현물 앵커는 보존됐지만 같은 시각의 비차익·전체 프로그램 원문을 완전하게 고정하지 못했다.","rawHash":"b8c45b0a6c659532c7b7e8f3849f032f3794eb2663ecd38b2293e766db7c6a14"},
+      "close": {"status":"available","asOf":"2026-08-26T15:30:00+09:00","foreignCash":131,"programNonArbitrage":-11921,"programTotal":-11700,"source":"Naver Finance KOSPI intraday archive and program trading historical page","rawHash":"c667429bbd63276fba4c2592a6cfddcdae95136748d9ae4ac587018aeb1051e2"}
+    }
+  },
+  "flowTrajectoryMissingEvidence": null
+}
+

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-26-0827-same-close",
+  "recordedAt": "2026-08-27T08:15:37+09:00",
+  "actualRef": "2026-08-26",
+  "realizedScenario": "base",
+  "errorCodes": [],
+  "triggerResults": [
+    {"id":"bull-price","status":"not_observed","observedAt":"2026-08-26T15:20:00+09:00","observedValue":6813.21,"source":"Naver Finance KOSPI"},
+    {"id":"bull-foreign","status":"observed","observedAt":"2026-08-26T15:19:00+09:00","observedValue":141,"source":"Naver Finance 투자자별 매매동향"},
+    {"id":"base-support","status":"observed","observedAt":"2026-08-26T15:20:00+09:00","observedValue":6813.21,"source":"Naver Finance KOSPI"},
+    {"id":"base-cap","status":"observed","observedAt":"2026-08-26T15:20:00+09:00","observedValue":6813.21,"source":"Naver Finance KOSPI"},
+    {"id":"bear-price","status":"not_observed","observedAt":"2026-08-26T15:20:00+09:00","observedValue":6813.21,"source":"Naver Finance KOSPI"},
+    {"id":"bear-program","status":"not_observed","observedAt":"2026-08-26T15:20:00+09:00","observedValue":-10572,"source":"Naver Finance 프로그램 매매동향"}
+  ],
+  "driverAssessment": [
+    {"id":"rate-oil-chip-rebound","status":"confirmed"},
+    {"id":"event-risk-before-gdp-pce-nvidia","status":"confirmed"},
+    {"id":"domestic-flow-divergence","status":"partial"}
+  ],
+  "hypothesisTests": [
+    {"hypothesisId":"us-chip-signal-overweight","result":"supported"}
+  ]
+}

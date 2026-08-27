@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-27-0911-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-08-27.md",
+  "reportSha256": "72c44a634ff0107f6fc2a6eadfa4e950a45ff1b309307f4ec3d3e5b935832d83",
+  "issuedAt": "2026-08-27T09:11:58+09:00",
+  "dataCutoffAt": "2026-08-27T09:11:50+09:00",
+  "marketState": "intraday",
+  "marketRegime": "mixed",
+  "evaluationBucket": "open_0900_0930",
+  "target": {"sessionDate":"2026-08-27","horizon":"session_close","instrument":"KOSPI","leadSessions":0,"previousSessionDate":"2026-08-26"},
+  "reference": {"price":6972.00,"asOf":"2026-08-27T09:11:47+09:00","kind":"live"},
+  "scenarios": {
+    "bull": {"low":7100,"high":7350,"probability":0.30},
+    "base": {"low":6800,"high":7100,"probability":0.50},
+    "bear": {"low":6500,"high":6800,"probability":0.20}
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {"low":6450,"high":7400,"coverage":0.9},
+  "drivers": [
+    {"id":"nvidia-ai-demand","rank":1,"claim":"Nvidia의 데이터센터 성장과 높은 3분기 가이던스, 시간외 반도체 상승이 국내 메모리 대형주와 지수 하단을 받친다.","validationMetric":"Nvidia·SOXX·SMH 시간외, 삼성전자·SK하이닉스, KOSPI 저가와 종가"},
+    {"id":"yield-fx-cap","rank":2,"claim":"미국 10년물 4.66%와 달러/원 1,384.50원이 KOSPI 7,100 위 추격을 제한할 수 있다.","validationMetric":"미국 10년물·USD/KRW·KOSPI 장중 고가와 종가"},
+    {"id":"domestic-flow-confirmation","rank":3,"claim":"개장 직후 반도체 강세가 외국인 현물과 비차익 프로그램의 동반 순매수로 확인돼야 강세 시나리오가 열린다.","validationMetric":"외국인 현물·비차익 프로그램·삼성전자·SK하이닉스·KOSPI 종가"}
+  ],
+  "scenarioTriggers": {
+    "bull": {"logic":"AND","observeBy":"2026-08-27T15:20:00+09:00","conditions":[{"id":"bull-price","description":"KOSPI 7,100 이상","metricId":"kospi_price","operator":"gte","threshold":7100,"source":"Naver Finance KOSPI"},{"id":"bull-foreign","description":"외국인 현물 순매수","metricId":"foreign_cash","operator":"gt","threshold":0,"source":"Naver Finance 투자자별 매매동향"}]},
+    "base": {"logic":"AND","observeBy":"2026-08-27T15:20:00+09:00","conditions":[{"id":"base-support","description":"KOSPI 6,800 이상","metricId":"kospi_price","operator":"gte","threshold":6800,"source":"Naver Finance KOSPI"},{"id":"base-cap","description":"KOSPI 7,100 미만","metricId":"kospi_price","operator":"lt","threshold":7100,"source":"Naver Finance KOSPI"}]},
+    "bear": {"logic":"AND","observeBy":"2026-08-27T15:20:00+09:00","conditions":[{"id":"bear-price","description":"KOSPI 6,800 미만","metricId":"kospi_price","operator":"lt","threshold":6800,"source":"Naver Finance KOSPI"},{"id":"bear-program","description":"프로그램 순매도 1조원 초과","metricId":"program_total","operator":"lt","threshold":-10000,"source":"Naver Finance 프로그램 매매동향"}]}
+  },
+  "hypothesisTrials": [
+    {"hypothesisId":"us-chip-signal-overweight","regime":"mixed","candidatePrediction":7040.00,"baselineId":"reference_carry","predictorVersion":"us-chip-signal-overweight-v1"}
+  ],
+  "posture": {"attack":35,"wait":50,"defense":15},
+  "supersedes": null,
+  "contentHash": "2b9ee4551fc0efc47c5da28f36040cdc9173925d119d8b7e41ac2b8ffe6f825d"
+}
