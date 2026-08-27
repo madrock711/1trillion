@@ -1,24 +1,24 @@
 {
   "schemaVersion": 1,
-  "snapshotId": "20260827-0930",
-  "generatedAt": "2026-08-27T09:30:32+09:00",
-  "asOf": "2026-08-27T09:30:23+09:00",
-  "asOfDisplay": "2026년 8월 27일 09:30:23 KST",
+  "snapshotId": "20260827-0936",
+  "generatedAt": "2026-08-27T09:36:30+09:00",
+  "asOf": "2026-08-27T09:36:23+09:00",
+  "asOfDisplay": "2026년 8월 27일 09:36:23 KST",
   "marketState": "한국 정규장 개장 직후",
-  "sourceLabel": "국내 지수·수급은 8월 26일 정규장 마감, NXT·원/달러·미국 선물은 2026년 8월 27일 09:30:23 KST 개장 직후에 마지막으로 확인했고 미국 정규장 주가는 8월 26일 기준입니다.",
+  "sourceLabel": "국내 지수·수급은 8월 26일 정규장 마감, NXT·원/달러·미국 선물은 2026년 8월 27일 09:36:23 KST 개장 직후에 마지막으로 확인했고 미국 정규장 주가는 8월 26일 기준입니다.",
   "latestArticle": {"title":"엔비디아 실적이 HBM 수요를 확인했다, KOSPI 7,100은 수급에 달렸다","href":"market-2026-08-27.html"},
   "headline": "엔비디아가 AI와 HBM 수요를 다시 확인했습니다. KOSPI 7,100은 국내 수급이 함께 열어야 합니다.",
   "summary": "시간외 반도체와 국내 NXT는 올랐습니다. 높은 금리·환율과 전날 고점 매물을 넘어서는지 봅니다.",
   "markets": [
-    {"id":"KOSPI","label":"KOSPI","symbol":"K","value":6962.43,"changePercent":2.27,"asOf":"2026-08-27T09:30:21+09:00","asOfLabel":"8월 27일 09:30:21 KST","stateLabel":"정규장 개장 직후","open":6996.12,"high":6996.12,"low":6943.37,"previousClose":6808.21,"flows":[]},
+    {"id":"KOSPI","label":"KOSPI","symbol":"K","value":6939.72,"changePercent":1.93,"asOf":"2026-08-27T09:36:22+09:00","asOfLabel":"8월 27일 09:36:22 KST","stateLabel":"정규장 개장 직후","open":6996.12,"high":6996.12,"low":6925.37,"previousClose":6808.21,"flows":[]},
     {"id":"KOSDAQ","label":"KOSDAQ","symbol":"Q","value":null,"changePercent":null,"asOf":"2026-08-26T15:30:00+09:00","asOfLabel":"8월 26일 정규장 마감","stateLabel":"직전 정규장","flows":[]}
   ],
   "stance": {"label":"조건부 공격","attack":35,"wait":50,"defense":15,"note":"AI 수요는 확인됐지만 7,100 위에서는 외국인·비차익 동반 순매수를 확인합니다."},
   "checkpoints": [
     {"label":"Nvidia 실적","value":"매출 $96.2B · 데이터센터 $89.0B","detail":"2분기, 전년 대비 +106% · +117%","tone":"positive"},
     {"label":"미국 반도체 시간외","value":"SOXX +2.50% · SMH +2.59%","detail":"실적 발표 뒤","tone":"positive"},
-    {"label":"금리·환율","value":"10년물 4.66% · 달러/원 1,382.40원","detail":"상단을 제한하는 변수","tone":"warning"},
-    {"label":"반도체 NXT","value":"삼성 +2.68% · 하이닉스 +4.32%","detail":"09:30:23 KST 개장 직후 가격","tone":"positive"}
+    {"label":"금리·환율","value":"10년물 4.66% · 달러/원 1,380.10원","detail":"상단을 제한하는 변수","tone":"warning"},
+    {"label":"반도체 NXT","value":"삼성 +2.10% · 하이닉스 +3.61%","detail":"09:36:23 KST 개장 직후 가격","tone":"positive"}
   ],
   "changes": [
     {"label":"KOSPI","before":"8월 25일 6,742.74","after":"8월 26일 6,808.21","meaning":"자사주 추정 매수와 기관 수급으로 0.97% 올랐습니다."},
@@ -29,9 +29,9 @@
     {"label":"AI 수요","metric":"Nvidia 매출 $96.2B · 가이던스 $108B","detail":"데이터센터 성장과 다음 분기 수요가 예상을 웃돌았습니다.","tone":"positive"},
     {"label":"시간외 반도체","metric":"Nvidia +4.71% · Micron +3.79%","detail":"실적 발표 뒤 업종이 함께 올랐습니다.","tone":"positive"},
     {"label":"국내 수급","metric":"외국인 +131억 · 비차익 -1조1,921억","detail":"전날 외국인은 잠시 돌아섰지만 프로그램 매도는 남았습니다.","tone":"warning"},
-    {"label":"개장 직후 가격","metric":"삼성 +2.68% · 하이닉스 +4.32%","detail":"두 메모리 대형주의 상승 지속성을 봅니다.","tone":"positive"},
+    {"label":"개장 직후 가격","metric":"삼성 +2.10% · 하이닉스 +3.61%","detail":"두 메모리 대형주의 상승 지속성을 봅니다.","tone":"positive"},
     {"label":"메모리 현물","metric":"DDR5 보합 · DDR4 16Gb +0.27%","detail":"HBM 기대와 범용 현물 흐름을 구분합니다.","tone":"info"},
-    {"label":"금리·환율","metric":"10년물 4.66% · 달러/원 1,382.40원","detail":"성장과 물가 상향 뒤 할인율 부담이 남았습니다.","tone":"warning"}
+    {"label":"금리·환율","metric":"10년물 4.66% · 달러/원 1,380.10원","detail":"성장과 물가 상향 뒤 할인율 부담이 남았습니다.","tone":"warning"}
   ],
   "flows": {"program":{"arbitrage":221,"nonArbitrage":-11921,"total":-11700,"unit":"억원"},"kospi200FuturesForeign":null,"futuresUnit":"계약","futuresAsOfLabel":"개장 직후 확인값 없음"},
   "memory": [
@@ -41,15 +41,15 @@
   ],
   "scenarios": [
     {"id":"base","label":"기본 · 50%","range":"KOSPI 6,800~7,100","summary":"Nvidia 실적과 NXT 상승이 하단을 받치지만 금리·환율과 전날 고점 매물이 상단을 제한합니다.","conditions":["6,800 방어","NXT 상승 유지","외국인·비차익 개선"],"invalidation":"6,800을 회복하지 못하면 약세 범위로 이동합니다."},
-    {"id":"bull","label":"강세 · 30%","range":"KOSPI 7,100~7,350","summary":"두 메모리 대형주가 09시 30분 상승폭을 지키고 외국인과 비차익이 함께 순매수로 전환합니다.","conditions":["7,100 안착","삼성·하이닉스 강세 유지","외국인·비차익 동반 순매수"],"invalidation":"7,100 아래로 되밀리면 기본 범위로 돌아갑니다."},
+    {"id":"bull","label":"강세 · 30%","range":"KOSPI 7,100~7,350","summary":"두 메모리 대형주가 09시 36분 상승폭을 지키고 외국인과 비차익이 함께 순매수로 전환합니다.","conditions":["7,100 안착","삼성·하이닉스 강세 유지","외국인·비차익 동반 순매수"],"invalidation":"7,100 아래로 되밀리면 기본 범위로 돌아갑니다."},
     {"id":"bear","label":"약세 · 20%","range":"KOSPI 6,500~6,800","summary":"NXT 상승이 사라지고 환율 상승과 프로그램 매도가 겹칩니다.","conditions":["6,800 회복 실패","NXT 상승 소멸","프로그램 매도 확대"],"invalidation":"6,800을 회복하고 외국인 수급이 개선되면 기본 범위로 돌아갑니다."}
   ],
   "strategyLevels": [
     {"asset":"KOSPI","support":"6,800 / 6,500","pivot":"6,887~7,100","resistance":"7,350"},
     {"asset":"KODEX 레버리지","support":"105,000 / 103,700원","pivot":"110,190원","resistance":"114,000원"},
-    {"asset":"삼성전자","support":"261,500원","pivot":"268,500원","resistance":"275,000원"},
-    {"asset":"SK하이닉스","support":"1,688,000원","pivot":"1,761,000원","resistance":"1,800,000원"},
-    {"asset":"USD/KRW","support":"1,370원","pivot":"1,382.40원","resistance":"1,400원"}
+    {"asset":"삼성전자","support":"261,500원","pivot":"267,000원","resistance":"275,000원"},
+    {"asset":"SK하이닉스","support":"1,688,000원","pivot":"1,749,000원","resistance":"1,800,000원"},
+    {"asset":"USD/KRW","support":"1,370원","pivot":"1,380.10원","resistance":"1,400원"}
   ],
   "events": [
     {"time":"8월 27일 21:30 KST","name":"미국 주간 신규 실업수당 청구","path":"노동시장과 금리 반응"},
