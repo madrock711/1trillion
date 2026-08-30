@@ -1210,6 +1210,39 @@ class MarketResearchEvaluationTests(unittest.TestCase):
                     {eligible["forecastId"]},
                 )
 
+    def test_retired_hypothesis_is_not_required_in_new_forecasts(self):
+        definition = {
+            "hypothesisId": "retired-test",
+            "status": "retired",
+            "evaluationBuckets": ["preopen"],
+            "allowedRegimes": ["event_shock"],
+            "eligibleFromTimeParsed": None,
+            "lastReviewedAt": "2026-08-31T08:06:56+09:00",
+        }
+        forecast = {
+            "evaluationBucket": "preopen",
+            "marketRegime": "event_shock",
+            "issuedAtParsed": MODULE.parse_iso(
+                "2026-08-31T08:22:10+09:00", "issuedAt"
+            ),
+            "dataCutoffAtParsed": MODULE.parse_iso(
+                "2026-08-31T08:21:49+09:00", "dataCutoffAt"
+            ),
+        }
+        self.assertFalse(
+            MODULE.hypothesis_required_for_forecast(definition, forecast)
+        )
+        forecast["issuedAtParsed"] = MODULE.parse_iso(
+            "2026-08-28T08:19:10+09:00", "issuedAt"
+        )
+        self.assertTrue(
+            MODULE.hypothesis_required_for_forecast(definition, forecast)
+        )
+        definition["status"] = "candidate"
+        self.assertTrue(
+            MODULE.hypothesis_required_for_forecast(definition, forecast)
+        )
+
     def test_every_eligible_selected_forecast_must_seal_the_predictor_version(self):
         definition = self.make_flow_hypothesis_definition()
         with tempfile.TemporaryDirectory() as temp:

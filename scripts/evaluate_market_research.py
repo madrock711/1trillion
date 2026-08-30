@@ -2608,6 +2608,28 @@ def apply_promotion_block(
     return stage
 
 
+def hypothesis_required_for_forecast(
+    definition: dict[str, Any], forecast: dict[str, Any]
+) -> bool:
+    if definition["status"] == "retired":
+        retired_at = parse_iso(
+            definition["lastReviewedAt"],
+            f"hypothesis {definition['hypothesisId']} lastReviewedAt",
+        )
+        if forecast["issuedAtParsed"] >= retired_at:
+            return False
+    eligible_from_time = definition["eligibleFromTimeParsed"]
+    return (
+        forecast["evaluationBucket"] in definition["evaluationBuckets"]
+        and forecast["marketRegime"] in definition["allowedRegimes"]
+        and (
+            eligible_from_time is None
+            or forecast["dataCutoffAtParsed"].astimezone(SEOUL).time()
+            >= eligible_from_time
+        )
+    )
+
+
 def summarize_hypotheses(
     definitions: list[dict[str, Any]],
     forecasts_by_id: dict[str, dict[str, Any]],
@@ -2792,13 +2814,7 @@ def summarize_hypotheses(
             expected_hypothesis_ids = {
                 hypothesis_id
                 for hypothesis_id, definition in definitions_by_id.items()
-                if forecast["evaluationBucket"] in definition["evaluationBuckets"]
-                and forecast["marketRegime"] in definition["allowedRegimes"]
-                and (
-                    definition["eligibleFromTimeParsed"] is None
-                    or forecast["dataCutoffAtParsed"].astimezone(SEOUL).time()
-                    >= definition["eligibleFromTimeParsed"]
-                )
+                if hypothesis_required_for_forecast(definition, forecast)
             }
             actual_hypothesis_ids = {
                 trial["hypothesisId"] for trial in forecast["hypothesisTrialsParsed"]
