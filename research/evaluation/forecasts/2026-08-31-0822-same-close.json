@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-08-31-0822-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-08-31.md",
+  "reportSha256": "80360c14d86c6ac67c7de2b4c5afd7aac221b1cd2dded0ce6f9d7437dfce8288",
+  "issuedAt": "2026-08-31T08:22:10+09:00",
+  "dataCutoffAt": "2026-08-31T08:21:49+09:00",
+  "marketState": "preopen",
+  "marketRegime": "event_shock",
+  "evaluationBucket": "preopen",
+  "target": {"sessionDate":"2026-08-31","horizon":"session_close","instrument":"KOSPI","leadSessions":0,"previousSessionDate":"2026-08-28"},
+  "reference": {"price":6788.88,"asOf":"2026-08-28T15:30:00+09:00","kind":"previous_close"},
+  "scenarios": {
+    "bull": {"low":6800,"high":7000,"probability":0.15},
+    "base": {"low":6600,"high":6800,"probability":0.45},
+    "bear": {"low":6300,"high":6600,"probability":0.40}
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {"low":6250,"high":7050,"coverage":0.9},
+  "drivers": [
+    {"id":"hormuz-oil-inflation-shock","rank":1,"claim":"호르무즈 군사 충돌 뒤 브렌트유가 90달러를 넘나들며 수입물가와 위험 회피 부담을 키울 수 있다.","validationMetric":"Brent·달러/원·KOSPI 장중 저가와 종가"},
+    {"id":"warsh-yield-chip-discount","rank":2,"claim":"Warsh 의장의 물가 우선 발언과 미국 10년물 4.73%가 금요일 미국 반도체 매도와 함께 국내 대형주의 할인율 부담을 키울 수 있다.","validationMetric":"미국 10년물·SOXX·Nvidia·삼성전자·SK하이닉스·KOSPI 종가"},
+    {"id":"domestic-flow-repair-needed","rank":3,"claim":"8월 28일 외국인 현물과 비차익 프로그램의 대규모 순매도가 줄어들어야 KOSPI 6,800 회복이 이어질 수 있다.","validationMetric":"외국인 현물·비차익 프로그램·KOSPI 종가"}
+  ],
+  "scenarioTriggers": {
+    "bull": {"logic":"AND","observeBy":"2026-08-31T15:20:00+09:00","conditions":[{"id":"bull-price","description":"KOSPI 6,800 이상","metricId":"kospi_price","operator":"gte","threshold":6800,"source":"Naver Finance KOSPI"},{"id":"bull-foreign","description":"외국인 현물 순매수","metricId":"foreign_cash","operator":"gt","threshold":0,"source":"Naver Finance 투자자별 매매동향"}]},
+    "base": {"logic":"AND","observeBy":"2026-08-31T15:20:00+09:00","conditions":[{"id":"base-support","description":"KOSPI 6,600 이상","metricId":"kospi_price","operator":"gte","threshold":6600,"source":"Naver Finance KOSPI"},{"id":"base-cap","description":"KOSPI 6,800 미만","metricId":"kospi_price","operator":"lt","threshold":6800,"source":"Naver Finance KOSPI"}]},
+    "bear": {"logic":"AND","observeBy":"2026-08-31T15:20:00+09:00","conditions":[{"id":"bear-price","description":"KOSPI 6,600 미만","metricId":"kospi_price","operator":"lt","threshold":6600,"source":"Naver Finance KOSPI"},{"id":"bear-program","description":"프로그램 순매도","metricId":"program_total","operator":"lt","threshold":0,"source":"Naver Finance 프로그램 매매동향"}]}
+  },
+  "hypothesisTrials": [],
+  "posture": {"attack":10,"wait":45,"defense":45},
+  "supersedes": null,
+  "contentHash": "402f1f396d36e1771f7e9f19b9060a206452c7a26e5af895422a4c3165083b35"
+}
