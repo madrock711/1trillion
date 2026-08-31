@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-08-31",
+  "bizdate": "20260831",
+  "fetchedAt": "2026-09-01T08:04:00+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6613.58,
+    "high": 6820.10,
+    "low": 6547.76,
+    "close": 6820.02,
+    "asOf": "2026-08-31T15:30:00+09:00",
+    "source": "Naver Finance KOSPI daily price archive and HPMPLab intraday archive",
+    "rawHash": "17d274b1f002ab8e314923a139138941c1b842d691e407240ba4f4bd5fa31dc0"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "Naver Finance 일별 투자자 수급과 장중 아카이브의 외국인 종가 누적값이 서로 달라 동일 원천으로 완결된 KODEX·수급·프로그램·시장폭 종가 스냅샷을 봉인하지 않았다.",
+  "flowTrajectory": {
+    "contract": "flow_trajectory_v1",
+    "unit": "억원",
+    "anchors": {
+      "open30": {"status":"available","asOf":"2026-08-31T09:30:00+09:00","foreignCash":-2643,"programNonArbitrage":-2917,"programTotal":-2596,"source":"HPMPLab Naver Finance KOSPI intraday archive and Naver Finance program trading archive","rawHash":"fbccb31b64b035786622f04c44e35f96875a43da0bf9da4d9862f548eb127790"},
+      "open60": {"status":"available","asOf":"2026-08-31T10:00:00+09:00","foreignCash":-3234,"programNonArbitrage":-3491,"programTotal":-3000,"source":"HPMPLab Naver Finance KOSPI intraday archive and Naver Finance program trading archive","rawHash":"fbccb31b64b035786622f04c44e35f96875a43da0bf9da4d9862f548eb127790"},
+      "at1400": {"status":"available","asOf":"2026-08-31T14:00:00+09:00","foreignCash":-8731,"programNonArbitrage":-6828,"programTotal":-5359,"source":"HPMPLab Naver Finance KOSPI intraday archive and Naver Finance program trading archive","rawHash":"fbccb31b64b035786622f04c44e35f96875a43da0bf9da4d9862f548eb127790"},
+      "close": {"status":"missing","expectedAsOf":"2026-08-31T15:30:00+09:00","attemptedAt":"2026-09-01T08:04:00+09:00","sourceStatus":"unavailable","source":"Naver Finance daily and HPMPLab intraday archives","missingReason":"외국인 현물 종가 누적값이 원천별로 달라 하나의 완결 종가 앵커로 고정할 수 없었다.","rawHash":"17d274b1f002ab8e314923a139138941c1b842d691e407240ba4f4bd5fa31dc0"}
+    }
+  },
+  "flowTrajectoryMissingEvidence": null
+}

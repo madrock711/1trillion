@@ -14,7 +14,7 @@ const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
 assert.match(home, /<title>연마 아티클 \| 사람과 사회, 몸과 마음에 관한 글<\/title>/);
 assert.match(home, /<link rel="canonical" href="https:\/\/www\.hpmplab\.com\/">/);
 assert.match(home, /<meta name="twitter:card" content="summary_large_image">/);
-assert.match(home, /<meta property="og:image" content="https:\/\/www\.hpmplab\.com\/assets\/images\/articles\/market-2026-08-31-hormuz-oil-chip-risk-1200x630\.webp">/);
+assert.match(home, /<meta property="og:image" content="https:\/\/www\.hpmplab\.com\/assets\/images\/articles\/market-2026-09-01-oil-chip-crosscurrents-1200x630\.webp">/);
 assert.match(home, /<a class="skip-link" href="#main-content">최신 아티클로 건너뛰기<\/a>/);
 assert.match(home, /<main class="content-page article-index-page article-home-page" id="main-content" tabindex="-1">/);
 
@@ -30,16 +30,16 @@ const marketNavIndex = homeHeader.indexOf('href="articles/market.html">시황');
 assert.ok(articleNavIndex >= 0 && articleNavIndex < toolsNavIndex && toolsNavIndex < marketNavIndex);
 
 const cardTags = [...home.matchAll(/<article class="article-card home-article-card" data-category="([^"]+)" data-published="([^"]+)">/g)];
-assert.equal(cardTags.length, 41);
-assert.equal((home.match(/<h3 class="home-article-title">/g) || []).length, 41);
+assert.equal(cardTags.length, 42);
+assert.equal((home.match(/<h3 class="home-article-title">/g) || []).length, 42);
 assert.deepEqual(
     cardTags.reduce((counts, match) => ({...counts, [match[1]]: (counts[match[1]] || 0) + 1}), {}),
-    {market: 26, health: 9, essay: 6}
+    {market: 27, health: 9, essay: 6}
 );
 assert.ok(cardTags.every((match, index) => index === 0 || Date.parse(cardTags[index - 1][2]) >= Date.parse(match[2])));
 assert.equal((home.match(/loading="eager"/g) || []).length, 1);
 assert.equal((home.match(/fetchpriority="high"/g) || []).length, 1);
-assert.equal((home.match(/loading="lazy"/g) || []).length, 40);
+assert.equal((home.match(/loading="lazy"/g) || []).length, 41);
 
 for (const match of home.matchAll(/class="home-article-link" href="([^"]+)"/g)) {
     assert.ok(fs.existsSync(path.join(root, ...match[1].split('/'))), `missing article: ${match[1]}`);
@@ -63,7 +63,7 @@ const collection = jsonBlocks[0]['@graph'].find((item) => item['@type'] === 'Col
 assert.ok(collection);
 assert.equal(collection.mainEntity.numberOfItems, cardTags.length);
 assert.equal(collection.mainEntity.itemListElement.length, cardTags.length);
-assert.deepEqual(collection.mainEntity.itemListElement.map((item) => item.position), Array.from({length: 41}, (_, index) => index + 1));
+assert.deepEqual(collection.mainEntity.itemListElement.map((item) => item.position), Array.from({length: 42}, (_, index) => index + 1));
 assert.deepEqual(
     collection.mainEntity.itemListElement.map((item) => item.url),
     homeArticlePaths.map((pathname) => `https://www.hpmplab.com/articles/${pathname}`)
@@ -84,13 +84,13 @@ assert.equal((i18n.match(/'nav\.market':/g) || []).length, 2);
 assert.match(archive, /href="\.\/" aria-current="page">아티클<\/a>[\s\S]*href="\.\.\/app\.html">도구<\/a>[\s\S]*href="market\.html">시황<\/a>/);
 assert.match(market, /href="\.\.\/">아티클<\/a>[\s\S]*href="\.\.\/app\.html">도구<\/a>[\s\S]*href="market\.html" aria-current="page">시황<\/a>/);
 const marketHero = market.match(/<section class="content-page-hero market-dashboard-hero">([\s\S]*?)<\/section>/)?.[1] || '';
-assert.match(marketHero, /aria-label="시황 글"[\s\S]*>일일시황 <span class="article-category-count">26<\/span>/);
+assert.match(marketHero, /aria-label="시황 글"[\s\S]*>일일시황 <span class="article-category-count">27<\/span>/);
 assert.doesNotMatch(marketHero, />전체 |\?category=essay|\?category=health/);
-assert.equal((market.match(/<article class="market-article-item">/g) || []).length, 26);
+assert.equal((market.match(/<article class="market-article-item">/g) || []).length, 27);
 
 const detailFiles = fs.readdirSync(path.join(root, 'articles'))
     .filter((name) => name.endsWith('.html') && name !== 'index.html' && name !== 'market.html');
-assert.equal(detailFiles.length, 41);
+assert.equal(detailFiles.length, 42);
 for (const name of detailFiles) {
     const detail = fs.readFileSync(path.join(root, 'articles', name), 'utf8');
     const header = detail.match(/<header>[\s\S]*?<\/header>/)?.[0] || '';
@@ -106,7 +106,7 @@ for (const name of detailFiles) {
 
 for (const pathname of ['', 'articles/', 'articles/market.html']) {
     const escaped = pathname.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replaceAll('/', '\\/');
-    assert.match(sitemap, new RegExp(`<loc>https:\\/\\/www\\.hpmplab\\.com\\/${escaped}<\\/loc><lastmod>2026-08-31<\\/lastmod>`));
+    assert.match(sitemap, new RegExp(`<loc>https:\\/\\/www\\.hpmplab\\.com\\/${escaped}<\\/loc><lastmod>2026-09-01<\\/lastmod>`));
 }
 
 console.log('home article feed: ok');
