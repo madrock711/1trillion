@@ -1,6 +1,6 @@
 # KOSPI·KODEX 리서치 상태
 
-## 최신 기준 · 2026-09-02 08:18 KST
+## 최신 기준 · 2026-09-02 08:29 KST
 
 - 최신 보고서: `reports/2026-09-02.md`
 - 시장 상태: 한국 정규장 개장 전
@@ -23,7 +23,7 @@
 
 - 기준일: 2026-09-02
 - 데이터 최종 확인: 08:13:00 KST
-- 실제 발행 시각: 08:18:30 KST
+- 실제 발행 시각: 08:29:31 KST
 - 최신 공개 글: `articles/market-2026-09-02.html`
 - 최신 대시보드 스냅샷: `assets/data/market-dashboard-20260902-0813.json`
 - 최신 대시보드 포인터: `assets/data/market-dashboard-latest.json`
