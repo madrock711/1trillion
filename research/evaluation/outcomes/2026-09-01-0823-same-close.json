@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-01-0823-same-close",
+  "recordedAt": "2026-09-02T08:13:00+09:00",
+  "actualRef": "2026-09-01",
+  "realizedScenario": "base",
+  "errorCodes": [],
+  "triggerResults": [
+    {"id":"bull-price","status":"not_observed","observedAt":"2026-09-01T15:20:00+09:00","observedValue":6833.21,"source":"Naver Finance KOSPI"},
+    {"id":"bull-foreign","status":"not_observed","observedAt":"2026-09-01T15:20:00+09:00","observedValue":-4966,"source":"Naver Finance 투자자별 매매동향"},
+    {"id":"base-support","status":"observed","observedAt":"2026-09-01T15:20:00+09:00","observedValue":6833.21,"source":"Naver Finance KOSPI"},
+    {"id":"base-cap","status":"observed","observedAt":"2026-09-01T15:20:00+09:00","observedValue":6833.21,"source":"Naver Finance KOSPI"},
+    {"id":"bear-price","status":"not_observed","observedAt":"2026-09-01T15:20:00+09:00","observedValue":6833.21,"source":"Naver Finance KOSPI"},
+    {"id":"bear-program","status":"observed","observedAt":"2026-09-01T15:20:00+09:00","observedValue":-3043,"source":"Naver Finance 프로그램 매매동향"}
+  ],
+  "driverAssessment": [
+    {"id":"oil-yield-cap","status":"confirmed"},
+    {"id":"us-chip-krw-floor","status":"partial"},
+    {"id":"domestic-flow-export-confirmation","status":"partial"}
+  ],
+  "hypothesisTests": []
+}

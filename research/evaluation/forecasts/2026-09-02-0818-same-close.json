@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-02-0818-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-09-02.md",
+  "reportSha256": "0fb9cfa3a2410df2b38dcddedcd26e48bdfae2fbcd115a3154bcc3b7aeb6ad98",
+  "issuedAt": "2026-09-02T08:18:30+09:00",
+  "dataCutoffAt": "2026-09-02T08:13:00+09:00",
+  "marketState": "preopen",
+  "marketRegime": "risk_off",
+  "evaluationBucket": "preopen",
+  "target": {"sessionDate":"2026-09-02","horizon":"session_close","instrument":"KOSPI","leadSessions":0,"previousSessionDate":"2026-09-01"},
+  "reference": {"price":6835.80,"asOf":"2026-09-01T15:30:00+09:00","kind":"previous_close"},
+  "scenarios": {
+    "bull": {"low":6900,"high":7100,"probability":0.15},
+    "base": {"low":6700,"high":6900,"probability":0.40},
+    "bear": {"low":6500,"high":6700,"probability":0.45}
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {"low":6400,"high":7150,"coverage":0.9},
+  "drivers": [
+    {"id":"oil-yield-chip-risk","rank":1,"claim":"브렌트유 94.65달러, 미국 10년물 4.79%, SOXX -2.13%가 함께 KOSPI와 메모리 대형주의 장 초반 하락 압력을 키울 수 있다.","validationMetric":"Brent·미국 10년물·SOXX·KOSPI 시가와 종가"},
+    {"id":"nxt-krw-risk-confirmation","rank":2,"claim":"NXT 삼성전자 -3.07%, SK하이닉스 -3.48%와 달러/원 1,375.50원이 밤사이 위험 회피를 국내 시초가로 전달할 수 있다.","validationMetric":"NXT 대비 정규장 삼성전자·SK하이닉스·달러/원·KOSPI 종가"},
+    {"id":"export-dram-floor","rank":3,"claim":"전날 이미 발표된 반도체 수출 최고치와 DRAM 현물 상승은 새 호재가 아니라 KOSPI 6,700 부근 낙폭을 제한하는 바닥 재료로 작동할 수 있다.","validationMetric":"외국인 현물·프로그램 전체·삼성전자·SK하이닉스·KOSPI 저가와 종가"}
+  ],
+  "scenarioTriggers": {
+    "bull": {"logic":"AND","observeBy":"2026-09-02T15:20:00+09:00","conditions":[{"id":"bull-price","description":"KOSPI 6,900 이상","metricId":"kospi_price","operator":"gte","threshold":6900,"source":"Naver Finance KOSPI"},{"id":"bull-foreign","description":"외국인 현물 순매수","metricId":"foreign_cash","operator":"gt","threshold":0,"source":"Naver Finance 투자자별 매매동향"}]},
+    "base": {"logic":"AND","observeBy":"2026-09-02T15:20:00+09:00","conditions":[{"id":"base-support","description":"KOSPI 6,700 이상","metricId":"kospi_price","operator":"gte","threshold":6700,"source":"Naver Finance KOSPI"},{"id":"base-cap","description":"KOSPI 6,900 미만","metricId":"kospi_price","operator":"lt","threshold":6900,"source":"Naver Finance KOSPI"}]},
+    "bear": {"logic":"AND","observeBy":"2026-09-02T15:20:00+09:00","conditions":[{"id":"bear-price","description":"KOSPI 6,700 미만","metricId":"kospi_price","operator":"lt","threshold":6700,"source":"Naver Finance KOSPI"},{"id":"bear-program","description":"프로그램 순매도","metricId":"program_total","operator":"lt","threshold":0,"source":"Naver Finance 프로그램 매매동향"}]}
+  },
+  "hypothesisTrials": [],
+  "posture": {"attack":10,"wait":45,"defense":45},
+  "supersedes": null,
+  "contentHash": "0d245c870b934d5feab2aa968e8a217fce0502a43c2ca56c53558296afd5565b"
+}
