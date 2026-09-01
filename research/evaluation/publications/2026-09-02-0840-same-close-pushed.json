@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-02-0840-same-close",
+  "eventType": "pushed",
+  "occurredAt": "2026-09-02T08:41:32+09:00",
+  "contentHash": "1ebaae5544621469547a6058ac309f38bc1018bce28fb69a176e43f19ffc3467",
+  "commitSha": "47c04e7c2bc9c07cac597b0f1d7e9278abfceefc"
+}
