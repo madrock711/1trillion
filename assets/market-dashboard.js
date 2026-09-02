@@ -672,6 +672,7 @@
         if (strategyWrittenAt) strategyWrittenAt.textContent = writtenAtDisplay + ' 작성본 기준';
 
         var liveKospi = liveData ? findById(liveData.markets, 'KOSPI') : null;
+        if (liveKospi && liveKospi.marketStatus === 'PREOPEN') liveKospi = null;
         var savedKospi = findById(data.markets, 'KOSPI');
         var factsAsOf = document.getElementById('market-facts-as-of');
         factsAsOf.textContent = liveKospi
@@ -4329,6 +4330,8 @@
 
     function replaceMarketValues(market, liveMarket) {
         if (!market || !liveMarket) return false;
+        // PREOPEN quotes contain reset counters, not a new regular-session observation.
+        if (liveMarket.marketStatus === 'PREOPEN') return false;
         if (Number.isFinite(Date.parse(market.asOf)) && Date.parse(liveMarket.asOf) < Date.parse(market.asOf)) return false;
         ['value', 'previousClose', 'open', 'high', 'low', 'changePercent', 'asOf', 'asOfLabel', 'shortTimeLabel', 'stateLabel', 'marketStatus', 'delayed', 'volume', 'tradingValue'].forEach(function (key) {
             market[key] = liveMarket[key];
@@ -4342,6 +4345,7 @@
 
     function replaceTechnicalObservation(instrument, liveInstrument) {
         if (!instrument || !liveInstrument) return false;
+        if (liveInstrument.marketStatus === 'PREOPEN') return false;
         if (Number.isFinite(Date.parse(instrument.asOf)) && Date.parse(liveInstrument.asOf) < Date.parse(instrument.asOf)) return false;
         instrument.liveSnapshot = liveInstrument;
         if (liveInstrument.sessionPricesComplete !== false) {
@@ -4593,7 +4597,7 @@
 
         var incomingKospi = findById(liveData.markets, 'KOSPI');
         var displayKospi = findById(data.markets, 'KOSPI');
-        if (incomingKospi) {
+        if (incomingKospi && incomingKospi.marketStatus !== 'PREOPEN') {
             updateFlowCheckpoint(data, incomingKospi, '외국인', '외국인 현물');
             updateFlowCheckpoint(data, incomingKospi, '기관', '기관 현물');
             updateProgramCheckpoint(data, incomingKospi.program || liveData.program, incomingKospi);

@@ -1,0 +1,166 @@
+{
+  "verifiedAt": "2026-09-03T08:21:32+09:00",
+  "commit": "e7a4953eafa72fae73f38fa0e93998b65237501a",
+  "checks": [
+    {
+      "url": "https://www.hpmplab.com/articles/market-2026-09-03.html?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 18713,
+      "matchesLocal": true,
+      "sha256": "3910bb4b3d367fff889eed7924aadeb41c622a9359f159b33769c9db1198a21a"
+    },
+    {
+      "url": "https://www.hpmplab.com/index.html?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 71184,
+      "matchesLocal": true,
+      "sha256": "1cb27e4f943554627b05f1b511fa7c3fdb7091c9b805dc8620d0b8ee988fa6ba"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/index.html?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 86552,
+      "matchesLocal": true,
+      "sha256": "8a34693ffda7075d5ceb7fc734d6effe015e0e53a376e58624eaf411ef5417cb"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/market.html?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 66141,
+      "matchesLocal": true,
+      "sha256": "6b9e17c23b041c586d1a3bf95a7f8acec796726b2e6dfb6975f83e3b34f57021"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-latest.json?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 10611,
+      "matchesLocal": true,
+      "sha256": "412cc38f61deb7b3b87d72f6eb5cfe363c14796fe1aa4affa5ba22a8f7139543"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-20260903-0819.json?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 10611,
+      "matchesLocal": true,
+      "sha256": "412cc38f61deb7b3b87d72f6eb5cfe363c14796fe1aa4affa5ba22a8f7139543"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/images/articles/market-2026-09-03-chip-rebound-balance-1200x630.webp?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 87248,
+      "matchesLocal": true,
+      "sha256": "374e24b98086eacc1442539559aebec67239e3af7406f4d7960875d35ba4f642"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_90d_2026-09-03.png?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 45715,
+      "matchesLocal": true,
+      "sha256": "9b062bed9b89ddad38cb15543a0620405cd67dc1700bd4b1f2b773f583a60615"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_long_term_2026-09-03.png?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 42519,
+      "matchesLocal": true,
+      "sha256": "2a7112573ee0ec4317fbf09d71e811b1f14566c7ca288cb2bb722a16a7acfd14"
+    },
+    {
+      "url": "https://www.hpmplab.com/sitemap.xml?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 20507,
+      "matchesLocal": true,
+      "sha256": "d4eb208c170a21b391045fda36f308479ea9fd4ddba57ccd18095dfcc026d147"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market-2026-09-03.html?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 18713,
+      "matchesLocal": true,
+      "sha256": "3910bb4b3d367fff889eed7924aadeb41c622a9359f159b33769c9db1198a21a"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/index.html?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 71184,
+      "matchesLocal": true,
+      "sha256": "1cb27e4f943554627b05f1b511fa7c3fdb7091c9b805dc8620d0b8ee988fa6ba"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/index.html?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 86552,
+      "matchesLocal": true,
+      "sha256": "8a34693ffda7075d5ceb7fc734d6effe015e0e53a376e58624eaf411ef5417cb"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market.html?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 66141,
+      "matchesLocal": true,
+      "sha256": "6b9e17c23b041c586d1a3bf95a7f8acec796726b2e6dfb6975f83e3b34f57021"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-latest.json?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 10611,
+      "matchesLocal": true,
+      "sha256": "412cc38f61deb7b3b87d72f6eb5cfe363c14796fe1aa4affa5ba22a8f7139543"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-20260903-0819.json?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 10611,
+      "matchesLocal": true,
+      "sha256": "412cc38f61deb7b3b87d72f6eb5cfe363c14796fe1aa4affa5ba22a8f7139543"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/images/articles/market-2026-09-03-chip-rebound-balance-1200x630.webp?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 87248,
+      "matchesLocal": true,
+      "sha256": "374e24b98086eacc1442539559aebec67239e3af7406f4d7960875d35ba4f642"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_90d_2026-09-03.png?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 45715,
+      "matchesLocal": true,
+      "sha256": "9b062bed9b89ddad38cb15543a0620405cd67dc1700bd4b1f2b773f583a60615"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_long_term_2026-09-03.png?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 42519,
+      "matchesLocal": true,
+      "sha256": "2a7112573ee0ec4317fbf09d71e811b1f14566c7ca288cb2bb722a16a7acfd14"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/sitemap.xml?v=e7a4953eafa72fae73f38fa0e93998b65237501a",
+      "status": 200,
+      "bytes": 20507,
+      "matchesLocal": true,
+      "sha256": "d4eb208c170a21b391045fda36f308479ea9fd4ddba57ccd18095dfcc026d147"
+    }
+  ],
+  "amplify": {
+    "jobId": "559",
+    "status": "SUCCEED",
+    "startTime": "2026-09-03T08:19:46.673+09:00",
+    "endTime": "2026-09-03T08:20:48.523+09:00"
+  },
+  "browserQa": {
+    "articleDesktop": true,
+    "articleMobileWidth": 390,
+    "horizontalOverflow": 0,
+    "heroNaturalSize": [
+      1200,
+      630
+    ],
+    "articleTime": "08:19 KST",
+    "dataCutoff": "08:19:05 KST",
+    "strategyTab": true,
+    "siteConsoleErrors": [],
+    "followup": "장전 PREOPEN 초기화 값이 전일 등락률과 수급을 덮는 표시 오류를 발견해 별도 코드 수정 및 회귀 검증."
+  }
+}
