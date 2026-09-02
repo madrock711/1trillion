@@ -1,0 +1,1785 @@
+{
+  "fetchedAt": "2026-09-03T08:09:45+09:00",
+  "daily": {
+    "kospi_daily": {
+      "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=10&page=1",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "data": [
+        {
+          "localTradedAt": "2026-09-02",
+          "closePrice": "6,562.72",
+          "compareToPreviousClosePrice": "-273.08",
+          "compareToPreviousPrice": {
+            "code": "5",
+            "text": "하락",
+            "name": "FALLING"
+          },
+          "fluctuationsRatio": "-3.99",
+          "openPrice": "6,625.47",
+          "highPrice": "6,694.57",
+          "lowPrice": "6,558.30"
+        },
+        {
+          "localTradedAt": "2026-09-01",
+          "closePrice": "6,835.80",
+          "compareToPreviousClosePrice": "15.78",
+          "compareToPreviousPrice": {
+            "code": "2",
+            "text": "상승",
+            "name": "RISING"
+          },
+          "fluctuationsRatio": "0.23",
+          "openPrice": "6,784.29",
+          "highPrice": "6,857.35",
+          "lowPrice": "6,732.47"
+        },
+        {
+          "localTradedAt": "2026-08-31",
+          "closePrice": "6,820.02",
+          "compareToPreviousClosePrice": "31.14",
+          "compareToPreviousPrice": {
+            "code": "2",
+            "text": "상승",
+            "name": "RISING"
+          },
+          "fluctuationsRatio": "0.46",
+          "openPrice": "6,613.58",
+          "highPrice": "6,820.10",
+          "lowPrice": "6,547.76"
+        }
+      ]
+    },
+    "kodex_daily": {
+      "source": "https://m.stock.naver.com/api/stock/122630/price?pageSize=10&page=1",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "data": [
+        {
+          "localTradedAt": "2026-09-03",
+          "closePrice": "98,900",
+          "compareToPreviousClosePrice": "0",
+          "compareToPreviousPrice": {
+            "code": "3",
+            "text": "보합",
+            "name": "UNCHANGED"
+          },
+          "fluctuationsRatio": "0.00",
+          "openPrice": "98,900",
+          "highPrice": "98,900",
+          "lowPrice": "98,900",
+          "accumulatedTradingVolume": 0
+        },
+        {
+          "localTradedAt": "2026-09-02",
+          "closePrice": "98,900",
+          "compareToPreviousClosePrice": "-8,825",
+          "compareToPreviousPrice": {
+            "code": "5",
+            "text": "하락",
+            "name": "FALLING"
+          },
+          "fluctuationsRatio": "-8.19",
+          "openPrice": "100,995",
+          "highPrice": "103,200",
+          "lowPrice": "98,885",
+          "accumulatedTradingVolume": 15502252
+        },
+        {
+          "localTradedAt": "2026-09-01",
+          "closePrice": "107,725",
+          "compareToPreviousClosePrice": "645",
+          "compareToPreviousPrice": {
+            "code": "2",
+            "text": "상승",
+            "name": "RISING"
+          },
+          "fluctuationsRatio": "0.60",
+          "openPrice": "105,050",
+          "highPrice": "108,675",
+          "lowPrice": "104,090",
+          "accumulatedTradingVolume": 14725345
+        }
+      ]
+    },
+    "samsung_daily": {
+      "source": "https://m.stock.naver.com/api/stock/005930/price?pageSize=10&page=1",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "data": [
+        {
+          "localTradedAt": "2026-09-03",
+          "closePrice": "250,500",
+          "compareToPreviousClosePrice": "0",
+          "compareToPreviousPrice": {
+            "code": "3",
+            "text": "보합",
+            "name": "UNCHANGED"
+          },
+          "fluctuationsRatio": "0.00",
+          "openPrice": "252,000",
+          "highPrice": "255,000",
+          "lowPrice": "250,500",
+          "accumulatedTradingVolume": 335482
+        },
+        {
+          "localTradedAt": "2026-09-02",
+          "closePrice": "250,500",
+          "compareToPreviousClosePrice": "-10,500",
+          "compareToPreviousPrice": {
+            "code": "5",
+            "text": "하락",
+            "name": "FALLING"
+          },
+          "fluctuationsRatio": "-4.02",
+          "openPrice": "252,000",
+          "highPrice": "255,500",
+          "lowPrice": "249,500",
+          "accumulatedTradingVolume": 15176841
+        },
+        {
+          "localTradedAt": "2026-09-01",
+          "closePrice": "261,000",
+          "compareToPreviousClosePrice": "1,000",
+          "compareToPreviousPrice": {
+            "code": "2",
+            "text": "상승",
+            "name": "RISING"
+          },
+          "fluctuationsRatio": "0.38",
+          "openPrice": "256,500",
+          "highPrice": "262,500",
+          "lowPrice": "254,000",
+          "accumulatedTradingVolume": 15319615
+        }
+      ]
+    },
+    "hynix_daily": {
+      "source": "https://m.stock.naver.com/api/stock/000660/price?pageSize=10&page=1",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "data": [
+        {
+          "localTradedAt": "2026-09-03",
+          "closePrice": "1,613,000",
+          "compareToPreviousClosePrice": "0",
+          "compareToPreviousPrice": {
+            "code": "3",
+            "text": "보합",
+            "name": "UNCHANGED"
+          },
+          "fluctuationsRatio": "0.00",
+          "openPrice": "1,615,000",
+          "highPrice": "1,645,000",
+          "lowPrice": "1,613,000",
+          "accumulatedTradingVolume": 107410
+        },
+        {
+          "localTradedAt": "2026-09-02",
+          "closePrice": "1,613,000",
+          "compareToPreviousClosePrice": "-80,000",
+          "compareToPreviousPrice": {
+            "code": "5",
+            "text": "하락",
+            "name": "FALLING"
+          },
+          "fluctuationsRatio": "-4.73",
+          "openPrice": "1,630,000",
+          "highPrice": "1,661,000",
+          "lowPrice": "1,612,000",
+          "accumulatedTradingVolume": 2568478
+        },
+        {
+          "localTradedAt": "2026-09-01",
+          "closePrice": "1,693,000",
+          "compareToPreviousClosePrice": "19,000",
+          "compareToPreviousPrice": {
+            "code": "2",
+            "text": "상승",
+            "name": "RISING"
+          },
+          "fluctuationsRatio": "1.14",
+          "openPrice": "1,666,000",
+          "highPrice": "1,713,000",
+          "lowPrice": "1,652,000",
+          "accumulatedTradingVolume": 2727724
+        }
+      ]
+    },
+    "kosdaq_daily": {
+      "source": "https://m.stock.naver.com/api/index/KOSDAQ/price?pageSize=10&page=1",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "data": [
+        {
+          "localTradedAt": "2026-09-02",
+          "closePrice": "803.98",
+          "compareToPreviousClosePrice": "-17.27",
+          "compareToPreviousPrice": {
+            "code": "5",
+            "text": "하락",
+            "name": "FALLING"
+          },
+          "fluctuationsRatio": "-2.10",
+          "openPrice": "802.80",
+          "highPrice": "819.62",
+          "lowPrice": "796.34"
+        },
+        {
+          "localTradedAt": "2026-09-01",
+          "closePrice": "821.25",
+          "compareToPreviousClosePrice": "-13.04",
+          "compareToPreviousPrice": {
+            "code": "5",
+            "text": "하락",
+            "name": "FALLING"
+          },
+          "fluctuationsRatio": "-1.56",
+          "openPrice": "831.96",
+          "highPrice": "833.52",
+          "lowPrice": "815.52"
+        },
+        {
+          "localTradedAt": "2026-08-31",
+          "closePrice": "834.29",
+          "compareToPreviousClosePrice": "-4.12",
+          "compareToPreviousPrice": {
+            "code": "5",
+            "text": "하락",
+            "name": "FALLING"
+          },
+          "fluctuationsRatio": "-0.49",
+          "openPrice": "821.67",
+          "highPrice": "835.50",
+          "lowPrice": "805.14"
+        }
+      ]
+    }
+  },
+  "us": {
+    "y_QQQ": {
+      "source": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?range=5d&interval=1d&includePrePost=true",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "meta": {
+        "currency": "USD",
+        "symbol": "QQQ",
+        "exchangeName": "NGM",
+        "fullExchangeName": "NasdaqGM",
+        "instrumentType": "ETF",
+        "firstTradeDate": 921076200,
+        "regularMarketTime": 1788379200,
+        "hasPrePostMarketData": true,
+        "gmtoffset": -14400,
+        "timezone": "EDT",
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketPrice": 709.24,
+        "regularMarketChangePercent": 0.226,
+        "fiftyTwoWeekHigh": 748.65,
+        "fiftyTwoWeekLow": 555.6,
+        "regularMarketDayHigh": 709.799,
+        "regularMarketDayLow": 705.11,
+        "regularMarketVolume": 23119119,
+        "longName": "Invesco QQQ Trust",
+        "shortName": "Invesco QQQ Trust, Series 1",
+        "chartPreviousClose": 711.37,
+        "priceHint": 2,
+        "currentTradingPeriod": {
+          "pre": {
+            "timezone": "EDT",
+            "start": 1788336000,
+            "end": 1788355800,
+            "gmtoffset": -14400
+          },
+          "regular": {
+            "timezone": "EDT",
+            "start": 1788355800,
+            "end": 1788379200,
+            "gmtoffset": -14400
+          },
+          "post": {
+            "timezone": "EDT",
+            "start": 1788379200,
+            "end": 1788393600,
+            "gmtoffset": -14400
+          }
+        },
+        "dataGranularity": "1d",
+        "range": "5d",
+        "validRanges": [
+          "1d",
+          "5d",
+          "1mo",
+          "3mo",
+          "6mo",
+          "1y",
+          "2y",
+          "5y",
+          "10y",
+          "ytd",
+          "max"
+        ]
+      },
+      "timestamp": [
+        1787837400,
+        1787923800,
+        1788183000,
+        1788269400,
+        1788355800
+      ],
+      "quote": {
+        "close": [
+          721.1099853515625,
+          716.4299926757812,
+          716.760009765625,
+          707.6400146484375,
+          709.239990234375
+        ],
+        "open": [
+          716.9299926757812,
+          719.739990234375,
+          715.1699829101562,
+          707.3900146484375,
+          707.1099853515625
+        ],
+        "high": [
+          721.3499755859375,
+          724.1300048828125,
+          717.5800170898438,
+          712.2999877929688,
+          709.798828125
+        ],
+        "volume": [
+          28723500,
+          34105400,
+          32237200,
+          35236100,
+          23119119
+        ],
+        "low": [
+          714.530029296875,
+          715.0900268554688,
+          713.1599731445312,
+          704.6599731445312,
+          705.1099853515625
+        ]
+      }
+    },
+    "y_TQQQ": {
+      "source": "https://query1.finance.yahoo.com/v8/finance/chart/TQQQ?range=5d&interval=1d&includePrePost=true",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "meta": {
+        "currency": "USD",
+        "symbol": "TQQQ",
+        "exchangeName": "NGM",
+        "fullExchangeName": "NasdaqGM",
+        "instrumentType": "ETF",
+        "firstTradeDate": 1265898600,
+        "regularMarketTime": 1788379200,
+        "hasPrePostMarketData": true,
+        "gmtoffset": -14400,
+        "timezone": "EDT",
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketPrice": 69.6,
+        "regularMarketChangePercent": 0.651,
+        "fiftyTwoWeekHigh": 88.09,
+        "fiftyTwoWeekLow": 37.32,
+        "regularMarketDayHigh": 69.76,
+        "regularMarketDayLow": 68.39,
+        "regularMarketVolume": 38189544,
+        "longName": "ProShares UltraPro QQQ",
+        "shortName": "ProShares UltraPro QQQ",
+        "chartPreviousClose": 70.47,
+        "priceHint": 2,
+        "currentTradingPeriod": {
+          "pre": {
+            "timezone": "EDT",
+            "end": 1788355800,
+            "start": 1788336000,
+            "gmtoffset": -14400
+          },
+          "regular": {
+            "timezone": "EDT",
+            "end": 1788379200,
+            "start": 1788355800,
+            "gmtoffset": -14400
+          },
+          "post": {
+            "timezone": "EDT",
+            "end": 1788393600,
+            "start": 1788379200,
+            "gmtoffset": -14400
+          }
+        },
+        "dataGranularity": "1d",
+        "range": "5d",
+        "validRanges": [
+          "1d",
+          "5d",
+          "1mo",
+          "3mo",
+          "6mo",
+          "1y",
+          "2y",
+          "5y",
+          "10y",
+          "ytd",
+          "max"
+        ]
+      },
+      "timestamp": [
+        1787837400,
+        1787923800,
+        1788183000,
+        1788269400,
+        1788355800
+      ],
+      "quote": {
+        "volume": [
+          48782800,
+          58068000,
+          42308100,
+          57328900,
+          38189544
+        ],
+        "high": [
+          73.37999725341797,
+          74.18000030517578,
+          72.1500015258789,
+          70.55000305175781,
+          69.75990295410156
+        ],
+        "low": [
+          71.37999725341797,
+          71.43000030517578,
+          70.81999969482422,
+          68.25,
+          68.38990020751953
+        ],
+        "open": [
+          72.08999633789062,
+          72.8499984741211,
+          71.44000244140625,
+          69.06999969482422,
+          68.97000122070312
+        ],
+        "close": [
+          73.30000305175781,
+          71.8499984741211,
+          71.91999816894531,
+          69.1500015258789,
+          69.5999984741211
+        ]
+      }
+    },
+    "y_SOXX": {
+      "source": "https://query1.finance.yahoo.com/v8/finance/chart/SOXX?range=5d&interval=1d&includePrePost=true",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "meta": {
+        "currency": "USD",
+        "symbol": "SOXX",
+        "exchangeName": "NGM",
+        "fullExchangeName": "NasdaqGM",
+        "instrumentType": "ETF",
+        "firstTradeDate": 995031000,
+        "regularMarketTime": 1788379200,
+        "hasPrePostMarketData": true,
+        "gmtoffset": -14400,
+        "timezone": "EDT",
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketPrice": 501.44,
+        "regularMarketChangePercent": 0.226,
+        "fiftyTwoWeekHigh": 655.95,
+        "fiftyTwoWeekLow": 238.75,
+        "regularMarketDayHigh": 504.02,
+        "regularMarketDayLow": 493.31,
+        "regularMarketVolume": 5723185,
+        "longName": "iShares Semiconductor ETF",
+        "shortName": "iShares PHLX SOX Semiconductor ",
+        "chartPreviousClose": 515.4,
+        "priceHint": 2,
+        "currentTradingPeriod": {
+          "pre": {
+            "timezone": "EDT",
+            "start": 1788336000,
+            "end": 1788355800,
+            "gmtoffset": -14400
+          },
+          "regular": {
+            "timezone": "EDT",
+            "start": 1788355800,
+            "end": 1788379200,
+            "gmtoffset": -14400
+          },
+          "post": {
+            "timezone": "EDT",
+            "start": 1788379200,
+            "end": 1788393600,
+            "gmtoffset": -14400
+          }
+        },
+        "dataGranularity": "1d",
+        "range": "5d",
+        "validRanges": [
+          "1d",
+          "5d",
+          "1mo",
+          "3mo",
+          "6mo",
+          "1y",
+          "2y",
+          "5y",
+          "10y",
+          "ytd",
+          "max"
+        ]
+      },
+      "timestamp": [
+        1787837400,
+        1787923800,
+        1788183000,
+        1788269400,
+        1788355800
+      ],
+      "quote": {
+        "volume": [
+          9046000,
+          8468500,
+          6241500,
+          8049500,
+          5723185
+        ],
+        "open": [
+          526.0599975585938,
+          521.2000122070312,
+          509.82000732421875,
+          501.42999267578125,
+          498.17999267578125
+        ],
+        "low": [
+          517.0,
+          506.82000732421875,
+          507.0299987792969,
+          495.0899963378906,
+          493.30999755859375
+        ],
+        "high": [
+          527.780029296875,
+          522.6500244140625,
+          514.3300170898438,
+          504.7200012207031,
+          504.0199890136719
+        ],
+        "close": [
+          525.4299926757812,
+          508.6199951171875,
+          511.0400085449219,
+          500.30999755859375,
+          501.44000244140625
+        ]
+      }
+    },
+    "y_SMH": {
+      "source": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?range=5d&interval=1d&includePrePost=true",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "meta": {
+        "currency": "USD",
+        "symbol": "SMH",
+        "exchangeName": "NGM",
+        "fullExchangeName": "NasdaqGM",
+        "instrumentType": "ETF",
+        "firstTradeDate": 960211800,
+        "regularMarketTime": 1788379200,
+        "hasPrePostMarketData": true,
+        "gmtoffset": -14400,
+        "timezone": "EDT",
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketPrice": 550.48,
+        "regularMarketChangePercent": 0.965,
+        "fiftyTwoWeekHigh": 671.83,
+        "fiftyTwoWeekLow": 283.78,
+        "regularMarketDayHigh": 553.19,
+        "regularMarketDayLow": 541.75,
+        "regularMarketVolume": 5071467,
+        "longName": "VanEck Semiconductor ETF",
+        "shortName": "VanEck Semiconductor ETF",
+        "chartPreviousClose": 555.77,
+        "priceHint": 2,
+        "currentTradingPeriod": {
+          "pre": {
+            "timezone": "EDT",
+            "end": 1788355800,
+            "start": 1788336000,
+            "gmtoffset": -14400
+          },
+          "regular": {
+            "timezone": "EDT",
+            "end": 1788379200,
+            "start": 1788355800,
+            "gmtoffset": -14400
+          },
+          "post": {
+            "timezone": "EDT",
+            "end": 1788393600,
+            "start": 1788379200,
+            "gmtoffset": -14400
+          }
+        },
+        "dataGranularity": "1d",
+        "range": "5d",
+        "validRanges": [
+          "1d",
+          "5d",
+          "1mo",
+          "3mo",
+          "6mo",
+          "1y",
+          "2y",
+          "5y",
+          "10y",
+          "ytd",
+          "max"
+        ]
+      },
+      "timestamp": [
+        1787837400,
+        1787923800,
+        1788183000,
+        1788269400,
+        1788355800
+      ],
+      "quote": {
+        "open": [
+          569.3699951171875,
+          null,
+          554.3800048828125,
+          546.47998046875,
+          545.0
+        ],
+        "low": [
+          562.5399780273438,
+          null,
+          552.7899780273438,
+          540.8499755859375,
+          541.75
+        ],
+        "high": [
+          573.2100219726562,
+          null,
+          558.4299926757812,
+          549.8800048828125,
+          553.1900024414062
+        ],
+        "close": [
+          573.0,
+          null,
+          556.6300048828125,
+          545.219970703125,
+          550.47998046875
+        ],
+        "volume": [
+          6562500,
+          null,
+          4317100,
+          6195100,
+          5071467
+        ]
+      }
+    },
+    "y_NVDA": {
+      "source": "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?range=5d&interval=1d&includePrePost=true",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "meta": {
+        "currency": "USD",
+        "symbol": "NVDA",
+        "exchangeName": "NMS",
+        "fullExchangeName": "NasdaqGS",
+        "instrumentType": "EQUITY",
+        "firstTradeDate": 917015400,
+        "regularMarketTime": 1788379200,
+        "hasPrePostMarketData": true,
+        "gmtoffset": -14400,
+        "timezone": "EDT",
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketPrice": 224.41,
+        "regularMarketChangePercent": 3.205,
+        "fiftyTwoWeekHigh": 236.54,
+        "fiftyTwoWeekLow": 164.07,
+        "regularMarketDayHigh": 227.95,
+        "regularMarketDayLow": 218.48,
+        "regularMarketVolume": 155979384,
+        "longName": "NVIDIA Corporation",
+        "shortName": "NVIDIA Corporation",
+        "chartPreviousClose": 209.66,
+        "priceHint": 2,
+        "currentTradingPeriod": {
+          "pre": {
+            "timezone": "EDT",
+            "start": 1788336000,
+            "end": 1788355800,
+            "gmtoffset": -14400
+          },
+          "regular": {
+            "timezone": "EDT",
+            "start": 1788355800,
+            "end": 1788379200,
+            "gmtoffset": -14400
+          },
+          "post": {
+            "timezone": "EDT",
+            "start": 1788379200,
+            "end": 1788393600,
+            "gmtoffset": -14400
+          }
+        },
+        "dataGranularity": "1d",
+        "range": "5d",
+        "validRanges": [
+          "1d",
+          "5d",
+          "1mo",
+          "3mo",
+          "6mo",
+          "1y",
+          "2y",
+          "5y",
+          "10y",
+          "ytd",
+          "max"
+        ]
+      },
+      "timestamp": [
+        1787837400,
+        1787923800,
+        1788183000,
+        1788269400,
+        1788355800
+      ],
+      "quote": {
+        "open": [
+          222.86000061035156,
+          227.36000061035156,
+          218.8699951171875,
+          216.75,
+          218.78500366210938
+        ],
+        "close": [
+          227.97999572753906,
+          217.5500030517578,
+          220.77999877929688,
+          217.44000244140625,
+          224.41000366210938
+        ],
+        "volume": [
+          298909800,
+          195116400,
+          124702700,
+          109756200,
+          155979384
+        ],
+        "high": [
+          230.47000122070312,
+          229.25999450683594,
+          221.3000030517578,
+          220.41000366210938,
+          227.9499969482422
+        ],
+        "low": [
+          220.89999389648438,
+          216.80999755859375,
+          216.2100067138672,
+          215.10000610351562,
+          218.47999572753906
+        ]
+      }
+    },
+    "y_AMD": {
+      "source": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=5d&interval=1d&includePrePost=true",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "meta": {
+        "currency": "USD",
+        "symbol": "AMD",
+        "exchangeName": "NMS",
+        "fullExchangeName": "NasdaqGS",
+        "instrumentType": "EQUITY",
+        "firstTradeDate": 322151400,
+        "regularMarketTime": 1788379201,
+        "hasPrePostMarketData": true,
+        "gmtoffset": -14400,
+        "timezone": "EDT",
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketPrice": 457.06,
+        "regularMarketChangePercent": -0.555,
+        "fiftyTwoWeekHigh": 584.73,
+        "fiftyTwoWeekLow": 149.22,
+        "regularMarketDayHigh": 462.21,
+        "regularMarketDayLow": 452.37,
+        "regularMarketVolume": 11852873,
+        "longName": "Advanced Micro Devices, Inc.",
+        "shortName": "Advanced Micro Devices, Inc.",
+        "chartPreviousClose": 480.93,
+        "priceHint": 2,
+        "currentTradingPeriod": {
+          "pre": {
+            "timezone": "EDT",
+            "end": 1788355800,
+            "start": 1788336000,
+            "gmtoffset": -14400
+          },
+          "regular": {
+            "timezone": "EDT",
+            "end": 1788379200,
+            "start": 1788355800,
+            "gmtoffset": -14400
+          },
+          "post": {
+            "timezone": "EDT",
+            "end": 1788393600,
+            "start": 1788379200,
+            "gmtoffset": -14400
+          }
+        },
+        "dataGranularity": "1d",
+        "range": "5d",
+        "validRanges": [
+          "1d",
+          "5d",
+          "1mo",
+          "3mo",
+          "6mo",
+          "1y",
+          "2y",
+          "5y",
+          "10y",
+          "ytd",
+          "max"
+        ]
+      },
+      "timestamp": [
+        1787837400,
+        1787923800,
+        1788183000,
+        1788269400,
+        1788355800
+      ],
+      "quote": {
+        "volume": [
+          16441800,
+          15373900,
+          12463000,
+          16212800,
+          11852873
+        ],
+        "high": [
+          483.0,
+          478.75,
+          475.80999755859375,
+          461.5,
+          462.2099914550781
+        ],
+        "low": [
+          469.6300048828125,
+          465.2900085449219,
+          463.67999267578125,
+          452.29998779296875,
+          452.3699951171875
+        ],
+        "open": [
+          481.5,
+          472.5199890136719,
+          466.2200012207031,
+          459.9100036621094,
+          458.45001220703125
+        ],
+        "close": [
+          476.6700134277344,
+          465.5799865722656,
+          470.7200012207031,
+          459.6099853515625,
+          457.05999755859375
+        ]
+      }
+    },
+    "y_MU": {
+      "source": "https://query1.finance.yahoo.com/v8/finance/chart/MU?range=5d&interval=1d&includePrePost=true",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "meta": {
+        "currency": "USD",
+        "symbol": "MU",
+        "exchangeName": "NMS",
+        "fullExchangeName": "NasdaqGS",
+        "instrumentType": "EQUITY",
+        "firstTradeDate": 454944600,
+        "regularMarketTime": 1788379201,
+        "hasPrePostMarketData": true,
+        "gmtoffset": -14400,
+        "timezone": "EDT",
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketPrice": 956.08,
+        "regularMarketChangePercent": 2.425,
+        "fiftyTwoWeekHigh": 1255.0,
+        "fiftyTwoWeekLow": 117.3,
+        "regularMarketDayHigh": 958.0,
+        "regularMarketDayLow": 927.157,
+        "regularMarketVolume": 21231828,
+        "longName": "Micron Technology, Inc.",
+        "shortName": "Micron Technology, Inc.",
+        "chartPreviousClose": 938.4,
+        "priceHint": 2,
+        "currentTradingPeriod": {
+          "pre": {
+            "timezone": "EDT",
+            "start": 1788336000,
+            "end": 1788355800,
+            "gmtoffset": -14400
+          },
+          "regular": {
+            "timezone": "EDT",
+            "start": 1788355800,
+            "end": 1788379200,
+            "gmtoffset": -14400
+          },
+          "post": {
+            "timezone": "EDT",
+            "start": 1788379200,
+            "end": 1788393600,
+            "gmtoffset": -14400
+          }
+        },
+        "dataGranularity": "1d",
+        "range": "5d",
+        "validRanges": [
+          "1d",
+          "5d",
+          "1mo",
+          "3mo",
+          "6mo",
+          "1y",
+          "2y",
+          "5y",
+          "10y",
+          "ytd",
+          "max"
+        ]
+      },
+      "timestamp": [
+        1787837400,
+        1787923800,
+        1788183000,
+        1788269400,
+        1788355800
+      ],
+      "quote": {
+        "volume": [
+          28838500,
+          22890100,
+          22569500,
+          27762200,
+          21231828
+        ],
+        "low": [
+          906.8900146484375,
+          909.0900268554688,
+          930.7899780273438,
+          922.3900146484375,
+          927.1569213867188
+        ],
+        "close": [
+          935.3900146484375,
+          932.8599853515625,
+          958.72998046875,
+          933.4400024414062,
+          956.0800170898438
+        ],
+        "high": [
+          968.7100219726562,
+          946.7999877929688,
+          959.969970703125,
+          969.4400024414062,
+          958.0
+        ],
+        "open": [
+          967.010009765625,
+          919.2899780273438,
+          931.3900146484375,
+          941.1300048828125,
+          930.8250122070312
+        ]
+      }
+    },
+    "y_AVGO": {
+      "source": "https://query1.finance.yahoo.com/v8/finance/chart/AVGO?range=5d&interval=1d&includePrePost=true",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "meta": {
+        "currency": "USD",
+        "symbol": "AVGO",
+        "exchangeName": "NMS",
+        "fullExchangeName": "NasdaqGS",
+        "instrumentType": "EQUITY",
+        "firstTradeDate": 1249565400,
+        "regularMarketTime": 1788379201,
+        "hasPrePostMarketData": true,
+        "gmtoffset": -14400,
+        "timezone": "EDT",
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketPrice": 367.24,
+        "regularMarketChangePercent": -0.66,
+        "fiftyTwoWeekHigh": 495.0,
+        "fiftyTwoWeekLow": 289.96,
+        "regularMarketDayHigh": 371.09,
+        "regularMarketDayLow": 364.65,
+        "regularMarketVolume": 30822042,
+        "longName": "Broadcom Inc.",
+        "shortName": "Broadcom Inc.",
+        "chartPreviousClose": 355.59,
+        "priceHint": 2,
+        "currentTradingPeriod": {
+          "pre": {
+            "timezone": "EDT",
+            "start": 1788336000,
+            "end": 1788355800,
+            "gmtoffset": -14400
+          },
+          "regular": {
+            "timezone": "EDT",
+            "start": 1788355800,
+            "end": 1788379200,
+            "gmtoffset": -14400
+          },
+          "post": {
+            "timezone": "EDT",
+            "start": 1788379200,
+            "end": 1788393600,
+            "gmtoffset": -14400
+          }
+        },
+        "dataGranularity": "1d",
+        "range": "5d",
+        "validRanges": [
+          "1d",
+          "5d",
+          "1mo",
+          "3mo",
+          "6mo",
+          "1y",
+          "2y",
+          "5y",
+          "10y",
+          "ytd",
+          "max"
+        ]
+      },
+      "timestamp": [
+        1787837400,
+        1787923800,
+        1788183000,
+        1788269400,
+        1788355800
+      ],
+      "quote": {
+        "volume": [
+          21330000,
+          16596100,
+          21948000,
+          19288900,
+          30822042
+        ],
+        "open": [
+          361.7900085449219,
+          373.6000061035156,
+          369.5199890136719,
+          364.25,
+          369.67999267578125
+        ],
+        "low": [
+          360.6099853515625,
+          365.3500061035156,
+          366.29998779296875,
+          362.0,
+          364.6499938964844
+        ],
+        "high": [
+          371.7200012207031,
+          376.5899963378906,
+          372.75,
+          371.3999938964844,
+          371.0899963378906
+        ],
+        "close": [
+          371.5400085449219,
+          368.7900085449219,
+          370.3399963378906,
+          369.67999267578125,
+          367.239990234375
+        ]
+      }
+    },
+    "y_EWY": {
+      "source": "https://query1.finance.yahoo.com/v8/finance/chart/EWY?range=5d&interval=1d&includePrePost=true",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "meta": {
+        "currency": "USD",
+        "symbol": "EWY",
+        "exchangeName": "PCX",
+        "fullExchangeName": "NYSEArca",
+        "instrumentType": "ETF",
+        "firstTradeDate": 958138200,
+        "regularMarketTime": 1788379200,
+        "hasPrePostMarketData": true,
+        "gmtoffset": -14400,
+        "timezone": "EDT",
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketPrice": 178.86,
+        "regularMarketChangePercent": 1.741,
+        "fiftyTwoWeekHigh": 220.89,
+        "fiftyTwoWeekLow": 72.58,
+        "regularMarketDayHigh": 179.11,
+        "regularMarketDayLow": 176.242,
+        "regularMarketVolume": 7253057,
+        "longName": "iShares MSCI South Korea ETF",
+        "shortName": "iShares MSCI South Korea ETF",
+        "chartPreviousClose": 179.18,
+        "priceHint": 2,
+        "currentTradingPeriod": {
+          "pre": {
+            "timezone": "EDT",
+            "start": 1788336000,
+            "end": 1788355800,
+            "gmtoffset": -14400
+          },
+          "regular": {
+            "timezone": "EDT",
+            "start": 1788355800,
+            "end": 1788379200,
+            "gmtoffset": -14400
+          },
+          "post": {
+            "timezone": "EDT",
+            "start": 1788379200,
+            "end": 1788393600,
+            "gmtoffset": -14400
+          }
+        },
+        "dataGranularity": "1d",
+        "range": "5d",
+        "validRanges": [
+          "1d",
+          "5d",
+          "1mo",
+          "3mo",
+          "6mo",
+          "1y",
+          "2y",
+          "5y",
+          "10y",
+          "ytd",
+          "max"
+        ]
+      },
+      "timestamp": [
+        1787837400,
+        1787923800,
+        1788183000,
+        1788269400,
+        1788355800
+      ],
+      "quote": {
+        "high": [
+          183.0500030517578,
+          null,
+          182.27000427246094,
+          179.8800048828125,
+          179.11000061035156
+        ],
+        "low": [
+          179.07000732421875,
+          null,
+          179.24000549316406,
+          174.61000061035156,
+          176.24229431152344
+        ],
+        "close": [
+          182.13999938964844,
+          null,
+          180.86000061035156,
+          175.8000030517578,
+          178.86000061035156
+        ],
+        "volume": [
+          10182300,
+          null,
+          9901600,
+          13438900,
+          7253057
+        ],
+        "open": [
+          182.63999938964844,
+          null,
+          181.0500030517578,
+          178.16000366210938,
+          176.80999755859375
+        ]
+      }
+    },
+    "y_SKHY": {
+      "source": "https://query1.finance.yahoo.com/v8/finance/chart/SKHY?range=5d&interval=1d&includePrePost=true",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "meta": {
+        "currency": "USD",
+        "symbol": "SKHY",
+        "exchangeName": "NMS",
+        "fullExchangeName": "NasdaqGS",
+        "instrumentType": "EQUITY",
+        "firstTradeDate": 1783690200,
+        "regularMarketTime": 1788379200,
+        "hasPrePostMarketData": true,
+        "gmtoffset": -14400,
+        "timezone": "EDT",
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketPrice": 164.98,
+        "regularMarketChangePercent": 2.612,
+        "fiftyTwoWeekHigh": 194.8,
+        "fiftyTwoWeekLow": 124.8,
+        "regularMarketDayHigh": 165.47,
+        "regularMarketDayLow": 158.67,
+        "regularMarketVolume": 11104829,
+        "longName": "SK hynix Inc.",
+        "shortName": "SK hynix Inc.",
+        "chartPreviousClose": 158.02,
+        "priceHint": 2,
+        "currentTradingPeriod": {
+          "pre": {
+            "timezone": "EDT",
+            "start": 1788336000,
+            "end": 1788355800,
+            "gmtoffset": -14400
+          },
+          "regular": {
+            "timezone": "EDT",
+            "start": 1788355800,
+            "end": 1788379200,
+            "gmtoffset": -14400
+          },
+          "post": {
+            "timezone": "EDT",
+            "start": 1788379200,
+            "end": 1788393600,
+            "gmtoffset": -14400
+          }
+        },
+        "dataGranularity": "1d",
+        "range": "5d",
+        "validRanges": [
+          "1d",
+          "5d",
+          "1mo",
+          "3mo",
+          "ytd",
+          "max"
+        ]
+      },
+      "timestamp": [
+        1787837400,
+        1787923800,
+        1788183000,
+        1788269400,
+        1788355800
+      ],
+      "quote": {
+        "high": [
+          164.72999572753906,
+          163.55999755859375,
+          165.07000732421875,
+          164.0399932861328,
+          165.47000122070312
+        ],
+        "volume": [
+          13394000,
+          11712000,
+          12183300,
+          10875700,
+          11104829
+        ],
+        "open": [
+          163.8800048828125,
+          159.1999969482422,
+          160.75,
+          161.5,
+          159.76499938964844
+        ],
+        "low": [
+          158.61000061035156,
+          157.97000122070312,
+          160.5,
+          158.52000427246094,
+          158.6699981689453
+        ],
+        "close": [
+          161.61000061035156,
+          161.0399932861328,
+          164.5800018310547,
+          160.77999877929688,
+          164.97999572753906
+        ]
+      }
+    },
+    "y_NQF": {
+      "source": "https://query1.finance.yahoo.com/v8/finance/chart/NQ%3DF?range=5d&interval=1d&includePrePost=true",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "meta": {
+        "currency": "USD",
+        "symbol": "NQ=F",
+        "exchangeName": "CME",
+        "fullExchangeName": "CME",
+        "instrumentType": "FUTURE",
+        "firstTradeDate": 969249600,
+        "regularMarketTime": 1788389676,
+        "hasPrePostMarketData": false,
+        "gmtoffset": -14400,
+        "timezone": "EDT",
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketPrice": 29181.0,
+        "regularMarketChangePercent": -0.018,
+        "fiftyTwoWeekHigh": 30968.0,
+        "fiftyTwoWeekLow": 22961.5,
+        "regularMarketDayHigh": 29208.75,
+        "regularMarketDayLow": 29148.0,
+        "regularMarketVolume": 4235,
+        "shortName": "Nasdaq 100 Sep 26",
+        "chartPreviousClose": 29491.75,
+        "priceHint": 2,
+        "currentTradingPeriod": {
+          "pre": {
+            "timezone": "EDT",
+            "start": 1788321600,
+            "end": 1788321600,
+            "gmtoffset": -14400
+          },
+          "regular": {
+            "timezone": "EDT",
+            "start": 1788321600,
+            "end": 1788407940,
+            "gmtoffset": -14400
+          },
+          "post": {
+            "timezone": "EDT",
+            "start": 1788407940,
+            "end": 1788407940,
+            "gmtoffset": -14400
+          }
+        },
+        "dataGranularity": "1d",
+        "range": "5d",
+        "validRanges": [
+          "1d",
+          "5d",
+          "1mo",
+          "3mo",
+          "6mo",
+          "1y",
+          "2y",
+          "5y",
+          "10y",
+          "ytd",
+          "max"
+        ]
+      },
+      "timestamp": [
+        1787889600,
+        1788148800,
+        1788235200,
+        1788321600
+      ],
+      "quote": {
+        "close": [
+          29491.75,
+          29513.0,
+          29125.5,
+          29181.0
+        ],
+        "high": [
+          29811.5,
+          29546.25,
+          29571.25,
+          29208.75
+        ],
+        "volume": [
+          583609,
+          468460,
+          468460,
+          4235
+        ],
+        "open": [
+          29635.5,
+          29540.0,
+          29518.25,
+          29177.0
+        ],
+        "low": [
+          29436.25,
+          29273.5,
+          29002.0,
+          29148.0
+        ]
+      }
+    },
+    "y_ESF": {
+      "source": "https://query1.finance.yahoo.com/v8/finance/chart/ES%3DF?range=5d&interval=1d&includePrePost=true",
+      "fetchedAt": "2026-09-03T08:04:45+09:00",
+      "status": 200,
+      "meta": {
+        "currency": "USD",
+        "symbol": "ES=F",
+        "exchangeName": "CME",
+        "fullExchangeName": "CME",
+        "instrumentType": "FUTURE",
+        "firstTradeDate": 969249600,
+        "regularMarketTime": 1788389650,
+        "hasPrePostMarketData": false,
+        "gmtoffset": -14400,
+        "timezone": "EDT",
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketPrice": 7675.75,
+        "regularMarketChangePercent": -0.01,
+        "fiftyTwoWeekHigh": 7838.5,
+        "fiftyTwoWeekLow": 6353.25,
+        "regularMarketDayHigh": 7680.0,
+        "regularMarketDayLow": 7671.5,
+        "regularMarketVolume": 4486,
+        "shortName": "E-Mini S&P 500 Sep 26",
+        "chartPreviousClose": 7722.0,
+        "priceHint": 2,
+        "currentTradingPeriod": {
+          "pre": {
+            "timezone": "EDT",
+            "start": 1788321600,
+            "end": 1788321600,
+            "gmtoffset": -14400
+          },
+          "regular": {
+            "timezone": "EDT",
+            "start": 1788321600,
+            "end": 1788407940,
+            "gmtoffset": -14400
+          },
+          "post": {
+            "timezone": "EDT",
+            "start": 1788407940,
+            "end": 1788407940,
+            "gmtoffset": -14400
+          }
+        },
+        "dataGranularity": "1d",
+        "range": "5d",
+        "validRanges": [
+          "1d",
+          "5d",
+          "1mo",
+          "3mo",
+          "6mo",
+          "1y",
+          "2y",
+          "5y",
+          "10y",
+          "ytd",
+          "max"
+        ]
+      },
+      "timestamp": [
+        1787889600,
+        1788148800,
+        1788235200,
+        1788321600
+      ],
+      "quote": {
+        "open": [
+          7733.75,
+          7723.5,
+          7701.25,
+          7673.5
+        ],
+        "volume": [
+          1520831,
+          1247996,
+          1247996,
+          4486
+        ],
+        "high": [
+          7782.5,
+          7724.0,
+          7708.0,
+          7680.0
+        ],
+        "close": [
+          7722.0,
+          7699.0,
+          7642.75,
+          7675.75
+        ],
+        "low": [
+          7711.75,
+          7674.75,
+          7621.5,
+          7671.5
+        ]
+      }
+    },
+    "y_CLF": {
+      "source": "https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?range=5d&interval=1d&includePrePost=true",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "meta": {
+        "currency": "USD",
+        "symbol": "CL=F",
+        "exchangeName": "NYM",
+        "fullExchangeName": "NY Mercantile",
+        "instrumentType": "FUTURE",
+        "firstTradeDate": 967003200,
+        "regularMarketTime": 1788389670,
+        "hasPrePostMarketData": false,
+        "gmtoffset": -14400,
+        "timezone": "EDT",
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketPrice": 90.77,
+        "regularMarketChangePercent": -0.264,
+        "fiftyTwoWeekHigh": 119.48,
+        "fiftyTwoWeekLow": 54.98,
+        "regularMarketDayHigh": 90.81,
+        "regularMarketDayLow": 90.63,
+        "regularMarketVolume": 894,
+        "shortName": "Crude Oil Oct 26",
+        "chartPreviousClose": 83.4,
+        "priceHint": 2,
+        "currentTradingPeriod": {
+          "pre": {
+            "timezone": "EDT",
+            "end": 1788321600,
+            "start": 1788321600,
+            "gmtoffset": -14400
+          },
+          "regular": {
+            "timezone": "EDT",
+            "end": 1788407940,
+            "start": 1788321600,
+            "gmtoffset": -14400
+          },
+          "post": {
+            "timezone": "EDT",
+            "end": 1788407940,
+            "start": 1788407940,
+            "gmtoffset": -14400
+          }
+        },
+        "dataGranularity": "1d",
+        "range": "5d",
+        "validRanges": [
+          "1d",
+          "5d",
+          "1mo",
+          "3mo",
+          "6mo",
+          "1y",
+          "2y",
+          "5y",
+          "10y",
+          "ytd",
+          "max"
+        ]
+      },
+      "timestamp": [
+        1787889600,
+        1788148800,
+        1788235200,
+        1788321600
+      ],
+      "quote": {
+        "low": [
+          82.25,
+          84.11000061035156,
+          86.12999725341797,
+          90.62999725341797
+        ],
+        "volume": [
+          167615,
+          235761,
+          235761,
+          894
+        ],
+        "high": [
+          83.77999877929688,
+          86.79000091552734,
+          90.97000122070312,
+          90.80999755859375
+        ],
+        "close": [
+          83.4000015258789,
+          85.76000213623047,
+          90.22000122070312,
+          90.7699966430664
+        ],
+        "open": [
+          83.66999816894531,
+          84.69000244140625,
+          86.30999755859375,
+          90.69999694824219
+        ]
+      }
+    },
+    "y_BZF": {
+      "source": "https://query1.finance.yahoo.com/v8/finance/chart/BZ%3DF?range=5d&interval=1d&includePrePost=true",
+      "fetchedAt": "2026-09-03T08:04:44+09:00",
+      "status": 200,
+      "meta": {
+        "currency": "USD",
+        "symbol": "BZ=F",
+        "exchangeName": "NYM",
+        "fullExchangeName": "NY Mercantile",
+        "instrumentType": "FUTURE",
+        "firstTradeDate": 1185768000,
+        "regularMarketTime": 1788389292,
+        "hasPrePostMarketData": false,
+        "gmtoffset": -14400,
+        "timezone": "EDT",
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketPrice": 95.32,
+        "regularMarketChangePercent": -0.324,
+        "fiftyTwoWeekHigh": 126.1,
+        "fiftyTwoWeekLow": 58.72,
+        "regularMarketDayHigh": 95.36,
+        "regularMarketDayLow": 95.32,
+        "regularMarketVolume": 14,
+        "longName": "Brent Crude Oil Last Day Financial Futures",
+        "shortName": "Brent Crude Oil Last Day Financ",
+        "chartPreviousClose": 89.31,
+        "priceHint": 2,
+        "currentTradingPeriod": {
+          "pre": {
+            "timezone": "EDT",
+            "end": 1788321600,
+            "start": 1788321600,
+            "gmtoffset": -14400
+          },
+          "regular": {
+            "timezone": "EDT",
+            "end": 1788407940,
+            "start": 1788321600,
+            "gmtoffset": -14400
+          },
+          "post": {
+            "timezone": "EDT",
+            "end": 1788407940,
+            "start": 1788407940,
+            "gmtoffset": -14400
+          }
+        },
+        "dataGranularity": "1d",
+        "range": "5d",
+        "validRanges": [
+          "1d",
+          "5d",
+          "1mo",
+          "3mo",
+          "6mo",
+          "1y",
+          "2y",
+          "5y",
+          "10y",
+          "ytd",
+          "max"
+        ]
+      },
+      "timestamp": [
+        1787889600,
+        1788148800,
+        1788235200,
+        1788321600
+      ],
+      "quote": {
+        "low": [
+          88.9000015258789,
+          89.02999877929688,
+          90.7300033569336,
+          95.31999969482422
+        ],
+        "volume": [
+          26729,
+          23556,
+          23556,
+          14
+        ],
+        "open": [
+          89.51000213623047,
+          89.30999755859375,
+          90.8499984741211,
+          95.33000183105469
+        ],
+        "high": [
+          90.16000366210938,
+          91.5,
+          95.44999694824219,
+          95.36000061035156
+        ],
+        "close": [
+          89.30999755859375,
+          90.48999786376953,
+          94.6500015258789,
+          95.31999969482422
+        ]
+      }
+    }
+  },
+  "triggerPrice": {
+    "localDateTime": "20260902152000",
+    "currentPrice": 6563.67,
+    "openPrice": 6563.67,
+    "highPrice": 6563.67,
+    "lowPrice": 6563.67,
+    "accumulatedTradingVolume": 302
+  },
+  "flowRows": {
+    "1519": {
+      "foreign": -21228
+    }
+  },
+  "rawHashes": {
+    "avgo-raw.txt": "b1c758f5a030327bfc2a257591aa9fd4fcbda16fe5db09ffc53dadb873a35a6e",
+    "flow.txt": "292d69f4112b91f0a6372c821d94e6ef9ca619a26689a58a3710b972b99b71a1",
+    "flow2-raw.txt": "1c5a01526396ee1b663c2742dac89ad921a4a5f4d95cf1a39b3cc8b8a8f89dd8",
+    "fx.txt": "3b076f56e468de1d57402e7ccc627a3d04653f594654e82cf4554189c4dde794",
+    "hynix_daily.txt": "f81e7d0770412a35fca1cf04a1e0c6b74e902e8ad42d52724daa6a977da66a9a",
+    "kodex_daily.txt": "9616a6cc241bed9239997eb1e8da897a427824956e7a5914f95435fe00eefcee",
+    "kosdaq_daily.txt": "5957358d8249ee4cd22a445924fdc007342cac8ee10572e86fee79636e830ea6",
+    "kospi_daily.txt": "0967613804dd1b7dcfa240f76874753970fb85afc5c30819faad9eeb85334bcf",
+    "kospi_min-raw.txt": "f35b2bfed6686c1083db693d2b2147bcfbd59960c0b0515485915cf0fe0011a7",
+    "nxt.txt": "f5f56fa666f9e60f890bc2c53d78f82b8d245f6a4c11da2bac6899c0222027e9",
+    "program.txt": "8ab388a7c7cb7ca5599478508b29c485aa852cfae7cc70315e107dbb13d4cbab",
+    "program2-raw.txt": "1a9e83021bbb1b95f712fe20d190583e9470afdac6c1fd5bd29b8b83e0c6be3c",
+    "program3-raw.txt": "148a16ed579d8a1950a9e330fa661eabcd78249afb36124a5bde627e1a693484",
+    "samsung_daily.txt": "47740443f7eccd3317b9a08dd67791fa1694c33f861d44b3d4e7ef36227ddbc3",
+    "y_AMD.txt": "fcfb3db8962ac193dc5ef6ec6ed442be213449c2873491b02e9d06c300ea5e80",
+    "y_AVGO.txt": "2c8e87557217936753ce724911500b28250f21cb78ba712864ed782fc6b2b089",
+    "y_BZF.txt": "441c07011d03b2184722199635f014e6470c45914dda6454247fc965c00f322e",
+    "y_CLF.txt": "9af8ed93389cc4b08ff29433e044510dc6e26895def03fe4440be9b0cfb6f502",
+    "y_ESF.txt": "ceec25d4cb99ce6002aadcc10e061fa4de8ed8e4559e2815cb21694b1b1c4d6e",
+    "y_EWY.txt": "08380affbc083955a809d516d7cd8e7367b66b97afb22bbc7a4fa4626b0eba3a",
+    "y_MU.txt": "559350a834aa3b803a9b428740a0a4ad0bc61f71292074689f1c657cbde294fa",
+    "y_NQF.txt": "ca05d77aeab78250029d9f126fcee851891f2eb6c11d11b00225a49e0d43bc46",
+    "y_NVDA.txt": "b7b7e6f16770b42e3546513624ded00faf8bd69126402334f5c39016dbbe63d6",
+    "y_QQQ.txt": "f0149ec18ef917634d45269ba3f791c841d5b58973968a4bd83621b9a0330503",
+    "y_SKHY.txt": "cbaf748a20497fd8412a89f170af182fe2a1652d16a8c44d1ba532d854182cc6",
+    "y_SMH.txt": "9133c8281719dbbbf94894c408232d4a265bb067c6984525a6344bbf26fb1849",
+    "y_SOXX.txt": "0b97d3fdcc397ddb5f563e65e024742036acd98d812143650f49e946f95c41ac",
+    "y_TQQQ.txt": "a58565a89e4387b03d56eb8d3e287ee5636553803d6512fa96fe8bd060500ecc"
+  },
+  "sourceNotes": "장후 수급은 정규장 종가로 혼합하지 않았다."
+}

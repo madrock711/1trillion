@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-02-0840-same-close",
+  "recordedAt": "2026-09-03T08:09:45+09:00",
+  "actualRef": "2026-09-02",
+  "realizedScenario": "bear",
+  "errorCodes": [],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "not_observed",
+      "observedAt": "2026-09-02T15:20:00+09:00",
+      "observedValue": 6563.67,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "bull-foreign",
+      "status": "not_observed",
+      "observedAt": "2026-09-02T15:19:00+09:00",
+      "observedValue": -21228,
+      "source": "Naver Finance 투자자별 매매동향"
+    },
+    {
+      "id": "base-support",
+      "status": "not_observed",
+      "observedAt": "2026-09-02T15:20:00+09:00",
+      "observedValue": 6563.67,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "base-cap",
+      "status": "observed",
+      "observedAt": "2026-09-02T15:20:00+09:00",
+      "observedValue": 6563.67,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "bear-price",
+      "status": "observed",
+      "observedAt": "2026-09-02T15:20:00+09:00",
+      "observedValue": 6563.67,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "bear-program",
+      "status": "unavailable",
+      "reason": "관측 마감 15:20 프로그램 원문이 이번 조회에 없으며 장후 값을 소급하지 않았다."
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "oil-yield-chip-risk",
+      "status": "confirmed"
+    },
+    {
+      "id": "nxt-krw-risk-confirmation",
+      "status": "confirmed"
+    },
+    {
+      "id": "export-dram-floor",
+      "status": "rejected"
+    }
+  ],
+  "hypothesisTests": []
+}

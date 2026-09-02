@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-09-02T08:13:00+09:00",
-  "source": "KRX 유가증권시장 거래일과 Naver Finance PREOPEN 원천",
-  "rawHash": "d59efe636ede367546bc3b7f8d58e6a994e17a6d6c30f8626c4748308757dffa",
+  "asOf": "2026-09-03T08:09:45+09:00",
+  "source": "Naver Finance 2026-09-03 PREOPEN basic와 NXT OPEN 원문 및 KRX 휴장 규칙",
+  "rawHash": "aef25d39a5ac882a1d7d0d706b8a679b3db0ef26d5993eb4e53326dc7d082dfc",
   "sessions": [
     "2026-07-27",
     "2026-07-28",
@@ -30,6 +30,7 @@
     "2026-08-28",
     "2026-08-31",
     "2026-09-01",
-    "2026-09-02"
+    "2026-09-02",
+    "2026-09-03"
   ]
 }

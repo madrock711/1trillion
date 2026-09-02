@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-03-0819-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-09-03.md",
+  "reportSha256": "2ae090457395caa3803c72d0899d1d658fb8ccb3d7cc431fd1856c8a72317d65",
+  "issuedAt": "2026-09-03T08:19:07+09:00",
+  "dataCutoffAt": "2026-09-03T08:19:05+09:00",
+  "marketState": "preopen",
+  "marketRegime": "mixed",
+  "evaluationBucket": "preopen",
+  "target": {
+    "sessionDate": "2026-09-03",
+    "horizon": "session_close",
+    "instrument": "KOSPI",
+    "leadSessions": 0,
+    "previousSessionDate": "2026-09-02"
+  },
+  "reference": {
+    "price": 6562.72,
+    "asOf": "2026-09-02T15:30:00+09:00",
+    "kind": "previous_close"
+  },
+  "scenarios": {
+    "bull": {
+      "low": 6700,
+      "high": 6950,
+      "probability": 0.25
+    },
+    "base": {
+      "low": 6500,
+      "high": 6700,
+      "probability": 0.5
+    },
+    "bear": {
+      "low": 6250,
+      "high": 6500,
+      "probability": 0.25
+    }
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {
+    "low": 6200,
+    "high": 7000,
+    "coverage": 0.9
+  },
+  "drivers": [
+    {
+      "id": "chip-krw-recovery",
+      "rank": 1,
+      "claim": "미국 반도체·원화·NXT 반등이 6,500 지지와 6,700 회복을 받친다.",
+      "validationMetric": "KOSPI·삼성전자·SK하이닉스 종가와 외국인·프로그램"
+    },
+    {
+      "id": "avgo-oil-rate-cap",
+      "rank": 2,
+      "claim": "Broadcom 기대치 차이와 유가95달러대·10년물4.79%가 반등 상단을 제한한다.",
+      "validationMetric": "KOSPI 고가·종가와 Broadcom·Brent"
+    },
+    {
+      "id": "memory-price-not-volume",
+      "rank": 3,
+      "claim": "DRAM 호가 상승은 거래 부진 속 하단 지지 근거이며 전면 수요 회복을 뜻하지 않는다.",
+      "validationMetric": "메모리주 종가·현물가격·거래 해설"
+    }
+  ],
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-09-03T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "description": "kospi_price gt 6700",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 6700,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "bull-foreign",
+          "description": "foreign_cash gt 0",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance 투자자별 매매동향"
+        },
+        {
+          "id": "bull-program",
+          "description": "program_total gt 0",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance 프로그램 매매동향"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-09-03T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-support",
+          "description": "kospi_price gte 6500",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 6500,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "base-cap",
+          "description": "kospi_price lte 6700",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 6700,
+          "source": "Naver Finance KOSPI"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-09-03T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "description": "kospi_price lt 6500",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 6500,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "bear-foreign",
+          "description": "foreign_cash lt 0",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance 투자자별 매매동향"
+        },
+        {
+          "id": "bear-program",
+          "description": "program_total lt 0",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance 프로그램 매매동향"
+        }
+      ]
+    }
+  },
+  "hypothesisTrials": [],
+  "posture": {
+    "attack": 25,
+    "wait": 50,
+    "defense": 25
+  },
+  "supersedes": null,
+  "contentHash": "a841e59702c6991173545ccd528371e2f9a44ceb8011a14e5abfec75415c5e0c"
+}

@@ -20,8 +20,14 @@ vm.runInContext(`${source.slice(start, end)}\nthis.validateData = validateData;`
 
 assert.doesNotThrow(
     () => context.validateData(structuredClone(snapshot)),
-    '보조 지수의 OHLC 전체가 비어 있어도 최신 대시보드 초기화는 계속되어야 합니다.'
+    '최신 대시보드의 실제 스냅샷이 초기화되어야 합니다.'
 );
+
+const absentKosdaq = structuredClone(snapshot);
+Object.assign(absentKosdaq.markets.find((market) => market.id === 'KOSDAQ'), {
+    value: null, open: null, high: null, low: null
+});
+assert.doesNotThrow(() => context.validateData(absentKosdaq));
 
 const invalidKospi = structuredClone(snapshot);
 invalidKospi.markets.find((market) => market.id === 'KOSPI').open = null;
@@ -31,7 +37,7 @@ assert.throws(
     '핵심 지수 KOSPI의 불완전한 OHLC는 차단해야 합니다.'
 );
 
-const partialKosdaq = structuredClone(snapshot);
+const partialKosdaq = structuredClone(absentKosdaq);
 partialKosdaq.markets.find((market) => market.id === 'KOSDAQ').value = 1000;
 assert.throws(
     () => context.validateData(partialKosdaq),
