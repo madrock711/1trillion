@@ -1,0 +1,126 @@
+{
+  "verifiedAt": "2026-09-04T08:21:20+09:00",
+  "commitSha": "b3557ced4b8387c6f08a38c14a9443397f97dc25",
+  "checks": [
+    {
+      "url": "https://www.hpmplab.com/articles/market-2026-09-04.html?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "bfadd94772a6eadadda0ffcde027cacb791d1a4f811ff026a350b8e05a3a011f"
+    },
+    {
+      "url": "https://www.hpmplab.com/index.html?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "542d86348533ff611293234ee3d6b3faf87aec25b070d252e29847c91b693ce0"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/index.html?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "9c709c01f381a749c9f3641dde2edb419bdffe9fc1e3a601dd9b2ba70899ef93"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/market.html?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "87d98ab9132eb491122f49c1b01056df6165d98acc90484a23cf224be0ab3f55"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-latest.json?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "acce49c64d6f98d4701241e441b382b379a4e6181c5caef919197935d6fa0f39"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-20260904-0818.json?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "acce49c64d6f98d4701241e441b382b379a4e6181c5caef919197935d6fa0f39"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/images/articles/market-2026-09-04-ai-platform-jobs-1200x630.webp?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "9be08992a91d8104512d9ed1a753a057b6e6702777837f951958bc821d3ab7cb"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_90d_2026-09-04.png?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "04c93de246c7287b0894f2c61978a986d910d13fa56a817ecc53df07236b3ef7"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_long_term_2026-09-04.png?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "6416039744a341045efc5f4feedcde9a9c8094b86055423b4f30fc17558c3122"
+    },
+    {
+      "url": "https://www.hpmplab.com/sitemap.xml?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "7417c9b0db84c5823c102a542694771f0a5f04ee5a3057b0a2af3bfbd56d0541"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market-2026-09-04.html?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "bfadd94772a6eadadda0ffcde027cacb791d1a4f811ff026a350b8e05a3a011f"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/index.html?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "542d86348533ff611293234ee3d6b3faf87aec25b070d252e29847c91b693ce0"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/index.html?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "9c709c01f381a749c9f3641dde2edb419bdffe9fc1e3a601dd9b2ba70899ef93"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market.html?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "87d98ab9132eb491122f49c1b01056df6165d98acc90484a23cf224be0ab3f55"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-latest.json?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "acce49c64d6f98d4701241e441b382b379a4e6181c5caef919197935d6fa0f39"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-20260904-0818.json?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "acce49c64d6f98d4701241e441b382b379a4e6181c5caef919197935d6fa0f39"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/images/articles/market-2026-09-04-ai-platform-jobs-1200x630.webp?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "9be08992a91d8104512d9ed1a753a057b6e6702777837f951958bc821d3ab7cb"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_90d_2026-09-04.png?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "04c93de246c7287b0894f2c61978a986d910d13fa56a817ecc53df07236b3ef7"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_long_term_2026-09-04.png?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "6416039744a341045efc5f4feedcde9a9c8094b86055423b4f30fc17558c3122"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/sitemap.xml?v=b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "status": 200,
+      "matchesLocal": true,
+      "sha256": "7417c9b0db84c5823c102a542694771f0a5f04ee5a3057b0a2af3bfbd56d0541"
+    }
+  ]
+}

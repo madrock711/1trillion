@@ -13,3 +13,5 @@
 - 전망 2026-09-04-0818-same-close, 평가 research/evaluation/generated/latest.md.
 
 다음 실행은 9월4일 확정 일봉·수급·15:20 트리거를 정산한다. 이 파일은 현재 시세 원천이 아니다.
+
+- 발행: main b3557ce, Amplify562 08:20:31 SUCCEED, 두 도메인20/20 커밋 일치. 누적 평가 검증은 CRLF/LF 보고서 해시 불일치로 실패. 상세 research/evidence/2026-09-04/publication-integrity-note.md. 기존 봉인값을 사후 수정하지 않았으며 정정 절차 필요.
