@@ -1,0 +1,137 @@
+{
+  "url": "https://stock.naver.com/api/polling/domestic/NXT/stock?itemCodes=005930,000660",
+  "fetchedAt": "2026-09-04T08:03:30+09:00",
+  "rawHash": "85b0d65d1818de55c03c80bbe91e57971812ee9bd6d465e79058789d460f7b78",
+  "data": {
+    "pollingInterval": 7000,
+    "datas": [
+      {
+        "itemCode": "005930",
+        "stockName": "삼성전자",
+        "stockExchangeType": {
+          "code": "KS",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스피",
+          "nameEng": "KOSPI",
+          "name": "KOSPI",
+          "nationName": "대한민국",
+          "nationCode": "KOR",
+          "stockType": "domestic"
+        },
+        "closePrice": "252,500",
+        "compareToPreviousClosePrice": "2,500",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        },
+        "fluctuationsRatio": "1.00",
+        "tradeStopType": {
+          "code": "1",
+          "text": "운영.Trading",
+          "name": "TRADING"
+        },
+        "tradableStatus": "tradable",
+        "tradableStatusCode": "ok",
+        "tradableStatusUpdatedAt": "2026-09-04T07:10:12.796+09:00",
+        "openPrice": "251,000",
+        "highPrice": "253,500",
+        "lowPrice": "251,000",
+        "accumulatedTradingVolume": "311,372",
+        "accumulatedTradingValue": "785억",
+        "marketStatus": "OPEN",
+        "localTradedAt": null,
+        "overMarketPriceInfo": null,
+        "integratedPriceInfo": null,
+        "isinCode": "KR7005930003",
+        "myDataCode": null,
+        "stockEndUrl": null,
+        "symbolCode": "005930",
+        "currencyType": {
+          "code": "KRW",
+          "text": "Republic of Korea won",
+          "name": "KRW"
+        },
+        "closePriceRaw": "252500",
+        "compareToPreviousClosePriceRaw": "2500",
+        "fluctuationsRatioRaw": "1.00",
+        "openPriceRaw": "251000",
+        "highPriceRaw": "253500",
+        "lowPriceRaw": "251000",
+        "accumulatedTradingVolumeRaw": "311372",
+        "accumulatedTradingValueRaw": "78517000000",
+        "marketValueFull": "1,476,185,348,520,000",
+        "marketValueFullRaw": "1476185348520000"
+      },
+      {
+        "itemCode": "000660",
+        "stockName": "SK하이닉스",
+        "stockExchangeType": {
+          "code": "KS",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스피",
+          "nameEng": "KOSPI",
+          "name": "KOSPI",
+          "nationName": "대한민국",
+          "nationCode": "KOR",
+          "stockType": "domestic"
+        },
+        "closePrice": "1,608,000",
+        "compareToPreviousClosePrice": "12,000",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        },
+        "fluctuationsRatio": "0.75",
+        "tradeStopType": {
+          "code": "1",
+          "text": "운영.Trading",
+          "name": "TRADING"
+        },
+        "tradableStatus": "tradable",
+        "tradableStatusCode": "ok",
+        "tradableStatusUpdatedAt": "2026-09-04T07:10:11.32+09:00",
+        "openPrice": "1,615,000",
+        "highPrice": "1,640,000",
+        "lowPrice": "1,603,000",
+        "accumulatedTradingVolume": "72,149",
+        "accumulatedTradingValue": "1,161억",
+        "marketStatus": "OPEN",
+        "localTradedAt": null,
+        "overMarketPriceInfo": null,
+        "integratedPriceInfo": null,
+        "isinCode": "KR7000660001",
+        "myDataCode": null,
+        "stockEndUrl": null,
+        "symbolCode": "000660",
+        "currencyType": {
+          "code": "KRW",
+          "text": "Republic of Korea won",
+          "name": "KRW"
+        },
+        "closePriceRaw": "1608000",
+        "compareToPreviousClosePriceRaw": "12000",
+        "fluctuationsRatioRaw": "0.75",
+        "openPriceRaw": "1615000",
+        "highPriceRaw": "1640000",
+        "lowPriceRaw": "1603000",
+        "accumulatedTradingVolumeRaw": "72149",
+        "accumulatedTradingValueRaw": "116078000000",
+        "marketValueFull": "1,174,631,722,920,000",
+        "marketValueFullRaw": "1174631722920000"
+      }
+    ],
+    "time": "20260904080331"
+  }
+}

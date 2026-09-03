@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AVGO?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-09-04T08:03:29+09:00",
+  "rawHash": "9cd088b7d4bf08c371315464212e17596e75d3c9ae3af3e1f5caf46597aaf592",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "AVGO",
+            "exchangeName": "NMS",
+            "fullExchangeName": "NasdaqGS",
+            "instrumentType": "EQUITY",
+            "firstTradeDate": 1249565400,
+            "regularMarketTime": 1788465601,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 357.16,
+            "regularMarketChangePercent": -2.745,
+            "fulldayPrice": 356.39,
+            "fulldayChange": -10.85,
+            "fulldayChangePercent": -2.954,
+            "fiftyTwoWeekHigh": 495.0,
+            "fiftyTwoWeekLow": 289.96,
+            "regularMarketDayHigh": 359.4,
+            "regularMarketDayLow": 342.331,
+            "regularMarketVolume": 60115767,
+            "longName": "Broadcom Inc.",
+            "shortName": "Broadcom Inc.",
+            "chartPreviousClose": 371.54,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "start": 1788422400,
+                "end": 1788442200,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "start": 1788442200,
+                "end": 1788465600,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "start": 1788465600,
+                "end": 1788480000,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1787923800,
+            1788183000,
+            1788269400,
+            1788355800,
+            1788442200
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "high": [
+                  376.5899963378906,
+                  372.75,
+                  371.3999938964844,
+                  371.0899963378906,
+                  359.3999938964844
+                ],
+                "open": [
+                  373.6000061035156,
+                  369.5199890136719,
+                  364.25,
+                  369.67999267578125,
+                  351.614990234375
+                ],
+                "close": [
+                  368.7900085449219,
+                  370.3399963378906,
+                  369.67999267578125,
+                  367.239990234375,
+                  357.1600036621094
+                ],
+                "low": [
+                  365.3500061035156,
+                  366.29998779296875,
+                  362.0,
+                  364.6499938964844,
+                  342.33050537109375
+                ],
+                "volume": [
+                  16596100,
+                  21948000,
+                  19288900,
+                  38874600,
+                  60115767
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  368.7900085449219,
+                  370.3399963378906,
+                  369.67999267578125,
+                  367.239990234375,
+                  357.1600036621094
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}

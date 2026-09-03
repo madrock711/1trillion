@@ -1,0 +1,127 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/CL=F?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-09-04T08:03:30+09:00",
+  "rawHash": "40c96b5f2a8d259e3b85cad14a7854868aea90a8ccd210a6b2cbc699577be86b",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "CL=F",
+            "exchangeName": "NYM",
+            "fullExchangeName": "NY Mercantile",
+            "instrumentType": "FUTURE",
+            "firstTradeDate": 967003200,
+            "regularMarketTime": 1788475936,
+            "hasPrePostMarketData": false,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 91.74,
+            "regularMarketChangePercent": 0.482,
+            "fulldayPrice": 91.74,
+            "fulldayChange": 0.44,
+            "fulldayChangePercent": 0.482,
+            "fiftyTwoWeekHigh": 119.48,
+            "fiftyTwoWeekLow": 54.98,
+            "regularMarketDayHigh": 91.84,
+            "regularMarketDayLow": 91.59,
+            "regularMarketVolume": 663,
+            "shortName": "Crude Oil Oct 26",
+            "chartPreviousClose": 85.76,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "start": 1788408000,
+                "end": 1788408000,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "start": 1788408000,
+                "end": 1788494340,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "start": 1788494340,
+                "end": 1788494340,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1788148800,
+            1788235200,
+            1788321600,
+            1788408000
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "low": [
+                  84.11000061035156,
+                  86.12999725341797,
+                  88.97000122070312,
+                  91.58999633789062
+                ],
+                "high": [
+                  86.79000091552734,
+                  90.97000122070312,
+                  92.29000091552734,
+                  91.83999633789062
+                ],
+                "volume": [
+                  235761,
+                  331106,
+                  331106,
+                  663
+                ],
+                "close": [
+                  85.76000213623047,
+                  90.22000122070312,
+                  91.01000213623047,
+                  91.73999786376953
+                ],
+                "open": [
+                  84.69000244140625,
+                  86.30999755859375,
+                  90.6500015258789,
+                  91.66999816894531
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  85.76000213623047,
+                  90.22000122070312,
+                  91.01000213623047,
+                  91.73999786376953
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}

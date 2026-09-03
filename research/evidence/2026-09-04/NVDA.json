@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-09-04T08:03:29+09:00",
+  "rawHash": "8ae1157e6f774b4424e4b28be1735ea7fe42ea406b2a2ffbf52a18b3d6637d2f",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "NVDA",
+            "exchangeName": "NMS",
+            "fullExchangeName": "NasdaqGS",
+            "instrumentType": "EQUITY",
+            "firstTradeDate": 917015400,
+            "regularMarketTime": 1788465600,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 228.45,
+            "regularMarketChangePercent": 1.8,
+            "fulldayPrice": 229.451,
+            "fulldayChange": 5.09,
+            "fulldayChangePercent": 2.268,
+            "fiftyTwoWeekHigh": 236.54,
+            "fiftyTwoWeekLow": 164.07,
+            "regularMarketDayHigh": 230.4,
+            "regularMarketDayLow": 224.75,
+            "regularMarketVolume": 133890362,
+            "longName": "NVIDIA Corporation",
+            "shortName": "NVIDIA Corporation",
+            "chartPreviousClose": 227.98,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "start": 1788422400,
+                "end": 1788442200,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "start": 1788442200,
+                "end": 1788465600,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "start": 1788465600,
+                "end": 1788480000,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1787923800,
+            1788183000,
+            1788269400,
+            1788355800,
+            1788442200
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "close": [
+                  217.5500030517578,
+                  220.77999877929688,
+                  217.44000244140625,
+                  224.41000366210938,
+                  228.4499969482422
+                ],
+                "high": [
+                  229.25999450683594,
+                  221.3000030517578,
+                  220.41000366210938,
+                  227.9499969482422,
+                  230.39999389648438
+                ],
+                "low": [
+                  216.80999755859375,
+                  216.2100067138672,
+                  215.10000610351562,
+                  218.47999572753906,
+                  224.75
+                ],
+                "volume": [
+                  195116400,
+                  124702700,
+                  109756200,
+                  157104700,
+                  133890362
+                ],
+                "open": [
+                  227.36000061035156,
+                  218.8699951171875,
+                  216.75,
+                  218.7899932861328,
+                  226.02000427246094
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  217.5500030517578,
+                  220.77999877929688,
+                  217.44000244140625,
+                  224.41000366210938,
+                  228.4499969482422
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}

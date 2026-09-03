@@ -23,7 +23,7 @@ vm.runInContext(source.slice(start, end), context);
 const observed = {
     ...structuredClone(snapshot.markets[0]),
     marketStatus: 'PREOPEN', stateLabel: '개장 전', changePercent: 0,
-    asOf: '2026-09-03T08:23:00+09:00', asOfLabel: '9월 3일 08:23 KST',
+    asOf: '2026-09-04T08:23:00+09:00', asOfLabel: '9월 4일 08:23 KST',
     flows: ['외국인', '기관', '개인'].map(label => ({ label, value: 0, unit: '억원' })),
     program: { total: 0, arbitrage: 0, nonArbitrage: 0, unit: '억원' }
 };
@@ -38,7 +38,7 @@ assert.strictEqual(context.replaceTechnicalObservation(instrument, observed), fa
 assert.deepStrictEqual(instrument, originalInstrument);
 
 // Zero is a valid observation after the regular session opens.
-const opened = { ...observed, marketStatus: 'OPEN', stateLabel: '장중', asOf: '2026-09-03T09:01:00+09:00' };
+const opened = { ...observed, marketStatus: 'OPEN', stateLabel: '장중', asOf: '2026-09-04T09:01:00+09:00' };
 context.applyLiveMarketData(data, { markets: [opened], instruments: [], exchange: null });
 assert.strictEqual(data.markets[0].changePercent, 0);
 assert.strictEqual(data.markets[0].asOf, opened.asOf);

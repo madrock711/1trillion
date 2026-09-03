@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-09-04T08:03:29+09:00",
+  "rawHash": "a2042e12e77f3936d92eb1f5a35c3d4cc7ee31f57ae4a4efd619afd5f22416f8",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "SMH",
+            "exchangeName": "NGM",
+            "fullExchangeName": "NasdaqGM",
+            "instrumentType": "ETF",
+            "firstTradeDate": 960211800,
+            "regularMarketTime": 1788465600,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 552.6,
+            "regularMarketChangePercent": 0.385,
+            "fulldayPrice": 553.88,
+            "fulldayChange": 2.12,
+            "fulldayChangePercent": 0.385,
+            "fiftyTwoWeekHigh": 671.83,
+            "fiftyTwoWeekLow": 284.3,
+            "regularMarketDayHigh": 553.74,
+            "regularMarketDayLow": 540.07,
+            "regularMarketVolume": 5567524,
+            "longName": "VanEck Semiconductor ETF",
+            "shortName": "VanEck Semiconductor ETF",
+            "chartPreviousClose": 573.0,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "end": 1788442200,
+                "start": 1788422400,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "end": 1788465600,
+                "start": 1788442200,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "end": 1788480000,
+                "start": 1788465600,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1787923800,
+            1788183000,
+            1788269400,
+            1788355800,
+            1788442200
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "close": [
+                  553.1099853515625,
+                  556.6300048828125,
+                  545.219970703125,
+                  550.47998046875,
+                  552.5999755859375
+                ],
+                "volume": [
+                  6461800,
+                  4317100,
+                  6195100,
+                  5127100,
+                  5567524
+                ],
+                "high": [
+                  570.1199951171875,
+                  558.4299926757812,
+                  549.8800048828125,
+                  553.1900024414062,
+                  553.739990234375
+                ],
+                "open": [
+                  568.719970703125,
+                  554.3800048828125,
+                  546.47998046875,
+                  545.22998046875,
+                  546.719970703125
+                ],
+                "low": [
+                  552.2999877929688,
+                  552.7899780273438,
+                  540.8499755859375,
+                  541.719970703125,
+                  540.0700073242188
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  553.1099853515625,
+                  556.6300048828125,
+                  545.219970703125,
+                  550.47998046875,
+                  552.5999755859375
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}

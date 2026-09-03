@@ -1,0 +1,729 @@
+{
+  "NXT": {
+    "url": "https://stock.naver.com/api/polling/domestic/NXT/stock?itemCodes=005930,000660",
+    "fetchedAt": "2026-09-04T08:18:19+09:00",
+    "rawHash": "b44cc27bc0bbc51d17e7e768463a55d8e71f1a5f76026262f3153cbb3607a7f3",
+    "data": {
+      "pollingInterval": 7000,
+      "datas": [
+        {
+          "itemCode": "005930",
+          "stockName": "삼성전자",
+          "stockExchangeType": {
+            "code": "KS",
+            "zoneId": "Asia/Seoul",
+            "nationType": "KOR",
+            "delayTime": 0,
+            "startTime": "0900",
+            "endTime": "1530",
+            "closePriceSendTime": "1630",
+            "nameKor": "코스피",
+            "nameEng": "KOSPI",
+            "nationCode": "KOR",
+            "nationName": "대한민국",
+            "stockType": "domestic",
+            "name": "KOSPI"
+          },
+          "closePrice": "252,500",
+          "compareToPreviousClosePrice": "2,500",
+          "compareToPreviousPrice": {
+            "code": "2",
+            "text": "상승",
+            "name": "RISING"
+          },
+          "fluctuationsRatio": "1.00",
+          "tradeStopType": {
+            "code": "1",
+            "text": "운영.Trading",
+            "name": "TRADING"
+          },
+          "tradableStatus": "tradable",
+          "tradableStatusCode": "ok",
+          "tradableStatusUpdatedAt": "2026-09-04T07:10:12.796+09:00",
+          "openPrice": "251,000",
+          "highPrice": "253,500",
+          "lowPrice": "251,000",
+          "accumulatedTradingVolume": "706,043",
+          "accumulatedTradingValue": "1,781억",
+          "marketStatus": "OPEN",
+          "localTradedAt": null,
+          "overMarketPriceInfo": null,
+          "integratedPriceInfo": null,
+          "isinCode": "KR7005930003",
+          "myDataCode": null,
+          "stockEndUrl": null,
+          "symbolCode": "005930",
+          "currencyType": {
+            "code": "KRW",
+            "text": "Republic of Korea won",
+            "name": "KRW"
+          },
+          "accumulatedTradingVolumeRaw": "706043",
+          "accumulatedTradingValueRaw": "178060000000",
+          "marketValueFullRaw": "1476185348520000",
+          "marketValueFull": "1,476,185,348,520,000",
+          "lowPriceRaw": "251000",
+          "highPriceRaw": "253500",
+          "compareToPreviousClosePriceRaw": "2500",
+          "openPriceRaw": "251000",
+          "fluctuationsRatioRaw": "1.00",
+          "closePriceRaw": "252500"
+        },
+        {
+          "itemCode": "000660",
+          "stockName": "SK하이닉스",
+          "stockExchangeType": {
+            "code": "KS",
+            "zoneId": "Asia/Seoul",
+            "nationType": "KOR",
+            "delayTime": 0,
+            "startTime": "0900",
+            "endTime": "1530",
+            "closePriceSendTime": "1630",
+            "nameKor": "코스피",
+            "nameEng": "KOSPI",
+            "nationCode": "KOR",
+            "nationName": "대한민국",
+            "stockType": "domestic",
+            "name": "KOSPI"
+          },
+          "closePrice": "1,609,000",
+          "compareToPreviousClosePrice": "13,000",
+          "compareToPreviousPrice": {
+            "code": "2",
+            "text": "상승",
+            "name": "RISING"
+          },
+          "fluctuationsRatio": "0.81",
+          "tradeStopType": {
+            "code": "1",
+            "text": "운영.Trading",
+            "name": "TRADING"
+          },
+          "tradableStatus": "tradable",
+          "tradableStatusCode": "ok",
+          "tradableStatusUpdatedAt": "2026-09-04T07:10:11.32+09:00",
+          "openPrice": "1,615,000",
+          "highPrice": "1,640,000",
+          "lowPrice": "1,603,000",
+          "accumulatedTradingVolume": "139,439",
+          "accumulatedTradingValue": "2,243억",
+          "marketStatus": "OPEN",
+          "localTradedAt": null,
+          "overMarketPriceInfo": null,
+          "integratedPriceInfo": null,
+          "isinCode": "KR7000660001",
+          "myDataCode": null,
+          "stockEndUrl": null,
+          "symbolCode": "000660",
+          "currencyType": {
+            "code": "KRW",
+            "text": "Republic of Korea won",
+            "name": "KRW"
+          },
+          "accumulatedTradingVolumeRaw": "139439",
+          "accumulatedTradingValueRaw": "224338000000",
+          "marketValueFullRaw": "1175362215285000",
+          "marketValueFull": "1,175,362,215,285,000",
+          "lowPriceRaw": "1603000",
+          "highPriceRaw": "1640000",
+          "compareToPreviousClosePriceRaw": "13000",
+          "openPriceRaw": "1615000",
+          "fluctuationsRatioRaw": "0.81",
+          "closePriceRaw": "1609000"
+        }
+      ],
+      "time": "20260904081819"
+    }
+  },
+  "FX": {
+    "url": "https://api.stock.naver.com/marketindex/exchange/FX_USDKRW",
+    "fetchedAt": "2026-09-04T08:18:19+09:00",
+    "rawHash": "7dd590a31fc4d847a0514bf731b2268c38ab95ecb9e1f5de70453073b951bdcd",
+    "data": {
+      "exchangeInfo": {
+        "stockExchangeType": {
+          "code": "HANA",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "",
+          "endTime": "",
+          "closePriceSendTime": "",
+          "nameKor": "하나은행",
+          "nameEng": "Hana Bank",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "stockType": "domestic",
+          "name": "HANA"
+        },
+        "categoryType": "exchange",
+        "reutersCode": "FX_USDKRW",
+        "symbolCode": "USD",
+        "exchangeCode": "USD",
+        "name": "미국 USD",
+        "fullName": null,
+        "description": "하나은행 고시회차",
+        "localTradedAt": "2026-09-04T07:58:16+09:00",
+        "closePrice": "1,358.50",
+        "fluctuations": "-1.80",
+        "fluctuationsRatio": "-0.13",
+        "fluctuationsType": {
+          "code": "5",
+          "text": "하락",
+          "name": "FALLING"
+        },
+        "marketStatus": "OPEN",
+        "priceDataType": "NOTICE_ROUND",
+        "endUrl": "https://m.stock.naver.com/marketindex/exchange/FX_USDKRW",
+        "newPcUrl": "https://stock.naver.com/marketindex/exchange/FX_USDKRW/price",
+        "unit": "KRW",
+        "degreeCount": 1815,
+        "imageCharts": {
+          "areaYear": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year/FX_USDKRW_end.png",
+          "areaMonthThree": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month3/FX_USDKRW_end.png",
+          "areaYearFive": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year5/FX_USDKRW_end.png",
+          "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year10/FX_USDKRW_end.png",
+          "areaMonth": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month/FX_USDKRW_end.png",
+          "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year3/FX_USDKRW_end.png"
+        },
+        "imageChartUrlInfo": {
+          "line": {
+            "month": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month/FX_USDKRW_end.png",
+            "month3": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month3/FX_USDKRW_end.png",
+            "year": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year/FX_USDKRW_end.png",
+            "year3": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year3/FX_USDKRW_end.png",
+            "year5": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year5/FX_USDKRW_end.png",
+            "year10": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year10/FX_USDKRW_end.png"
+          }
+        },
+        "scriptChartTypes": [
+          "day",
+          "areaMonth",
+          "areaMonthThree",
+          "areaYear",
+          "areaYearThree",
+          "areaYearFive",
+          "areaYearTen"
+        ],
+        "calcPrice": "1358.5"
+      },
+      "marketIndexCdList": [
+        "FX_USDKRW",
+        "FX_USDKRW_SHB"
+      ],
+      "nationTypeCode": "USA",
+      "itemLogoUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/index/MarketIndexExchange.svg",
+      "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/index/MarketIndexExchange.png"
+    }
+  },
+  "NQF": {
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQ=F?range=5d&interval=1d&includePrePost=true",
+    "fetchedAt": "2026-09-04T08:18:19+09:00",
+    "rawHash": "ce2862d37f52937ded11adebbcf1e6cfea98c4ba2378af86192db6094d77fd51",
+    "data": {
+      "chart": {
+        "result": [
+          {
+            "meta": {
+              "currency": "USD",
+              "symbol": "NQ=F",
+              "exchangeName": "CME",
+              "fullExchangeName": "CME",
+              "instrumentType": "FUTURE",
+              "firstTradeDate": 969249600,
+              "regularMarketTime": 1788476896,
+              "hasPrePostMarketData": false,
+              "gmtoffset": -14400,
+              "timezone": "EDT",
+              "exchangeTimezoneName": "America/New_York",
+              "regularMarketPrice": 29508.0,
+              "regularMarketChangePercent": -0.057,
+              "fulldayPrice": 29508.0,
+              "fulldayChange": -16.75,
+              "fulldayChangePercent": -0.057,
+              "fiftyTwoWeekHigh": 30968.0,
+              "fiftyTwoWeekLow": 22961.5,
+              "regularMarketDayHigh": 29512.75,
+              "regularMarketDayLow": 29482.0,
+              "regularMarketVolume": 3636,
+              "shortName": "Nasdaq 100 Sep 26",
+              "chartPreviousClose": 29513.0,
+              "priceHint": 2,
+              "currentTradingPeriod": {
+                "pre": {
+                  "timezone": "EDT",
+                  "start": 1788408000,
+                  "end": 1788408000,
+                  "gmtoffset": -14400
+                },
+                "regular": {
+                  "timezone": "EDT",
+                  "start": 1788408000,
+                  "end": 1788494340,
+                  "gmtoffset": -14400
+                },
+                "post": {
+                  "timezone": "EDT",
+                  "start": 1788494340,
+                  "end": 1788494340,
+                  "gmtoffset": -14400
+                }
+              },
+              "dataGranularity": "1d",
+              "range": "5d",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "timestamp": [
+              1788148800,
+              1788235200,
+              1788321600,
+              1788408000
+            ],
+            "indicators": {
+              "quote": [
+                {
+                  "volume": [
+                    468460,
+                    556412,
+                    556412,
+                    3636
+                  ],
+                  "high": [
+                    29546.25,
+                    29571.25,
+                    29213.0,
+                    29512.75
+                  ],
+                  "open": [
+                    29540.0,
+                    29518.25,
+                    29136.5,
+                    29505.0
+                  ],
+                  "close": [
+                    29513.0,
+                    29125.5,
+                    29186.25,
+                    29508.0
+                  ],
+                  "low": [
+                    29273.5,
+                    29002.0,
+                    28927.25,
+                    29482.0
+                  ]
+                }
+              ],
+              "adjclose": [
+                {
+                  "adjclose": [
+                    29513.0,
+                    29125.5,
+                    29186.25,
+                    29508.0
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "error": null
+      }
+    }
+  },
+  "ESF": {
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/ES=F?range=5d&interval=1d&includePrePost=true",
+    "fetchedAt": "2026-09-04T08:18:19+09:00",
+    "rawHash": "386ab632c611a0232e62d81f1d8310470ad499ebbadcdcbb355aac6d2f4daaff",
+    "data": {
+      "chart": {
+        "result": [
+          {
+            "meta": {
+              "currency": "USD",
+              "symbol": "ES=F",
+              "exchangeName": "CME",
+              "fullExchangeName": "CME",
+              "instrumentType": "FUTURE",
+              "firstTradeDate": 969249600,
+              "regularMarketTime": 1788476880,
+              "hasPrePostMarketData": false,
+              "gmtoffset": -14400,
+              "timezone": "EDT",
+              "exchangeTimezoneName": "America/New_York",
+              "regularMarketPrice": 7753.25,
+              "regularMarketChangePercent": -0.019,
+              "fulldayPrice": 7753.25,
+              "fulldayChange": -1.5,
+              "fulldayChangePercent": -0.019,
+              "fiftyTwoWeekHigh": 7838.5,
+              "fiftyTwoWeekLow": 6353.25,
+              "regularMarketDayHigh": 7753.5,
+              "regularMarketDayLow": 7748.25,
+              "regularMarketVolume": 3957,
+              "shortName": "E-Mini S&P 500 Sep 26",
+              "chartPreviousClose": 7699.0,
+              "priceHint": 2,
+              "currentTradingPeriod": {
+                "pre": {
+                  "timezone": "EDT",
+                  "start": 1788408000,
+                  "end": 1788408000,
+                  "gmtoffset": -14400
+                },
+                "regular": {
+                  "timezone": "EDT",
+                  "start": 1788408000,
+                  "end": 1788494340,
+                  "gmtoffset": -14400
+                },
+                "post": {
+                  "timezone": "EDT",
+                  "start": 1788494340,
+                  "end": 1788494340,
+                  "gmtoffset": -14400
+                }
+              },
+              "dataGranularity": "1d",
+              "range": "5d",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "timestamp": [
+              1788148800,
+              1788235200,
+              1788321600,
+              1788408000
+            ],
+            "indicators": {
+              "quote": [
+                {
+                  "volume": [
+                    1247996,
+                    1599408,
+                    1599408,
+                    3957
+                  ],
+                  "open": [
+                    7723.5,
+                    7701.25,
+                    7645.0,
+                    7749.75
+                  ],
+                  "low": [
+                    7674.75,
+                    7621.5,
+                    7618.5,
+                    7748.25
+                  ],
+                  "close": [
+                    7699.0,
+                    7642.75,
+                    7676.5,
+                    7753.25
+                  ],
+                  "high": [
+                    7724.0,
+                    7708.0,
+                    7691.25,
+                    7753.5
+                  ]
+                }
+              ],
+              "adjclose": [
+                {
+                  "adjclose": [
+                    7699.0,
+                    7642.75,
+                    7676.5,
+                    7753.25
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "error": null
+      }
+    }
+  },
+  "BZF": {
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F?range=5d&interval=1d&includePrePost=true",
+    "fetchedAt": "2026-09-04T08:18:19+09:00",
+    "rawHash": "a6b59dcb4672da815359936d7ea11a1fa3e406dd8731823d36ecba55bff8a99b",
+    "data": {
+      "chart": {
+        "result": [
+          {
+            "meta": {
+              "currency": "USD",
+              "symbol": "BZ=F",
+              "exchangeName": "NYM",
+              "fullExchangeName": "NY Mercantile",
+              "instrumentType": "FUTURE",
+              "firstTradeDate": 1185768000,
+              "regularMarketTime": 1788476820,
+              "hasPrePostMarketData": false,
+              "gmtoffset": -14400,
+              "timezone": "EDT",
+              "exchangeTimezoneName": "America/New_York",
+              "regularMarketPrice": 95.89,
+              "regularMarketChangePercent": 0.387,
+              "fulldayPrice": 95.89,
+              "fulldayChange": 0.37,
+              "fulldayChangePercent": 0.387,
+              "fiftyTwoWeekHigh": 126.1,
+              "fiftyTwoWeekLow": 58.72,
+              "regularMarketDayHigh": 95.91,
+              "regularMarketDayLow": 95.76,
+              "regularMarketVolume": 52,
+              "longName": "Brent Crude Oil Last Day Financial Futures",
+              "shortName": "Brent Crude Oil Last Day Financ",
+              "chartPreviousClose": 90.49,
+              "priceHint": 2,
+              "currentTradingPeriod": {
+                "pre": {
+                  "timezone": "EDT",
+                  "end": 1788408000,
+                  "start": 1788408000,
+                  "gmtoffset": -14400
+                },
+                "regular": {
+                  "timezone": "EDT",
+                  "end": 1788494340,
+                  "start": 1788408000,
+                  "gmtoffset": -14400
+                },
+                "post": {
+                  "timezone": "EDT",
+                  "end": 1788494340,
+                  "start": 1788494340,
+                  "gmtoffset": -14400
+                }
+              },
+              "dataGranularity": "1d",
+              "range": "5d",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "timestamp": [
+              1788148800,
+              1788235200,
+              1788321600,
+              1788408000
+            ],
+            "indicators": {
+              "quote": [
+                {
+                  "close": [
+                    90.48999786376953,
+                    94.6500015258789,
+                    95.62999725341797,
+                    95.88999938964844
+                  ],
+                  "low": [
+                    89.02999877929688,
+                    90.7300033569336,
+                    93.5199966430664,
+                    95.76000213623047
+                  ],
+                  "volume": [
+                    23556,
+                    38404,
+                    38404,
+                    52
+                  ],
+                  "open": [
+                    89.30999755859375,
+                    90.8499984741211,
+                    95.2300033569336,
+                    95.87999725341797
+                  ],
+                  "high": [
+                    91.5,
+                    95.44999694824219,
+                    97.01000213623047,
+                    95.91000366210938
+                  ]
+                }
+              ],
+              "adjclose": [
+                {
+                  "adjclose": [
+                    90.48999786376953,
+                    94.6500015258789,
+                    95.62999725341797,
+                    95.88999938964844
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "error": null
+      }
+    }
+  },
+  "CLF": {
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/CL=F?range=5d&interval=1d&includePrePost=true",
+    "fetchedAt": "2026-09-04T08:18:19+09:00",
+    "rawHash": "bd7739972f929601e55d038b3ed3023b148b4f53536872f9671cebfc01cf3455",
+    "data": {
+      "chart": {
+        "result": [
+          {
+            "meta": {
+              "currency": "USD",
+              "symbol": "CL=F",
+              "exchangeName": "NYM",
+              "fullExchangeName": "NY Mercantile",
+              "instrumentType": "FUTURE",
+              "firstTradeDate": 967003200,
+              "regularMarketTime": 1788476861,
+              "hasPrePostMarketData": false,
+              "gmtoffset": -14400,
+              "timezone": "EDT",
+              "exchangeTimezoneName": "America/New_York",
+              "regularMarketPrice": 91.8,
+              "regularMarketChangePercent": 0.548,
+              "fulldayPrice": 91.8,
+              "fulldayChange": 0.5,
+              "fulldayChangePercent": 0.548,
+              "fiftyTwoWeekHigh": 119.48,
+              "fiftyTwoWeekLow": 54.98,
+              "regularMarketDayHigh": 91.86,
+              "regularMarketDayLow": 91.59,
+              "regularMarketVolume": 866,
+              "shortName": "Crude Oil Oct 26",
+              "chartPreviousClose": 85.76,
+              "priceHint": 2,
+              "currentTradingPeriod": {
+                "pre": {
+                  "timezone": "EDT",
+                  "end": 1788408000,
+                  "start": 1788408000,
+                  "gmtoffset": -14400
+                },
+                "regular": {
+                  "timezone": "EDT",
+                  "end": 1788494340,
+                  "start": 1788408000,
+                  "gmtoffset": -14400
+                },
+                "post": {
+                  "timezone": "EDT",
+                  "end": 1788494340,
+                  "start": 1788494340,
+                  "gmtoffset": -14400
+                }
+              },
+              "dataGranularity": "1d",
+              "range": "5d",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "timestamp": [
+              1788148800,
+              1788235200,
+              1788321600,
+              1788408000
+            ],
+            "indicators": {
+              "quote": [
+                {
+                  "open": [
+                    84.69000244140625,
+                    86.30999755859375,
+                    90.6500015258789,
+                    91.66999816894531
+                  ],
+                  "volume": [
+                    235761,
+                    331106,
+                    331106,
+                    866
+                  ],
+                  "close": [
+                    85.76000213623047,
+                    90.22000122070312,
+                    91.01000213623047,
+                    91.80000305175781
+                  ],
+                  "high": [
+                    86.79000091552734,
+                    90.97000122070312,
+                    92.29000091552734,
+                    91.86000061035156
+                  ],
+                  "low": [
+                    84.11000061035156,
+                    86.12999725341797,
+                    88.97000122070312,
+                    91.58999633789062
+                  ]
+                }
+              ],
+              "adjclose": [
+                {
+                  "adjclose": [
+                    85.76000213623047,
+                    90.22000122070312,
+                    91.01000213623047,
+                    91.80000305175781
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "error": null
+      }
+    }
+  }
+}

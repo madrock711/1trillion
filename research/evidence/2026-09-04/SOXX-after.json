@@ -1,0 +1,9 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/SOXX?range=1d&interval=1m&includePrePost=true",
+  "fetchedAt": "2026-09-04T08:09:51+09:00",
+  "rawHash": "612d67182cb5d332faab34d16526dc770052f10bd6d88b9f212ea08abc1516a0",
+  "asOf": "2026-09-04T08:09:23+09:00",
+  "price": 502.1,
+  "regularClose": 502.2,
+  "changePercent": -0.019912385503773056
+}

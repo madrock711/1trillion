@@ -1,0 +1,157 @@
+{
+  "url": "https://m.stock.naver.com/api/stock/005930/price?pageSize=10&page=1",
+  "fetchedAt": "2026-09-04T08:03:30+09:00",
+  "rawHash": "5e8173917c7964c2e4c0b95f70bbde3295cef5f9c0749f22fe369955f5718d8f",
+  "data": [
+    {
+      "localTradedAt": "2026-09-04",
+      "closePrice": "250,000",
+      "compareToPreviousClosePrice": "0",
+      "compareToPreviousPrice": {
+        "code": "3",
+        "text": "보합",
+        "name": "UNCHANGED"
+      },
+      "fluctuationsRatio": "0.00",
+      "openPrice": "251,000",
+      "highPrice": "253,500",
+      "lowPrice": "250,000",
+      "accumulatedTradingVolume": 300019
+    },
+    {
+      "localTradedAt": "2026-09-03",
+      "closePrice": "250,000",
+      "compareToPreviousClosePrice": "-500",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "fluctuationsRatio": "-0.20",
+      "openPrice": "254,000",
+      "highPrice": "255,000",
+      "lowPrice": "243,000",
+      "accumulatedTradingVolume": 13756022
+    },
+    {
+      "localTradedAt": "2026-09-02",
+      "closePrice": "250,500",
+      "compareToPreviousClosePrice": "-10,500",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "fluctuationsRatio": "-4.02",
+      "openPrice": "252,000",
+      "highPrice": "255,500",
+      "lowPrice": "249,500",
+      "accumulatedTradingVolume": 15176841
+    },
+    {
+      "localTradedAt": "2026-09-01",
+      "closePrice": "261,000",
+      "compareToPreviousClosePrice": "1,000",
+      "compareToPreviousPrice": {
+        "code": "2",
+        "text": "상승",
+        "name": "RISING"
+      },
+      "fluctuationsRatio": "0.38",
+      "openPrice": "256,500",
+      "highPrice": "262,500",
+      "lowPrice": "254,000",
+      "accumulatedTradingVolume": 15319615
+    },
+    {
+      "localTradedAt": "2026-08-31",
+      "closePrice": "260,000",
+      "compareToPreviousClosePrice": "3,000",
+      "compareToPreviousPrice": {
+        "code": "2",
+        "text": "상승",
+        "name": "RISING"
+      },
+      "fluctuationsRatio": "1.17",
+      "openPrice": "249,000",
+      "highPrice": "260,000",
+      "lowPrice": "246,000",
+      "accumulatedTradingVolume": 18270969
+    },
+    {
+      "localTradedAt": "2026-08-28",
+      "closePrice": "257,000",
+      "compareToPreviousClosePrice": "-9,000",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "fluctuationsRatio": "-3.38",
+      "openPrice": "262,500",
+      "highPrice": "266,000",
+      "lowPrice": "256,000",
+      "accumulatedTradingVolume": 15106746
+    },
+    {
+      "localTradedAt": "2026-08-27",
+      "closePrice": "266,000",
+      "compareToPreviousClosePrice": "4,500",
+      "compareToPreviousPrice": {
+        "code": "2",
+        "text": "상승",
+        "name": "RISING"
+      },
+      "fluctuationsRatio": "1.72",
+      "openPrice": "270,000",
+      "highPrice": "271,000",
+      "lowPrice": "262,500",
+      "accumulatedTradingVolume": 16829395
+    },
+    {
+      "localTradedAt": "2026-08-26",
+      "closePrice": "261,500",
+      "compareToPreviousClosePrice": "4,500",
+      "compareToPreviousPrice": {
+        "code": "2",
+        "text": "상승",
+        "name": "RISING"
+      },
+      "fluctuationsRatio": "1.75",
+      "openPrice": "256,500",
+      "highPrice": "266,500",
+      "lowPrice": "255,500",
+      "accumulatedTradingVolume": 19532523
+    },
+    {
+      "localTradedAt": "2026-08-25",
+      "closePrice": "257,000",
+      "compareToPreviousClosePrice": "0",
+      "compareToPreviousPrice": {
+        "code": "3",
+        "text": "보합",
+        "name": "UNCHANGED"
+      },
+      "fluctuationsRatio": "0.00",
+      "openPrice": "249,000",
+      "highPrice": "258,000",
+      "lowPrice": "245,000",
+      "accumulatedTradingVolume": 21617407
+    },
+    {
+      "localTradedAt": "2026-08-24",
+      "closePrice": "257,000",
+      "compareToPreviousClosePrice": "-24,500",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "fluctuationsRatio": "-8.70",
+      "openPrice": "271,500",
+      "highPrice": "272,000",
+      "lowPrice": "255,000",
+      "accumulatedTradingVolume": 32451940
+    }
+  ]
+}

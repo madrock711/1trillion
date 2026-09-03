@@ -1,0 +1,9 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?range=1d&interval=1m&includePrePost=true",
+  "fetchedAt": "2026-09-04T08:09:51+09:00",
+  "rawHash": "b179aa9941c6a22cfe72b83aef5dc26929cc17629c2340d745dc0423d6cb4e16",
+  "asOf": "2026-09-04T08:09:48+09:00",
+  "price": 717.1581,
+  "regularClose": 717.67,
+  "changePercent": -0.07132804770995094
+}

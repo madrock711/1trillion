@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-09-03",
+  "bizdate": "20260903",
+  "fetchedAt": "2026-09-04T08:08:02+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6650.33,
+    "high": 6682.97,
+    "low": 6439.49,
+    "close": 6579.48,
+    "asOf": "2026-09-03T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=10&page=1",
+    "rawHash": "9578b41e45796c8be6a4f53c705d53c27ccba7b8fdd3d880c754077bf6da959d"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "다음 날 PREOPEN 응답의 수급·시장폭은 초기화됐다. 별도 시간표의 18:05~18:06은 장후 자료이며 15:30 종가 묶음으로 대체하지 않았다.",
+  "flowTrajectory": null,
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "Naver Finance PREOPEN integration 및 전일 수급 시간표",
+    "asOf": "2026-09-03T15:30:00+09:00",
+    "fetchedAt": "2026-09-04T08:08:02+09:00",
+    "missingReason": "다음 날 PREOPEN 응답의 수급·시장폭은 초기화됐다. 별도 시간표의 18:05~18:06은 장후 자료이며 15:30 종가 묶음으로 대체하지 않았다.",
+    "rawHash": "829e356186daf8c80d6ae31ed36d2ee1c1533e91e65926fc869b14839d4ec846"
+  }
+}

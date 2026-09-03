@@ -1,0 +1,9 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/MU?range=1d&interval=1m&includePrePost=true",
+  "fetchedAt": "2026-09-04T08:09:51+09:00",
+  "rawHash": "136c743d5a67c88336938c52bf43c6fb47acb117fd3ade80fc4317f2c42bf65b",
+  "asOf": "2026-09-04T08:09:30+09:00",
+  "price": 954.94,
+  "regularClose": 958.16,
+  "changePercent": -0.33606078316772425
+}

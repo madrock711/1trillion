@@ -1,0 +1,9 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=1d&interval=1m&includePrePost=true",
+  "fetchedAt": "2026-09-04T08:09:51+09:00",
+  "rawHash": "8a831f4c0d6fb95f28c66e039865705216bbf414fd3c7a51b9dc9d3d68bf0e77",
+  "asOf": "2026-09-04T08:09:50+09:00",
+  "price": 455.4,
+  "regularClose": 456.16,
+  "changePercent": -0.1666082076464459
+}

@@ -1,0 +1,9 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?range=1d&interval=1m&includePrePost=true",
+  "fetchedAt": "2026-09-04T08:09:51+09:00",
+  "rawHash": "3effbfcb3cc66c00b589ff16be1b8d987ec8f9c927b135260f54ed996cb9c4a2",
+  "asOf": "2026-09-04T08:09:50+09:00",
+  "price": 229.4601,
+  "regularClose": 228.45,
+  "changePercent": 0.44215364412345526
+}

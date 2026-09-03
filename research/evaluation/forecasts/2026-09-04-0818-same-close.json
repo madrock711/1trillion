@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-04-0818-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-09-04.md",
+  "reportSha256": "0e30d0276fb1ba06c072f6bd21f0a3941bfa8be1c31ad846578678b942fd4b8e",
+  "issuedAt": "2026-09-04T08:18:19+09:00",
+  "dataCutoffAt": "2026-09-04T08:18:19+09:00",
+  "marketState": "preopen",
+  "marketRegime": "mixed",
+  "evaluationBucket": "preopen",
+  "target": {
+    "sessionDate": "2026-09-04",
+    "horizon": "session_close",
+    "instrument": "KOSPI",
+    "leadSessions": 0,
+    "previousSessionDate": "2026-09-03"
+  },
+  "reference": {
+    "price": 6579.48,
+    "asOf": "2026-09-03T15:30:00+09:00",
+    "kind": "previous_close"
+  },
+  "scenarios": {
+    "bull": {
+      "low": 6750,
+      "high": 6950,
+      "probability": 0.25
+    },
+    "base": {
+      "low": 6500,
+      "high": 6750,
+      "probability": 0.5
+    },
+    "bear": {
+      "low": 6250,
+      "high": 6500,
+      "probability": 0.25
+    }
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {
+    "low": 6200,
+    "high": 7000,
+    "coverage": 0.9
+  },
+  "drivers": [
+    {
+      "id": "us-tech-rate-relief",
+      "rank": 1,
+      "claim": "미국 기술주·금리·NXT 회복이 국내 하단을 받친다.",
+      "validationMetric": "KOSPI·메모리 종가"
+    },
+    {
+      "id": "domestic-flow-cap",
+      "rank": 2,
+      "claim": "국내 수급 부진과 Broadcom 약세가 상단을 제한한다.",
+      "validationMetric": "외국인·프로그램·KOSPI"
+    },
+    {
+      "id": "jobs-inflation-gate",
+      "rank": 3,
+      "claim": "고용 발표 대기와 서비스 물가가 추격을 제한한다.",
+      "validationMetric": "장중 변동·종가"
+    }
+  ],
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-09-04T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "description": "kospi_price gt 6750",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 6750,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "bull-foreign",
+          "description": "foreign_cash gt 0",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance 투자자별 매매동향"
+        },
+        {
+          "id": "bull-program",
+          "description": "program_total gt 0",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance 프로그램 매매동향"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-09-04T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-support",
+          "description": "kospi_price gte 6500",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 6500,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "base-cap",
+          "description": "kospi_price lte 6750",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 6750,
+          "source": "Naver Finance KOSPI"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-09-04T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "description": "kospi_price lt 6500",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 6500,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "bear-foreign",
+          "description": "foreign_cash lt 0",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance 투자자별 매매동향"
+        },
+        {
+          "id": "bear-program",
+          "description": "program_total lt 0",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance 프로그램 매매동향"
+        }
+      ]
+    }
+  },
+  "hypothesisTrials": [],
+  "posture": {
+    "attack": 25,
+    "wait": 55,
+    "defense": 20
+  },
+  "supersedes": null,
+  "contentHash": "43180247f6d2fcf873bc3cd9b1d38ce161dbfc81885e389ad3a3ae11cbb6097e"
+}

@@ -1,0 +1,9 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AVGO?range=1d&interval=1m&includePrePost=true",
+  "fetchedAt": "2026-09-04T08:09:51+09:00",
+  "rawHash": "7c83cba7d50d3f4969f1fb18c9c191270cce410226df656dda7340edc2c079f5",
+  "asOf": "2026-09-04T08:09:50+09:00",
+  "price": 356.4,
+  "regularClose": 357.16,
+  "changePercent": -0.21278978609028387
+}

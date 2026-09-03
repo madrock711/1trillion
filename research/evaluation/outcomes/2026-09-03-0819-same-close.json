@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-03-0819-same-close",
+  "recordedAt": "2026-09-04T08:08:02+09:00",
+  "actualRef": "2026-09-03",
+  "realizedScenario": "base",
+  "errorCodes": [
+    "cause_unverifiable"
+  ],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "unavailable",
+      "reason": "15:20 정확한 가격·수급 원문 미확보. 일봉·장후 자료를 소급하지 않음."
+    },
+    {
+      "id": "bull-foreign",
+      "status": "unavailable",
+      "reason": "15:20 정확한 가격·수급 원문 미확보. 일봉·장후 자료를 소급하지 않음."
+    },
+    {
+      "id": "bull-program",
+      "status": "unavailable",
+      "reason": "15:20 정확한 가격·수급 원문 미확보. 일봉·장후 자료를 소급하지 않음."
+    },
+    {
+      "id": "base-support",
+      "status": "unavailable",
+      "reason": "15:20 정확한 가격·수급 원문 미확보. 일봉·장후 자료를 소급하지 않음."
+    },
+    {
+      "id": "base-cap",
+      "status": "unavailable",
+      "reason": "15:20 정확한 가격·수급 원문 미확보. 일봉·장후 자료를 소급하지 않음."
+    },
+    {
+      "id": "bear-price",
+      "status": "unavailable",
+      "reason": "15:20 정확한 가격·수급 원문 미확보. 일봉·장후 자료를 소급하지 않음."
+    },
+    {
+      "id": "bear-foreign",
+      "status": "unavailable",
+      "reason": "15:20 정확한 가격·수급 원문 미확보. 일봉·장후 자료를 소급하지 않음."
+    },
+    {
+      "id": "bear-program",
+      "status": "unavailable",
+      "reason": "15:20 정확한 가격·수급 원문 미확보. 일봉·장후 자료를 소급하지 않음."
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "chip-krw-recovery",
+      "status": "unverifiable"
+    },
+    {
+      "id": "avgo-oil-rate-cap",
+      "status": "unverifiable"
+    },
+    {
+      "id": "memory-price-not-volume",
+      "status": "unverifiable"
+    }
+  ],
+  "hypothesisTests": []
+}

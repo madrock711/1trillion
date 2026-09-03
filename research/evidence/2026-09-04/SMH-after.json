@@ -1,0 +1,9 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?range=1d&interval=1m&includePrePost=true",
+  "fetchedAt": "2026-09-04T08:09:51+09:00",
+  "rawHash": "235ec8312afe7fbe2845623632dccb538981902cd298495f42c2f5df1d359cca",
+  "asOf": "2026-09-04T08:09:43+09:00",
+  "price": 553.11,
+  "regularClose": 552.6,
+  "changePercent": 0.09229098805645375
+}
