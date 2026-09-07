@@ -10,3 +10,5 @@
 - reports/2026-09-08.md; research/evidence/2026-09-08/overnight-notes.md; charts/us_yield_spreads_90d_2026-09-08.png 및 long_term.
 - assets/data/market-dashboard-20260908-0814.json; 최신 포인터 market-dashboard-latest.json.
 - 평가 research/evaluation/generated/latest.md, 직전 정산 outcomes/2026-09-07-1134-same-close.json.
+- 전일 현물 최종 일별원문: 외국인+25,532억원·기관+26,491억원·개인-68,374억원. 프로그램·시장폭은 결측 유지.
+- 발행 콘텐츠922ee35, Amplify573 SUCCEED08:16:22.796, 양 도메인18건 바이트 일치08:16:42. 발행 원장 2건 및 누적평가 PASS.
