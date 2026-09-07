@@ -6,10 +6,11 @@ const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'articles', 'market.html'), 'utf8');
 const dashboard = fs.readFileSync(path.join(root, 'assets', 'market-dashboard.js'), 'utf8');
 const css = fs.readFileSync(path.join(root, 'assets', 'market-dashboard.css'), 'utf8');
+const latest = JSON.parse(fs.readFileSync(path.join(root, 'assets/data/market-dashboard-latest.json'), 'utf8'));
 
 assert.match(
     html,
-    /<a class="market-dashboard-card market-summary-card" id="market-summary-article-link" href="market-2026-09-04\.html">/,
+    new RegExp(`<a class="market-dashboard-card market-summary-card" id="market-summary-article-link" href="${latest.latestArticle.href.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}">`),
     '오늘 시장 요약 카드는 최신 시황 글로 이동하는 네이티브 링크여야 합니다.'
 );
 assert(

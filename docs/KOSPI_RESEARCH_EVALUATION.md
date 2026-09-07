@@ -244,3 +244,13 @@ py -3 scripts/evaluate_market_research.py `
 ```
 
 이 산출물은 내부 평가용이다. 공개 아티클과 대시보드에는 적중률, 내부 오류 코드, 후보 가설을 노출하지 않는다.
+
+## 발행 보고서 해시 실패의 명시적 무효화
+
+발행 후 발견된 원시 바이트 봉인 실패는 기존 전망·보고서·발행 이벤트를 수정해서 복구하지 않는다. `research/evaluation/invalidations/<forecastId>.json`을 한 번 추가해 실패를 보존하고 성과 집계에서 제외한다. 같은 전망의 무효화 파일을 덮어쓰거나 중복 작성하지 않는다. 방향 예측 실패나 데이터 부진을 무효화 사유로 쓰지 않는다.
+
+무효화 레코드는 `schemaVersion: 1`, `forecastId`, 원본 `contentHash`, 원래 push의 `commitSha`, 실제 발견·기록 시각 `recordedAt`, `failureCode: pushed_report_hash_mismatch`, 원본 `sealedReportSha256`, Git 커밋에서 확인한 `committedReportSha256`, 구체적인 `reason`을 모두 포함한다. 별도 필드는 허용하지 않는다.
+
+평가기에서 두 해시와 Git 원본을 재확인하고 기존 전망·발행 이벤트 검증을 그대로 실행한다. 원본 커밋의 전망 계약이 보존됐고 보고서 해시 실패가 실제 재현될 때만 무효화를 적용한다. 불일치하지 않는 해시, 다른 push, 공개 이전 기록시각, 변조된 전망, 근거 없는 무효화는 평가 전체를 실패시킨다. 작업 트리 보고서도 봉인 또는 확인된 커밋 해시에 해당해야 하며 제3의 내용은 허용하지 않는다.
+
+무효 판본은 JSON의 `invalidatedForecasts`·`invalidatedForecastCount`와 Markdown 실패 목록에 남고 성과·미정산 표본·가설 승격 근거에서 제외된다. 원래 검증 실패를 유효 표본으로 바꾸거나 보고서 바이트를 정규화해 봉인을 통과시키지 않는다. 새 보고서는 LF 바이트로 저장하고 스테이징된 `git show :reports/...`의 SHA-256을 봉인 전에 대조한다.

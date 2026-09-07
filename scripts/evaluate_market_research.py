@@ -134,6 +134,10 @@ class ValidationError(ValueError):
     """Raised when an evaluation record violates the forecast contract."""
 
 
+class ReportIntegrityError(ValidationError):
+    """A pushed report fails its original raw-byte seal."""
+
+
 def parse_iso(value: Any, field: str) -> datetime:
     if not isinstance(value, str):
         raise ValidationError(f"{field} must be an ISO-8601 string")
@@ -271,7 +275,7 @@ def validate_forecast_at_commit(
         )
     committed_report_hash = hashlib.sha256(report_result.stdout).hexdigest()
     if committed_report_hash != forecast["reportSha256"]:
-        raise ValidationError(
+        raise ReportIntegrityError(
             f"{forecast['forecastId']}: pushed commit report differs from reportSha256"
         )
 
@@ -1111,6 +1115,8 @@ def validate_forecast(
     payload: dict[str, Any],
     path: Path,
     repo_root: Path | None = None,
+    *,
+    invalidated_report_hash: str | None = None,
 ) -> dict[str, Any]:
     if payload.get("schemaVersion") != 1:
         raise ValidationError(f"{path}: unsupported schemaVersion")
@@ -1311,7 +1317,7 @@ def validate_forecast(
         if not report_file.is_file():
             raise ValidationError(f"{path}: reportPath does not exist")
         actual_digest = hashlib.sha256(report_file.read_bytes()).hexdigest()
-        if actual_digest != report_sha256:
+        if actual_digest not in {report_sha256, invalidated_report_hash}:
             raise ValidationError(f"{path}: reportSha256 no longer matches the report")
     content_hash = validate_raw_hash(payload.get("contentHash"), f"{path}: contentHash")
     expected_content_hash = canonical_forecast_content_hash(payload)
@@ -2570,6 +2576,15 @@ def render_markdown(summary: dict[str, Any]) -> str:
                 "> 독립 표본이 10개 미만이므로 적중률을 성과나 우위로 해석하지 않는다. 현재 결과는 오류 분류용이다.",
             ]
         )
+    invalidated = summary.get("invalidatedForecasts", [])
+    lines.extend(["", "## 검증 실패로 무효 처리된 전망", ""])
+    if not invalidated:
+        lines.append("- 없음")
+    for row in invalidated:
+        lines.append(
+            f"- {row['forecastId']}: {row['failureCode']} — {row['reason']} "
+            f"(무효 기록 {row['recordedAt']}; 성과·미정산 표본에서 제외)"
+        )
     return "\n".join(lines) + "\n"
 
 
@@ -2862,7 +2877,7 @@ def summarize_hypotheses(
     for hypothesis_id, definition in sorted(definitions_by_id.items()):
         eligible_ids_for_hypothesis = {
             forecast_id
-            for forecast_id in (eligible_forecast_ids or set(forecasts_by_id))
+            for forecast_id in (set(forecasts_by_id) if eligible_forecast_ids is None else eligible_forecast_ids)
             if (
                 forecasts_by_id[forecast_id]["evaluationBucket"]
                 in definition["evaluationBuckets"]
@@ -3048,14 +3063,75 @@ def summarize_hypotheses(
     return summary
 
 
+def validate_report_invalidation(
+    payload: dict[str, Any], forecast: dict[str, Any], repo_root: Path | None
+) -> dict[str, Any]:
+    """Verify an append-only exclusion against the original committed bytes."""
+    fields = {
+        "schemaVersion", "forecastId", "contentHash", "commitSha", "recordedAt",
+        "failureCode", "sealedReportSha256", "committedReportSha256", "reason",
+    }
+    if set(payload) != fields or payload.get("schemaVersion") != 1:
+        raise ValidationError("invalidation fields or schemaVersion are invalid")
+    if payload["failureCode"] != "pushed_report_hash_mismatch":
+        raise ValidationError("invalidation failureCode is unsupported")
+    if forecast.get("visibility") != "public":
+        raise ValidationError("invalidation requires an original public forecast")
+    for key in ("forecastId", "contentHash"):
+        if payload[key] != forecast.get(key):
+            raise ValidationError(f"invalidation {key} differs from original forecast")
+    if payload["sealedReportSha256"] != forecast.get("reportSha256"):
+        raise ValidationError("invalidation sealedReportSha256 differs from original seal")
+    for key in ("contentHash", "sealedReportSha256", "committedReportSha256"):
+        validate_raw_hash(payload[key], f"invalidation.{key}")
+    commit = validate_commit_sha(payload["commitSha"], "invalidation.commitSha")
+    recorded = parse_iso(payload["recordedAt"], "invalidation.recordedAt")
+    if recorded < parse_iso(forecast["issuedAt"], "forecast.issuedAt"):
+        raise ValidationError("invalidation precedes the original forecast")
+    if not isinstance(payload["reason"], str) or not payload["reason"].strip():
+        raise ValidationError("invalidation reason is required")
+    if repo_root is None or not (repo_root / ".git").exists():
+        raise ValidationError("invalidation requires Git evidence")
+    report_path = forecast.get("reportPath")
+    if not isinstance(report_path, str):
+        raise ValidationError("invalidation reportPath is required")
+    try:
+        (repo_root / report_path).resolve().relative_to(repo_root.resolve())
+    except ValueError as error:
+        raise ValidationError("invalidation reportPath escapes repository") from error
+    result = subprocess.run(
+        ["git", "-C", str(repo_root), "show", f"{commit}:{report_path}"],
+        capture_output=True, check=False,
+    )
+    if result.returncode or hashlib.sha256(result.stdout).hexdigest() != payload["committedReportSha256"]:
+        raise ValidationError("invalidation committedReportSha256 cannot be reproduced")
+    if payload["committedReportSha256"] == payload["sealedReportSha256"]:
+        raise ValidationError("invalidation does not demonstrate a failed report seal")
+    return payload
+
+
 def evaluate(evaluation_root: Path, repo_root: Path | None) -> dict[str, Any]:
+    invalidations: dict[str, dict[str, Any]] = {}
+    for path, payload in load_json_files(evaluation_root / "invalidations"):
+        forecast_id = payload.get("forecastId")
+        if not isinstance(forecast_id, str) or forecast_id in invalidations:
+            raise ValidationError(f"{path}: missing or duplicate invalidation forecastId")
+        invalidations[forecast_id] = payload
     forecasts_by_id: dict[str, dict[str, Any]] = {}
     for path, payload in load_json_files(evaluation_root / "forecasts"):
-        forecast = validate_forecast(payload, path, repo_root)
+        invalidation = invalidations.get(payload.get("forecastId"))
+        if invalidation is not None:
+            validate_report_invalidation(invalidation, payload, repo_root)
+        forecast = validate_forecast(
+            payload, path, repo_root,
+            invalidated_report_hash=None if invalidation is None else invalidation["committedReportSha256"],
+        )
         forecast_id = forecast["forecastId"]
         if forecast_id in forecasts_by_id:
             raise ValidationError(f"duplicate forecastId: {forecast_id}")
         forecasts_by_id[forecast_id] = forecast
+    if set(invalidations) - set(forecasts_by_id):
+        raise ValidationError("invalidation has no matching forecast")
     if forecasts_by_id:
         trading_sessions = load_trading_session_sequence(
             evaluation_root / "trading-sessions.json"
@@ -3127,9 +3203,22 @@ def evaluate(evaluation_root: Path, repo_root: Path | None) -> dict[str, Any]:
             raise ValidationError(
                 f"deploy event commitSha differs from the pushed revision for {forecast_id}"
             )
-        validate_forecast_at_commit(
-            repo_root, forecast, pushed["commitShaParsed"]
-        )
+        invalidation = invalidations.get(forecast_id)
+        if invalidation is not None:
+            if invalidation["commitSha"] != pushed["commitShaParsed"]:
+                raise ValidationError("invalidation commit differs from original push")
+            if parse_iso(invalidation["recordedAt"], "invalidation.recordedAt") < max(
+                pushed["occurredAtParsed"], deployed["occurredAtParsed"]
+            ):
+                raise ValidationError("invalidation precedes publication events")
+        try:
+            validate_forecast_at_commit(repo_root, forecast, pushed["commitShaParsed"])
+        except ReportIntegrityError:
+            if invalidation is None:
+                raise
+        else:
+            if invalidation is not None:
+                raise ValidationError("invalidation failed to reproduce the original validation error")
         publications_by_id[forecast_id] = {
             "pushedAtParsed": pushed["occurredAtParsed"],
             "deployVerifiedAtParsed": None
@@ -3144,7 +3233,8 @@ def evaluate(evaluation_root: Path, repo_root: Path | None) -> dict[str, Any]:
         }
 
     selected_forecasts = select_aggregate_forecasts(
-        forecasts_by_id, publications_by_id
+        {key: value for key, value in forecasts_by_id.items() if key not in invalidations},
+        publications_by_id,
     )
 
     hypothesis_definitions = load_jsonl(evaluation_root / "hypotheses.jsonl")
@@ -3174,17 +3264,21 @@ def evaluate(evaluation_root: Path, repo_root: Path | None) -> dict[str, Any]:
     event_times.extend(actual["fetchedAtParsed"] for actual in actuals_by_date.values())
     event_times.extend(outcome["recordedAtParsed"] for outcome in outcomes_by_id.values())
     event_times.extend(event["occurredAtParsed"] for event in publication_events.values())
+    event_times.extend(parse_iso(row["recordedAt"], "invalidation.recordedAt") for row in invalidations.values())
     event_times.extend(
         parse_iso(row["lastReviewedAt"], "hypothesis.lastReviewedAt")
         for row in hypothesis_definitions
     )
     generated_at = max(event_times).astimezone(SEOUL).isoformat(timespec="seconds") if event_times else None
-    return build_summary(
+    summary = build_summary(
         scores,
         unsettled,
         generated_at=generated_at,
         hypothesis_summary=hypothesis_summary,
     )
+    summary["invalidatedForecasts"] = [invalidations[key] for key in sorted(invalidations)]
+    summary["invalidatedForecastCount"] = len(invalidations)
+    return summary
 
 
 def parse_args() -> argparse.Namespace:

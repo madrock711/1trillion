@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-09-04",
+  "bizdate": "20260904",
+  "fetchedAt": "2026-09-07T08:04:22+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6654.36,
+    "high": 6746.14,
+    "low": 6632.77,
+    "close": 6687.21,
+    "asOf": "2026-09-04T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=10&page=1",
+    "rawHash": "305f36c69a6d47c568a9586efb919e674e83d94f8a65a1ab27cffee1b2d86e3d"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "9월7일 PREOPEN integration 수급·시장폭이 초기화되어 9월4일 최종 묶음 복구 불가. KODEX 확정 OHLCV 원문은 evidence/2026-09-07/122630.json에 별도 보존.",
+  "flowTrajectory": null,
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "Naver Finance PREOPEN integration 및 전일 수급 시간표",
+    "asOf": "2026-09-04T15:30:00+09:00",
+    "fetchedAt": "2026-09-07T08:04:22+09:00",
+    "missingReason": "9월7일 PREOPEN integration 수급·시장폭이 초기화되어 9월4일 최종 묶음 복구 불가. KODEX 확정 OHLCV 원문은 evidence/2026-09-07/122630.json에 별도 보존.",
+    "rawHash": "10f8c40c59e83ed2663b50857323019d0da3cef53bcd68c4e110a7d1f86d7040"
+  }
+}

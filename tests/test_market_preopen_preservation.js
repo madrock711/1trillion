@@ -5,7 +5,7 @@ const vm = require('vm');
 
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'assets/market-dashboard.js'), 'utf8');
-const snapshot = JSON.parse(fs.readFileSync(path.join(root, 'assets/data/market-dashboard-latest.json'), 'utf8'));
+const snapshot = JSON.parse(fs.readFileSync(path.join(root, 'assets/data/market-dashboard-20260904-0818.json'), 'utf8'));
 const start = source.indexOf('    function findById(items, id) {');
 const end = source.indexOf('    function clearLiveRefreshTimer()', start);
 assert(start >= 0 && end > start);

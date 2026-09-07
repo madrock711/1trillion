@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-04-0818-same-close",
+  "contentHash": "43180247f6d2fcf873bc3cd9b1d38ce161dbfc81885e389ad3a3ae11cbb6097e",
+  "commitSha": "b3557ced4b8387c6f08a38c14a9443397f97dc25",
+  "recordedAt": "2026-09-07T08:07:01+09:00",
+  "failureCode": "pushed_report_hash_mismatch",
+  "sealedReportSha256": "0e30d0276fb1ba06c072f6bd21f0a3941bfa8be1c31ad846578678b942fd4b8e",
+  "committedReportSha256": "5a018057e59eff77b0a4cc327b14b9bb0aadde9b5aac323b8f7196ba5fc9d9d2",
+  "reason": "CRLF 보고서 바이트로 봉인한 해시와 Git LF 정규화 커밋의 원시 바이트가 불일치했다. 원본 전망과 발행 이벤트는 보존하고 이 표본의 성과 편입을 무효화한다."
+}

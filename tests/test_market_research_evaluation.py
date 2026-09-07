@@ -1,6 +1,7 @@
 import hashlib
 import importlib.util
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -17,6 +18,104 @@ SPEC.loader.exec_module(MODULE)
 
 
 class MarketResearchEvaluationTests(unittest.TestCase):
+    def make_invalidated_publication(self, root):
+        evaluation = root / "research" / "evaluation"
+        forecast = self.make_forecast(root)
+        # Reproduce Windows sealing CRLF followed by Git publication of LF bytes.
+        report = root / forecast["reportPath"]
+        report.write_bytes(b"# sealed report\r\n")
+        forecast["reportSha256"] = hashlib.sha256(report.read_bytes()).hexdigest()
+        forecast["contentHash"] = MODULE.canonical_forecast_content_hash(forecast)
+        self.write_record(evaluation / "forecasts", forecast)
+        self.write_trading_sessions(evaluation)
+        report.write_bytes(b"# sealed report\n")
+        for args in (
+            ["init", "--quiet"], ["config", "core.autocrlf", "false"],
+            ["add", "."],
+            ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.test",
+             "-c", "core.hooksPath=/dev/null", "commit", "--quiet", "-m", "sealed publication"],
+        ):
+            subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True)
+        commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+        (evaluation / "publications").mkdir()
+        for event in self.make_publication_events(content_hash=forecast["contentHash"], commit_sha=commit):
+            (evaluation / "publications" / f"{event['eventType']}.json").write_text(json.dumps(event), encoding="utf-8")
+        invalidation = {
+            "schemaVersion": 1, "forecastId": forecast["forecastId"],
+            "contentHash": forecast["contentHash"], "commitSha": commit,
+            "recordedAt": "2026-08-08T09:00:00+09:00",
+            "failureCode": "pushed_report_hash_mismatch",
+            "sealedReportSha256": forecast["reportSha256"],
+            "committedReportSha256": hashlib.sha256(report.read_bytes()).hexdigest(),
+            "reason": "CRLF 봉인과 LF 커밋의 원시 바이트 불일치",
+        }
+        self.write_record(evaluation / "invalidations", invalidation)
+        return evaluation, forecast, invalidation
+
+    def test_append_only_invalidation_excludes_failed_publication_and_discloses_it(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            evaluation, forecast, invalidation = self.make_invalidated_publication(root)
+            original_files = {
+                path: path.read_bytes() for folder in ("forecasts", "publications")
+                for path in (evaluation / folder).rglob("*.json")
+            }
+            (evaluation / "actuals").mkdir()
+            (evaluation / "actuals" / "2026-08-07.json").write_text(json.dumps(self.make_actual()), encoding="utf-8")
+            self.write_record(evaluation / "outcomes", self.make_outcome())
+            summary = MODULE.evaluate(evaluation, root)
+            self.assertEqual(summary["invalidatedForecasts"], [invalidation])
+            self.assertEqual(summary["invalidatedForecastCount"], 1)
+            self.assertEqual(summary["selectedSettledForecastCount"], 0)
+            self.assertEqual(summary["unsettledForecastIds"], [])
+            self.assertIn(forecast["forecastId"], MODULE.render_markdown(summary))
+            self.assertEqual(original_files, {path: path.read_bytes() for path in original_files})
+            # Both checkout representations work only while the original Git failure is reproducible.
+            (root / forecast["reportPath"]).write_bytes(b"# sealed report\r\n")
+            self.assertEqual(MODULE.evaluate(evaluation, root)["invalidatedForecastCount"], 1)
+            (evaluation / "invalidations" / f"{forecast['forecastId']}.json").unlink()
+            with self.assertRaises(MODULE.ReportIntegrityError):
+                MODULE.evaluate(evaluation, root)
+
+    def test_invalidation_fails_closed_for_false_or_unanchored_evidence(self):
+        for key, value, message in (
+            ("committedReportSha256", "a" * 64, "cannot be reproduced"),
+            ("contentHash", "a" * 64, "original forecast"),
+            ("recordedAt", "2026-08-07T09:13:00+09:00", "precedes publication"),
+            ("failureCode", "direction_wrong", "unsupported"),
+        ):
+            with self.subTest(key=key), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                evaluation, _, invalidation = self.make_invalidated_publication(root)
+                invalidation[key] = value
+                self.write_record(evaluation / "invalidations", invalidation)
+                with self.assertRaisesRegex(MODULE.ValidationError, message):
+                    MODULE.evaluate(evaluation, root)
+
+    def test_invalidation_does_not_hide_later_report_tampering(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            evaluation, forecast, _ = self.make_invalidated_publication(root)
+            (root / forecast["reportPath"]).write_bytes(b"# altered content\n")
+            with self.assertRaisesRegex(MODULE.ValidationError, "no longer matches"):
+                MODULE.evaluate(evaluation, root)
+
+    def test_invalidation_cannot_hide_changed_forecast_contract(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            evaluation, forecast, invalidation = self.make_invalidated_publication(root)
+            forecast["drivers"][0]["claim"] = "사후 수정된 주장"
+            forecast["contentHash"] = MODULE.canonical_forecast_content_hash(forecast)
+            invalidation["contentHash"] = forecast["contentHash"]
+            self.write_record(evaluation / "forecasts", forecast)
+            self.write_record(evaluation / "invalidations", invalidation)
+            for path in (evaluation / "publications").glob("*.json"):
+                event = json.loads(path.read_text(encoding="utf-8"))
+                event["contentHash"] = forecast["contentHash"]
+                path.write_text(json.dumps(event), encoding="utf-8")
+            with self.assertRaisesRegex(MODULE.ValidationError, "forecast differs from contentHash"):
+                MODULE.evaluate(evaluation, root)
+
     def make_report(self, root: Path, name: str = "sample.md") -> tuple[str, str]:
         path = root / "reports" / name
         path.parent.mkdir(parents=True, exist_ok=True)
