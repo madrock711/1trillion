@@ -3,7 +3,7 @@
   "forecastId": "2026-09-07-1134-same-close",
   "visibility": "public",
   "reportPath": "reports/2026-09-07.md",
-  "reportSha256": "954303c5bb64e426b0c527962efe3cd9c3f915b4d0c14bc7f412741f8804e0c2",
+  "reportSha256": "11e77bad96d7adf387c015149a93e1dc95eede96f16e8d63647abdc1101645c4",
   "issuedAt": "2026-09-07T11:34:28+09:00",
   "dataCutoffAt": "2026-09-07T11:34:28+09:00",
   "marketState": "intraday",
@@ -155,5 +155,5 @@
     "defense": 15
   },
   "supersedes": null,
-  "contentHash": "55b693613bc6dde641b18fa70eb45e26377090a6318ad86ae95de743dbf28351"
+  "contentHash": "0304dc87cd4f02395d33b79fa5b8122895346cc87c339bf8fdf11b9496a55288"
 }
