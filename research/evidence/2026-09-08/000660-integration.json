@@ -1,0 +1,495 @@
+{
+  "url": "https://m.stock.naver.com/api/stock/000660/integration",
+  "fetchedAt": "2026-09-08T08:14:32+09:00",
+  "rawHash": "635b934346e3d6c63374c2cbd66a717d3d6db4e7922dc26b8f790fa78b895d5a",
+  "data": {
+    "stockEndType": "stock",
+    "itemCode": "000660",
+    "reutersCode": "000660",
+    "stockName": "SK하이닉스",
+    "totalInfos": [
+      {
+        "code": "lastClosePrice",
+        "key": "전일",
+        "value": "1,783,000"
+      },
+      {
+        "code": "openPrice",
+        "key": "시가",
+        "value": "1,785,000",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "highPrice",
+        "key": "고가",
+        "value": "1,797,000",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "lowPrice",
+        "key": "저가",
+        "value": "1,773,000",
+        "compareToPreviousPrice": {
+          "code": "5",
+          "text": "하락",
+          "name": "FALLING"
+        }
+      },
+      {
+        "code": "accumulatedTradingVolume",
+        "key": "거래량",
+        "value": "209,096"
+      },
+      {
+        "code": "accumulatedTradingValue",
+        "key": "대금",
+        "value": "3,724억"
+      },
+      {
+        "code": "marketValue",
+        "key": "시총",
+        "value": "1,302조 4,679억"
+      },
+      {
+        "code": "foreignRate",
+        "key": "외인소진율",
+        "value": "50.63%"
+      },
+      {
+        "code": "highPriceOf52Weeks",
+        "key": "52주 최고",
+        "value": "3,002,000"
+      },
+      {
+        "code": "lowPriceOf52Weeks",
+        "key": "52주 최저",
+        "value": "277,000"
+      },
+      {
+        "code": "per",
+        "key": "PER",
+        "value": "7.95배",
+        "valueDesc": "2026.06."
+      },
+      {
+        "code": "eps",
+        "key": "EPS",
+        "value": "224,313원",
+        "valueDesc": "2026.06."
+      },
+      {
+        "code": "cnsPer",
+        "key": "추정PER",
+        "value": "5.10배"
+      },
+      {
+        "code": "cnsEps",
+        "key": "추정EPS",
+        "value": "349,342원"
+      },
+      {
+        "code": "pbr",
+        "key": "PBR",
+        "value": "4.81배",
+        "valueDesc": "2026.06."
+      },
+      {
+        "code": "bps",
+        "key": "BPS",
+        "value": "370,432원",
+        "valueDesc": "2026.06."
+      },
+      {
+        "code": "dividendYieldRatio",
+        "key": "배당수익률",
+        "value": "0.17%",
+        "valueDesc": "2026.02."
+      },
+      {
+        "code": "dividend",
+        "key": "주당배당금",
+        "value": "3,000원",
+        "valueDesc": "2026.02."
+      }
+    ],
+    "iconInfos": null,
+    "description": null,
+    "etfKeyIndicator": null,
+    "dealTrendInfos": [
+      {
+        "itemCode": "000660",
+        "bizdate": "20260907",
+        "foreignerPureBuyQuant": "+772,036",
+        "foreignerHoldRatio": "50.63%",
+        "organPureBuyQuant": "+365,719",
+        "individualPureBuyQuant": "-1,771,800",
+        "closePrice": "1,783,000",
+        "compareToPreviousClosePrice": "136,000",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        },
+        "accumulatedTradingVolume": "3,480,094"
+      },
+      {
+        "itemCode": "000660",
+        "bizdate": "20260904",
+        "foreignerPureBuyQuant": "+308,833",
+        "foreignerHoldRatio": "50.50%",
+        "organPureBuyQuant": "+96,776",
+        "individualPureBuyQuant": "-1,037,636",
+        "closePrice": "1,647,000",
+        "compareToPreviousClosePrice": "51,000",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        },
+        "accumulatedTradingVolume": "2,827,892"
+      },
+      {
+        "itemCode": "000660",
+        "bizdate": "20260903",
+        "foreignerPureBuyQuant": "-234,626",
+        "foreignerHoldRatio": "50.45%",
+        "organPureBuyQuant": "-187,288",
+        "individualPureBuyQuant": "-220,315",
+        "closePrice": "1,596,000",
+        "compareToPreviousClosePrice": "-17,000",
+        "compareToPreviousPrice": {
+          "code": "5",
+          "text": "하락",
+          "name": "FALLING"
+        },
+        "accumulatedTradingVolume": "2,632,758"
+      },
+      {
+        "itemCode": "000660",
+        "bizdate": "20260902",
+        "foreignerPureBuyQuant": "-651,507",
+        "foreignerHoldRatio": "50.47%",
+        "organPureBuyQuant": "-295,219",
+        "individualPureBuyQuant": "+296,807",
+        "closePrice": "1,613,000",
+        "compareToPreviousClosePrice": "-80,000",
+        "compareToPreviousPrice": {
+          "code": "5",
+          "text": "하락",
+          "name": "FALLING"
+        },
+        "accumulatedTradingVolume": "2,568,478"
+      },
+      {
+        "itemCode": "000660",
+        "bizdate": "20260901",
+        "foreignerPureBuyQuant": "+91,835",
+        "foreignerHoldRatio": "50.57%",
+        "organPureBuyQuant": "-142,669",
+        "individualPureBuyQuant": "-590,498",
+        "closePrice": "1,693,000",
+        "compareToPreviousClosePrice": "19,000",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        },
+        "accumulatedTradingVolume": "2,727,724"
+      }
+    ],
+    "researches": [
+      {
+        "id": 96025,
+        "cd": "000660",
+        "nm": "SK하이닉스",
+        "bnm": "미래에셋증권",
+        "tit": "HBM 고객 다변화 본격화",
+        "rcnt": "10424",
+        "wdt": "20260907"
+      },
+      {
+        "id": 95869,
+        "cd": "000660",
+        "nm": "SK하이닉스",
+        "bnm": "미래에셋증권",
+        "tit": "짙은 안개속 선명한 성장",
+        "rcnt": "53346",
+        "wdt": "20260826"
+      },
+      {
+        "id": 95791,
+        "cd": "000660",
+        "nm": "SK하이닉스",
+        "bnm": "한화투자증권",
+        "tit": "40조원은 시작, 대규모 자사주 매입 및 소각 기대",
+        "rcnt": "76102",
+        "wdt": "20260820"
+      },
+      {
+        "id": 95786,
+        "cd": "000660",
+        "nm": "SK하이닉스",
+        "bnm": "하나증권",
+        "tit": "40조원 규모의 자기주식 취득 및 소각 공시",
+        "rcnt": "56873",
+        "wdt": "20260820"
+      },
+      {
+        "id": 95627,
+        "cd": "000660",
+        "nm": "SK하이닉스",
+        "bnm": "미래에셋증권",
+        "tit": "단번에 풀려가는 매듭들",
+        "rcnt": "67967",
+        "wdt": "20260814"
+      }
+    ],
+    "industryCode": "278",
+    "industryCompareInfo": [
+      {
+        "stockType": "domestic",
+        "stockEndType": "stock",
+        "itemCode": "005930",
+        "reutersCode": "005930",
+        "stockName": "삼성전자",
+        "sosok": "0",
+        "closePrice": "270,000",
+        "compareToPreviousClosePrice": "0",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        },
+        "fluctuationsRatio": "0.00",
+        "accumulatedTradingVolume": "-",
+        "accumulatedTradingValue": "-",
+        "marketValue": "1,578,495,224",
+        "nav": "N/A",
+        "threeMonthEarningRate": "N/A",
+        "stockExchangeType": {
+          "code": "KS",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스피",
+          "nameEng": "KOSPI",
+          "stockType": "domestic",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "name": "KOSPI"
+        },
+        "endUrl": "https://m.stock.naver.com/domestic/stock/005930",
+        "newPcUrl": "https://stock.naver.com/domestic/stock/005930"
+      },
+      {
+        "stockType": "domestic",
+        "stockEndType": "stock",
+        "itemCode": "402340",
+        "reutersCode": "402340",
+        "stockName": "SK스퀘어",
+        "sosok": "0",
+        "closePrice": "1,125,000",
+        "compareToPreviousClosePrice": "0",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        },
+        "fluctuationsRatio": "0.00",
+        "accumulatedTradingVolume": "-",
+        "accumulatedTradingValue": "-",
+        "marketValue": "148,414,497",
+        "nav": "N/A",
+        "threeMonthEarningRate": "N/A",
+        "stockExchangeType": {
+          "code": "KS",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스피",
+          "nameEng": "KOSPI",
+          "stockType": "domestic",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "name": "KOSPI"
+        },
+        "endUrl": "https://m.stock.naver.com/domestic/stock/402340",
+        "newPcUrl": "https://stock.naver.com/domestic/stock/402340"
+      },
+      {
+        "stockType": "domestic",
+        "stockEndType": "stock",
+        "itemCode": "042700",
+        "reutersCode": "042700",
+        "stockName": "한미반도체",
+        "sosok": "0",
+        "closePrice": "240,500",
+        "compareToPreviousClosePrice": "0",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        },
+        "fluctuationsRatio": "0.00",
+        "accumulatedTradingVolume": "-",
+        "accumulatedTradingValue": "-",
+        "marketValue": "22,922,584",
+        "nav": "N/A",
+        "threeMonthEarningRate": "N/A",
+        "stockExchangeType": {
+          "code": "KS",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스피",
+          "nameEng": "KOSPI",
+          "stockType": "domestic",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "name": "KOSPI"
+        },
+        "endUrl": "https://m.stock.naver.com/domestic/stock/042700",
+        "newPcUrl": "https://stock.naver.com/domestic/stock/042700"
+      },
+      {
+        "stockType": "domestic",
+        "stockEndType": "stock",
+        "itemCode": "036930",
+        "reutersCode": "036930",
+        "stockName": "주성엔지니어링",
+        "sosok": "1",
+        "closePrice": "187,200",
+        "compareToPreviousClosePrice": "0",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        },
+        "fluctuationsRatio": "0.00",
+        "accumulatedTradingVolume": "-",
+        "accumulatedTradingValue": "-",
+        "marketValue": "8,701,265",
+        "nav": "N/A",
+        "threeMonthEarningRate": "N/A",
+        "stockExchangeType": {
+          "code": "KQ",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스닥",
+          "nameEng": "KOSDAQ",
+          "stockType": "domestic",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "name": "KOSDAQ"
+        },
+        "endUrl": "https://m.stock.naver.com/domestic/stock/036930",
+        "newPcUrl": "https://stock.naver.com/domestic/stock/036930"
+      },
+      {
+        "stockType": "domestic",
+        "stockEndType": "stock",
+        "itemCode": "007660",
+        "reutersCode": "007660",
+        "stockName": "이수페타시스",
+        "sosok": "0",
+        "closePrice": "111,900",
+        "compareToPreviousClosePrice": "0",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        },
+        "fluctuationsRatio": "0.00",
+        "accumulatedTradingVolume": "-",
+        "accumulatedTradingValue": "-",
+        "marketValue": "8,214,491",
+        "nav": "N/A",
+        "threeMonthEarningRate": "N/A",
+        "stockExchangeType": {
+          "code": "KS",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스피",
+          "nameEng": "KOSPI",
+          "stockType": "domestic",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "name": "KOSPI"
+        },
+        "endUrl": "https://m.stock.naver.com/domestic/stock/007660",
+        "newPcUrl": "https://stock.naver.com/domestic/stock/007660"
+      },
+      {
+        "stockType": "domestic",
+        "stockEndType": "stock",
+        "itemCode": "240810",
+        "reutersCode": "240810",
+        "stockName": "원익IPS",
+        "sosok": "1",
+        "closePrice": "117,600",
+        "compareToPreviousClosePrice": "0",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        },
+        "fluctuationsRatio": "0.00",
+        "accumulatedTradingVolume": "-",
+        "accumulatedTradingValue": "-",
+        "marketValue": "5,772,266",
+        "nav": "N/A",
+        "threeMonthEarningRate": "N/A",
+        "stockExchangeType": {
+          "code": "KQ",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스닥",
+          "nameEng": "KOSDAQ",
+          "stockType": "domestic",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "name": "KOSDAQ"
+        },
+        "endUrl": "https://m.stock.naver.com/domestic/stock/240810",
+        "newPcUrl": "https://stock.naver.com/domestic/stock/240810"
+      }
+    ],
+    "consensusInfo": {
+      "itemCode": "000660",
+      "createDate": "2026-09-04",
+      "recommMean": "4.00",
+      "priceTargetMean": "3,279,565"
+    },
+    "shareholdersMeetingInfo": null,
+    "irScheduleInfo": null
+  }
+}

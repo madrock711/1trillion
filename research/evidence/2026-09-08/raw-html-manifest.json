@@ -1,0 +1,32 @@
+[
+  {
+    "file": "bok-gdp-20260908.html.gz",
+    "rawSha256": "9fc04e142a1528cc724faf3aa5d484b763c0d6a757225d3fd80b4efd7f95cf82",
+    "rawBytes": 407835,
+    "encoding": "original bytes; gzip"
+  },
+  {
+    "file": "bok-income-list.html.gz",
+    "rawSha256": "dcebaa1e492fc8a7e257174f55024fb69e23502501868b78f47248c9ca91726a",
+    "rawBytes": 17556,
+    "encoding": "original bytes; gzip"
+  },
+  {
+    "file": "bok-news-list.html.gz",
+    "rawSha256": "f27993dec6f7168e4f101ae15f42c3e6839b9b9aa8e42f5ad9c5dbd3ffd8383f",
+    "rawBytes": 419001,
+    "encoding": "original bytes; gzip"
+  },
+  {
+    "file": "naver-investors-20260907.html.gz",
+    "rawSha256": "318f577e6c2023530e241541e4ab8faae37e2f68804faf0a94253c25f8695e09",
+    "rawBytes": 8055,
+    "encoding": "original bytes; gzip"
+  },
+  {
+    "file": "naver-kospi-page.html.gz",
+    "rawSha256": "6555e9a72938db127a2bbdd93c1c8ac1812ed7ad7093a318bb60896806f894ac",
+    "rawBytes": 61646,
+    "encoding": "original bytes; gzip"
+  }
+]

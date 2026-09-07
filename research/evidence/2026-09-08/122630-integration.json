@@ -1,0 +1,470 @@
+{
+  "url": "https://m.stock.naver.com/api/stock/122630/integration",
+  "fetchedAt": "2026-09-08T08:14:32+09:00",
+  "rawHash": "71040899fe0b9b8a59b90ce6f4cabac4b5c944553a70bfa0856911387a8d2904",
+  "data": {
+    "stockEndType": "etf",
+    "itemCode": "122630",
+    "reutersCode": "122630",
+    "stockName": "KODEX 레버리지",
+    "totalInfos": [
+      {
+        "code": "lastClosePrice",
+        "key": "전일",
+        "value": "113,045"
+      },
+      {
+        "code": "openPrice",
+        "key": "시가",
+        "value": "113,045",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        }
+      },
+      {
+        "code": "highPrice",
+        "key": "고가",
+        "value": "113,045",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        }
+      },
+      {
+        "code": "lowPrice",
+        "key": "저가",
+        "value": "113,045",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        }
+      },
+      {
+        "code": "accumulatedTradingVolume",
+        "key": "거래량",
+        "value": "-"
+      },
+      {
+        "code": "accumulatedTradingValue",
+        "key": "대금",
+        "value": "-"
+      },
+      {
+        "code": "highPriceOf52Weeks",
+        "key": "52주 최고",
+        "value": "252,500"
+      },
+      {
+        "code": "lowPriceOf52Weeks",
+        "key": "52주 최저",
+        "value": "25,270"
+      },
+      {
+        "code": "oneMonthEarnRate",
+        "key": "최근 1개월 수익률",
+        "value": "+24.65%",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "threeMonthEarnRate",
+        "key": "최근 3개월 수익률",
+        "value": "-40.45%",
+        "compareToPreviousPrice": {
+          "code": "5",
+          "text": "하락",
+          "name": "FALLING"
+        }
+      },
+      {
+        "code": "sixMonthEarnRate",
+        "key": "최근 6개월 수익률",
+        "value": "+34.58%",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "oneYearEarnRate",
+        "key": "최근 1년 수익률",
+        "value": "+350.83%",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "nav",
+        "key": "NAV",
+        "value": "113,871.66"
+      },
+      {
+        "code": "fundPay",
+        "key": "펀드보수",
+        "value": "0.64%"
+      },
+      {
+        "code": "etfBaseIdx",
+        "key": "기초지수",
+        "value": "코스피 200 레버리지지수"
+      },
+      {
+        "code": "issueName",
+        "key": "운용사",
+        "value": "삼성자산운용(ETF)"
+      }
+    ],
+    "iconInfos": [
+      {
+        "code": "referenceIndexLeverageTypeCode",
+        "value": "P2"
+      },
+      {
+        "code": "isDividend",
+        "value": "N"
+      }
+    ],
+    "description": "1좌당 순자산가치의 일간변동률을 기초지수인 KOSPI200 지수 일간변동률의 양의 2배수와 유사하도록 투자신탁재산을 운용하는 것을 목표로 합니다.  한국거래소가 산출하는 KOSPI200 지수는 한국을 대표하는 200개 종목의 시가총액을 지수화한 것입니다. 200개 종목은 시장 대표성, 유동성, 업종 대표성을 고려하여 선정하는데, 전체 종목을 9개업 군으로 분류하여 시가총액과 거래량 비중이 높은 종목들을 우선 선정합니다.  주된 투자대상 자산으로 KOSPI200을 기초로 하는 ETF와 KOSPI200 주가지수선물을 혼용하여 운용합니다.",
+    "etfKeyIndicator": {
+      "issuerName": "삼성자산운용(ETF)",
+      "marketValue": "6조 2,796억",
+      "dividendYieldTtm": 0.0,
+      "totalNav": "6조 3,252억",
+      "nav": "103,102.67",
+      "deviationSign": "-",
+      "deviationRate": 0.72,
+      "totalFee": 0.64,
+      "returnRate1m": 24.65,
+      "returnRate3m": -40.45,
+      "returnRate1y": 350.83,
+      "marketValueRaw": "6279649000000"
+    },
+    "dealTrendInfos": [
+      {
+        "itemCode": "122630",
+        "bizdate": "20260907",
+        "foreignerPureBuyQuant": "+67,276",
+        "foreignerHoldRatio": "0.61%",
+        "organPureBuyQuant": "+1,652,464",
+        "individualPureBuyQuant": "-1,584,399",
+        "closePrice": "113,045",
+        "compareToPreviousClosePrice": "9,990",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        },
+        "accumulatedTradingVolume": "13,091,879"
+      },
+      {
+        "itemCode": "122630",
+        "bizdate": "20260904",
+        "foreignerPureBuyQuant": "+96,724",
+        "foreignerHoldRatio": "0.88%",
+        "organPureBuyQuant": "+898,684",
+        "individualPureBuyQuant": "-984,237",
+        "closePrice": "103,055",
+        "compareToPreviousClosePrice": "3,955",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        },
+        "accumulatedTradingVolume": "14,081,706"
+      },
+      {
+        "itemCode": "122630",
+        "bizdate": "20260903",
+        "foreignerPureBuyQuant": "+398,224",
+        "foreignerHoldRatio": "1.30%",
+        "organPureBuyQuant": "+513,036",
+        "individualPureBuyQuant": "-889,843",
+        "closePrice": "99,100",
+        "compareToPreviousClosePrice": "200",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        },
+        "accumulatedTradingVolume": "19,251,517"
+      },
+      {
+        "itemCode": "122630",
+        "bizdate": "20260902",
+        "foreignerPureBuyQuant": "-67,301",
+        "foreignerHoldRatio": "0.56%",
+        "organPureBuyQuant": "-1,918,695",
+        "individualPureBuyQuant": "+1,963,639",
+        "closePrice": "98,900",
+        "compareToPreviousClosePrice": "-8,825",
+        "compareToPreviousPrice": {
+          "code": "5",
+          "text": "하락",
+          "name": "FALLING"
+        },
+        "accumulatedTradingVolume": "15,502,252"
+      },
+      {
+        "itemCode": "122630",
+        "bizdate": "20260901",
+        "foreignerPureBuyQuant": "+101,506",
+        "foreignerHoldRatio": "0.79%",
+        "organPureBuyQuant": "+450,210",
+        "individualPureBuyQuant": "-557,062",
+        "closePrice": "107,725",
+        "compareToPreviousClosePrice": "645",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        },
+        "accumulatedTradingVolume": "14,725,345"
+      }
+    ],
+    "researches": [],
+    "industryCode": "25",
+    "industryCompareInfo": [
+      {
+        "stockType": "domestic",
+        "stockEndType": "stock",
+        "itemCode": "069500",
+        "reutersCode": "069500",
+        "stockName": "KODEX 200",
+        "sosok": "0",
+        "closePrice": "110,820",
+        "compareToPreviousClosePrice": "0",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        },
+        "fluctuationsRatio": "0.00",
+        "accumulatedTradingVolume": "-",
+        "accumulatedTradingValue": "-",
+        "marketValue": "25,732,404",
+        "nav": "0",
+        "threeMonthEarningRate": "0",
+        "stockExchangeType": {
+          "code": "KS",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스피",
+          "nameEng": "KOSPI",
+          "stockType": "domestic",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "name": "KOSPI"
+        },
+        "endUrl": "https://m.stock.naver.com/domestic/stock/069500",
+        "newPcUrl": "https://stock.naver.com/domestic/stock/069500"
+      },
+      {
+        "stockType": "domestic",
+        "stockEndType": "stock",
+        "itemCode": "360750",
+        "reutersCode": "360750",
+        "stockName": "TIGER 미국S&P500",
+        "sosok": "0",
+        "closePrice": "25,660",
+        "compareToPreviousClosePrice": "0",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        },
+        "fluctuationsRatio": "0.00",
+        "accumulatedTradingVolume": "-",
+        "accumulatedTradingValue": "-",
+        "marketValue": "20,182,873",
+        "nav": "0",
+        "threeMonthEarningRate": "0",
+        "stockExchangeType": {
+          "code": "KS",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스피",
+          "nameEng": "KOSPI",
+          "stockType": "domestic",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "name": "KOSPI"
+        },
+        "endUrl": "https://m.stock.naver.com/domestic/stock/360750",
+        "newPcUrl": "https://stock.naver.com/domestic/stock/360750"
+      },
+      {
+        "stockType": "domestic",
+        "stockEndType": "stock",
+        "itemCode": "133690",
+        "reutersCode": "133690",
+        "stockName": "TIGER 미국나스닥100",
+        "sosok": "0",
+        "closePrice": "175,920",
+        "compareToPreviousClosePrice": "0",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        },
+        "fluctuationsRatio": "0.00",
+        "accumulatedTradingVolume": "-",
+        "accumulatedTradingValue": "-",
+        "marketValue": "11,403,134",
+        "nav": "0",
+        "threeMonthEarningRate": "0",
+        "stockExchangeType": {
+          "code": "KS",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스피",
+          "nameEng": "KOSPI",
+          "stockType": "domestic",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "name": "KOSPI"
+        },
+        "endUrl": "https://m.stock.naver.com/domestic/stock/133690",
+        "newPcUrl": "https://stock.naver.com/domestic/stock/133690"
+      },
+      {
+        "stockType": "domestic",
+        "stockEndType": "stock",
+        "itemCode": "102110",
+        "reutersCode": "102110",
+        "stockName": "TIGER 200",
+        "sosok": "0",
+        "closePrice": "111,030",
+        "compareToPreviousClosePrice": "0",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        },
+        "fluctuationsRatio": "0.00",
+        "accumulatedTradingVolume": "-",
+        "accumulatedTradingValue": "-",
+        "marketValue": "10,392,408",
+        "nav": "0",
+        "threeMonthEarningRate": "0",
+        "stockExchangeType": {
+          "code": "KS",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스피",
+          "nameEng": "KOSPI",
+          "stockType": "domestic",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "name": "KOSPI"
+        },
+        "endUrl": "https://m.stock.naver.com/domestic/stock/102110",
+        "newPcUrl": "https://stock.naver.com/domestic/stock/102110"
+      },
+      {
+        "stockType": "domestic",
+        "stockEndType": "stock",
+        "itemCode": "379800",
+        "reutersCode": "379800",
+        "stockName": "KODEX 미국S&P500",
+        "sosok": "0",
+        "closePrice": "23,320",
+        "compareToPreviousClosePrice": "0",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        },
+        "fluctuationsRatio": "0.00",
+        "accumulatedTradingVolume": "-",
+        "accumulatedTradingValue": "-",
+        "marketValue": "9,990,288",
+        "nav": "0",
+        "threeMonthEarningRate": "0",
+        "stockExchangeType": {
+          "code": "KS",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스피",
+          "nameEng": "KOSPI",
+          "stockType": "domestic",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "name": "KOSPI"
+        },
+        "endUrl": "https://m.stock.naver.com/domestic/stock/379800",
+        "newPcUrl": "https://stock.naver.com/domestic/stock/379800"
+      },
+      {
+        "stockType": "domestic",
+        "stockEndType": "stock",
+        "itemCode": "396500",
+        "reutersCode": "396500",
+        "stockName": "TIGER 반도체TOP10",
+        "sosok": "0",
+        "closePrice": "37,070",
+        "compareToPreviousClosePrice": "0",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        },
+        "fluctuationsRatio": "0.00",
+        "accumulatedTradingVolume": "-",
+        "accumulatedTradingValue": "-",
+        "marketValue": "9,892,129",
+        "nav": "0",
+        "threeMonthEarningRate": "0",
+        "stockExchangeType": {
+          "code": "KS",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스피",
+          "nameEng": "KOSPI",
+          "stockType": "domestic",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "name": "KOSPI"
+        },
+        "endUrl": "https://m.stock.naver.com/domestic/stock/396500",
+        "newPcUrl": "https://stock.naver.com/domestic/stock/396500"
+      }
+    ],
+    "consensusInfo": null,
+    "shareholdersMeetingInfo": null,
+    "irScheduleInfo": null
+  }
+}

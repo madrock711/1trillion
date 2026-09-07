@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-08-0814-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-09-08.md",
+  "reportSha256": "0a6cb7a457d2d660fea5b33be8d6380f28b2a4ea5b0bc486117d705659f20887",
+  "issuedAt": "2026-09-08T08:14:33+09:00",
+  "dataCutoffAt": "2026-09-08T08:14:33+09:00",
+  "marketState": "preopen",
+  "marketRegime": "mixed",
+  "evaluationBucket": "preopen",
+  "target": {
+    "sessionDate": "2026-09-08",
+    "horizon": "session_close",
+    "instrument": "KOSPI",
+    "leadSessions": 0,
+    "previousSessionDate": "2026-09-07"
+  },
+  "reference": {
+    "price": 6995.39,
+    "asOf": "2026-09-07T15:30:00+09:00",
+    "kind": "previous_close"
+  },
+  "scenarios": {
+    "bull": {
+      "low": 7100,
+      "high": 7300,
+      "probability": 0.25
+    },
+    "base": {
+      "low": 6900,
+      "high": 7100,
+      "probability": 0.5
+    },
+    "bear": {
+      "low": 6650,
+      "high": 6900,
+      "probability": 0.25
+    }
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {
+    "low": 6600,
+    "high": 7350,
+    "coverage": 0.9
+  },
+  "drivers": [
+    {
+      "id": "domestic-demand",
+      "rank": 1,
+      "claim": "7,000선 부근 추가 상승에는 국내 신규 매수가 필요하다.",
+      "validationMetric": "KOSPI 가격·외국인·프로그램 수급"
+    },
+    {
+      "id": "oil-risk",
+      "rank": 2,
+      "claim": "유가 상승은 물가와 지수 상단에 부담을 준다.",
+      "validationMetric": "브렌트·원화·KOSPI 종가"
+    },
+    {
+      "id": "memory-differentiation",
+      "rank": 3,
+      "claim": "DRAM 품목별 가격은 실적 기대를 지지하되 주식 매수와 다르다.",
+      "validationMetric": "메모리 현물·삼성전자·SK하이닉스 가격"
+    }
+  ],
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-09-08T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "description": "kospi_price gt 7100",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 7100,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "bull-foreign",
+          "description": "foreign_cash gt 0",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance 투자자별 매매동향"
+        },
+        {
+          "id": "bull-program",
+          "description": "program_total gt 0",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance 프로그램 매매동향"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-09-08T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-support",
+          "description": "kospi_price gte 6900",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 6900,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "base-cap",
+          "description": "kospi_price lte 7100",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 7100,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "base-foreign",
+          "description": "foreign_cash gte 0",
+          "metricId": "foreign_cash",
+          "operator": "gte",
+          "threshold": 0,
+          "source": "Naver Finance 투자자별 매매동향"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-09-08T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "description": "kospi_price lt 6900",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 6900,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "bear-foreign",
+          "description": "foreign_cash lt 0",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance 투자자별 매매동향"
+        },
+        {
+          "id": "bear-program",
+          "description": "program_total lt 0",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance 프로그램 매매동향"
+        }
+      ]
+    }
+  },
+  "hypothesisTrials": [],
+  "posture": {
+    "attack": 25,
+    "wait": 55,
+    "defense": 20
+  },
+  "supersedes": null,
+  "contentHash": "cef3edfbc93680d1c4f84b3295b426a39c6e1821682ed66f0c5a68b182a4a60b"
+}

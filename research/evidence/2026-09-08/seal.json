@@ -1,0 +1,18 @@
+{
+  "forecastId": "2026-09-08-0814-same-close",
+  "issuedAt": "2026-09-08T08:14:33+09:00",
+  "dataCutoffAt": "2026-09-08T08:14:33+09:00",
+  "snapshotId": "20260908-0814",
+  "articleTitle": "7,000선 앞의 KOSPI, 유가 부담 속 국내 매수가 관건",
+  "files": [
+    "articles/market-2026-09-08.html",
+    "assets/data/market-dashboard-latest.json",
+    "assets/data/market-dashboard-20260908-0814.json",
+    "assets/images/articles/market-2026-09-08-chips-oil-1200x630.webp",
+    "charts/us_yield_spreads_90d_2026-09-08.png",
+    "charts/us_yield_spreads_long_term_2026-09-08.png",
+    "articles/index.html",
+    "articles/market.html",
+    "index.html"
+  ]
+}
