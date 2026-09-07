@@ -1,12 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-04T08:08:02+09:00",
+  "generatedAt": "2026-09-07T11:37:24+09:00",
   "selectedSettledForecastCount": 15,
   "independentSessionCount": 15,
   "unsettledForecastIds": [
     "2026-08-10-0852-same-close",
     "2026-08-11-0923-same-close",
-    "2026-08-12-0816-same-close"
+    "2026-08-12-0816-same-close",
+    "2026-09-07-1134-same-close"
   ],
   "overall": {
     "sampleCount": 15,
@@ -31,11 +32,11 @@
     "meanPathIntervalScoreBps": null,
     "meanMaxFavorableMoveBps": null,
     "meanMaxAdverseMoveBps": null,
-    "meanCenterLiftVsCarryBps": 10.37946,
-    "meanBrier": 0.607,
-    "meanDataLagMinutes": 1.5254666666666667,
-    "meanPublicationLagMinutes": 2.5797142857142856,
-    "meanDeployLagMinutes": 2.0476428571428573
+    "meanCenterLiftVsCarryBps": 10.379459999999993,
+    "meanBrier": 0.6069999999999999,
+    "meanDataLagMinutes": 1.5254666666666665,
+    "meanPublicationLagMinutes": 2.579714285714285,
+    "meanDeployLagMinutes": 2.047642857142857
   },
   "byEvaluationBucket": {
     "morning_0931_1130": {
@@ -91,12 +92,12 @@
       "meanCloseEnvelopeIntervalScoreBps": 1062.8222214285713,
       "meanPathIntervalScoreBps": 1318.8444571428572,
       "meanMaxFavorableMoveBps": 345.1987357142857,
-      "meanMaxAdverseMoveBps": 65.26129285714286,
-      "meanCenterLiftVsCarryBps": 14.4948,
+      "meanMaxAdverseMoveBps": 65.26129285714285,
+      "meanCenterLiftVsCarryBps": 14.494799999999993,
       "meanBrier": 0.6232142857142857,
       "meanDataLagMinutes": 1.6260714285714286,
-      "meanPublicationLagMinutes": 2.575615384615385,
-      "meanDeployLagMinutes": 2.1333846153846157,
+      "meanPublicationLagMinutes": 2.5756153846153844,
+      "meanDeployLagMinutes": 2.133384615384615,
       "topErrorCodes": [
         {
           "code": "trigger_false_positive",
@@ -196,7 +197,7 @@
         "verified": 10
       },
       "independentSessionCount": 10,
-      "meanBaselineLiftBps": -13.36122196777186,
+      "meanBaselineLiftBps": -13.361221967771854,
       "supportRate": 0.6,
       "positiveRegimeCount": 0,
       "recentDegraded": true
@@ -881,5 +882,19 @@
         "cause_unverifiable"
       ]
     }
-  ]
+  ],
+  "invalidatedForecasts": [
+    {
+      "schemaVersion": 1,
+      "forecastId": "2026-09-04-0818-same-close",
+      "contentHash": "43180247f6d2fcf873bc3cd9b1d38ce161dbfc81885e389ad3a3ae11cbb6097e",
+      "commitSha": "b3557ced4b8387c6f08a38c14a9443397f97dc25",
+      "recordedAt": "2026-09-07T08:07:01+09:00",
+      "failureCode": "pushed_report_hash_mismatch",
+      "sealedReportSha256": "0e30d0276fb1ba06c072f6bd21f0a3941bfa8be1c31ad846578678b942fd4b8e",
+      "committedReportSha256": "5a018057e59eff77b0a4cc327b14b9bb0aadde9b5aac323b8f7196ba5fc9d9d2",
+      "reason": "CRLF 보고서 바이트로 봉인한 해시와 Git LF 정규화 커밋의 원시 바이트가 불일치했다. 원본 전망과 발행 이벤트는 보존하고 이 표본의 성과 편입을 무효화한다."
+    }
+  ],
+  "invalidatedForecastCount": 1
 }

@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-09-07T11:38:00+09:00",
+  "commitSha": "7a8f80f1c04261a2abc153596c59576f06a9e032",
+  "amplifyJobId": "566",
+  "amplifyStatus": "SUCCEED",
+  "amplifyCompletedAt": "2026-09-07T11:37:24.670+09:00",
+  "domains": [
+    "https://www.hpmplab.com",
+    "https://main.d2pg7r2qjjb9u9.amplifyapp.com"
+  ],
+  "verifiedPaths": 6,
+  "responses": 12,
+  "allHttp200": true,
+  "crossDomainHashesMatch": true,
+  "articleSha256": "5f8a1ac1aef94e148c18f251d01b0a023f2412b4efb60d3db6d007efa9a5dd7e",
+  "dashboardSha256": "8677d5416fb42b0f36882de9b81e4064a6c0a400c35e2410eff7b2e1ffa813ac",
+  "imageSha256": "5154e3120185fbe34056d1684f2c97c7da9ec43f0cb7da778b3c9dc17eccdfbf"
+}
