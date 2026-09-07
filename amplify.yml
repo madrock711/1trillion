@@ -2,7 +2,10 @@ version: 1
 frontend:
   phases:
     build:
-      commands: []
+      commands:
+        - node scripts/audit_public_site.js
+        - node tests/test_home_article_feed.js
+        - node tests/test_home_article_search.js
   artifacts:
     baseDirectory: /
     files:

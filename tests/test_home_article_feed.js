@@ -10,11 +10,17 @@ const market = fs.readFileSync(path.join(root, 'articles', 'market.html'), 'utf8
 const styles = fs.readFileSync(path.join(root, 'style.css'), 'utf8');
 const i18n = fs.readFileSync(path.join(root, 'i18n.js'), 'utf8');
 const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
+const detailFiles = fs.readdirSync(path.join(root, 'articles'))
+    .filter((name) => name.endsWith('.html') && name !== 'index.html' && name !== 'market.html');
+const marketFiles = detailFiles.filter((name) => name.startsWith('market-'));
+const archiveCards = [...archive.matchAll(/<article class="article-card" data-category="(essay|market|health)" data-published="([^"]+)">([\s\S]*?)<\/article>/g)];
+const categoryCounts = archiveCards.reduce((counts, match) => ({...counts, [match[1]]: (counts[match[1]] || 0) + 1}), {});
 
 assert.match(home, /<title>연마 아티클 \| 사람과 사회, 몸과 마음에 관한 글<\/title>/);
 assert.match(home, /<link rel="canonical" href="https:\/\/www\.hpmplab\.com\/">/);
 assert.match(home, /<meta name="twitter:card" content="summary_large_image">/);
-assert.match(home, /<meta property="og:image" content="https:\/\/www\.hpmplab\.com\/assets\/images\/articles\/market-2026-09-04-ai-platform-jobs-1200x630\.webp">/);
+const firstImage = home.match(/class="article-card-image" src="([^"]+)"/)?.[1];
+assert.equal(home.match(/<meta property="og:image" content="([^"]+)"/)?.[1], `https://www.hpmplab.com/${firstImage}`);
 assert.match(home, /<a class="skip-link" href="#main-content">최신 아티클로 건너뛰기<\/a>/);
 assert.match(home, /<main class="content-page article-index-page article-home-page" id="main-content" tabindex="-1">/);
 
@@ -30,16 +36,16 @@ const marketNavIndex = homeHeader.indexOf('href="articles/market.html">시황');
 assert.ok(articleNavIndex >= 0 && articleNavIndex < toolsNavIndex && toolsNavIndex < marketNavIndex);
 
 const cardTags = [...home.matchAll(/<article class="article-card home-article-card" data-category="([^"]+)" data-published="([^"]+)">/g)];
-assert.equal(cardTags.length, 45);
-assert.equal((home.match(/<h3 class="home-article-title">/g) || []).length, 45);
+assert.equal(cardTags.length, detailFiles.length);
+assert.equal((home.match(/<h3 class="home-article-title">/g) || []).length, detailFiles.length);
 assert.deepEqual(
     cardTags.reduce((counts, match) => ({...counts, [match[1]]: (counts[match[1]] || 0) + 1}), {}),
-    {market: 30, health: 9, essay: 6}
+    categoryCounts
 );
 assert.ok(cardTags.every((match, index) => index === 0 || Date.parse(cardTags[index - 1][2]) >= Date.parse(match[2])));
 assert.equal((home.match(/loading="eager"/g) || []).length, 1);
 assert.equal((home.match(/fetchpriority="high"/g) || []).length, 1);
-assert.equal((home.match(/loading="lazy"/g) || []).length, 44);
+assert.equal((home.match(/loading="lazy"/g) || []).length, cardTags.length - 1);
 
 for (const match of home.matchAll(/class="home-article-link" href="([^"]+)"/g)) {
     assert.ok(fs.existsSync(path.join(root, ...match[1].split('/'))), `missing article: ${match[1]}`);
@@ -53,6 +59,12 @@ const latestArchiveArticles = [...archive.matchAll(/<article class="article-card
     .sort((a, b) => Date.parse(b.published) - Date.parse(a.published))
     .map((item) => item.href);
 assert.deepEqual(homeArticlePaths, latestArchiveArticles);
+assert.deepEqual([...homeArticlePaths].sort(), [...detailFiles].sort());
+for (const [category, count] of Object.entries({all: detailFiles.length, ...categoryCounts})) {
+    assert.ok(home.includes(`data-category-count="${category}">${count}</span>`), `${category}: stale home count`);
+    assert.ok(archive.includes(`data-category-count="${category}">${count}</span>`), `${category}: stale archive count`);
+}
+assert.doesNotMatch(archive, /window\.location\.replace\('market\.html/);
 for (const match of home.matchAll(/class="article-card-image" src="([^"]+)"/g)) {
     assert.ok(fs.existsSync(path.join(root, ...match[1].split('/'))), `missing image: ${match[1]}`);
 }
@@ -63,7 +75,7 @@ const collection = jsonBlocks[0]['@graph'].find((item) => item['@type'] === 'Col
 assert.ok(collection);
 assert.equal(collection.mainEntity.numberOfItems, cardTags.length);
 assert.equal(collection.mainEntity.itemListElement.length, cardTags.length);
-assert.deepEqual(collection.mainEntity.itemListElement.map((item) => item.position), Array.from({length: 45}, (_, index) => index + 1));
+assert.deepEqual(collection.mainEntity.itemListElement.map((item) => item.position), Array.from({length: cardTags.length}, (_, index) => index + 1));
 assert.deepEqual(
     collection.mainEntity.itemListElement.map((item) => item.url),
     homeArticlePaths.map((pathname) => `https://www.hpmplab.com/articles/${pathname}`)
@@ -84,13 +96,12 @@ assert.equal((i18n.match(/'nav\.market':/g) || []).length, 2);
 assert.match(archive, /href="\.\/" aria-current="page">아티클<\/a>[\s\S]*href="\.\.\/app\.html">도구<\/a>[\s\S]*href="market\.html">시황<\/a>/);
 assert.match(market, /href="\.\.\/">아티클<\/a>[\s\S]*href="\.\.\/app\.html">도구<\/a>[\s\S]*href="market\.html" aria-current="page">시황<\/a>/);
 const marketHero = market.match(/<section class="content-page-hero market-dashboard-hero">([\s\S]*?)<\/section>/)?.[1] || '';
-assert.match(marketHero, /aria-label="시황 글"[\s\S]*>일일시황 <span class="article-category-count">30<\/span>/);
+assert.match(marketHero, /aria-label="시황 글"/);
+assert.ok(marketHero.includes(`일일시황 <span class="article-category-count">${marketFiles.length}</span>`));
 assert.doesNotMatch(marketHero, />전체 |\?category=essay|\?category=health/);
-assert.equal((market.match(/<article class="market-article-item">/g) || []).length, 30);
-
-const detailFiles = fs.readdirSync(path.join(root, 'articles'))
-    .filter((name) => name.endsWith('.html') && name !== 'index.html' && name !== 'market.html');
-assert.equal(detailFiles.length, 45);
+assert.equal((market.match(/<article class="market-article-item">/g) || []).length, marketFiles.length);
+const marketPaths = [...market.matchAll(/<article class="market-article-item">[\s\S]*?<h3><a href="([^"]+)"/g)].map((match) => match[1]);
+assert.deepEqual([...marketPaths].sort(), [...marketFiles].sort());
 for (const name of detailFiles) {
     const detail = fs.readFileSync(path.join(root, 'articles', name), 'utf8');
     const header = detail.match(/<header>[\s\S]*?<\/header>/)?.[0] || '';
@@ -106,7 +117,8 @@ for (const name of detailFiles) {
 
 for (const pathname of ['', 'articles/', 'articles/market.html']) {
     const escaped = pathname.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replaceAll('/', '\\/');
-    assert.match(sitemap, new RegExp(`<loc>https:\\/\\/www\\.hpmplab\\.com\\/${escaped}<\\/loc><lastmod>2026-09-04<\\/lastmod>`));
+    const modified = sitemap.match(new RegExp(`<loc>https:\\/\\/www\\.hpmplab\\.com\\/${escaped}<\\/loc>\\s*<lastmod>([^<]+)<\\/lastmod>`))?.[1];
+    assert.ok(modified && Date.parse(modified) >= Date.parse(cardTags[0][2].slice(0, 10)), `${pathname}: stale sitemap date`);
 }
 
 console.log('home article feed: ok');

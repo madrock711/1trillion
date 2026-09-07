@@ -27,7 +27,7 @@
     <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20260824-5">
+    <link rel="stylesheet" href="style.css?v=20260908-2">
     <script>
         (function () {
             var allowed = ['breathing', 'co2', 'foot', 'sequence', 'lottery', 'abrahang'];
@@ -376,18 +376,29 @@
     <main class="content-page article-index-page article-home-page" id="main-content" tabindex="-1">
         <section class="article-home-hero" aria-labelledby="article-home-title">
             <h1 id="article-home-title">아티클</h1>
-            <p>사람과 사회, 몸과 마음에 관한 글을 씁니다.</p>
+            <p>몸과 마음을 연구합니다. 호흡과 그립 트레이닝으로 현재의 상태를 측정하고 기록하며, 사람과 사회를 다룬 글도 함께 씁니다.</p>
             <nav class="article-category-nav" aria-label="아티클 카테고리">
                 <a href="/" data-home-category="all" aria-current="page">전체 <span class="article-category-count" data-category-count="all">46</span></a>
                 <a href="/?category=essay" data-home-category="essay">에세이 <span class="article-category-count" data-category-count="essay">6</span></a>
                 <a href="/?category=market" data-home-category="market">일일시황 <span class="article-category-count" data-category-count="market">31</span></a>
                 <a href="/?category=health" data-home-category="health">몸과 마음의 건강 <span class="article-category-count" data-category-count="health">9</span></a>
             </nav>
+            <nav class="home-reading-links" aria-label="몸과 마음 읽을거리">
+                <a href="guides/breathing.html#records">호흡 기록하기</a>
+                <a href="guides/abrahang.html#max-hang-results">손가락 힘 측정값 읽기</a>
+                <a href="articles/automatic-thought-record.html">생각과 감정 기록하기</a>
+                <a href="about.html">연마 소개</a>
+            </nav>
         </section>
 
         <section class="content-page-section article-home-feed-section" aria-labelledby="latest-articles-title">
             <div class="article-feed-heading">
                 <h2 id="latest-articles-title">새 글</h2>
+                <div class="article-search" id="article-search-controls" hidden>
+                    <label for="article-search">글 검색</label>
+                    <input id="article-search" type="search" placeholder="제목·요약으로 찾기" aria-controls="article-feed" autocomplete="off">
+                    <span id="article-search-status" role="status" aria-live="polite"></span>
+                </div>
             </div>
             <div class="article-feed" id="article-feed">
                 <article class="article-card home-article-card" data-category="market" data-published="2026-09-07T11:34:28+09:00">
@@ -402,7 +413,7 @@
                 </article>
 <article class="article-card home-article-card" data-category="market" data-published="2026-09-04T08:18:19+09:00">
                     <a class="home-article-link" href="articles/market-2026-09-04.html">
-                        <span class="article-card-media"><img class="article-card-image" src="assets/images/articles/market-2026-09-04-ai-platform-jobs-1200x630.webp" width="1200" height="630" loading="eager" decoding="async" fetchpriority="high" alt=""></span>
+                        <span class="article-card-media"><img class="article-card-image" src="assets/images/articles/market-2026-09-04-ai-platform-jobs-1200x630.webp" width="1200" height="630" loading="lazy" decoding="async" alt=""></span>
                         <div class="home-article-copy">
                             <span class="article-card-meta"><span class="article-category-badge">시황분석</span><time datetime="2026-09-04T08:18:19+09:00">2026.09.04 · 08:18 KST</time></span>
                             <h3 class="home-article-title">Nvidia 인수와 금리 진정, KOSPI 반등은 국내 매수에 달렸다</h3>
@@ -905,6 +916,25 @@
                 if (visible) visibleCount += 1;
             });
             empty.hidden = visibleCount !== 0;
+            var searchControls = document.getElementById('article-search-controls');
+            var searchInput = document.getElementById('article-search');
+            var searchStatus = document.getElementById('article-search-status');
+            searchControls.hidden = false;
+            searchInput.addEventListener('input', function () {
+                var terms = searchInput.value.trim().toLocaleLowerCase('ko').split(/\s+/).filter(Boolean);
+                var matches = 0;
+                cards.forEach(function (card) {
+                    var inCategory = activeCategory === 'all' || card.getAttribute('data-category') === activeCategory;
+                    var text = card.textContent.toLocaleLowerCase('ko');
+                    var visible = inCategory && terms.every(function (term) { return text.indexOf(term) !== -1; });
+                    card.hidden = !visible;
+                    card.style.display = visible ? '' : 'none';
+                    if (visible) matches += 1;
+                });
+                searchStatus.textContent = terms.length ? matches + '편' : '';
+                empty.textContent = terms.length ? '검색 결과가 없습니다. 다른 단어로 찾아보세요.' : '이 카테고리에 표시할 글이 없습니다.';
+                empty.hidden = matches !== 0;
+            });
         })();
     </script>
 </body>

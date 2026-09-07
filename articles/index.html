@@ -901,7 +901,7 @@
             <nav class="article-category-nav" aria-label="아티클 카테고리">
                 <a href="./" data-article-category="all" aria-current="page">전체 <span class="article-category-count" data-category-count="all">46</span></a>
                 <a href="?category=essay" data-article-category="essay">에세이 <span class="article-category-count" data-category-count="essay">6</span></a>
-                <a href="market.html" data-article-category="market">시황분석 <span class="article-category-count" data-category-count="market">31</span></a>
+                <a href="?category=market" data-article-category="market">일일시황 <span class="article-category-count" data-category-count="market">31</span></a>
                 <a href="?category=health" data-article-category="health">몸과 마음의 건강 <span class="article-category-count" data-category-count="health">9</span></a>
             </nav>
         </section>
@@ -922,7 +922,7 @@
                 </article>
 <article class="article-card" data-category="market" data-published="2026-09-04T08:18:19+09:00">
                     <a class="article-card-media" href="market-2026-09-04.html" aria-label="2026년 9월 4일 KOSPI 개장 전 시황 글의 대표 이미지와 함께 읽기">
-                        <img class="article-card-image" src="../assets/images/articles/market-2026-09-04-ai-platform-jobs-1200x630.webp" width="1200" height="630" loading="eager" decoding="async" fetchpriority="high" alt="">
+                        <img class="article-card-image" src="../assets/images/articles/market-2026-09-04-ai-platform-jobs-1200x630.webp" width="1200" height="630" loading="lazy" decoding="async" alt="">
                     </a>
                     <div class="article-card-meta"><span class="article-category-badge">시황분석</span><time datetime="2026-09-04T08:18:19+09:00">2026.09.04 · 08:18 KST</time></div>
                     <h3><a href="market-2026-09-04.html">Nvidia 인수와 금리 진정, KOSPI 반등은 국내 매수에 달렸다</a></h3>
@@ -1378,10 +1378,6 @@
         (function () {
             var validCategories = ['all', 'essay', 'market', 'health'];
             var requested = new URLSearchParams(window.location.search).get('category') || 'all';
-            if (requested === 'market') {
-                window.location.replace('market.html?view=analysis');
-                return;
-            }
             var activeCategory = validCategories.indexOf(requested) === -1 ? 'all' : requested;
             var feed = document.getElementById('article-feed');
             var cards = Array.prototype.slice.call(feed.querySelectorAll('.article-card'));
