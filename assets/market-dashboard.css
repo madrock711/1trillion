@@ -1101,7 +1101,7 @@
 .composite-momentum-chart {
     display: block;
     width: 100%;
-    min-width: 680px;
+    min-width: 760px;
     min-height: 0;
 }
 
@@ -1417,6 +1417,11 @@
     width: 100%;
     min-width: 680px;
     height: auto;
+}
+
+.composite-momentum-chart.is-intraday,
+.kospi-flow-chart.is-intraday {
+    min-width: 920px;
 }
 
 .leading-cycle-range {

@@ -1724,6 +1724,21 @@
         rows = rows.filter(function (row) {
             return [row.direction, row.momentum, row.signal, row.divergence].every(Number.isFinite);
         });
+        // Keep missing momentum samples in their time slots instead of stretching
+        // the available samples across a different date range.
+        if (technicalRangeRows.length > 1) {
+            var momentumByTime = new Map();
+            function momentumTimeKey(row) {
+                return (row.date || row.sessionDate || row.label || '') + '|' +
+                    (selectedKodexChartMode === 'intraday' ? row.time || '' : '');
+            }
+            rows.forEach(function (row) { momentumByTime.set(momentumTimeKey(row), row); });
+            rows = technicalRangeRows.map(function (row) {
+                return momentumByTime.get(momentumTimeKey(row)) || Object.assign({}, row, {
+                    direction: NaN, momentum: NaN, signal: NaN, divergence: NaN
+                });
+            });
+        }
         rows = technicalRangeSlice(rows);
         if (rows.length < 2) {
             readout.textContent = '합성 거래량 모멘텀을 계산할 공통 구간이 부족합니다.';
@@ -1732,14 +1747,17 @@
         }
 
         var width = 1000;
-        var left = 42;
-        var right = 944;
+        svg.classList.toggle('is-intraday', selectedKodexChartMode === 'intraday');
+        var left = 28;
+        var right = 908;
         var momentumTop = 16;
         var momentumBottom = 150;
         var innerWidth = right - left;
         var xStep = innerWidth / rows.length;
         function xFor(index) { return left + xStep * index + xStep / 2; }
-        var momentumMax = Math.max(5, Math.max.apply(Math, rows.map(function (row) {
+        var momentumMax = Math.max(5, Math.max.apply(Math, rows.filter(function (row) {
+            return Number.isFinite(row.momentum) && Number.isFinite(row.signal);
+        }).map(function (row) {
             return Math.max(Math.abs(row.momentum), Math.abs(row.signal));
         })) * 1.15);
         function momentumY(value) { return momentumTop + (momentumMax - value) / (momentumMax * 2) * (momentumBottom - momentumTop); }
@@ -1754,9 +1772,15 @@
         });
 
         var signalPath = '';
+        var signalConnected = false;
         rows.forEach(function (row, index) {
+            if (!Number.isFinite(row.momentum) || !Number.isFinite(row.signal)) {
+                signalConnected = false;
+                return;
+            }
             var x = xFor(index);
-            signalPath += (signalPath ? ' L ' : 'M ') + x.toFixed(2) + ' ' + momentumY(row.signal).toFixed(2);
+            signalPath += (signalConnected ? ' L ' : ' M ') + x.toFixed(2) + ' ' + momentumY(row.signal).toFixed(2);
+            signalConnected = true;
             var zeroY = momentumY(0);
             var valueY = momentumY(row.momentum);
             svg.appendChild(makeSvg('rect', {
@@ -1771,6 +1795,10 @@
         svg.appendChild(makeSvg('path', { d: signalPath, 'class': 'composite-signal-line' }));
 
         function updateReadout(row) {
+            if (!Number.isFinite(row.momentum)) {
+                readout.textContent = technicalRangePointLabel(row) + ' · 모멘텀 데이터 없음';
+                return;
+            }
             var label = selectedKodexChartMode === 'intraday'
                 ? formatHistoryDate(row.date || selectedKodexIntradayDate) + ' ' + row.time + (row.endTime && row.endTime !== row.time ? '–' + row.endTime : '')
                 : formatHistoryDate(row.label);
@@ -3327,7 +3355,7 @@
 
         svg.setAttribute('viewBox', '0 0 1000 530');
         var width = 1000;
-        var margin = { left: 24, right: 88 };
+        var margin = { left: 28, right: 92 };
         var innerWidth = width - margin.left - margin.right;
         var priceTop = 34;
         var priceBottom = 300;
@@ -3547,7 +3575,7 @@
         var rows = technicalRangeSlice(intradayDisplayRows(overlayRows, day));
         svg.setAttribute('viewBox', '0 0 1000 590');
         var width = 1000;
-        var margin = { left: 24, right: 88 };
+        var margin = { left: 28, right: 92 };
         var right = width - margin.right;
         var innerWidth = right - margin.left;
         var priceTop = 34;
