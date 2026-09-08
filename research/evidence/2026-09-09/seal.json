@@ -1,0 +1,18 @@
+{
+  "forecastId": "2026-09-09-0816-same-close",
+  "issuedAt": "2026-09-09T08:16:56+09:00",
+  "dataCutoffAt": "2026-09-09T08:16:55+09:00",
+  "snapshotId": "20260909-0816",
+  "articleTitle": "미국 반도체 ETF는 올랐지만 Micron은 하락, KOSPI 반등의 조건",
+  "files": [
+    "articles/market-2026-09-09.html",
+    "assets/data/market-dashboard-latest.json",
+    "assets/data/market-dashboard-20260909-0816.json",
+    "assets/images/articles/market-2026-09-09-chips-oil-1200x630.webp",
+    "charts/us_yield_spreads_90d_2026-09-09.png",
+    "charts/us_yield_spreads_long_term_2026-09-09.png",
+    "articles/index.html",
+    "articles/market.html",
+    "index.html"
+  ]
+}

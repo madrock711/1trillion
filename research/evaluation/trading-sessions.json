@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-09-08T08:03:39+09:00",
-  "source": "Naver Finance KOSPI 확정 일봉 및 122630 2026-09-08 PREOPEN 거래일",
-  "rawHash": "ce101bbd9bd18833b1e42e8a8b1bfb3204f27064053e0af9e6a2828a439e85de",
+  "asOf": "2026-09-09T08:10:20+09:00",
+  "source": "Naver Finance KOSPI 확정 일봉 및 122630 2026-09-09 PREOPEN 거래일",
+  "rawHash": "95aed9c8a628a78581ddf14d27925c8d7e51ce02f2c080d9c8e46f758ebb9b69",
   "sessions": [
     "2026-07-27",
     "2026-07-28",
@@ -34,6 +34,7 @@
     "2026-09-03",
     "2026-09-04",
     "2026-09-07",
-    "2026-09-08"
+    "2026-09-08",
+    "2026-09-09"
   ]
 }

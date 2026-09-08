@@ -1,0 +1,44 @@
+{
+  "recordedAt": "2026-09-09T08:10:20+09:00",
+  "closeSnapshot": {
+    "kodex": {
+      "open": 115250.0,
+      "high": 120015.0,
+      "low": 112065.0,
+      "close": 112150.0,
+      "volume": 17425765,
+      "asOf": "2026-09-08T15:30:00+09:00",
+      "source": "https://m.stock.naver.com/api/stock/122630/price?pageSize=10&page=1",
+      "rawHash": "95aed9c8a628a78581ddf14d27925c8d7e51ce02f2c080d9c8e46f758ebb9b69",
+      "unit": "원"
+    },
+    "cashFlow": {
+      "foreign": 6316.0,
+      "institution": 6427.0,
+      "personal": -30329.0,
+      "asOf": "2026-09-08T18:59:00+09:00",
+      "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+      "rawHash": "7c0c0ee4a695316959fd2c94620f3ea1b551cedf04a16cf10a21e9cb3410df37",
+      "unit": "억원"
+    },
+    "program": {
+      "arbitrage": -444.0,
+      "nonArbitrage": 1252.0,
+      "total": 808.0,
+      "asOf": "2026-09-08T18:59:00+09:00",
+      "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+      "rawHash": "7c0c0ee4a695316959fd2c94620f3ea1b551cedf04a16cf10a21e9cb3410df37",
+      "unit": "억원"
+    },
+    "breadth": {
+      "up": 231,
+      "flat": 45,
+      "down": 634,
+      "asOf": "2026-09-08T18:59:00+09:00",
+      "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+      "rawHash": "7c0c0ee4a695316959fd2c94620f3ea1b551cedf04a16cf10a21e9cb3410df37",
+      "unit": "종목"
+    }
+  },
+  "assessment": "기본 종가 범위 적중, 전체 장중 경로 포락. 고점 7171.52에서 6954.52로 반납; 외국인과 프로그램 순매수만으로 상승 지속을 보장하지 않았다. 마감 전 트리거는 미확인."
+}

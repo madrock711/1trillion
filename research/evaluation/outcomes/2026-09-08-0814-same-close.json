@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-08-0814-same-close",
+  "recordedAt": "2026-09-09T08:10:20+09:00",
+  "actualRef": "2026-09-08",
+  "realizedScenario": "base",
+  "errorCodes": [
+    "cause_unverifiable"
+  ],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "not_observed",
+      "observedAt": "2026-09-08T15:20:00+09:00",
+      "observedValue": 6952.65,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "bull-foreign",
+      "status": "observed",
+      "observedAt": "2026-09-08T15:19:00+09:00",
+      "observedValue": 4556.0,
+      "source": "Naver Finance 투자자별 매매동향"
+    },
+    {
+      "id": "bull-program",
+      "status": "unavailable",
+      "reason": "15:20 이전 시각의 원문 앵커를 확보하지 못했다. 18:59 마감 응답은 조건 관측시각을 넘으므로 대신 쓰지 않는다."
+    },
+    {
+      "id": "base-support",
+      "status": "observed",
+      "observedAt": "2026-09-08T15:20:00+09:00",
+      "observedValue": 6952.65,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "base-cap",
+      "status": "observed",
+      "observedAt": "2026-09-08T15:20:00+09:00",
+      "observedValue": 6952.65,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "base-foreign",
+      "status": "observed",
+      "observedAt": "2026-09-08T15:19:00+09:00",
+      "observedValue": 4556.0,
+      "source": "Naver Finance 투자자별 매매동향"
+    },
+    {
+      "id": "bear-price",
+      "status": "not_observed",
+      "observedAt": "2026-09-08T15:20:00+09:00",
+      "observedValue": 6952.65,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "bear-foreign",
+      "status": "not_observed",
+      "observedAt": "2026-09-08T15:19:00+09:00",
+      "observedValue": 4556.0,
+      "source": "Naver Finance 투자자별 매매동향"
+    },
+    {
+      "id": "bear-program",
+      "status": "unavailable",
+      "reason": "15:20 이전 시각의 원문 앵커를 확보하지 못했다. 18:59 마감 응답은 조건 관측시각을 넘으므로 대신 쓰지 않는다."
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "domestic-demand",
+      "status": "partial"
+    },
+    {
+      "id": "oil-risk",
+      "status": "unverifiable"
+    },
+    {
+      "id": "memory-differentiation",
+      "status": "unverifiable"
+    }
+  ],
+  "hypothesisTests": []
+}

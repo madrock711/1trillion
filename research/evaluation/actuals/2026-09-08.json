@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-09-08",
+  "bizdate": "20260908",
+  "fetchedAt": "2026-09-09T08:10:20+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 7045.79,
+    "high": 7171.52,
+    "low": 6951.78,
+    "close": 6954.52,
+    "asOf": "2026-09-08T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=10&page=1",
+    "rawHash": "7298b42cfc106e59cf21b3e6169d5b41ca1c0eac417a7110b6f7c57d4b3c499b"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "18:59 마감 후 응답의 수급·시장폭과 확정 KODEX 일봉은 settlement-note.json에 보존했다. 15:30 수급 앵커가 없어 평가 계약의 완결 묶음으로 봉인하지 않는다.",
+  "flowTrajectory": null,
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "incomplete",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-09-08T15:30:00+09:00",
+    "fetchedAt": "2026-09-09T08:10:20+09:00",
+    "missingReason": "전일 마감 자료는 남아 있으나 09:30·10:00·14:00·15:30 세 지표 원문 앵커가 없으며 18:59 종가 후 응답을 15:30으로 소급하지 않는다.",
+    "rawHash": "7c0c0ee4a695316959fd2c94620f3ea1b551cedf04a16cf10a21e9cb3410df37"
+  }
+}
