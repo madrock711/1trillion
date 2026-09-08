@@ -10,3 +10,5 @@
 - reports/2026-09-09.md; research/evidence/2026-09-09/overnight-notes.md; charts/us_yield_spreads_90d_2026-09-09.png 및 long_term.
 - assets/data/market-dashboard-20260909-0816.json; 최신 포인터 market-dashboard-latest.json.
 - 평가 research/evaluation/generated/latest.md, 직전 정산 outcomes/2026-09-08-0814-same-close.json.
+
+- 콘텐츠32d6a6879249690ad3214906e12f015175ba18f1, push08:17:40 KST. Amplify577 SUCCEED08:18:48.460, 08:19:47양도메인18개자산 바이트 일치. 발행 이벤트2건 및 누적평가 PASS.

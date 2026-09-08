@@ -1,0 +1,115 @@
+{
+  "commitSha": "32d6a6879249690ad3214906e12f015175ba18f1",
+  "jobId": "577",
+  "verifiedAt": "2026-09-09T08:19:47+09:00",
+  "checks": [
+    {
+      "url": "https://www.hpmplab.com/articles/market-2026-09-09.html?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "84b09074e6abc45de2b456864a38ea7a74fb6c8da94d29ff865db6a2b5e7b35b"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-latest.json?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "6a52c4cbeb3461e3e7291ff6b9dfad814e2f8fd5a1a5cf7fb6eb6bed033e8346"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-20260909-0816.json?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "6a52c4cbeb3461e3e7291ff6b9dfad814e2f8fd5a1a5cf7fb6eb6bed033e8346"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/images/articles/market-2026-09-09-chips-oil-1200x630.webp?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "572cabc4a06f935ed71ace8df7d2d7a85826804bcc249c2a4fd7f69617790b6b"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_90d_2026-09-09.png?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "a411f5ef25a265fee766c8e36ce6cb20b75b2c8e5a15c7be172a97d18b0b6245"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_long_term_2026-09-09.png?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "419a2d8bae68bff90b8bf69b9f2c1bb25d2591bf07f33f7799d6db729b898a44"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/index.html?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "64a05014febf0f16d74edc9847ae08f19f3b44ff3384337f08e8b24045b6d061"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/market.html?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "cad1625e5eabf138c78d8d5e2014644e33a24f771adcd08683d9e162420e2522"
+    },
+    {
+      "url": "https://www.hpmplab.com/index.html?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "df1593c694efed4ef20337604f2194f5b5c0fc306ed702bf9f166a00c821c002"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market-2026-09-09.html?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "84b09074e6abc45de2b456864a38ea7a74fb6c8da94d29ff865db6a2b5e7b35b"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-latest.json?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "6a52c4cbeb3461e3e7291ff6b9dfad814e2f8fd5a1a5cf7fb6eb6bed033e8346"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-20260909-0816.json?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "6a52c4cbeb3461e3e7291ff6b9dfad814e2f8fd5a1a5cf7fb6eb6bed033e8346"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/images/articles/market-2026-09-09-chips-oil-1200x630.webp?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "572cabc4a06f935ed71ace8df7d2d7a85826804bcc249c2a4fd7f69617790b6b"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_90d_2026-09-09.png?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "a411f5ef25a265fee766c8e36ce6cb20b75b2c8e5a15c7be172a97d18b0b6245"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_long_term_2026-09-09.png?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "419a2d8bae68bff90b8bf69b9f2c1bb25d2591bf07f33f7799d6db729b898a44"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/index.html?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "64a05014febf0f16d74edc9847ae08f19f3b44ff3384337f08e8b24045b6d061"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market.html?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "cad1625e5eabf138c78d8d5e2014644e33a24f771adcd08683d9e162420e2522"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/index.html?v=32d6a6879249",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "df1593c694efed4ef20337604f2194f5b5c0fc306ed702bf9f166a00c821c002"
+    }
+  ]
+}
