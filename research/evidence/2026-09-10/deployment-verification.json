@@ -1,0 +1,127 @@
+{
+  "commitSha": "088a9a876ba44d90983b836c18dba0d31976a139",
+  "jobId": "580",
+  "verifiedAt": "2026-09-10T08:32:53+09:00",
+  "checks": [
+    {
+      "url": "https://www.hpmplab.com/articles/market-2026-09-10.html?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "63c0ff0f0928e3ed7732abd00ac6a5856eef33ce9adece67de80b8bca530a839"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-latest.json?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "3e16516754546b0801972cf4fab5ded5bbc79265a89eb060ae7538f15d610d82"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-20260910-0828.json?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "3e16516754546b0801972cf4fab5ded5bbc79265a89eb060ae7538f15d610d82"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/images/articles/market-2026-09-10-oil-memory-balance-1200x630.webp?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "ab6e7e4987198bb8ecf1b3620cd9b2c57833659884753d0471010674aee002b1"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_90d_2026-09-10.png?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "a71d818bd8ad353bbb97e7a39a6fe8123132644f4d03826a7a42ed52917cf156"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_long_term_2026-09-10.png?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "bd4791147b6491332680c2f2eaa404b9847c51e5083481442fc97c91bb9484e4"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/index.html?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "dc63690f0140e1f6721a30d7c3cb3d87c85f3a677cc0f09de962a439148ab89b"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/market.html?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "a178d6222955a4f20f35f42e91ad4567dc8e92248b4e2df118c383d46e7e33d9"
+    },
+    {
+      "url": "https://www.hpmplab.com/index.html?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "e70ac28da2b244ada1a388e3fce65e30f70a18ce2942c18772722733abdb2305"
+    },
+    {
+      "url": "https://www.hpmplab.com/sitemap.xml?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "e11c130d925e4a47306ac1dbc15761dbf55104f1cfaed496d802d742d3b9c467"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market-2026-09-10.html?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "63c0ff0f0928e3ed7732abd00ac6a5856eef33ce9adece67de80b8bca530a839"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-latest.json?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "3e16516754546b0801972cf4fab5ded5bbc79265a89eb060ae7538f15d610d82"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-20260910-0828.json?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "3e16516754546b0801972cf4fab5ded5bbc79265a89eb060ae7538f15d610d82"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/images/articles/market-2026-09-10-oil-memory-balance-1200x630.webp?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "ab6e7e4987198bb8ecf1b3620cd9b2c57833659884753d0471010674aee002b1"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_90d_2026-09-10.png?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "a71d818bd8ad353bbb97e7a39a6fe8123132644f4d03826a7a42ed52917cf156"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_long_term_2026-09-10.png?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "bd4791147b6491332680c2f2eaa404b9847c51e5083481442fc97c91bb9484e4"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/index.html?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "dc63690f0140e1f6721a30d7c3cb3d87c85f3a677cc0f09de962a439148ab89b"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market.html?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "a178d6222955a4f20f35f42e91ad4567dc8e92248b4e2df118c383d46e7e33d9"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/index.html?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "e70ac28da2b244ada1a388e3fce65e30f70a18ce2942c18772722733abdb2305"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/sitemap.xml?v=088a9a876ba4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "e11c130d925e4a47306ac1dbc15761dbf55104f1cfaed496d802d742d3b9c467"
+    }
+  ]
+}

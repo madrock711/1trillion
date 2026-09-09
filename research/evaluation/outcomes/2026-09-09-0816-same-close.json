@@ -10,10 +10,8 @@
   "triggerResults": [
     {
       "id": "bull-price",
-      "status": "not_observed",
-      "observedAt": "2026-09-09T15:30:00+09:00",
-      "observedValue": 7051.64,
-      "source": "Naver Finance KOSPI 일봉"
+      "status": "unavailable",
+      "reason": "9월 9일 15:20 이전 KOSPI 가격 원문 앵커를 확보하지 못했다. 15:30 종가로 대체하지 않는다."
     },
     {
       "id": "bull-foreign",
@@ -27,17 +25,13 @@
     },
     {
       "id": "base-support",
-      "status": "observed",
-      "observedAt": "2026-09-09T15:30:00+09:00",
-      "observedValue": 7051.64,
-      "source": "Naver Finance KOSPI 일봉"
+      "status": "unavailable",
+      "reason": "9월 9일 15:20 이전 KOSPI 가격 원문 앵커를 확보하지 못했다. 15:30 종가로 대체하지 않는다."
     },
     {
       "id": "base-cap",
-      "status": "observed",
-      "observedAt": "2026-09-09T15:30:00+09:00",
-      "observedValue": 7051.64,
-      "source": "Naver Finance KOSPI 일봉"
+      "status": "unavailable",
+      "reason": "9월 9일 15:20 이전 KOSPI 가격 원문 앵커를 확보하지 못했다. 15:30 종가로 대체하지 않는다."
     },
     {
       "id": "base-foreign",
@@ -46,10 +40,8 @@
     },
     {
       "id": "bear-price",
-      "status": "not_observed",
-      "observedAt": "2026-09-09T15:30:00+09:00",
-      "observedValue": 7051.64,
-      "source": "Naver Finance KOSPI 일봉"
+      "status": "unavailable",
+      "reason": "9월 9일 15:20 이전 KOSPI 가격 원문 앵커를 확보하지 못했다. 15:30 종가로 대체하지 않는다."
     },
     {
       "id": "bear-foreign",
