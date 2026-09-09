@@ -1735,6 +1735,7 @@
             rows.forEach(function (row) { momentumByTime.set(momentumTimeKey(row), row); });
             rows = technicalRangeRows.map(function (row) {
                 return momentumByTime.get(momentumTimeKey(row)) || Object.assign({}, row, {
+                    label: row.date || row.sessionDate || row.label || '',
                     direction: NaN, momentum: NaN, signal: NaN, divergence: NaN
                 });
             });
@@ -1828,7 +1829,7 @@
                 ? ((index === 0 || rows[index].date !== rows[index - 1].date)
                     ? formatHistoryDate(rows[index].date).replace('월 ', '/').replace('일', '') + ' '
                     : '') + rows[index].time
-                : formatHistoryDate(rows[index].label).replace('월 ', '/').replace('일', '');
+                : formatHistoryDate(rows[index].date || rows[index].label || '').replace('월 ', '/').replace('일', '');
             svg.appendChild(label);
         });
         var latest = rows[rows.length - 1];
