@@ -1,0 +1,19 @@
+{
+  "forecastId": "2026-09-10-0828-same-close",
+  "issuedAt": "2026-09-10T08:28:11+09:00",
+  "dataCutoffAt": "2026-09-10T08:24:41+09:00",
+  "snapshotId": "20260910-0828",
+  "articleTitle": "유가 100달러의 압력 속, KOSPI 7,000선의 변수는 SK하이닉스",
+  "files": [
+    "articles/market-2026-09-10.html",
+    "assets/data/market-dashboard-latest.json",
+    "assets/data/market-dashboard-20260910-0828.json",
+    "assets/images/articles/market-2026-09-10-oil-memory-balance-1200x630.webp",
+    "charts/us_yield_spreads_90d_2026-09-10.png",
+    "charts/us_yield_spreads_long_term_2026-09-10.png",
+    "articles/index.html",
+    "articles/market.html",
+    "index.html",
+    "sitemap.xml"
+  ]
+}

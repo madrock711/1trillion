@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-10-0828-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-09-10.md",
+  "reportSha256": "f1a1fdd0f693904ea049a6a0ecd01fb3f803534f2ca8c40a3fc761282f8ea456",
+  "issuedAt": "2026-09-10T08:28:11+09:00",
+  "dataCutoffAt": "2026-09-10T08:24:41+09:00",
+  "marketState": "preopen",
+  "marketRegime": "mixed",
+  "evaluationBucket": "preopen",
+  "target": {
+    "sessionDate": "2026-09-10",
+    "horizon": "session_close",
+    "instrument": "KOSPI",
+    "leadSessions": 0,
+    "previousSessionDate": "2026-09-09"
+  },
+  "reference": {
+    "price": 7051.64,
+    "asOf": "2026-09-09T15:30:00+09:00",
+    "kind": "previous_close"
+  },
+  "scenarios": {
+    "bull": {
+      "low": 7150,
+      "high": 7350,
+      "probability": 0.25
+    },
+    "base": {
+      "low": 7000,
+      "high": 7150,
+      "probability": 0.5
+    },
+    "bear": {
+      "low": 6800,
+      "high": 7000,
+      "probability": 0.25
+    }
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {
+    "low": 6750,
+    "high": 7400,
+    "coverage": 0.9
+  },
+  "drivers": [
+    {
+      "id": "oil-rates",
+      "rank": 1,
+      "claim": "유가와 장기금리 상승이 지수 상단을 제한한다.",
+      "validationMetric": "브렌트·원/달러·KOSPI 종가"
+    },
+    {
+      "id": "memory-relative-strength",
+      "rank": 2,
+      "claim": "장전 메모리 대형주 강세가 7,000선 하단을 지지한다.",
+      "validationMetric": "삼성전자·SK하이닉스·KOSPI 종가"
+    },
+    {
+      "id": "semiconductor-differentiation",
+      "rank": 3,
+      "claim": "미국 반도체의 분화는 지수 전반 추세 확인을 늦춘다.",
+      "validationMetric": "SOXX·삼성전자·SK하이닉스"
+    }
+  ],
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-09-10T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "description": "KOSPI가 7,150을 넘는다.",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 7150,
+          "source": "Naver Finance KOSPI"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-09-10T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-support",
+          "description": "KOSPI가 7,000을 지킨다.",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 7000,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "base-cap",
+          "description": "KOSPI가 7,150 이하에 머문다.",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 7150,
+          "source": "Naver Finance KOSPI"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-09-10T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "description": "KOSPI가 7,000 아래로 내려간다.",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 7000,
+          "source": "Naver Finance KOSPI"
+        }
+      ]
+    }
+  },
+  "hypothesisTrials": [],
+  "posture": {
+    "attack": 25,
+    "wait": 55,
+    "defense": 20
+  },
+  "supersedes": null,
+  "contentHash": "bc560f9aefe56fac190747649a741c91269381f2a8812f012341e0320fdb8156"
+}

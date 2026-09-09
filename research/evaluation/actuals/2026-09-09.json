@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-09-09",
+  "bizdate": "20260909",
+  "fetchedAt": "2026-09-10T08:28:11+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6972.87,
+    "high": 7112.48,
+    "low": 6968.06,
+    "close": 7051.64,
+    "asOf": "2026-09-09T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=10&page=1",
+    "rawHash": "6d98041472f504a9464ba3bd4692986598ee73176c958b237aedaa7e8b7e18db"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "확정 KODEX 일봉은 보존했으나 9월 9일 15:30 이후 동일 묶음의 현물·프로그램·시장폭 원문을 확보하지 못했다. 장전 0값이나 다른 시각 수급으로 대체하지 않는다.",
+  "flowTrajectory": null,
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "incomplete",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-09-09T15:30:00+09:00",
+    "fetchedAt": "2026-09-10T08:28:11+09:00",
+    "missingReason": "9월 10일 장전 integration 응답은 새 거래일 0으로 초기화되어 9월 9일 09:30·10:00·14:00·15:30 원문 앵커를 제공하지 않는다.",
+    "rawHash": "9bb5ca093bb357583d6b05342a59fd1cdf7b7620abe15bd934caea2f56a11e38"
+  }
+}
