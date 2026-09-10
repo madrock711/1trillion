@@ -720,13 +720,16 @@
 
         var flowSummary = document.getElementById('market-flow-summary');
         clear(flowSummary);
+        // An unobserved program flow is intentionally null, not a zero trade.
+        var flows = data.flows || {};
+        var program = flows.program || {};
         [
-            ['차익 프로그램', formatSigned(data.flows.program.arbitrage, data.flows.program.unit)],
-            ['비차익 프로그램', formatSigned(data.flows.program.nonArbitrage, data.flows.program.unit)],
-            ['전체 프로그램', formatSigned(data.flows.program.total, data.flows.program.unit)],
+            ['차익 프로그램', formatSigned(program.arbitrage, program.unit)],
+            ['비차익 프로그램', formatSigned(program.nonArbitrage, program.unit)],
+            ['전체 프로그램', formatSigned(program.total, program.unit)],
             [
-                '외국인 KOSPI200 선물' + (data.flows.futuresAsOfLabel ? ' · ' + data.flows.futuresAsOfLabel.replace('지연값', '지연 시세') : ''),
-                formatSigned(data.flows.kospi200FuturesForeign, data.flows.futuresUnit)
+                '외국인 KOSPI200 선물' + (flows.futuresAsOfLabel ? ' · ' + flows.futuresAsOfLabel.replace('지연값', '지연 시세') : ''),
+                formatSigned(flows.kospi200FuturesForeign, flows.futuresUnit)
             ]
         ].forEach(function (row) {
             var item = make('div', 'market-flow-summary-item');
