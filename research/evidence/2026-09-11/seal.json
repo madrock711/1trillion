@@ -1,0 +1,18 @@
+{
+  "forecastId": "2026-09-11-0821-same-close",
+  "issuedAt": "2026-09-11T08:21:29+09:00",
+  "dataCutoffAt": "2026-09-11T08:21:06+09:00",
+  "snapshotId": "20260911-0821",
+  "files": [
+    "articles/market-2026-09-11.html",
+    "assets/data/market-dashboard-latest.json",
+    "assets/data/market-dashboard-20260911-0821.json",
+    "assets/images/articles/market-2026-09-11-oil-chip-pressure-1200x630.webp",
+    "charts/us_yield_spreads_90d_2026-09-11.png",
+    "charts/us_yield_spreads_long_term_2026-09-11.png",
+    "index.html",
+    "articles/index.html",
+    "articles/market.html",
+    "sitemap.xml"
+  ]
+}

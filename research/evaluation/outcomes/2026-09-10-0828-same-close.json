@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-10-0828-same-close",
+  "recordedAt": "2026-09-11T08:06:03+09:00",
+  "actualRef": "2026-09-10",
+  "realizedScenario": "base",
+  "errorCodes": [
+    "cause_unverifiable"
+  ],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "unavailable",
+      "reason": "9월 10일 15:20 이전 원문 앵커를 확보하지 못했다. 15:30 종가를 소급하지 않는다."
+    },
+    {
+      "id": "base-support",
+      "status": "unavailable",
+      "reason": "9월 10일 15:20 이전 원문 앵커를 확보하지 못했다. 15:30 종가를 소급하지 않는다."
+    },
+    {
+      "id": "base-cap",
+      "status": "unavailable",
+      "reason": "9월 10일 15:20 이전 원문 앵커를 확보하지 못했다. 15:30 종가를 소급하지 않는다."
+    },
+    {
+      "id": "bear-price",
+      "status": "unavailable",
+      "reason": "9월 10일 15:20 이전 원문 앵커를 확보하지 못했다. 15:30 종가를 소급하지 않는다."
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "oil-rates",
+      "status": "unverifiable"
+    },
+    {
+      "id": "memory-relative-strength",
+      "status": "unverifiable"
+    },
+    {
+      "id": "semiconductor-differentiation",
+      "status": "unverifiable"
+    }
+  ],
+  "hypothesisTests": []
+}
