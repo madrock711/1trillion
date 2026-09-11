@@ -10,6 +10,7 @@ const context = {
     selectedKodexChartMode: 'daily',
     technicalRangeRows: [{ date: '2026-09-08', close: 100 }, { date: '2026-09-09', close: 101 }, { date: '2026-09-10', close: 102 }],
     technicalRangeSlice: rows => rows, makeSvg: (tag, attrs) => ({ tag, attrs }),
+    rememberTechnicalRangePreview() {},
     registerLinkedChartHitZones() {}, formatSigned: String, formatHistoryDate: value => value,
     technicalRangePointLabel: row => row.date, compositeDirectionLabel: () => ''
 };

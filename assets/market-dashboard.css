@@ -490,7 +490,7 @@
     backdrop-filter: blur(14px);
 }
 
-.technical-navigator-floating .market-dashboard-page {
+.technical-navigator-active .market-dashboard-page {
     padding-bottom: calc(var(--technical-navigator-height, 118px) + 12px);
 }
 
@@ -501,7 +501,7 @@
 }
 
 .technical-range-navigator-slot.is-floating {
-    display: contents;
+    display: block;
 }
 
 .technical-range-navigator-slot[hidden] {
@@ -1419,6 +1419,32 @@
     width: 100%;
     min-width: 680px;
     height: auto;
+}
+
+.technical-range-preview-grid {
+    stroke: rgba(136, 162, 187, 0.2);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+}
+
+.technical-range-preview-line {
+    fill: none;
+    stroke: #76c4ff;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+}
+
+.technical-range-preview-line.is-secondary {
+    stroke: #ffe46f;
+    stroke-width: 1.8;
+}
+
+.technical-range-preview-label {
+    fill: #dfffee;
+    font-size: 12px;
+    font-weight: 800;
 }
 
 .composite-momentum-chart.is-intraday,
@@ -2850,7 +2876,7 @@
         order: 3;
     }
 
-    .technical-navigator-floating .market-dashboard-page {
+    .technical-navigator-active .market-dashboard-page {
         padding-bottom: calc(var(--technical-navigator-height, 108px) + 8px);
     }
 

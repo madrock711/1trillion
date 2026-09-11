@@ -41,6 +41,7 @@
     var technicalRangePreviewDirty = false;
     var technicalRangePreviewLastAt = 0;
     var technicalRangePreviewInterval = 48;
+    var technicalRangePreviewSeries = {};
     var technicalRangeDrag = null;
     var floatingDashboardControlsFrame = 0;
     var floatingDashboardControlsBound = false;
@@ -424,6 +425,7 @@
             var bottomOffset = window.matchMedia('(max-width: 720px)').matches ? 8 : 12;
             var navigatorHeight = Math.max(navigator.getBoundingClientRect().height, navigator.offsetHeight, 1);
             document.documentElement.style.setProperty('--technical-navigator-height', Math.ceil(navigatorHeight) + 'px');
+            var wasFloating = navigator.classList.contains('is-floating');
             var anchorCard = slot.previousElementSibling;
             var stackStyle = slot.parentElement ? window.getComputedStyle(slot.parentElement) : null;
             var stackGap = stackStyle ? parseFloat(stackStyle.rowGap || stackStyle.gap) || 0 : 0;
@@ -432,12 +434,17 @@
                 : slot.getBoundingClientRect().top;
             var triggerTop = window.innerHeight - bottomOffset - navigatorHeight;
             var panelBottom = technicalPanel.getBoundingClientRect().bottom;
-            shouldFloat = slotTop <= triggerTop && panelBottom > window.innerHeight - bottomOffset;
+            var viewportBottom = window.innerHeight - bottomOffset;
+            var entryMargin = 6;
+            var exitMargin = 12;
+            shouldFloat = slotTop <= triggerTop + (wasFloating ? entryMargin : -entryMargin)
+                && panelBottom > viewportBottom + (wasFloating ? -exitMargin : exitMargin);
         }
         if (navigator) navigator.classList.toggle('is-floating', shouldFloat);
         if (slot) {
             slot.classList.toggle('is-floating', shouldFloat);
-            slot.style.removeProperty('height');
+            if (shouldFloat) slot.style.height = Math.ceil(navigatorHeight) + 'px';
+            else slot.style.removeProperty('height');
         }
         document.documentElement.classList.toggle('technical-navigator-floating', shouldFloat);
     }
@@ -931,6 +938,85 @@
         return (date ? formatHistoryDate(date) : '') + (time ? ' ' + time : '');
     }
 
+    function rememberTechnicalRangePreview(svg, rows, viewBox, series) {
+        if (!svg || !svg.id) return;
+        technicalRangePreviewSeries[svg.id] = {
+            rows: (rows || []).slice(),
+            viewBox: viewBox,
+            series: series,
+            mode: selectedKodexChartMode,
+            period: selectedKodexPeriod,
+            intradayDate: selectedKodexIntradayDate,
+            intradayInterval: selectedKodexIntradayInterval
+        };
+    }
+
+    function renderTechnicalLinePreview(svgId) {
+        var svg = document.getElementById(svgId);
+        var preview = technicalRangePreviewSeries[svgId];
+        if (!svg || !preview) return;
+        if (preview.mode !== selectedKodexChartMode || preview.period !== selectedKodexPeriod) return;
+        if (preview.mode === 'intraday' && (preview.intradayDate !== selectedKodexIntradayDate
+            || preview.intradayInterval !== selectedKodexIntradayInterval)) return;
+        var rows = technicalRangeSlice(preview.rows);
+        if (rows.length < 2) return;
+        var box = preview.viewBox.split(/\s+/).map(Number);
+        var width = box[2];
+        var height = box[3];
+        var left = Math.max(24, width * 0.035);
+        var right = width - Math.max(68, width * 0.08);
+        var top = Math.max(18, height * 0.08);
+        var bottom = height - Math.max(24, height * 0.08);
+        var values = [];
+        preview.series.forEach(function (item) {
+            rows.forEach(function (row) {
+                if (Number.isFinite(row[item.key])) values.push(row[item.key]);
+            });
+        });
+        if (values.length < 2) return;
+        var min = Math.min.apply(Math, values);
+        var max = Math.max.apply(Math, values);
+        var spread = Math.max(max - min, Math.abs(max || 1) * 0.01);
+        min -= spread * 0.06;
+        max += spread * 0.06;
+        function xFor(index) { return left + (right - left) * index / Math.max(rows.length - 1, 1); }
+        function yFor(value) { return top + (max - value) / (max - min) * (bottom - top); }
+
+        clear(svg);
+        delete linkedChartViews[svgId];
+        svg.setAttribute('viewBox', preview.viewBox);
+        [top, (top + bottom) / 2, bottom].forEach(function (y) {
+            svg.appendChild(makeSvg('line', {
+                x1: left, y1: y, x2: right, y2: y,
+                'class': 'technical-range-preview-grid'
+            }));
+        });
+        preview.series.forEach(function (item, seriesIndex) {
+            var path = '';
+            var connected = false;
+            rows.forEach(function (row, index) {
+                var value = row[item.key];
+                if (!Number.isFinite(value)) {
+                    connected = false;
+                    return;
+                }
+                path += (connected ? ' L ' : ' M ') + xFor(index).toFixed(2) + ' ' + yFor(value).toFixed(2);
+                connected = true;
+            });
+            if (path) svg.appendChild(makeSvg('path', {
+                d: path,
+                'class': 'technical-range-preview-line' + (seriesIndex ? ' is-secondary' : '')
+            }));
+        });
+        var label = makeSvg('text', {
+            x: left,
+            y: top + 13,
+            'class': 'technical-range-preview-label'
+        });
+        label.textContent = '표시 구간 조정 중 · 선 미리보기';
+        svg.appendChild(label);
+    }
+
     function updateTechnicalRangeUi() {
         var startInput = document.getElementById('technical-range-start');
         var endInput = document.getElementById('technical-range-end');
@@ -989,55 +1075,14 @@
     function renderTechnicalRangePreview() {
         if (!dashboardData || selectedKodexChartMode === 'intraday' && !selectedKodexIntradayDate) return;
         clearLinkedChartSelection(false);
-        var kospi = findById(dashboardData.markets, 'KOSPI');
-        var kodex = findById(dashboardData.technical.instruments, 'KODEX');
-
-        if (kospi && technicalCardNearViewport('kospi-flow')) {
-            if (selectedKodexChartMode === 'daily') {
-                renderKospiHistoryChart(kospi);
-            } else if (kospiIntradayRangePreview && kospiIntradayRangePreview.day
-                && kospiIntradayRangePreview.date === selectedKodexIntradayDate) {
-                var kospiInterval = effectiveIntradayInterval(
-                    kospiIntradayRangePreview.day,
-                    selectedKodexIntradayInterval
-                );
-                renderKospiRows(prepareKospiIntradayRows(kospiIntradayRangePreview.day, kospiInterval), {
-                    mode: 'intraday',
-                    date: kospiIntradayRangePreview.date,
-                    rolling: kospiIntradayRangePreview.rolling,
-                    interval: kospiInterval,
-                    day: kospiIntradayRangePreview.day
-                });
-            }
-        }
-
-        if (kodex && technicalCardNearViewport('kodex-history')) {
-            if (selectedKodexChartMode === 'daily') {
-                renderKodexHistoryChart(kodex);
-            } else if (kodexIntradayRangePreview && kodexIntradayRangePreview.day
-                && kodexIntradayRangePreview.day.date === selectedKodexIntradayDate) {
-                var kodexSvg = document.getElementById('kodex-history-chart');
-                var kodexSummary = document.getElementById('kodex-history-summary');
-                var kodexReadout = document.getElementById('kodex-history-readout');
-                if (kodexSvg && kodexSummary && kodexReadout) {
-                    clear(kodexSvg);
-                    clear(kodexSummary);
-                    renderKodexIntradayRows(
-                        kodexIntradayRangePreview.day,
-                        effectiveIntradayInterval(kodexIntradayRangePreview.day, selectedKodexIntradayInterval),
-                        kodexSvg,
-                        kodexSummary,
-                        kodexReadout,
-                        kodexIntradayRenderOptions
-                    );
-                }
-            }
-        }
-
-        if (technicalCardNearViewport('composite-momentum') && compositeMomentumState.days.length) {
-            renderCompositeMomentumChart(compositeMomentumState.days);
-        }
-        if (technicalCardNearViewport('tqqq-history')) renderTqqqSynchronized();
+        [
+            ['kospi-flow', 'kospi-flow-chart'],
+            ['kodex-history', 'kodex-history-chart'],
+            ['composite-momentum', 'composite-momentum-chart'],
+            ['tqqq-history', 'tqqq-history-chart']
+        ].forEach(function (target) {
+            if (technicalCardNearViewport(target[0])) renderTechnicalLinePreview(target[1]);
+        });
     }
 
     function queueTechnicalRangePreview() {
@@ -1079,7 +1124,7 @@
         technicalRangeRenderFrame = window.requestAnimationFrame(function () {
             technicalRangeRenderFrame = 0;
             clearLinkedChartSelection(false);
-            renderSynchronizedTechnicalCharts();
+            renderRangeDependentTechnicalCharts();
         });
     }
 
@@ -1114,6 +1159,11 @@
             setTechnicalRange(technicalRangeStart, Math.max(Number(endInput.value), technicalRangeStart + 5), false);
             queueTechnicalRangePreview();
         });
+        [startInput, endInput].forEach(function (input) {
+            input.addEventListener('pointerdown', queueTechnicalRangePreview);
+            input.addEventListener('pointerup', queueTechnicalRangeRender);
+            input.addEventListener('pointercancel', queueTechnicalRangeRender);
+        });
         startInput.addEventListener('change', queueTechnicalRangeRender);
         endInput.addEventListener('change', queueTechnicalRangeRender);
         reset.addEventListener('click', function () { setTechnicalRange(0, 100); });
@@ -1128,6 +1178,7 @@
             };
             selection.setPointerCapture(event.pointerId);
             selection.classList.add('is-dragging');
+            queueTechnicalRangePreview();
             event.preventDefault();
         });
         selection.addEventListener('pointermove', function (event) {
@@ -1340,18 +1391,23 @@
         };
     }
 
-    function renderSynchronizedTechnicalCharts() {
+    function renderRangeDependentTechnicalCharts() {
         var kospi = dashboardData && findById(dashboardData.markets, 'KOSPI');
         var kodex = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
         if (kodex) setKodexChartControls(kodex);
         if (kospi) renderKospiHistoryChart(kospi);
-        if (kospi) renderLeadingCycleComparison(kospi);
         if (kodex) {
             renderKodexHistoryChart(kodex);
             renderCompositeMomentumCard(kodex);
         }
         renderTqqqSynchronized();
         queueTechnicalChartsToLatest(false);
+    }
+
+    function renderSynchronizedTechnicalCharts() {
+        renderRangeDependentTechnicalCharts();
+        var kospi = dashboardData && findById(dashboardData.markets, 'KOSPI');
+        if (kospi) renderLeadingCycleComparison(kospi);
     }
 
     function bindKodexChartControls() {
@@ -1743,6 +1799,10 @@
                 });
             });
         }
+        rememberTechnicalRangePreview(svg, rows, '0 0 1000 190', [
+            { key: 'momentum' },
+            { key: 'signal' }
+        ]);
         rows = technicalRangeSlice(rows);
         if (rows.length < 2) {
             readout.textContent = '합성 거래량 모멘텀을 계산할 공통 구간이 부족합니다.';
@@ -2801,6 +2861,7 @@
             rows = intradayDisplayRows(rows, options.day);
         }
         updateTechnicalRangeNavigator(rows);
+        rememberTechnicalRangePreview(svg, rows, '0 0 1000 720', [{ key: 'close' }]);
         rows = technicalRangeSlice(rows);
 
         svg.setAttribute('viewBox', '0 0 1000 720');
@@ -3352,7 +3413,9 @@
         threshold.setMonth(threshold.getMonth() - kospiPeriodMonths());
         var startIndex = history.findIndex(function (row) { return parseHistoryDate(row.date) >= threshold.getTime(); });
         if (startIndex < 0) startIndex = 0;
-        var rows = technicalRangeSlice(history.slice(startIndex));
+        var periodRows = history.slice(startIndex);
+        rememberTechnicalRangePreview(svg, periodRows, '0 0 1000 530', [{ key: 'close' }]);
+        var rows = technicalRangeSlice(periodRows);
         startIndex = Math.max(0, history.indexOf(rows[0]));
         var endIndex = startIndex + rows.length;
         var priceOverlays = stochasticSlowRows(priceOverlayRows(history), 20, 12, 12);
@@ -3576,7 +3639,9 @@
             : function (value) { return formatNumber(value, 0); };
         var overlayRows = priceOverlayRows(rollingIntradayRows(day, interval));
         if (settings.showStochasticSlow) overlayRows = stochasticSlowRows(overlayRows, 20, 12, 12);
-        var rows = technicalRangeSlice(intradayDisplayRows(overlayRows, day));
+        var displayRows = intradayDisplayRows(overlayRows, day);
+        rememberTechnicalRangePreview(svg, displayRows, '0 0 1000 590', [{ key: 'close' }]);
+        var rows = technicalRangeSlice(displayRows);
         svg.setAttribute('viewBox', '0 0 1000 590');
         var width = 1000;
         var margin = { left: 28, right: 92 };
@@ -3869,7 +3934,9 @@
         threshold.setMonth(threshold.getMonth() - kospiPeriodMonths());
         var startIndex = history.findIndex(function (row) { return parseHistoryDate(row.date) >= threshold.getTime(); });
         if (startIndex < 0) startIndex = 0;
-        var rows = technicalRangeSlice(history.slice(startIndex));
+        var periodRows = history.slice(startIndex);
+        rememberTechnicalRangePreview(svg, periodRows, '0 0 800 460', [{ key: 'close' }]);
+        var rows = technicalRangeSlice(periodRows);
         startIndex = Math.max(0, history.indexOf(rows[0]));
         var endIndex = startIndex + rows.length;
         var priceOverlays = priceOverlayRows(history);
