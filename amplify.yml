@@ -24,6 +24,7 @@ frontend:
       - 'assets/*.js'
       - 'assets/*.css'
       - 'assets/icons/*'
+      - 'assets/fonts/gowun-batang/*'
       - 'assets/images/FootType_*.png'
       - 'assets/images/share_btn.png'
       - 'assets/images/chakra-body-outline-right.png'

@@ -35,7 +35,8 @@ assert.doesNotMatch(script, /localStorage/);
 assert.match(styles, /\.article-keyline\.is-highlighted/);
 assert.match(styles, /@keyframes article-keyline-sweep/);
 assert.match(styles, /\.article-reading-progress span/);
-assert.match(styles, /rgba\(68, 209, 122, 0\.3\)/);
+assert.match(styles, /background: var\(--brand\)/);
+assert.match(styles, /rgba\(68, 209, 122, 0\.25\)/);
 assert.doesNotMatch(styles, /\.reading-article h2\.is-reading-target/);
 assert.match(styles, /@media \(prefers-reduced-motion: reduce\)/);
 
