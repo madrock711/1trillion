@@ -1,0 +1,35 @@
+{
+  "url": "https://m.stock.naver.com/api/index/KOSDAQ/price?pageSize=2&page=1&cacheBust=20260914085002",
+  "fetchedAt": "2026-09-14T08:07:37+09:00",
+  "rawHash": "0df8101a5acb89e26f6255ab5aa405790533d839d34f6dc890b41f921ae76ae8",
+  "data": [
+    {
+      "localTradedAt": "2026-09-11",
+      "closePrice": "820.64",
+      "compareToPreviousClosePrice": "-16.28",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "fluctuationsRatio": "-1.95",
+      "openPrice": "816.91",
+      "highPrice": "826.53",
+      "lowPrice": "816.91"
+    },
+    {
+      "localTradedAt": "2026-09-10",
+      "closePrice": "836.92",
+      "compareToPreviousClosePrice": "6.55",
+      "compareToPreviousPrice": {
+        "code": "2",
+        "text": "상승",
+        "name": "RISING"
+      },
+      "fluctuationsRatio": "0.79",
+      "openPrice": "825.06",
+      "highPrice": "839.05",
+      "lowPrice": "813.66"
+    }
+  ]
+}

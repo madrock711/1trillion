@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-11-0821-same-close",
+  "recordedAt": "2026-09-14T08:13:08+09:00",
+  "actualRef": "2026-09-11",
+  "realizedScenario": "base",
+  "errorCodes": [],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "not_observed",
+      "observedAt": "2026-09-11T15:20:00+09:00",
+      "observedValue": 6910.90,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "bull-foreign_cash",
+      "status": "not_observed",
+      "observedAt": "2026-09-11T15:19:00+09:00",
+      "observedValue": -23527,
+      "source": "Naver Finance KOSPI 수급 (억원)"
+    },
+    {
+      "id": "bull-program_total",
+      "status": "not_observed",
+      "observedAt": "2026-09-11T15:20:00+09:00",
+      "observedValue": -19605,
+      "source": "Naver Finance KOSPI 수급 (억원)"
+    },
+    {
+      "id": "base-support",
+      "status": "observed",
+      "observedAt": "2026-09-11T15:20:00+09:00",
+      "observedValue": 6910.90,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "base-cap",
+      "status": "observed",
+      "observedAt": "2026-09-11T15:20:00+09:00",
+      "observedValue": 6910.90,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "base-foreign",
+      "status": "not_observed",
+      "observedAt": "2026-09-11T15:19:00+09:00",
+      "observedValue": -23527,
+      "source": "Naver Finance KOSPI 수급 (억원)"
+    },
+    {
+      "id": "bear-price",
+      "status": "not_observed",
+      "observedAt": "2026-09-11T15:20:00+09:00",
+      "observedValue": 6910.90,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "bear-foreign_cash",
+      "status": "observed",
+      "observedAt": "2026-09-11T15:19:00+09:00",
+      "observedValue": -23527,
+      "source": "Naver Finance KOSPI 수급 (억원)"
+    },
+    {
+      "id": "bear-program_total",
+      "status": "observed",
+      "observedAt": "2026-09-11T15:20:00+09:00",
+      "observedValue": -19605,
+      "source": "Naver Finance KOSPI 수급 (억원)"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "oil-inflation",
+      "status": "unverifiable"
+    },
+    {
+      "id": "domestic-chip-selling",
+      "status": "partial"
+    },
+    {
+      "id": "fx-pressure",
+      "status": "partial"
+    }
+  ],
+  "hypothesisTests": []
+}

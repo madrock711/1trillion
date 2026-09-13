@@ -1,0 +1,82 @@
+[
+  {
+    "symbol": "QQQ",
+    "close": 714.88,
+    "previousClose": 708.69,
+    "changePct": 0.873,
+    "regularTime": 1789156800,
+    "lastBarTime": 1789171192,
+    "lastBarClose": 714.8865,
+    "source": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?range=1d&interval=5m&includePrePost=true"
+  },
+  {
+    "symbol": "TQQQ",
+    "close": 70.98,
+    "previousClose": 69.21,
+    "changePct": 2.557,
+    "regularTime": 1789156800,
+    "lastBarTime": 1789171199,
+    "lastBarClose": 70.9985,
+    "source": "https://query1.finance.yahoo.com/v8/finance/chart/TQQQ?range=1d&interval=5m&includePrePost=true"
+  },
+  {
+    "symbol": "SOXX",
+    "close": 527.07,
+    "previousClose": 517.43,
+    "changePct": 1.863,
+    "regularTime": 1789156800,
+    "lastBarTime": 1789171181,
+    "lastBarClose": 527.6667,
+    "source": "https://query1.finance.yahoo.com/v8/finance/chart/SOXX?range=1d&interval=5m&includePrePost=true"
+  },
+  {
+    "symbol": "SMH",
+    "close": 568.53,
+    "previousClose": 560.28,
+    "changePct": 1.472,
+    "regularTime": 1789156800,
+    "lastBarTime": 1789171148,
+    "lastBarClose": 568.8799,
+    "source": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?range=1d&interval=5m&includePrePost=true"
+  },
+  {
+    "symbol": "NVDA",
+    "close": 218.29,
+    "previousClose": 218.36,
+    "changePct": -0.032,
+    "regularTime": 1789156800,
+    "lastBarTime": 1789171199,
+    "lastBarClose": 218.26,
+    "source": "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?range=1d&interval=5m&includePrePost=true"
+  },
+  {
+    "symbol": "AMD",
+    "close": 516.13,
+    "previousClose": 503.6,
+    "changePct": 2.488,
+    "regularTime": 1789156800,
+    "lastBarTime": 1789171198,
+    "lastBarClose": 515.779,
+    "source": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=1d&interval=5m&includePrePost=true"
+  },
+  {
+    "symbol": "MU",
+    "close": 975.26,
+    "previousClose": 977.41,
+    "changePct": -0.22,
+    "regularTime": 1789156801,
+    "lastBarTime": 1789171199,
+    "lastBarClose": 975.45,
+    "source": "https://query1.finance.yahoo.com/v8/finance/chart/MU?range=1d&interval=5m&includePrePost=true"
+  },
+  {
+    "symbol": "AVGO",
+    "close": 361.99,
+    "previousClose": 360.83,
+    "changePct": 0.321,
+    "regularTime": 1789156801,
+    "lastBarTime": 1789171195,
+    "lastBarClose": 361.7361,
+    "source": "https://query1.finance.yahoo.com/v8/finance/chart/AVGO?range=1d&interval=5m&includePrePost=true"
+  }
+]

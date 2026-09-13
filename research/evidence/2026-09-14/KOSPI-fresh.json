@@ -1,0 +1,35 @@
+{
+  "url": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=2&page=1&cacheBust=20260914085001",
+  "fetchedAt": "2026-09-14T08:07:37+09:00",
+  "rawHash": "8c519863d45ae79c11c2c2f193b35a25bcb549efce0823f27ff97b2f1e12535f",
+  "data": [
+    {
+      "localTradedAt": "2026-09-11",
+      "closePrice": "6,909.91",
+      "compareToPreviousClosePrice": "-124.01",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "fluctuationsRatio": "-1.76",
+      "openPrice": "6,802.50",
+      "highPrice": "6,948.83",
+      "lowPrice": "6,802.50"
+    },
+    {
+      "localTradedAt": "2026-09-10",
+      "closePrice": "7,033.92",
+      "compareToPreviousClosePrice": "-17.72",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "fluctuationsRatio": "-0.25",
+      "openPrice": "7,038.85",
+      "highPrice": "7,072.79",
+      "lowPrice": "6,898.45"
+    }
+  ]
+}

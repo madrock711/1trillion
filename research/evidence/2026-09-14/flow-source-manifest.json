@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 1,
+  "bizdate": "20260911",
+  "sources": [
+    {
+      "kind": "investor",
+      "page": 35,
+      "targetTime": "09:30",
+      "url": "https://finance.naver.com/sise/investorDealTrendTime.naver?bizdate=20260911&sosok=01&page=35",
+      "fetchedAt": "2026-09-14T08:13:08+09:00",
+      "rawHash": "e09805855c86a650b0911b039b713a987acbb7a7d7249268815d6063c40149e0",
+      "rawPath": "investor-20260911-page-35.html.gz",
+      "row": [
+        "09:30",
+        "8,155",
+        "-4,716",
+        "-5,114",
+        "-4,606",
+        "14",
+        "-216",
+        "5",
+        "11",
+        "-322",
+        "1,675"
+      ],
+      "encoding": "gzip; rawHash is SHA-256 of decompressed original bytes"
+    },
+    {
+      "kind": "investor",
+      "page": 33,
+      "targetTime": "10:00",
+      "url": "https://finance.naver.com/sise/investorDealTrendTime.naver?bizdate=20260911&sosok=01&page=33",
+      "fetchedAt": "2026-09-14T08:13:08+09:00",
+      "rawHash": "208fe8927b473a1e75aaf507c8a8115f79d4f4e360225da4c16598803fb4c277",
+      "rawPath": "investor-20260911-page-33.html.gz",
+      "row": [
+        "10:00",
+        "12,875",
+        "-8,324",
+        "-7,542",
+        "-6,801",
+        "24",
+        "-419",
+        "7",
+        "23",
+        "-375",
+        "2,991"
+      ],
+      "encoding": "gzip; rawHash is SHA-256 of decompressed original bytes"
+    },
+    {
+      "kind": "investor",
+      "page": 17,
+      "targetTime": "14:00",
+      "url": "https://finance.naver.com/sise/investorDealTrendTime.naver?bizdate=20260911&sosok=01&page=17",
+      "fetchedAt": "2026-09-14T08:13:08+09:00",
+      "rawHash": "2b7068c1e49df09b20c1430c43f2837955c20eef1d3601b5685a0e26d7a9329c",
+      "rawPath": "investor-20260911-page-17.html.gz",
+      "row": [
+        "14:00",
+        "19,005",
+        "-21,215",
+        "-11,398",
+        "-12,721",
+        "-14",
+        "-1,364",
+        "19",
+        "169",
+        "2,513",
+        "13,609"
+      ],
+      "encoding": "gzip; rawHash is SHA-256 of decompressed original bytes"
+    },
+    {
+      "kind": "investor",
+      "page": 12,
+      "targetTime": "15:19",
+      "url": "https://finance.naver.com/sise/investorDealTrendTime.naver?bizdate=20260911&sosok=01&page=12",
+      "fetchedAt": "2026-09-14T08:13:08+09:00",
+      "rawHash": "bcc561c65c997539c946ae51914cde8bec2b2ca0e9a5f5cf7becce62f0af1b9d",
+      "rawPath": "investor-20260911-page-12.html.gz",
+      "row": [
+        "15:19",
+        "18,183",
+        "-23,527",
+        "-11,144",
+        "-12,166",
+        "-14",
+        "-1,785",
+        "7",
+        "217",
+        "2,597",
+        "16,488"
+      ],
+      "encoding": "gzip; rawHash is SHA-256 of decompressed original bytes"
+    },
+    {
+      "kind": "investor",
+      "page": 11,
+      "targetTime": "15:30",
+      "url": "https://finance.naver.com/sise/investorDealTrendTime.naver?bizdate=20260911&sosok=01&page=11",
+      "fetchedAt": "2026-09-14T08:13:08+09:00",
+      "rawHash": "6638779737dc2c8d155571754e1ba0e7ffc85b1a6fdbf856fc6c5dd6c9a1cc3d",
+      "rawPath": "investor-20260911-page-11.html.gz",
+      "row": [
+        "15:30",
+        "18,191",
+        "-23,556",
+        "-11,123",
+        "-12,163",
+        "-14",
+        "-1,768",
+        "7",
+        "217",
+        "2,598",
+        "16,489"
+      ],
+      "encoding": "gzip; rawHash is SHA-256 of decompressed original bytes"
+    },
+    {
+      "kind": "program",
+      "page": 39,
+      "targetTime": "09:30",
+      "url": "https://finance.naver.com/sise/programDealTrendTime.naver?bizdate=20260911&sosok=01&page=39",
+      "fetchedAt": "2026-09-14T08:13:08+09:00",
+      "rawHash": "f3034658f80ac80528f3b287bd7421b14249402968e38ba76c94681409d3f15a",
+      "rawPath": "program-20260911-page-39.html.gz",
+      "row": [
+        "09:30",
+        "58",
+        "912",
+        "-854",
+        "8,893",
+        "11,915",
+        "-3,021",
+        "8,951",
+        "12,827",
+        "-3,875"
+      ],
+      "encoding": "gzip; rawHash is SHA-256 of decompressed original bytes"
+    },
+    {
+      "kind": "program",
+      "page": 36,
+      "targetTime": "10:00",
+      "url": "https://finance.naver.com/sise/programDealTrendTime.naver?bizdate=20260911&sosok=01&page=36",
+      "fetchedAt": "2026-09-14T08:13:08+09:00",
+      "rawHash": "345cb6bfdda9849dba95b0844863e0b8c8f195d9ff162141003789b12269d9e1",
+      "rawPath": "program-20260911-page-36.html.gz",
+      "row": [
+        "10:00",
+        "90",
+        "1,021",
+        "-931",
+        "12,100",
+        "17,916",
+        "-5,815",
+        "12,190",
+        "18,937",
+        "-6,746"
+      ],
+      "encoding": "gzip; rawHash is SHA-256 of decompressed original bytes"
+    },
+    {
+      "kind": "program",
+      "page": 12,
+      "targetTime": "14:00",
+      "url": "https://finance.naver.com/sise/programDealTrendTime.naver?bizdate=20260911&sosok=01&page=12",
+      "fetchedAt": "2026-09-14T08:13:08+09:00",
+      "rawHash": "73336b4b9c978408b0210e9cb8d30da6d09be229cdb92d23c10ff7d4f9c489cd",
+      "rawPath": "program-20260911-page-12.html.gz",
+      "row": [
+        "14:00",
+        "982",
+        "2,267",
+        "-1,285",
+        "31,715",
+        "48,007",
+        "-16,292",
+        "32,697",
+        "50,274",
+        "-17,577"
+      ],
+      "encoding": "gzip; rawHash is SHA-256 of decompressed original bytes"
+    },
+    {
+      "kind": "program",
+      "page": 4,
+      "targetTime": "15:20",
+      "url": "https://finance.naver.com/sise/programDealTrendTime.naver?bizdate=20260911&sosok=01&page=4",
+      "fetchedAt": "2026-09-14T08:13:08+09:00",
+      "rawHash": "805379aace97215cbe4f3b11761a73b772a4b1dee33f877cc6656a82e4a6dc4f",
+      "rawPath": "program-20260911-page-04.html.gz",
+      "row": [
+        "15:20",
+        "1,420",
+        "2,581",
+        "-1,162",
+        "41,402",
+        "59,845",
+        "-18,443",
+        "42,822",
+        "62,426",
+        "-19,605"
+      ],
+      "encoding": "gzip; rawHash is SHA-256 of decompressed original bytes"
+    },
+    {
+      "kind": "program",
+      "page": 3,
+      "targetTime": "15:30",
+      "url": "https://finance.naver.com/sise/programDealTrendTime.naver?bizdate=20260911&sosok=01&page=3",
+      "fetchedAt": "2026-09-14T08:13:08+09:00",
+      "rawHash": "700e9e44f4c026e0972b7908427069d0e3675e8adffa181e94420a1ad38436f5",
+      "rawPath": "program-20260911-page-03.html.gz",
+      "row": [
+        "15:30",
+        "2,039",
+        "2,581",
+        "-543",
+        "50,917",
+        "68,573",
+        "-17,656",
+        "52,956",
+        "71,154",
+        "-18,199"
+      ],
+      "encoding": "gzip; rawHash is SHA-256 of decompressed original bytes"
+    }
+  ]
+}
