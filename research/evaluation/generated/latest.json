@@ -1,12 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-14T08:13:08+09:00",
+  "generatedAt": "2026-09-14T08:18:16+09:00",
   "selectedSettledForecastCount": 20,
   "independentSessionCount": 20,
   "unsettledForecastIds": [
     "2026-08-10-0852-same-close",
     "2026-08-11-0923-same-close",
-    "2026-08-12-0816-same-close"
+    "2026-08-12-0816-same-close",
+    "2026-09-14-0815-same-close"
   ],
   "overall": {
     "sampleCount": 20,
@@ -31,11 +32,11 @@
     "meanPathIntervalScoreBps": null,
     "meanMaxFavorableMoveBps": null,
     "meanMaxAdverseMoveBps": null,
-    "meanCenterLiftVsCarryBps": 21.211139999999993,
-    "meanBrier": 0.5497500000000001,
-    "meanDataLagMinutes": 1.3390999999999997,
-    "meanPublicationLagMinutes": 2.2973157894736835,
-    "meanDeployLagMinutes": 1.9272105263157897
+    "meanCenterLiftVsCarryBps": 21.21114,
+    "meanBrier": 0.54975,
+    "meanDataLagMinutes": 1.3391,
+    "meanPublicationLagMinutes": 2.2973157894736844,
+    "meanDeployLagMinutes": 1.9272105263157893
   },
   "byEvaluationBucket": {
     "afternoon_1131_1500": {
@@ -125,13 +126,13 @@
       "pathInsightEligible": true,
       "meanBaseIntervalScoreBps": 542.1488444444444,
       "meanCloseEnvelopeIntervalScoreBps": 1020.9060111111111,
-      "meanPathIntervalScoreBps": 1259.6394222222225,
-      "meanMaxFavorableMoveBps": 304.5141666666666,
-      "meanMaxAdverseMoveBps": 76.81546666666665,
-      "meanCenterLiftVsCarryBps": 20.83993888888888,
-      "meanBrier": 0.5686111111111112,
+      "meanPathIntervalScoreBps": 1259.6394222222223,
+      "meanMaxFavorableMoveBps": 304.51416666666665,
+      "meanMaxAdverseMoveBps": 76.81546666666667,
+      "meanCenterLiftVsCarryBps": 20.839938888888888,
+      "meanBrier": 0.5686111111111111,
       "meanDataLagMinutes": 1.4813888888888889,
-      "meanPublicationLagMinutes": 2.315647058823529,
+      "meanPublicationLagMinutes": 2.3156470588235294,
       "meanDeployLagMinutes": 2.0235882352941177,
       "topErrorCodes": [
         {
@@ -222,17 +223,17 @@
       "promotionBlocked": false,
       "promotionGateSatisfied": true,
       "promotionBlockReason": null,
-      "eligibleSessionCount": 21,
-      "verifiedInputSessionCount": 21,
-      "outcomeFeatureSessionCount": 21,
+      "eligibleSessionCount": 22,
+      "verifiedInputSessionCount": 22,
+      "outcomeFeatureSessionCount": 22,
       "evaluableSessionCount": 10,
-      "evidenceCoverageRate": 0.47619047619047616,
+      "evidenceCoverageRate": 0.45454545454545453,
       "evidenceStatusCounts": {
-        "missing_outcome": 11,
+        "missing_outcome": 12,
         "verified": 10
       },
       "independentSessionCount": 10,
-      "meanBaselineLiftBps": -13.361221967771854,
+      "meanBaselineLiftBps": -13.36122196777186,
       "supportRate": 0.6,
       "positiveRegimeCount": 0,
       "recentDegraded": true

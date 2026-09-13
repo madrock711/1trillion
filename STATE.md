@@ -7,7 +7,7 @@
 - 다음: 9/16 소매판매 21:30, 9/17 FOMC 03:00 KST.
 - 보고서 reports/2026-09-14.md, 취재 research/evidence/2026-09-14/overnight-notes.md. 차트 charts/us_yield_spreads_90d_2026-09-14.png 및 long_term.
 - 대시보드 assets/data/market-dashboard-20260914-0815.json 및 latest.json.
-- 직전 정산 research/evaluation/outcomes/2026-09-11-0821-same-close.json, 누적 research/evaluation/generated/latest.md. 트리거 원문은 미확인.
+- 직전 정산 research/evaluation/outcomes/2026-09-11-0821-same-close.json, 누적 research/evaluation/generated/latest.md. 15:20 가격 조건은 충족했으나 외국인 매도가 1조원을 넘어 기본 AND 조건은 불성립했다.
 - NXT 삼성 254,000원(-2.12%), SK하이닉스 1,755,000원(-3.15%); 원/달러 1,343.80원(2026-09-14T07:41:57+09:00).
 - 상위 이슈: 송유관·해운 위험, CPI 이후 FOMC, 금요일 반도체 내부 분화. 원유 운송량 추정은 확정 공급손실로 사용하지 않는다.
 - 직전 정산 및 수급 원문: research/evidence/2026-09-14/settlement-note.md. 미확인 강제청산은 주도 사건에서 제외.

@@ -1,0 +1,127 @@
+{
+  "commitSha": "40a3a8f05994087b9581cfdd23f047d5e66105d4",
+  "jobId": "592",
+  "verifiedAt": "2026-09-14T08:18:16+09:00",
+  "checks": [
+    {
+      "url": "https://www.hpmplab.com/articles/market-2026-09-14.html?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "641098c818fb10679541dcc51665e89fbcbad8f113265e53309df0dbe22826de"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-latest.json?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "87ea5e0ac5ba13f3e4b7f512360f097ad50670c46e16b5a508196f2bc2f4227c"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-20260914-0815.json?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "87ea5e0ac5ba13f3e4b7f512360f097ad50670c46e16b5a508196f2bc2f4227c"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/images/articles/market-2026-09-14-shipping-memory-1200x630.webp?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "97d7b43014d7cb68bef0fb640f15802d59f582fdea0b4cd69026ebe29ba56bb4"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_90d_2026-09-14.png?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "e173b477eb6a93475b455e9338c712b48dbaee480655418db5e0c0db435028d3"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_long_term_2026-09-14.png?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "fa1cc210beab7a167a257856ec29a439ee060846935354be0d9c5c07c785cd42"
+    },
+    {
+      "url": "https://www.hpmplab.com/index.html?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "46c9ba7d5029a1afff2aa07fa487dbdf03dd580c8718b49d1937383173f013db"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/index.html?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "f06e364a1982545eb89ea601c646282469088d4def045113f28cba85827f09ea"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/market.html?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "2c8f1e0baf1fe0310885a73e7e3b3e5a28802a66b0ac97d8cd3df7c45c6a9e00"
+    },
+    {
+      "url": "https://www.hpmplab.com/sitemap.xml?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "f49c90d3bc8d6c97d85b2d1f1bd23674ad10ea6edd8ec781ae6642464329d56e"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market-2026-09-14.html?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "641098c818fb10679541dcc51665e89fbcbad8f113265e53309df0dbe22826de"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-latest.json?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "87ea5e0ac5ba13f3e4b7f512360f097ad50670c46e16b5a508196f2bc2f4227c"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-20260914-0815.json?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "87ea5e0ac5ba13f3e4b7f512360f097ad50670c46e16b5a508196f2bc2f4227c"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/images/articles/market-2026-09-14-shipping-memory-1200x630.webp?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "97d7b43014d7cb68bef0fb640f15802d59f582fdea0b4cd69026ebe29ba56bb4"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_90d_2026-09-14.png?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "e173b477eb6a93475b455e9338c712b48dbaee480655418db5e0c0db435028d3"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_long_term_2026-09-14.png?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "fa1cc210beab7a167a257856ec29a439ee060846935354be0d9c5c07c785cd42"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/index.html?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "46c9ba7d5029a1afff2aa07fa487dbdf03dd580c8718b49d1937383173f013db"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/index.html?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "f06e364a1982545eb89ea601c646282469088d4def045113f28cba85827f09ea"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market.html?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "2c8f1e0baf1fe0310885a73e7e3b3e5a28802a66b0ac97d8cd3df7c45c6a9e00"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/sitemap.xml?v=40a3a8f05994",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "f49c90d3bc8d6c97d85b2d1f1bd23674ad10ea6edd8ec781ae6642464329d56e"
+    }
+  ]
+}
