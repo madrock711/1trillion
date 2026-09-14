@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-09-14",
+  "bizdate": "20260914",
+  "fetchedAt": "2026-09-15T08:07:22+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6692.61,
+    "high": 6773.97,
+    "low": 6654.82,
+    "close": 6684.37,
+    "asOf": "2026-09-14T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=11&page=1&cacheBust=202609150811",
+    "rawHash": "2391b120e4889efe14228a82f16f3a5ec9e8963e8d2e03d915fa8eb8b34de688"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "9월14일 최종 시장 폭 원문을 확보하지 못했다. 당일 확정 OHLCV·15:30 현물 및 프로그램은 확보했으나 네 묶음 계약을 충족하지 못해 closeSnapshot은 null로 둔다.",
+  "flowTrajectory": {
+    "contract": "flow_trajectory_v1",
+    "unit": "억원",
+    "anchors": {
+      "open30": {
+        "status": "available",
+        "asOf": "2026-09-14T09:30:00+09:00",
+        "foreignCash": -11658.0,
+        "programNonArbitrage": -9287.0,
+        "programTotal": -9801.0,
+        "source": "https://finance.naver.com/sise/investorDealTrendTime.naver?bizdate=20260914&sosok=01&page=43 ; https://finance.naver.com/sise/programDealTrendTime.naver?bizdate=20260914&sosok=01&page=63",
+        "rawHash": "b307e90a1b665457fe88589ae559349f7d20a73c9b08b24c5b0fd338e3c7f735"
+      },
+      "open60": {
+        "status": "available",
+        "asOf": "2026-09-14T10:00:00+09:00",
+        "foreignCash": -15449.0,
+        "programNonArbitrage": -12592.0,
+        "programTotal": -13133.0,
+        "source": "https://finance.naver.com/sise/investorDealTrendTime.naver?bizdate=20260914&sosok=01&page=41 ; https://finance.naver.com/sise/programDealTrendTime.naver?bizdate=20260914&sosok=01&page=60",
+        "rawHash": "f816740b8ee12d08ba5bc5fffe46770a96949a0b2141abcf2b6a97182fb0c6ec"
+      },
+      "at1400": {
+        "status": "available",
+        "asOf": "2026-09-14T14:00:00+09:00",
+        "foreignCash": -28490.0,
+        "programNonArbitrage": -22797.0,
+        "programTotal": -22867.0,
+        "source": "https://finance.naver.com/sise/investorDealTrendTime.naver?bizdate=20260914&sosok=01&page=25 ; https://finance.naver.com/sise/programDealTrendTime.naver?bizdate=20260914&sosok=01&page=36",
+        "rawHash": "dff4d418ba6a2e0de97bc24aea5323a6fd43031c6612cb858025ac4778f333ba"
+      },
+      "close": {
+        "status": "missing",
+        "expectedAsOf": "2026-09-14T15:30:00+09:00",
+        "attemptedAt": "2026-09-15T08:07:22+09:00",
+        "sourceStatus": "incomplete",
+        "source": "https://finance.naver.com/sise/investorDealTrendTime.naver?bizdate=20260914&sosok=01&page=19",
+        "missingReason": "15:30 현물·프로그램 확보, 최종 시장 폭 원문 없어 closeSnapshot과 연동된 close 앵커는 결측.",
+        "rawHash": "1907f892c60637379f4458a537795ae2b954c37c35dc456335f85c10c9362c04"
+      }
+    }
+  },
+  "flowTrajectoryMissingEvidence": null
+}

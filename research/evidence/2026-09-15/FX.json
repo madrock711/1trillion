@@ -1,0 +1,81 @@
+{
+  "url": "https://api.stock.naver.com/marketindex/exchange/FX_USDKRW",
+  "fetchedAt": "2026-09-15T08:13:47+09:00",
+  "rawHash": "10d7e56472c49c07f1edd3c75c32da12ba73ac52cca2ac7b8887aa9fd4c1ee55",
+  "data": {
+    "exchangeInfo": {
+      "stockExchangeType": {
+        "code": "HANA",
+        "zoneId": "Asia/Seoul",
+        "nationType": "KOR",
+        "delayTime": 0,
+        "startTime": "",
+        "endTime": "",
+        "closePriceSendTime": "",
+        "nameKor": "하나은행",
+        "nameEng": "Hana Bank",
+        "nationCode": "KOR",
+        "nationName": "대한민국",
+        "stockType": "domestic",
+        "name": "HANA"
+      },
+      "categoryType": "exchange",
+      "reutersCode": "FX_USDKRW",
+      "symbolCode": "USD",
+      "exchangeCode": "USD",
+      "name": "미국 USD",
+      "fullName": null,
+      "description": "하나은행 고시회차",
+      "localTradedAt": "2026-09-15T07:57:13+09:00",
+      "closePrice": "1,348.50",
+      "fluctuations": "4.70",
+      "fluctuationsRatio": "0.35",
+      "fluctuationsType": {
+        "code": "2",
+        "text": "상승",
+        "name": "RISING"
+      },
+      "marketStatus": "OPEN",
+      "priceDataType": "NOTICE_ROUND",
+      "endUrl": "https://m.stock.naver.com/marketindex/exchange/FX_USDKRW",
+      "newPcUrl": "https://stock.naver.com/marketindex/exchange/FX_USDKRW",
+      "unit": "KRW",
+      "degreeCount": 994,
+      "imageCharts": {
+        "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year10/FX_USDKRW_end.png",
+        "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year3/FX_USDKRW_end.png",
+        "areaYearFive": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year5/FX_USDKRW_end.png",
+        "areaMonth": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month/FX_USDKRW_end.png",
+        "areaMonthThree": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month3/FX_USDKRW_end.png",
+        "areaYear": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year/FX_USDKRW_end.png"
+      },
+      "imageChartUrlInfo": {
+        "line": {
+          "month": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month/FX_USDKRW_end.png",
+          "month3": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month3/FX_USDKRW_end.png",
+          "year": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year/FX_USDKRW_end.png",
+          "year3": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year3/FX_USDKRW_end.png",
+          "year5": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year5/FX_USDKRW_end.png",
+          "year10": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year10/FX_USDKRW_end.png"
+        }
+      },
+      "scriptChartTypes": [
+        "day",
+        "areaMonth",
+        "areaMonthThree",
+        "areaYear",
+        "areaYearThree",
+        "areaYearFive",
+        "areaYearTen"
+      ],
+      "calcPrice": "1348.5"
+    },
+    "marketIndexCdList": [
+      "FX_USDKRW",
+      "FX_USDKRW_SHB"
+    ],
+    "nationTypeCode": "USA",
+    "itemLogoUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/index/MarketIndexExchange.svg",
+    "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/index/MarketIndexExchange.png"
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-14-0815-same-close",
+  "recordedAt": "2026-09-15T08:07:22+09:00",
+  "actualRef": "2026-09-14",
+  "realizedScenario": "bear",
+  "errorCodes": [],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "unavailable",
+      "reason": "15:20 KOSPI 분봉 원문 조회가 HTTP400으로 실패해 정확 시각 가격 미확보. 종가나 일봉 고저를 대입하지 않는다."
+    },
+    {
+      "id": "bull-foreign_cash",
+      "status": "not_observed",
+      "observedAt": "2026-09-14T15:19:00+09:00",
+      "observedValue": -33073.0,
+      "source": "Naver Finance KOSPI 수급 (억원)"
+    },
+    {
+      "id": "bull-program_total",
+      "status": "not_observed",
+      "observedAt": "2026-09-14T15:20:00+09:00",
+      "observedValue": -27573.0,
+      "source": "Naver Finance KOSPI 수급 (억원)"
+    },
+    {
+      "id": "base-support",
+      "status": "unavailable",
+      "reason": "15:20 KOSPI 분봉 원문 조회가 HTTP400으로 실패해 정확 시각 가격 미확보. 종가나 일봉 고저를 대입하지 않는다."
+    },
+    {
+      "id": "base-cap",
+      "status": "unavailable",
+      "reason": "15:20 KOSPI 분봉 원문 조회가 HTTP400으로 실패해 정확 시각 가격 미확보. 종가나 일봉 고저를 대입하지 않는다."
+    },
+    {
+      "id": "base-foreign",
+      "status": "not_observed",
+      "observedAt": "2026-09-14T15:19:00+09:00",
+      "observedValue": -33073.0,
+      "source": "Naver Finance KOSPI 수급 (억원)"
+    },
+    {
+      "id": "bear-price",
+      "status": "unavailable",
+      "reason": "15:20 KOSPI 분봉 원문 조회가 HTTP400으로 실패해 정확 시각 가격 미확보. 종가나 일봉 고저를 대입하지 않는다."
+    },
+    {
+      "id": "bear-foreign_cash",
+      "status": "observed",
+      "observedAt": "2026-09-14T15:19:00+09:00",
+      "observedValue": -33073.0,
+      "source": "Naver Finance KOSPI 수급 (억원)"
+    },
+    {
+      "id": "bear-program_total",
+      "status": "observed",
+      "observedAt": "2026-09-14T15:20:00+09:00",
+      "observedValue": -27573.0,
+      "source": "Naver Finance KOSPI 수급 (억원)"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "oil-inflation",
+      "status": "unverifiable"
+    },
+    {
+      "id": "domestic-chip-selling",
+      "status": "unverifiable"
+    },
+    {
+      "id": "futures-pressure",
+      "status": "unverifiable"
+    }
+  ],
+  "hypothesisTests": []
+}
