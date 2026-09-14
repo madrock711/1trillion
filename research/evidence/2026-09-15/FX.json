@@ -1,7 +1,7 @@
 {
   "url": "https://api.stock.naver.com/marketindex/exchange/FX_USDKRW",
-  "fetchedAt": "2026-09-15T08:13:47+09:00",
-  "rawHash": "10d7e56472c49c07f1edd3c75c32da12ba73ac52cca2ac7b8887aa9fd4c1ee55",
+  "fetchedAt": "2026-09-15T08:17:09+09:00",
+  "rawHash": "68a8178586ddac8294a0bdb125e58d7704ea291ad8c50e8a4cb08f6ebe484c4c",
   "data": {
     "exchangeInfo": {
       "stockExchangeType": {
@@ -15,8 +15,8 @@
         "nameKor": "하나은행",
         "nameEng": "Hana Bank",
         "nationCode": "KOR",
-        "nationName": "대한민국",
         "stockType": "domestic",
+        "nationName": "대한민국",
         "name": "HANA"
       },
       "categoryType": "exchange",
@@ -42,12 +42,12 @@
       "unit": "KRW",
       "degreeCount": 994,
       "imageCharts": {
-        "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year10/FX_USDKRW_end.png",
-        "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year3/FX_USDKRW_end.png",
-        "areaYearFive": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year5/FX_USDKRW_end.png",
-        "areaMonth": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month/FX_USDKRW_end.png",
         "areaMonthThree": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month3/FX_USDKRW_end.png",
-        "areaYear": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year/FX_USDKRW_end.png"
+        "areaYearFive": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year5/FX_USDKRW_end.png",
+        "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year10/FX_USDKRW_end.png",
+        "areaYear": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year/FX_USDKRW_end.png",
+        "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year3/FX_USDKRW_end.png",
+        "areaMonth": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month/FX_USDKRW_end.png"
       },
       "imageChartUrlInfo": {
         "line": {

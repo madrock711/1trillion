@@ -1,0 +1,18 @@
+{
+  "forecastId": "2026-09-15-0817-same-close",
+  "issuedAt": "2026-09-15T08:17:32+09:00",
+  "dataCutoffAt": "2026-09-15T08:17:09+09:00",
+  "snapshotId": "20260915-0817",
+  "files": [
+    "articles/market-2026-09-15.html",
+    "assets/data/market-dashboard-latest.json",
+    "assets/data/market-dashboard-20260915-0817.json",
+    "assets/images/articles/market-2026-09-15-ai-braking-1200x630.webp",
+    "charts/us_yield_spreads_90d_2026-09-15.png",
+    "charts/us_yield_spreads_long_term_2026-09-15.png",
+    "index.html",
+    "articles/index.html",
+    "articles/market.html",
+    "sitemap.xml"
+  ]
+}
