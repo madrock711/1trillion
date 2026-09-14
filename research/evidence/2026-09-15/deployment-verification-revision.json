@@ -1,0 +1,127 @@
+{
+  "commitSha": "6bb2a6df09f6fb6a6a118b7ed1d9e1966cc0f69d",
+  "jobId": "596",
+  "verifiedAt": "2026-09-15T08:19:12+09:00",
+  "checks": [
+    {
+      "url": "https://www.hpmplab.com/articles/market-2026-09-15.html?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "c21ad4e22caa81026286d53ec1cb057bd45cbcdc32df5940d57f82849046354e"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-latest.json?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "52cf52b5a5643071984167ad821b4e7d611ad72f5c1b4616c85a62d33fa8c5a3"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-20260915-0817.json?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "52cf52b5a5643071984167ad821b4e7d611ad72f5c1b4616c85a62d33fa8c5a3"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/images/articles/market-2026-09-15-ai-braking-1200x630.webp?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "028f3e82a79b69d846f0b55f598e3ea4a7e54d9b9c7ff33f993682d566e9a455"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_90d_2026-09-15.png?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "0a3d60d4e22af66f7455b68dfdbeefbe5d1910a08cc8811351042c8d8840e3ff"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_long_term_2026-09-15.png?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "0ae63455a2c71524db64af24a74d69c8c6f61b806dbb7e912f6b867b731dd954"
+    },
+    {
+      "url": "https://www.hpmplab.com/index.html?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "ff91447dfbfd4776db9c2cc129752798c2bd34dd8c1aae3853050e2ef24add22"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/index.html?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "83474d4adb7e71c2d27fd4f077454d6a276f6895485bf24c51747899e9ea8125"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/market.html?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "9a0148ef76b088e5b8fc25cac13ce8a07d7f490d6f9177bacefe22fa3cce1699"
+    },
+    {
+      "url": "https://www.hpmplab.com/sitemap.xml?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "b543fc4bc196dc9d84f7df4f408e43505e780c68ab4582ad8ffdac5c896de829"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market-2026-09-15.html?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "c21ad4e22caa81026286d53ec1cb057bd45cbcdc32df5940d57f82849046354e"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-latest.json?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "52cf52b5a5643071984167ad821b4e7d611ad72f5c1b4616c85a62d33fa8c5a3"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-20260915-0817.json?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "52cf52b5a5643071984167ad821b4e7d611ad72f5c1b4616c85a62d33fa8c5a3"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/images/articles/market-2026-09-15-ai-braking-1200x630.webp?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "028f3e82a79b69d846f0b55f598e3ea4a7e54d9b9c7ff33f993682d566e9a455"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_90d_2026-09-15.png?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "0a3d60d4e22af66f7455b68dfdbeefbe5d1910a08cc8811351042c8d8840e3ff"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_long_term_2026-09-15.png?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "0ae63455a2c71524db64af24a74d69c8c6f61b806dbb7e912f6b867b731dd954"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/index.html?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "ff91447dfbfd4776db9c2cc129752798c2bd34dd8c1aae3853050e2ef24add22"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/index.html?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "83474d4adb7e71c2d27fd4f077454d6a276f6895485bf24c51747899e9ea8125"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market.html?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "9a0148ef76b088e5b8fc25cac13ce8a07d7f490d6f9177bacefe22fa3cce1699"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/sitemap.xml?v=6bb2a6df09f6",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "b543fc4bc196dc9d84f7df4f408e43505e780c68ab4582ad8ffdac5c896de829"
+    }
+  ]
+}
