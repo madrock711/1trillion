@@ -8,3 +8,4 @@
 - 대시보드 assets/data/market-dashboard-20260917-0813.json 및 latest.json. 직전 정산 research/evidence/2026-09-17/settlement-note.md.
 - 다음: 9/17 09:00 한국장 개장, 21:30 미국 신규 실업수당 청구.
 - 상위 사건과 제외 근거는 취재 노트에 보존.
+- 문장 정정: research/evidence/2026-09-17/correction-note.md. 봉인 보고서의 `반도체 선물`은 `주가지수 선물`을 뜻한다.

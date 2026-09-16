@@ -117,6 +117,9 @@ def main(seal):
         if path=='articles/market.html':
             t=re.sub(r'(id="market-(?:latest-article-link|summary-article-link)" href=")[^"]+',r'\g<1>market-2026-09-17.html',t)
             t=t.replace('KOSPI 6,500선과 외국인·프로그램 매도의 완화 여부를 함께 봅니다.','KOSPI 6,600선과 외국인·프로그램 수급의 방향을 함께 봅니다.')
+            t=t.replace('유가 급등과 장기금리 5% 돌파가 지수 상단을 누릅니다.','연준의 금리 인상과 원화 약세가 전날 반도체 반등을 시험합니다.')
+            t=t.replace('유가·금리 압력 아래 확인할 국내 수급','원화 약세 속 반도체와 국내 수급')
+            t=t.replace('오늘 시장을 움직인 여섯 축','오늘 시장을 움직인 변수')
             count=t.count('<article class="market-article-item"');t=re.sub(r'(일일시황 <span class="article-category-count">)\d+',r'\g<1>'+str(count),t);t=re.sub(r'최신순 · \d+편',f'최신순 · {count}편',t)
         write(path,t)
     for path in ('index.html','articles/index.html'):
