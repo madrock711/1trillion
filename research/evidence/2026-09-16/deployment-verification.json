@@ -1,0 +1,127 @@
+{
+  "commitSha": "65f807c036cc123a2ff57dee54fc5ed43fcc0893",
+  "jobId": "600",
+  "verifiedAt": "2026-09-16T09:16:49+09:00",
+  "checks": [
+    {
+      "url": "https://www.hpmplab.com/articles/market-2026-09-16.html?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "ab719aa03f32b740098ddca988a6daced34c4d583aa5b448836087f202bcface"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-latest.json?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "f0c578aadbac3b6fdb69ed31d800e66c18ab6b80799f95b929ed840fd5cacd61"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-20260916-0911.json?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "f0c578aadbac3b6fdb69ed31d800e66c18ab6b80799f95b929ed840fd5cacd61"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/images/articles/market-2026-09-16-oil-yields-chip-stabilization-1200x630.webp?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "43a26dfe69fb2a453bcb697e1560bf5281f524f01341ee46b0795368f77a26fe"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_90d_2026-09-16.png?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "1805e4e73edc1eab76c574e0073c687a17931fa251f526c1161ccd2c3cd927d8"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_long_term_2026-09-16.png?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "63b86f983abc6a88a26e0ab7bf8998705ef3630a42d9455d554b7f0aebb8b96d"
+    },
+    {
+      "url": "https://www.hpmplab.com/index.html?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "63725f9d571f662166730ecdb07c711d8637614101b95e76ff52ba6f308037cb"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/index.html?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "d8cd999d912a9789c723f4d1f6be35aefc12aca82a9644f290216661535a545c"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/market.html?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "ecf430feab0331cc77121c21129a257013cfb81780980ed9d61eb495de5da351"
+    },
+    {
+      "url": "https://www.hpmplab.com/sitemap.xml?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "e8fd55b33b7d81bea52557cd6418b27bce1ea27c48a2dfd0327dfc16bce6cc7d"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market-2026-09-16.html?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "ab719aa03f32b740098ddca988a6daced34c4d583aa5b448836087f202bcface"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-latest.json?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "f0c578aadbac3b6fdb69ed31d800e66c18ab6b80799f95b929ed840fd5cacd61"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-20260916-0911.json?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "f0c578aadbac3b6fdb69ed31d800e66c18ab6b80799f95b929ed840fd5cacd61"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/images/articles/market-2026-09-16-oil-yields-chip-stabilization-1200x630.webp?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "43a26dfe69fb2a453bcb697e1560bf5281f524f01341ee46b0795368f77a26fe"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_90d_2026-09-16.png?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "1805e4e73edc1eab76c574e0073c687a17931fa251f526c1161ccd2c3cd927d8"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_long_term_2026-09-16.png?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "63b86f983abc6a88a26e0ab7bf8998705ef3630a42d9455d554b7f0aebb8b96d"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/index.html?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "63725f9d571f662166730ecdb07c711d8637614101b95e76ff52ba6f308037cb"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/index.html?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "d8cd999d912a9789c723f4d1f6be35aefc12aca82a9644f290216661535a545c"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market.html?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "ecf430feab0331cc77121c21129a257013cfb81780980ed9d61eb495de5da351"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/sitemap.xml?v=65f807c036cc",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "e8fd55b33b7d81bea52557cd6418b27bce1ea27c48a2dfd0327dfc16bce6cc7d"
+    }
+  ]
+}
