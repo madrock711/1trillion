@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/SOXX?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-09-16T09:11:24+09:00",
+  "rawHash": "4cfc7947bd108d60d2fb409a2b54896a77adbc7555b341dcc6a73cdca1d291d5",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "SOXX",
+            "exchangeName": "NGM",
+            "fullExchangeName": "NasdaqGM",
+            "instrumentType": "ETF",
+            "firstTradeDate": 995031000,
+            "regularMarketTime": 1789502401,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 498.85,
+            "regularMarketChangePercent": 0.357,
+            "fulldayPrice": 499.01,
+            "fulldayChange": 1.935,
+            "fulldayChangePercent": 0.389,
+            "fiftyTwoWeekHigh": 655.95,
+            "fiftyTwoWeekLow": 254.83,
+            "regularMarketDayHigh": 504.74,
+            "regularMarketDayLow": 496.58,
+            "regularMarketVolume": 5963761,
+            "longName": "iShares Semiconductor ETF",
+            "shortName": "iShares PHLX SOX Semiconductor ",
+            "chartPreviousClose": 528.4,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "start": 1789459200,
+                "end": 1789479000,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "start": 1789479000,
+                "end": 1789502400,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "start": 1789502400,
+                "end": 1789516800,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1788960600,
+            1789047000,
+            1789133400,
+            1789392600,
+            1789479000
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "high": [
+                  535.47998046875,
+                  522.5,
+                  531.0399780273438,
+                  503.17999267578125,
+                  504.739990234375
+                ],
+                "open": [
+                  524.8499755859375,
+                  518.3200073242188,
+                  525.239990234375,
+                  497.1700134277344,
+                  502.6549987792969
+                ],
+                "volume": [
+                  6427500,
+                  6651700,
+                  5663000,
+                  11265500,
+                  5963761
+                ],
+                "close": [
+                  532.0,
+                  517.4299926757812,
+                  527.0700073242188,
+                  497.3999938964844,
+                  null
+                ],
+                "low": [
+                  524.8499755859375,
+                  514.3099975585938,
+                  521.1300048828125,
+                  495.1499938964844,
+                  496.5799865722656
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  532.0,
+                  517.4299926757812,
+                  527.0700073242188,
+                  497.3999938964844,
+                  null
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}

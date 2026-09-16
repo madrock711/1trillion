@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-15-0813-same-close",
+  "recordedAt": "2026-09-16T08:55:46+09:00",
+  "actualRef": "2026-09-15",
+  "realizedScenario": "bear",
+  "errorCodes": [],
+  "triggerResults": [
+    {"id": "bull-price", "status": "unavailable", "reason": "15시 20분 정확 시각 KOSPI 원문 미확보"},
+    {"id": "bull-foreign_cash", "status": "unavailable", "reason": "15시 20분 외국인 현물 원문 미확보"},
+    {"id": "bull-program_total", "status": "unavailable", "reason": "15시 20분 프로그램 원문 미확보"},
+    {"id": "base-support", "status": "unavailable", "reason": "15시 20분 정확 시각 KOSPI 원문 미확보"},
+    {"id": "base-cap", "status": "unavailable", "reason": "15시 20분 정확 시각 KOSPI 원문 미확보"},
+    {"id": "base-foreign", "status": "unavailable", "reason": "15시 20분 외국인 현물 원문 미확보"},
+    {"id": "bear-price", "status": "unavailable", "reason": "15시 20분 정확 시각 KOSPI 원문 미확보"},
+    {"id": "bear-foreign_cash", "status": "unavailable", "reason": "15시 20분 외국인 현물 원문 미확보"},
+    {"id": "bear-program_total", "status": "unavailable", "reason": "15시 20분 프로그램 원문 미확보"}
+  ],
+  "driverAssessment": [
+    {"id": "ai-growth-repricing", "status": "partial"},
+    {"id": "domestic-chip-selling", "status": "rejected"},
+    {"id": "rates-oil-pressure", "status": "partial"}
+  ],
+  "hypothesisTests": []
+}

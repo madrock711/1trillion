@@ -1,0 +1,18 @@
+{
+  "forecastId": "2026-09-16-0911-same-close",
+  "issuedAt": "2026-09-16T09:11:24+09:00",
+  "dataCutoffAt": "2026-09-16T09:11:24+09:00",
+  "snapshotId": "20260916-0911",
+  "files": [
+    "articles/market-2026-09-16.html",
+    "assets/data/market-dashboard-latest.json",
+    "assets/data/market-dashboard-20260916-0911.json",
+    "assets/images/articles/market-2026-09-16-oil-yields-chip-stabilization-1200x630.webp",
+    "charts/us_yield_spreads_90d_2026-09-16.png",
+    "charts/us_yield_spreads_long_term_2026-09-16.png",
+    "index.html",
+    "articles/index.html",
+    "articles/market.html",
+    "sitemap.xml"
+  ]
+}

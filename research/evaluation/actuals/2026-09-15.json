@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-09-15",
+  "bizdate": "20260915",
+  "fetchedAt": "2026-09-16T08:55:46+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6659.25,
+    "high": 6715.46,
+    "low": 6582.20,
+    "close": 6627.26,
+    "asOf": "2026-09-15T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=10&page=1",
+    "rawHash": "e9d96b3ded55f4b7add2892481cceaf3022600992134d55ee8728d784df94e66"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "15시 20분 외국인·프로그램 원문과 최종 시장 폭을 이번 실행에서 확보하지 못해 종가 수치로 대체하지 않았다.",
+  "flowTrajectory": null,
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-09-15T15:30:00+09:00",
+    "fetchedAt": "2026-09-16T08:55:46+09:00",
+    "missingReason": "09:30·10:00·14:00·15:30의 외국인 현물·프로그램 세 지표를 같은 시각으로 결합한 원문을 확보하지 못했다.",
+    "rawHash": "a64f4bd3826029ed36af5eb055a979e41d510d996be4c3c55d17520046fee276"
+  }
+}

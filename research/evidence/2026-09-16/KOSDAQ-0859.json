@@ -1,0 +1,147 @@
+{
+  "url": "https://m.stock.naver.com/api/index/KOSDAQ/price?pageSize=10&page=1",
+  "fetchedAt": "2026-09-16T08:59:33+09:00",
+  "rawHash": "6bc65cecea4200245689a70ab04a3b89674fc8ec3d8b35450453edcd36aa1747",
+  "data": [
+    {
+      "localTradedAt": "2026-09-15",
+      "closePrice": "812.41",
+      "compareToPreviousClosePrice": "5.62",
+      "compareToPreviousPrice": {
+        "code": "2",
+        "text": "상승",
+        "name": "RISING"
+      },
+      "fluctuationsRatio": "0.70",
+      "openPrice": "806.49",
+      "highPrice": "824.37",
+      "lowPrice": "801.97"
+    },
+    {
+      "localTradedAt": "2026-09-14",
+      "closePrice": "806.79",
+      "compareToPreviousClosePrice": "-13.85",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "fluctuationsRatio": "-1.69",
+      "openPrice": "806.27",
+      "highPrice": "815.30",
+      "lowPrice": "799.77"
+    },
+    {
+      "localTradedAt": "2026-09-11",
+      "closePrice": "820.64",
+      "compareToPreviousClosePrice": "-16.28",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "fluctuationsRatio": "-1.95",
+      "openPrice": "816.91",
+      "highPrice": "826.53",
+      "lowPrice": "816.91"
+    },
+    {
+      "localTradedAt": "2026-09-10",
+      "closePrice": "836.92",
+      "compareToPreviousClosePrice": "6.55",
+      "compareToPreviousPrice": {
+        "code": "2",
+        "text": "상승",
+        "name": "RISING"
+      },
+      "fluctuationsRatio": "0.79",
+      "openPrice": "825.06",
+      "highPrice": "839.05",
+      "lowPrice": "813.66"
+    },
+    {
+      "localTradedAt": "2026-09-09",
+      "closePrice": "830.37",
+      "compareToPreviousClosePrice": "18.49",
+      "compareToPreviousPrice": {
+        "code": "2",
+        "text": "상승",
+        "name": "RISING"
+      },
+      "fluctuationsRatio": "2.28",
+      "openPrice": "815.06",
+      "highPrice": "830.87",
+      "lowPrice": "814.79"
+    },
+    {
+      "localTradedAt": "2026-09-08",
+      "closePrice": "811.88",
+      "compareToPreviousClosePrice": "-10.31",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "fluctuationsRatio": "-1.25",
+      "openPrice": "825.03",
+      "highPrice": "830.21",
+      "lowPrice": "811.88"
+    },
+    {
+      "localTradedAt": "2026-09-07",
+      "closePrice": "822.19",
+      "compareToPreviousClosePrice": "8.69",
+      "compareToPreviousPrice": {
+        "code": "2",
+        "text": "상승",
+        "name": "RISING"
+      },
+      "fluctuationsRatio": "1.07",
+      "openPrice": "822.91",
+      "highPrice": "828.85",
+      "lowPrice": "819.78"
+    },
+    {
+      "localTradedAt": "2026-09-04",
+      "closePrice": "813.50",
+      "compareToPreviousClosePrice": "23.29",
+      "compareToPreviousPrice": {
+        "code": "2",
+        "text": "상승",
+        "name": "RISING"
+      },
+      "fluctuationsRatio": "2.95",
+      "openPrice": "802.32",
+      "highPrice": "816.54",
+      "lowPrice": "798.97"
+    },
+    {
+      "localTradedAt": "2026-09-03",
+      "closePrice": "790.21",
+      "compareToPreviousClosePrice": "-13.77",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "fluctuationsRatio": "-1.71",
+      "openPrice": "814.31",
+      "highPrice": "815.79",
+      "lowPrice": "782.87"
+    },
+    {
+      "localTradedAt": "2026-09-02",
+      "closePrice": "803.98",
+      "compareToPreviousClosePrice": "-17.27",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "fluctuationsRatio": "-2.10",
+      "openPrice": "802.80",
+      "highPrice": "819.62",
+      "lowPrice": "796.34"
+    }
+  ]
+}
