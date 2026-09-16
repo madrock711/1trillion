@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-09-16",
+  "bizdate": "20260916",
+  "fetchedAt": "2026-09-17T08:06:51+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6611.24,
+    "high": 6717.97,
+    "low": 6598.87,
+    "close": 6717.97,
+    "asOf": "2026-09-16T15:30:00+09:00",
+    "source": "https://kr.investing.com/indices/kospi-historical-data",
+    "rawHash": "f221a1f4bb485eb726353cb9d23297a09d50a3cac2b79c723d4f2886b522358e"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "15시 20분 정확 시각 외국인·프로그램 및 시장 폭 원문이 없어 종가 수치로 대체하지 않음",
+  "flowTrajectory": null,
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-09-16T15:30:00+09:00",
+    "fetchedAt": "2026-09-17T08:06:51+09:00",
+    "missingReason": "09:30·10:00·14:00·15:20 동시각 수급 앵커 원문 미확보",
+    "rawHash": "9f10c95693bc408425cc711830349a35a39ad8bed4bc9d996b9ebed668d31e38"
+  }
+}

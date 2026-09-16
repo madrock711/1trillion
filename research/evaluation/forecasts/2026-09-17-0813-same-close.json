@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-17-0813-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-09-17.md",
+  "reportSha256": "474ab0858c862347cec48c60defab1fdef410b24924b4784ff601ba4d6efe6cb",
+  "issuedAt": "2026-09-17T08:13:28+09:00",
+  "dataCutoffAt": "2026-09-17T08:13:13+09:00",
+  "marketState": "preopen",
+  "marketRegime": "risk_off",
+  "evaluationBucket": "preopen",
+  "target": {
+    "sessionDate": "2026-09-17",
+    "horizon": "session_close",
+    "instrument": "KOSPI",
+    "leadSessions": 0,
+    "previousSessionDate": "2026-09-16"
+  },
+  "reference": {
+    "price": 6717.97,
+    "asOf": "2026-09-16T15:30:00+09:00",
+    "kind": "previous_close"
+  },
+  "scenarios": {
+    "bull": {
+      "low": 6750,
+      "high": 6900,
+      "probability": 0.2
+    },
+    "base": {
+      "low": 6600,
+      "high": 6750,
+      "probability": 0.5
+    },
+    "bear": {
+      "low": 6400,
+      "high": 6600,
+      "probability": 0.3
+    }
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {
+    "low": 6300,
+    "high": 7000,
+    "coverage": 0.9
+  },
+  "drivers": [
+    {
+      "id": "fed-rate-fx",
+      "rank": 1,
+      "claim": "연준 인상과 원화 약세가 국내 반도체 반등의 지속성을 시험한다.",
+      "validationMetric": "USD/KRW·KOSPI·외국인 수급"
+    },
+    {
+      "id": "chip-resilience",
+      "rank": 2,
+      "claim": "미국 반도체의 소폭 강세가 국내 반도체 하방을 일부 완충한다.",
+      "validationMetric": "SOXX·SMH·삼성전자·SK하이닉스"
+    },
+    {
+      "id": "foreign-flow",
+      "rank": 3,
+      "claim": "6,600선과 외국인 현물·프로그램 수급이 종가 방향을 가른다.",
+      "validationMetric": "KOSPI·외국인·프로그램"
+    }
+  ],
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-09-17T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "description": "KOSPI 6750 gt",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 6750,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "bull-foreign_cash",
+          "description": "외국인 현물 순매수",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급 (억원)"
+        },
+        {
+          "id": "bull-program_total",
+          "description": "프로그램 전체 순매수",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급 (억원)"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-09-17T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-support",
+          "description": "KOSPI 6600 gte",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 6600,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "base-cap",
+          "description": "KOSPI 6750 lte",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 6750,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "base-foreign",
+          "description": "외국인 현물 순매도가 1조원 이내",
+          "metricId": "foreign_cash",
+          "operator": "gte",
+          "threshold": -10000,
+          "source": "Naver Finance KOSPI 수급 (억원)"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-09-17T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "description": "KOSPI 6600 lt",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 6600,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "bear-foreign_cash",
+          "description": "외국인 현물 순매도",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급 (억원)"
+        },
+        {
+          "id": "bear-program_total",
+          "description": "프로그램 전체 순매도",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급 (억원)"
+        }
+      ]
+    }
+  },
+  "hypothesisTrials": [],
+  "posture": {
+    "attack": 20,
+    "wait": 45,
+    "defense": 35
+  },
+  "supersedes": null,
+  "contentHash": "3d48c39eb1de85f2f5e53b1ee8a4974e21ae9522c560c6bfee082056abf09031"
+}
