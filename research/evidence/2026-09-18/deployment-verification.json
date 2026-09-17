@@ -1,0 +1,127 @@
+{
+  "commitSha": "69b8bf001ad42cbfe3655ed3e1c273e84d408fb2",
+  "jobId": "605",
+  "verifiedAt": "2026-09-18T08:16:09+09:00",
+  "checks": [
+    {
+      "url": "https://www.hpmplab.com/articles/market-2026-09-18.html?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "be25ba9b9ffe9f9380ff903b21e7599a0ebfe212efb9e67365f18aa6bda2e34a"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-latest.json?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "67195a8d97f89b1e31efecd9deeaf0816845ff131c7c50a7350acf0097d78a3b"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/data/market-dashboard-20260918-0813.json?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "67195a8d97f89b1e31efecd9deeaf0816845ff131c7c50a7350acf0097d78a3b"
+    },
+    {
+      "url": "https://www.hpmplab.com/assets/images/articles/market-2026-09-18-chip-rebound-foreign-flow-1200x630.webp?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "e7cb684af6a485da0e10bb1b96b0e0a84a099e6656e2632003a89b721e0f8bcc"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_90d_2026-09-18.png?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "b8055c95589c4715ee8c8aa429eebc99045c46fd8cb7b0c4210a3d59cf773d8b"
+    },
+    {
+      "url": "https://www.hpmplab.com/charts/us_yield_spreads_long_term_2026-09-18.png?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "a0583bdbdadaf6cfb35b7d52c6556266567831a41c9b0a2b5c6fcb72618651c9"
+    },
+    {
+      "url": "https://www.hpmplab.com/index.html?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "4277ea1cd70fd4c7fa6f0d7733c357bde009e6094acc12e1aab5d3a1bf7a3f8f"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/index.html?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "4bedc85526bbeafc4a62b7564bda6a6b362a10961f1da6d59d97b89d1cefadfb"
+    },
+    {
+      "url": "https://www.hpmplab.com/articles/market.html?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "d34741c9ba82e7cccbad1cb3f91ff7167c452feda0e36a132ca5e93f376e3500"
+    },
+    {
+      "url": "https://www.hpmplab.com/sitemap.xml?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "5e704143c076aa8b833484b9b5d40ff9453733f78f7de7ecf4c45847000a4480"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market-2026-09-18.html?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "be25ba9b9ffe9f9380ff903b21e7599a0ebfe212efb9e67365f18aa6bda2e34a"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-latest.json?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "67195a8d97f89b1e31efecd9deeaf0816845ff131c7c50a7350acf0097d78a3b"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-20260918-0813.json?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "67195a8d97f89b1e31efecd9deeaf0816845ff131c7c50a7350acf0097d78a3b"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/images/articles/market-2026-09-18-chip-rebound-foreign-flow-1200x630.webp?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "e7cb684af6a485da0e10bb1b96b0e0a84a099e6656e2632003a89b721e0f8bcc"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_90d_2026-09-18.png?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "b8055c95589c4715ee8c8aa429eebc99045c46fd8cb7b0c4210a3d59cf773d8b"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_long_term_2026-09-18.png?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "a0583bdbdadaf6cfb35b7d52c6556266567831a41c9b0a2b5c6fcb72618651c9"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/index.html?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "4277ea1cd70fd4c7fa6f0d7733c357bde009e6094acc12e1aab5d3a1bf7a3f8f"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/index.html?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "4bedc85526bbeafc4a62b7564bda6a6b362a10961f1da6d59d97b89d1cefadfb"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market.html?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "d34741c9ba82e7cccbad1cb3f91ff7167c452feda0e36a132ca5e93f376e3500"
+    },
+    {
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/sitemap.xml?v=69b8bf001ad4",
+      "status": 200,
+      "matchesCommit": true,
+      "sha256": "5e704143c076aa8b833484b9b5d40ff9453733f78f7de7ecf4c45847000a4480"
+    }
+  ]
+}
