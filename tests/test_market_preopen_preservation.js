@@ -10,7 +10,8 @@ const start = source.indexOf('    function findById(items, id) {');
 const end = source.indexOf('    function clearLiveRefreshTimer()', start);
 assert(start >= 0 && end > start);
 const context = {
-    window: {}, document: { getElementById: () => ({ textContent: '' }) },
+    window: { MarketDashboardLive: { mergeRuntimeIntradayIndex: (previous, incoming) => [...previous, ...incoming] } },
+    document: { getElementById: () => ({ textContent: '' }) },
     lastAppliedLiveSignature: '',
     formatSigned: (value, unit) => `${value}${unit}`,
     formatNumber: String, formatKstDateTime: String
@@ -36,6 +37,15 @@ const instrument = structuredClone(snapshot.technical.instruments[0]);
 const originalInstrument = structuredClone(instrument);
 assert.strictEqual(context.replaceTechnicalObservation(instrument, observed), false);
 assert.deepStrictEqual(instrument, originalInstrument);
+const preopenInstrument = {
+    ...observed,
+    intradayIndex: [{ date: '2026-09-04', path: '', live: true, pending: true }],
+    intradayIndexUrl: '/assets/data/kodex-intraday-index.json'
+};
+assert.strictEqual(context.replaceTechnicalObservation(instrument, preopenInstrument), false);
+assert.deepStrictEqual(instrument.points, originalInstrument.points, '장전 가격 범위는 종가 기록을 덮지 않아야 한다.');
+assert.strictEqual(instrument.intradayIndex[0].date, '2026-09-04', '장전 거래일은 선택 목록에 반영되어야 한다.');
+assert.strictEqual(instrument.intradayIndexUrl, preopenInstrument.intradayIndexUrl);
 
 // Zero is a valid observation after the regular session opens.
 const opened = { ...observed, marketStatus: 'OPEN', stateLabel: '장중', asOf: '2026-09-04T09:01:00+09:00' };

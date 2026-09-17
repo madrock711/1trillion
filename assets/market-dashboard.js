@@ -4444,7 +4444,15 @@
 
     function replaceTechnicalObservation(instrument, liveInstrument) {
         if (!instrument || !liveInstrument) return false;
-        if (liveInstrument.marketStatus === 'PREOPEN') return false;
+        if (liveInstrument.marketStatus === 'PREOPEN') {
+            if (Array.isArray(liveInstrument.intradayIndex)) {
+                instrument.intradayIndex = window.MarketDashboardLive.mergeRuntimeIntradayIndex(
+                    instrument.intradayIndex || [], liveInstrument.intradayIndex
+                );
+                instrument.intradayIndexUrl = liveInstrument.intradayIndexUrl || instrument.intradayIndexUrl;
+            }
+            return false;
+        }
         if (Number.isFinite(Date.parse(instrument.asOf)) && Date.parse(liveInstrument.asOf) < Date.parse(instrument.asOf)) return false;
         instrument.liveSnapshot = liveInstrument;
         if (liveInstrument.sessionPricesComplete !== false) {
@@ -4901,7 +4909,9 @@
             if (!response.ok) throw new Error('KODEX 분봉 색인을 불러오지 못했습니다.');
             return response.json();
         }).then(window.MarketDashboardLive.normalizeKodexIntradayIndex).then(function (rows) {
-            instrument.intradayIndex = rows;
+            instrument.intradayIndex = window.MarketDashboardLive.mergeRuntimeIntradayIndex(
+                instrument.intradayIndex || [], rows
+            );
             instrument.intradayIndexUrl = absoluteUrl;
             renderKodex(data);
             return true;

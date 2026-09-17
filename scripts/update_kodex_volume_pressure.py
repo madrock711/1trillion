@@ -34,10 +34,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = ROOT / "assets" / "data" / "kodex-volume-pressure.json"
 DEFAULT_INTRADAY_DIR = ROOT / "assets" / "data" / "kodex-intraday"
 DEFAULT_INTRADAY_INDEX = ROOT / "assets" / "data" / "kodex-intraday-index.json"
-DAILY_URL = (
-    "https://m.stock.naver.com/front-api/stock/domestic/price/list"
-    "?code=122630&page=1&pageSize=50"
-)
+DAILY_URL = "https://m.stock.naver.com/api/stock/122630/price?pageSize=50&page=1"
 MINUTE_URL = "https://api.stock.naver.com/chart/domestic/item/122630/minute"
 MINIMUM_BARS = 300
 MINIMUM_COVERAGE = 0.95
@@ -83,9 +80,12 @@ def fetch_json(url: str, timeout: float = 20.0) -> object:
 
 
 def normalize_daily_volumes(payload: object) -> dict[str, int]:
-    if not isinstance(payload, dict) or payload.get("isSuccess") is not True:
+    if isinstance(payload, list):
+        rows = payload
+    elif isinstance(payload, dict) and payload.get("isSuccess") is True:
+        rows = payload.get("result")
+    else:
         raise ValueError("daily response is invalid")
-    rows = payload.get("result")
     if not isinstance(rows, list):
         raise ValueError("daily rows are missing")
     result: dict[str, int] = {}

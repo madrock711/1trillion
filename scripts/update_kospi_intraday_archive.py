@@ -15,6 +15,7 @@ import os
 import re
 import tempfile
 import urllib.parse
+import urllib.error
 import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -201,6 +202,10 @@ def build_day(date: str, collected_at: datetime) -> dict[str, object]:
     minute_rows = normalize_minute_rows(fetch_json(minute_url(date)), date)
     try:
         flow_rows, page_count = collect_flow_rows(date)
+    except urllib.error.HTTPError as error:
+        if error.code != 410:
+            raise
+        flow_rows, page_count = [], 0
     except ValueError:
         flow_rows, page_count = [], 0
     bars = merge_rows(minute_rows, flow_rows)

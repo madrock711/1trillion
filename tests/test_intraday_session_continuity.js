@@ -164,13 +164,14 @@ assert.ok(dashboard.includes("marketStatus === 'CLOSE' && selectedEntry && selec
 assert.ok(dashboard.includes("row && row.path"), '장전 placeholder를 합성 모멘텀 원자료로 요청하면 안 된다.');
 assert.ok(dashboard.includes('MarketDashboardLive.intradaySourceDate(cached.flowSourceLastAt, selectedDate)'), '장전 수급 기준일은 전 거래일 실제 날짜를 표시해야 한다.');
 assert.ok(dashboard.includes('MarketDashboardLive.mergeRuntimeIntradayIndex('), '날짜 목록 병합은 회귀 테스트 가능한 helper를 사용해야 한다.');
+assert.ok(dashboard.includes('instrument.intradayIndex || [], rows'), '늦게 도착한 보관 색인이 장전 현재 거래일을 지우면 안 된다.');
 assert.ok(dashboard.includes('kospiIntradayPendingWarmupRerender = true'), '초기 KOSPI 요청 중 선행 분봉이 도착하면 완료 뒤 재렌더해야 한다.');
 assert.ok(dashboard.includes('kospiWarmupSignature !== kospiIntradayRequestWarmupSignature'), '초기 요청과 최신 선행 분봉 상태를 비교해야 한다.');
 assert.ok(dashboard.includes('renderKospiIntradayChart();'), '보강된 선행 분봉으로 KOSPI 차트를 다시 그려야 한다.');
 assert.ok(dashboard.includes('item.indicatorWarmupDays = previous.indicatorWarmupDays'), '일시적인 갱신 실패가 이미 받은 선행 분봉을 지우면 안 된다.');
 assert.ok(css.includes('.intraday-session-divider'), '두 거래일의 경계를 차트에서 구분해야 한다.');
 assert.ok(html.includes('market-live-data.js?v=20260820-01'), '현재 세션 선행 로드는 이전 live-data 캐시를 우회해야 한다.');
-assert.ok(html.includes('market-dashboard.js?v=20260911-03'), '최신 거래일 자동 선택은 이전 dashboard 캐시를 우회해야 한다.');
+assert.ok(html.includes('market-dashboard.js?v=20260918-01'), '장전 거래일 복구 코드는 이전 dashboard 캐시를 우회해야 한다.');
 assert.ok(html.includes('data-kospi-intraday-source="../assets/data/kospi-intraday-index.json"'), 'KOSPI 완료 세션은 정적 보존 색인을 사용해야 한다.');
 assert.ok(dashboard.includes('fetchKospiIntradayArchiveDay('), '완료된 KOSPI 세션은 반복 원격 조회 대신 저장본을 사용해야 한다.');
 assert.ok(dashboard.includes('return request.catch(function (error)'), '저장본이 없는 오래된 선행 거래일 한 건의 실패가 전체 KOSPI 렌더를 취소하면 안 된다.');

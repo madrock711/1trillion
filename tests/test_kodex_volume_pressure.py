@@ -27,6 +27,13 @@ def bar(date, time, close, volume):
 
 
 class KodexVolumePressureTests(unittest.TestCase):
+    def test_current_daily_api_list_skips_preopen_zero_volume(self):
+        rows = MODULE.normalize_daily_volumes([
+            {"localTradedAt": "2026-09-18", "accumulatedTradingVolume": 0},
+            {"localTradedAt": "2026-09-17", "accumulatedTradingVolume": 15559088},
+        ])
+        self.assertEqual(rows, {"2026-09-17": 15559088})
+
     def setUp(self):
         self.date = "2026-08-05"
         self.collected_at = datetime(2026, 8, 6, 7, 20, tzinfo=MODULE.timezone.utc)
