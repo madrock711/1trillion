@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-09-17",
+  "bizdate": "20260917",
+  "fetchedAt": "2026-09-18T08:06:40+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6779.02,
+    "high": 6795.53,
+    "low": 6697.85,
+    "close": 6715.41,
+    "asOf": "2026-09-17T15:30:00+09:00",
+    "source": "https://en.sedaily.com/finance/2026/09/17/kospi-ends-flat-as-foreigners-dump-16-billion-on-hawkish-fed",
+    "rawHash": "65e54fdf410ed50bb1253a79502b3d96652b808741fb48fff21755823bccffa9",
+    "rawPath": "research/evidence/2026-09-18/kospi-ohlc-source.html.gz"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "15시 20분 정확 시각 외국인·프로그램·시장 폭 원문 부재. 15시 30분 누적 보도를 소급하지 않음",
+  "flowTrajectory": null,
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-09-17T15:30:00+09:00",
+    "fetchedAt": "2026-09-18T08:06:40+09:00",
+    "missingReason": "09:30·10:00·14:00·15:20 동일 시각 수급 앵커 원문 미확보",
+    "rawHash": "cddfc723ced2198c5cfa7c817768dd8ec35f3136982240bbc2b7e94b67ce9590"
+  }
+}
