@@ -3,9 +3,7 @@ frontend:
   phases:
     build:
       commands:
-        - node scripts/audit_public_site.js
-        - node tests/test_home_article_feed.js
-        - node tests/test_home_article_search.js
+        - node scripts/preflight_deploy.js
   artifacts:
     baseDirectory: /
     files:

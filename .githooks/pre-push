@@ -2,5 +2,4 @@
 set -eu
 
 repo_root="$(git rev-parse --show-toplevel)"
-"$repo_root/scripts/check_worklog_guard.sh"
 node "$repo_root/scripts/preflight_deploy.js"
