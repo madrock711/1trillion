@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-09-21T08:14:50+09:00",
+  "rawHash": "9ab45601815493f4a781557256c8483f8c364a108d7ff76af5f275b8d7801cf7",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "BZ=F",
+            "exchangeName": "NYM",
+            "fullExchangeName": "NY Mercantile",
+            "instrumentType": "FUTURE",
+            "firstTradeDate": 1185768000,
+            "regularMarketTime": 1789945393,
+            "hasPrePostMarketData": false,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 99.36,
+            "regularMarketChangePercent": 0.071,
+            "fulldayPrice": 99.36,
+            "fulldayChange": 0.07,
+            "fulldayChangePercent": 0.071,
+            "fiftyTwoWeekHigh": 126.1,
+            "fiftyTwoWeekLow": 58.72,
+            "regularMarketDayHigh": 100.26,
+            "regularMarketDayLow": 99.31,
+            "regularMarketVolume": 508,
+            "longName": "Brent Crude Oil Last Day Financial Futures",
+            "shortName": "Brent Crude Oil Last Day Financ",
+            "chartPreviousClose": 108.75,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "start": 1789876800,
+                "end": 1789876800,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "start": 1789876800,
+                "end": 1789963140,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "start": 1789963140,
+                "end": 1789963140,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1789444800,
+            1789531200,
+            1789617600,
+            1789704000,
+            1789945393
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "high": [
+                  109.44999694824219,
+                  108.58999633789062,
+                  106.0,
+                  105.0199966430664,
+                  100.26000213623047
+                ],
+                "open": [
+                  106.30999755859375,
+                  108.55000305175781,
+                  105.30999755859375,
+                  104.08999633789062,
+                  100.0
+                ],
+                "low": [
+                  105.11000061035156,
+                  104.05999755859375,
+                  101.55000305175781,
+                  101.94000244140625,
+                  99.30999755859375
+                ],
+                "volume": [
+                  51174,
+                  52162,
+                  50042,
+                  50042,
+                  508
+                ],
+                "close": [
+                  108.75,
+                  105.83000183105469,
+                  104.81999969482422,
+                  103.87000274658203,
+                  99.36000061035156
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  108.75,
+                  105.83000183105469,
+                  104.81999969482422,
+                  103.87000274658203,
+                  99.36000061035156
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}
