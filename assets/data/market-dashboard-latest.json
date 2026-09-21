@@ -18,14 +18,14 @@
       "label": "KOSPI",
       "symbol": "K",
       "value": 6894.23,
-      "changePercent": -0.04,
-      "asOf": "2026-09-17T15:30:00+09:00",
-      "asOfLabel": "9월 17일 종가",
+      "changePercent": 2.66,
+      "asOf": "2026-09-18T15:30:00+09:00",
+      "asOfLabel": "9월 18일 종가",
       "stateLabel": "정규장 종가",
-      "open": 6779.02,
-      "high": 6795.53,
-      "low": 6697.85,
-      "previousClose": 6717.97,
+      "open": 6885.7,
+      "high": 6914.08,
+      "low": 6830.95,
+      "previousClose": 6715.41,
       "flows": []
     },
     {
@@ -219,20 +219,20 @@
         "id": "KOSPI",
         "label": "KOSPI",
         "unit": "pt",
-        "asOf": "2026-09-17T15:30:00+09:00",
-        "asOfLabel": "9월 17일 정규장 종가",
+        "asOf": "2026-09-18T15:30:00+09:00",
+        "asOfLabel": "9월 18일 정규장 종가",
         "points": [
           {
             "label": "시가",
-            "value": 6779.02
+            "value": 6885.7
           },
           {
             "label": "고가",
-            "value": 6795.53
+            "value": 6914.08
           },
           {
             "label": "저가",
-            "value": 6697.85
+            "value": 6830.95
           },
           {
             "label": "종가",

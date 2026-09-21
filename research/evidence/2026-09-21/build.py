@@ -1,5 +1,6 @@
 """9월 21일 장전판을 검증된 전일 조립 계약으로 생성한다."""
 from pathlib import Path
+import json
 
 HERE = Path(__file__).parent
 SOURCE = (HERE.parent / '2026-09-18' / 'build.py').read_text(encoding='utf-8')
@@ -51,5 +52,52 @@ SOURCE = SOURCE.replace("E.parent/'2026-09-20'", "E.parent/'2026-09-18'")
 namespace = {'__name__': 'market_build', '__file__': str(HERE / 'template-2026-09-18.py')}
 exec(compile(SOURCE, str(HERE / 'template-2026-09-18.py'), 'exec'), namespace)
 
+
+def number(value):
+    return float(str(value).replace(',', ''))
+
+
+def repair_kospi_snapshot(path):
+    """Use the collected 9/18 bar as one atomic OHLC observation.
+
+    The inherited template has editorial text substitutions, but a market bar
+    must never be assembled field-by-field from different sessions.
+    """
+    raw = json.loads((HERE / 'KOSPI.json').read_text(encoding='utf-8'))['data']
+    bar = next(row for row in raw if row['localTradedAt'] == '2026-09-18')
+    close = number(bar['closePrice'])
+    previous_close = close - number(bar['compareToPreviousClosePrice'])
+    points = [
+        ('시가', number(bar['openPrice'])),
+        ('고가', number(bar['highPrice'])),
+        ('저가', number(bar['lowPrice'])),
+        ('종가', close),
+    ]
+    data = json.loads(path.read_text(encoding='utf-8'))
+    market = next(item for item in data['markets'] if item['id'] == 'KOSPI')
+    market.update(
+        value=close,
+        changePercent=number(bar['fluctuationsRatio']),
+        open=number(bar['openPrice']),
+        high=number(bar['highPrice']),
+        low=number(bar['lowPrice']),
+        previousClose=previous_close,
+        asOf='2026-09-18T15:30:00+09:00',
+        asOfLabel='9월 18일 종가',
+        stateLabel='정규장 종가',
+    )
+    instrument = next(item for item in data['technical']['instruments'] if item['id'] == 'KOSPI')
+    instrument.update(
+        asOf='2026-09-18T15:30:00+09:00',
+        asOfLabel='9월 18일 정규장 종가',
+        points=[{'label': label, 'value': value} for label, value in points],
+    )
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
+
+
 if __name__ == '__main__':
-    namespace['main'](seal='--seal' in __import__('sys').argv)
+    arguments = __import__('sys').argv
+    if '--repair-dashboard' not in arguments:
+        namespace['main'](seal='--seal' in arguments)
+    repair_kospi_snapshot(Path('assets/data/market-dashboard-latest.json'))
+    repair_kospi_snapshot(Path('assets/data/market-dashboard-20260921-0814.json'))
