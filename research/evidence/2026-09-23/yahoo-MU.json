@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/MU?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-09-23T08:14:47+09:00",
+  "rawHash": "c5c8a2232e66cf76eb98613c7f2c05333642d0d01e6e7e61300d850fb78135e9",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "MU",
+            "exchangeName": "NMS",
+            "fullExchangeName": "NasdaqGS",
+            "instrumentType": "EQUITY",
+            "firstTradeDate": 454944600,
+            "regularMarketTime": 1790107201,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 1096.16,
+            "regularMarketChangePercent": 5.0,
+            "fulldayPrice": 1094.2,
+            "fulldayChange": 50.302,
+            "fulldayChangePercent": 4.818,
+            "fiftyTwoWeekHigh": 1255.0,
+            "fiftyTwoWeekLow": 154.65,
+            "regularMarketDayHigh": 1097.25,
+            "regularMarketDayLow": 1030.015,
+            "regularMarketVolume": 28773640,
+            "longName": "Micron Technology, Inc.",
+            "shortName": "Micron Technology, Inc.",
+            "chartPreviousClose": 927.6,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "start": 1790064000,
+                "end": 1790083800,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "start": 1790083800,
+                "end": 1790107200,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "start": 1790107200,
+                "end": 1790121600,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1789565400,
+            1789651800,
+            1789738200,
+            1789997400,
+            1790083800
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "low": [
+                  917.6400146484375,
+                  953.5,
+                  977.8300170898438,
+                  1030.6800537109375,
+                  1030.0150146484375
+                ],
+                "close": [
+                  926.5499877929688,
+                  977.5,
+                  1015.7999877929688,
+                  1043.9599609375,
+                  1096.1600341796875
+                ],
+                "volume": [
+                  20213000,
+                  22091600,
+                  35803500,
+                  28174400,
+                  28773640
+                ],
+                "open": [
+                  934.22998046875,
+                  954.5700073242188,
+                  984.719970703125,
+                  1044.989990234375,
+                  1033.280029296875
+                ],
+                "high": [
+                  941.2000122070312,
+                  986.2000122070312,
+                  1016.4400024414062,
+                  1064.489990234375,
+                  1097.25
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  926.5499877929688,
+                  977.5,
+                  1015.7999877929688,
+                  1043.9599609375,
+                  1096.1600341796875
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}
