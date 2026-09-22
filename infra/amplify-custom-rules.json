@@ -207,37 +207,37 @@
   },
   {
     "source": "/market-data/stock/122630/history/price-1",
-    "target": "https://m.stock.naver.com/front-api/stock/domestic/price/list?code=122630&page=1&pageSize=50",
+    "target": "https://m.stock.naver.com/api/stock/122630/price?pageSize=50&page=1",
     "status": "200"
   },
   {
     "source": "/market-data/stock/122630/history/price-2",
-    "target": "https://m.stock.naver.com/front-api/stock/domestic/price/list?code=122630&page=2&pageSize=50",
+    "target": "https://m.stock.naver.com/api/stock/122630/price?pageSize=50&page=2",
     "status": "200"
   },
   {
     "source": "/market-data/stock/122630/history/price-3",
-    "target": "https://m.stock.naver.com/front-api/stock/domestic/price/list?code=122630&page=3&pageSize=50",
+    "target": "https://m.stock.naver.com/api/stock/122630/price?pageSize=50&page=3",
     "status": "200"
   },
   {
     "source": "/market-data/stock/122630/history/price-4",
-    "target": "https://m.stock.naver.com/front-api/stock/domestic/price/list?code=122630&page=4&pageSize=50",
+    "target": "https://m.stock.naver.com/api/stock/122630/price?pageSize=50&page=4",
     "status": "200"
   },
   {
     "source": "/market-data/stock/122630/history/price-5",
-    "target": "https://m.stock.naver.com/front-api/stock/domestic/price/list?code=122630&page=5&pageSize=50",
+    "target": "https://m.stock.naver.com/api/stock/122630/price?pageSize=50&page=5",
     "status": "200"
   },
   {
     "source": "/market-data/stock/122630/history/price-6",
-    "target": "https://m.stock.naver.com/front-api/stock/domestic/price/list?code=122630&page=6&pageSize=50",
+    "target": "https://m.stock.naver.com/api/stock/122630/price?pageSize=50&page=6",
     "status": "200"
   },
   {
     "source": "/market-data/stock/122630/history/price-7",
-    "target": "https://m.stock.naver.com/front-api/stock/domestic/price/list?code=122630&page=7&pageSize=50",
+    "target": "https://m.stock.naver.com/api/stock/122630/price?pageSize=50&page=7",
     "status": "200"
   },
   {

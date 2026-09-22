@@ -212,16 +212,17 @@
     function normalizeKodexPriceHistory(payloads) {
         var rowsByDate = {};
         (payloads || []).forEach(function (payload) {
-            var rows = payload && payload.isSuccess && Array.isArray(payload.result) ? payload.result : [];
+            var result = Array.isArray(payload) ? payload : payload && payload.isSuccess && payload.result;
+            var rows = Array.isArray(result) ? result : result && Array.isArray(result.items) ? result.items : [];
             rows.forEach(function (row) {
-                var date = row && String(row.localTradedAt || '');
+                var date = row && String(row.localTradedAt || row.tradingDateKst || '');
                 var normalized = {
                     date: date,
-                    open: parseNumber(row && row.openPrice),
+                    open: parseNumber(row && (row.openPrice || row.openingPrice)),
                     high: parseNumber(row && row.highPrice),
                     low: parseNumber(row && row.lowPrice),
-                    close: parseNumber(row && row.closePrice),
-                    volume: parseNumber(row && row.accumulatedTradingVolume)
+                    close: parseNumber(row && (row.closePrice || row.closingPrice)),
+                    volume: parseNumber(row && (row.accumulatedTradingVolume || row.tradingVolume))
                 };
                 if (!/^\d{4}-\d{2}-\d{2}$/.test(date)
                     || ![normalized.open, normalized.high, normalized.low, normalized.close, normalized.volume].every(Number.isFinite)
@@ -633,12 +634,20 @@
                 var quote = result && result.indicators && result.indicators.quote && result.indicators.quote[0];
                 var jsonRows = [];
                 (result && result.timestamp || []).forEach(function (timestamp, index) {
-                    var open = quote && Number(quote.open[index]);
-                    var high = quote && Number(quote.high[index]);
-                    var low = quote && Number(quote.low[index]);
-                    var close = quote && Number(quote.close[index]);
-                    var volume = quote && Number(quote.volume[index]);
-                    if (![open, high, low, close, volume].every(Number.isFinite)) return;
+                    var rawOpen = quote && quote.open[index];
+                    var rawHigh = quote && quote.high[index];
+                    var rawLow = quote && quote.low[index];
+                    var rawClose = quote && quote.close[index];
+                    var rawVolume = quote && quote.volume[index];
+                    if ([rawOpen, rawHigh, rawLow, rawClose, rawVolume].some(function (value) { return value === null || value === undefined; })) return;
+                    var open = Number(rawOpen);
+                    var high = Number(rawHigh);
+                    var low = Number(rawLow);
+                    var close = Number(rawClose);
+                    var volume = Number(rawVolume);
+                    if (![open, high, low, close, volume].every(Number.isFinite)
+                        || open <= 0 || high <= 0 || low <= 0 || close <= 0 || volume <= 0
+                        || high < Math.max(open, close) || low > Math.min(open, close)) return;
                     jsonRows.push({
                         date: new Date(Number(timestamp) * 1000).toISOString().slice(0, 10),
                         open: open,
@@ -1433,7 +1442,11 @@
             credentials: 'same-origin',
             signal: signal
         }).then(function (response) {
-            if (!response.ok) throw new Error('최신 가격 이력을 불러오지 못했습니다.');
+            if (!response.ok) {
+                var error = new Error('최신 가격 이력을 불러오지 못했습니다.');
+                error.status = response.status;
+                throw error;
+            }
             return response.text();
         });
     }
@@ -1521,7 +1534,11 @@
         }
         var pageRequests = [];
         for (var page = 1; page <= pageCount; page += 1) {
-            pageRequests.push(fetchKospiForeignFlowPage(fetchImpl, baseUrl, page, signal, nonce, now, ttlMs));
+            pageRequests.push(fetchKospiForeignFlowPage(fetchImpl, baseUrl, page, signal, nonce, now, ttlMs).catch(function (error) {
+                if (error && error.name === 'AbortError') throw error;
+                if (error && error.status === 410) return [];
+                throw error;
+            }));
         }
         return Promise.all([
             fetchKospiPriceHistory(fetchImpl, baseUrl, signal, nonce, now, ttlMs),

@@ -78,6 +78,39 @@ async function main() {
         volume: 1234567
     });
 
+    const currentKodexPayload = {
+        isSuccess: true,
+        result: {
+            items: [{
+                tradingDateKst: '2026-09-21',
+                openingPrice: '110920',
+                highPrice: '114925',
+                lowPrice: '110635',
+                closingPrice: '114060',
+                tradingVolume: '14642059'
+            }]
+        }
+    };
+    assert.deepStrictEqual(live.normalizeKodexPriceHistory([currentKodexPayload]), [{
+        date: '2026-09-21', open: 110920, high: 114925, low: 110635, close: 114060, volume: 14642059
+    }], 'KODEX 현재 result.items 응답도 가격 이력으로 정규화해야 한다.');
+    assert.deepStrictEqual(live.normalizeKodexPriceHistory([[{
+        localTradedAt: '2026-09-21', openPrice: '110920', highPrice: '114925', lowPrice: '110635',
+        closePrice: '114060', accumulatedTradingVolume: '14642059'
+    }]]), [{
+        date: '2026-09-21', open: 110920, high: 114925, low: 110635, close: 114060, volume: 14642059
+    }], 'KODEX 현재 /api/stock/122630/price 배열 응답도 정규화해야 한다.');
+
+    const tqqqPayload = JSON.stringify({ chart: { result: [{
+        timestamp: [Date.parse('2026-09-18T20:00:00Z') / 1000, Date.parse('2026-09-21T20:00:00Z') / 1000],
+        indicators: { quote: [{
+            open: [75, 76], high: [78, 79], low: [74, 75], close: [77, null], volume: [1000, 1200]
+        }] }
+    }] } });
+    assert.deepStrictEqual(live.normalizeTqqqPriceHistory(tqqqPayload), [{
+        date: '2026-09-18', open: 75, high: 78, low: 74, close: 77, volume: 1000
+    }], 'TQQQ 미완성 null 종가를 0달러 봉으로 만들면 안 된다.');
+
     const flowHtml = [
         '<table>',
         '<tr><td class="date2">26.08.07</td><td>1,100</td><td class="rate_up">2,350</td><td>-3,450</td></tr>',
@@ -96,6 +129,23 @@ async function main() {
     assert.strictEqual(merged[0].foreign, -1250);
     assert.strictEqual(merged[1].foreign, 2350);
     assert.strictEqual(merged[1].volume, 1456789);
+
+    const longPriceXml = '<protocol><chartdata>' + Array.from({ length: 240 }, (_, index) => {
+        const date = new Date(Date.UTC(2025, 0, 1 + index)).toISOString().slice(0, 10).replace(/-/g, '');
+        return '<item data="' + date + '|100|105|95|102|1000" />';
+    }).join('') + '</chartdata></protocol>';
+    const goneFlowFetch = async (url) => {
+        if (url.includes('/index/KOSPI/history')) return { ok: true, status: 200, text: async () => longPriceXml };
+        if (url.includes('/foreign-flow/page-')) return { ok: false, status: 410, text: async () => '' };
+        throw new Error('Unexpected URL ' + url);
+    };
+    const priceOnlyHistory = await live.fetchKospiTechnicalHistory(
+        goneFlowFetch,
+        'https://gone-flow.test/market-data/',
+        { pageCount: 3, now: Date.parse('2026-09-22T10:00:00+09:00'), ttlMs: 1 }
+    );
+    assert.strictEqual(priceOnlyHistory.length, 240, '종료된 수급 원천이 410이어도 KOSPI 가격 차트는 그려야 한다.');
+    assert.ok(priceOnlyHistory.every((row) => row.foreign === null), '410 수급은 추정하지 않고 null로 남겨야 한다.');
 
     const foreignFlowValues = Array.from({ length: 80 }, (_, index) => -8000 + index * 250);
     const foreignFlowMacd = live.calculateMacd(foreignFlowValues, 12, 26, 9);
