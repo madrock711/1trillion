@@ -57,40 +57,51 @@ def number(value):
     return float(str(value).replace(',', ''))
 
 
-def repair_kospi_snapshot(path):
-    """Use the collected 9/18 bar as one atomic OHLC observation.
-
-    The inherited template has editorial text substitutions, but a market bar
-    must never be assembled field-by-field from different sessions.
-    """
-    raw = json.loads((HERE / 'KOSPI.json').read_text(encoding='utf-8'))['data']
-    bar = next(row for row in raw if row['localTradedAt'] == '2026-09-21')
-    close = number(bar['closePrice'])
-    previous_close = close - number(bar['compareToPreviousClosePrice'])
-    points = [
+def bar_points(bar):
+    return [
         ('시가', number(bar['openPrice'])),
         ('고가', number(bar['highPrice'])),
         ('저가', number(bar['lowPrice'])),
-        ('종가', close),
+        ('종가', number(bar['closePrice'])),
     ]
+
+
+def repair_dashboard_snapshot(path):
+    """Keep every published OHLC field and level tied to its source session."""
+    kospi_bar = next(row for row in json.loads((HERE / 'KOSPI.json').read_text(encoding='utf-8'))['data'] if row['localTradedAt'] == '2026-09-21')
+    kodex_bar = next(row for row in json.loads((HERE / '122630.json').read_text(encoding='utf-8'))['data'] if row['localTradedAt'] == '2026-09-21')
+    close = number(kospi_bar['closePrice'])
+    previous_close = round(close - number(kospi_bar['compareToPreviousClosePrice']), 2)
     data = json.loads(path.read_text(encoding='utf-8'))
     market = next(item for item in data['markets'] if item['id'] == 'KOSPI')
     market.update(
         value=close,
-        changePercent=number(bar['fluctuationsRatio']),
-        open=number(bar['openPrice']),
-        high=number(bar['highPrice']),
-        low=number(bar['lowPrice']),
+        changePercent=number(kospi_bar['fluctuationsRatio']),
+        open=number(kospi_bar['openPrice']),
+        high=number(kospi_bar['highPrice']),
+        low=number(kospi_bar['lowPrice']),
         previousClose=previous_close,
-        asOf='2026-09-18T15:30:00+09:00',
-        asOfLabel='9월 18일 종가',
+        asOf='2026-09-21T15:30:00+09:00',
+        asOfLabel='9월 21일 종가',
         stateLabel='정규장 종가',
     )
     instrument = next(item for item in data['technical']['instruments'] if item['id'] == 'KOSPI')
     instrument.update(
-        asOf='2026-09-18T15:30:00+09:00',
-        asOfLabel='9월 18일 정규장 종가',
-        points=[{'label': label, 'value': value} for label, value in points],
+        asOf='2026-09-21T15:30:00+09:00',
+        asOfLabel='9월 21일 정규장 종가',
+        points=[{'label': label, 'value': value} for label, value in bar_points(kospi_bar)],
+    )
+    kodex = next(item for item in data['technical']['instruments'] if item['id'] == 'KODEX')
+    kodex.update(
+        asOf='2026-09-21T15:30:00+09:00',
+        asOfLabel='9월 21일 정규장 종가',
+        points=[{'label': label, 'value': value} for label, value in bar_points(kodex_bar)],
+        levels=[
+            {'label': '1차 지지', 'value': 110635},
+            {'label': '반등 기준', 'value': 114060},
+            {'label': '저항', 'value': 114925},
+        ],
+        interpretation='1차 지지 110,635 · 반등 기준 114,060 · 저항 114,925',
     )
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
 
@@ -99,5 +110,5 @@ if __name__ == '__main__':
     arguments = __import__('sys').argv
     if '--repair-dashboard' not in arguments:
         namespace['main'](seal='--seal' in arguments)
-    repair_kospi_snapshot(Path('assets/data/market-dashboard-latest.json'))
-    repair_kospi_snapshot(Path('assets/data/market-dashboard-20260921-0814.json'))
+    repair_dashboard_snapshot(Path('assets/data/market-dashboard-latest.json'))
+    repair_dashboard_snapshot(Path('assets/data/market-dashboard-20260922-0808.json'))

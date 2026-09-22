@@ -37,5 +37,15 @@ assert(kodex, '최신 발행 스냅샷에 KODEX 기술 데이터가 필요하다
     const level = kodex.levels.find((item) => item.label === label);
     assert(level && Number.isFinite(level.value), `${label} 숫자가 최신 발행 스냅샷에 있어야 한다.`);
 });
+assert.deepStrictEqual(
+    kodex.points.map((point) => point.value),
+    [110920, 114925, 110635, 114060],
+    'KODEX OHLC는 9월 21일 단일 거래일에서만 조립해야 한다.'
+);
+assert.deepStrictEqual(
+    kodex.levels.map((level) => level.value),
+    [110635, 114060, 114925],
+    'KODEX 지지·중심·저항은 중심값보다 낮은 이전 거래일 고가를 섞으면 안 된다.'
+);
 
 console.log('KODEX published support and resistance overlay tests passed.');
