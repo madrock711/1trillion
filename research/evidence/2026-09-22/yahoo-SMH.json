@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-09-22T08:03:52+09:00",
+  "rawHash": "7428561274d03531cfb3addcd131cbf33c8d05141d0d975225c00b03370832a4",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "SMH",
+            "exchangeName": "NGM",
+            "fullExchangeName": "NasdaqGM",
+            "instrumentType": "ETF",
+            "firstTradeDate": 960211800,
+            "regularMarketTime": 1790020800,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 596.03,
+            "regularMarketChangePercent": 4.019,
+            "fulldayPrice": 597.29,
+            "fulldayChange": 24.9,
+            "fulldayChangePercent": 4.346,
+            "fiftyTwoWeekHigh": 671.83,
+            "fiftyTwoWeekLow": 313.6,
+            "regularMarketDayHigh": 598.62,
+            "regularMarketDayLow": 578.555,
+            "regularMarketVolume": 9758693,
+            "longName": "VanEck Semiconductor ETF",
+            "shortName": "VanEck Semiconductor ETF",
+            "chartPreviousClose": 541.5,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "start": 1789977600,
+                "end": 1789997400,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "start": 1789997400,
+                "end": 1790020800,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "start": 1790020800,
+                "end": 1790035200,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1789479000,
+            1789565400,
+            1789651800,
+            1789738200,
+            1789997400
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "open": [
+                  546.5700073242188,
+                  549.9500122070312,
+                  560.0999755859375,
+                  562.8800048828125,
+                  582.4450073242188
+                ],
+                "low": [
+                  540.1099853515625,
+                  540.4500122070312,
+                  557.5599975585938,
+                  562.75,
+                  578.5551147460938
+                ],
+                "high": [
+                  548.1900024414062,
+                  553.1699829101562,
+                  561.77001953125,
+                  580.8099975585938,
+                  598.6199951171875
+                ],
+                "volume": [
+                  6113700,
+                  5998800,
+                  6164200,
+                  6269900,
+                  9758693
+                ],
+                "close": [
+                  542.1099853515625,
+                  545.5599975585938,
+                  560.6099853515625,
+                  573.0,
+                  596.030029296875
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  542.1099853515625,
+                  545.5599975585938,
+                  560.6099853515625,
+                  573.0,
+                  596.030029296875
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}

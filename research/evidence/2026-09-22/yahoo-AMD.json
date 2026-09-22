@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-09-22T08:03:52+09:00",
+  "rawHash": "9fe882ff26bedce386383260b1cf6649ddc6c9157e8a7414eeff108400a29896",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "AMD",
+            "exchangeName": "NMS",
+            "fullExchangeName": "NasdaqGS",
+            "instrumentType": "EQUITY",
+            "firstTradeDate": 322151400,
+            "regularMarketTime": 1790020801,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 615.52,
+            "regularMarketChangePercent": 9.95,
+            "fulldayPrice": 619.5,
+            "fulldayChange": 59.68,
+            "fulldayChangePercent": 10.661,
+            "fiftyTwoWeekHigh": 616.68,
+            "fiftyTwoWeekLow": 154.78,
+            "regularMarketDayHigh": 616.68,
+            "regularMarketDayLow": 582.27,
+            "regularMarketVolume": 44156939,
+            "longName": "Advanced Micro Devices, Inc.",
+            "shortName": "Advanced Micro Devices, Inc.",
+            "chartPreviousClose": 493.41,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "start": 1789977600,
+                "end": 1789997400,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "start": 1789997400,
+                "end": 1790020800,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "start": 1790020800,
+                "end": 1790035200,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1789479000,
+            1789565400,
+            1789651800,
+            1789738200,
+            1789997400
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "open": [
+                  501.70001220703125,
+                  517.3900146484375,
+                  533.5999755859375,
+                  547.3699951171875,
+                  583.9400024414062
+                ],
+                "high": [
+                  513.6699829101562,
+                  527.25,
+                  551.4199829101562,
+                  559.9099731445312,
+                  616.6799926757812
+                ],
+                "low": [
+                  497.510009765625,
+                  506.04998779296875,
+                  527.5999755859375,
+                  541.530029296875,
+                  582.27001953125
+                ],
+                "close": [
+                  504.20001220703125,
+                  512.5,
+                  545.0900268554688,
+                  559.8200073242188,
+                  615.52001953125
+                ],
+                "volume": [
+                  17134000,
+                  22317700,
+                  28464700,
+                  31785700,
+                  44156939
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  504.20001220703125,
+                  512.5,
+                  545.0900268554688,
+                  559.8200073242188,
+                  615.52001953125
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}
