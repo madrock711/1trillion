@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-09-23T08:14:47+09:00",
-  "source": "Naver Finance KOSPI PREOPEN 2026-09-23; KRX 거래일",
-  "rawHash": "7bbf43f6e9d0646757c02895e5b22de16272878674803b62a59df52b8aacf9b2",
+  "asOf": "2026-09-28T08:21:02+09:00",
+  "source": "Naver Finance KOSPI PREOPEN 2026-09-28; KRX 거래일",
+  "rawHash": "746b3e1adec925574b5baed7376a054edfa7d52017476e0e0ec2d07a7a828594",
   "sessions": [
     "2026-07-27",
     "2026-07-28",
@@ -45,6 +45,7 @@
     "2026-09-18",
     "2026-09-21",
     "2026-09-22",
-    "2026-09-23"
+    "2026-09-23",
+    "2026-09-28"
   ]
 }
