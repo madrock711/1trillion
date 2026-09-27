@@ -5,6 +5,7 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const checks = [
     'scripts/audit_public_site.js',
+    'tests/test_precommit_hook_runner.js',
     'tests/test_home_article_feed.js',
     'tests/test_home_article_search.js',
     'tests/test_market_dashboard_validation.js'

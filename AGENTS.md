@@ -6,7 +6,7 @@
 - 작업 시작 전에 `git rebase origin/main`을 수행한다.
 - 문서는 기본적으로 한글로 작성한다.
 - 코드나 설정을 수정하면 `docs/현재작업중.md`에 변경 파일과 작업 내용을 갱신한다.
-- 커밋 전 `.githooks/pre-commit`과 `scripts/check_worklog_guard.sh`를 통과시킨다.
+- 커밋 전 `.githooks/pre-commit`과 `scripts/check_worklog_guard.sh`를 통과시킨다. Windows PowerShell에서 확장자 없는 훅을 직접 실행하지 않는다. 훅 수동 검증은 반드시 `bash .githooks/pre-commit` 또는 `pwsh -NoProfile -File scripts/run_precommit_hook.ps1`로 실행하며, `./.githooks/pre-commit` 및 `.\\.githooks\\pre-commit` 직접 실행은 금지한다.
 - 작업 완료 후 관련 변경만 커밋하고 현재 브랜치를 원격에 푸시한다.
 - `docs/screenshot/`의 이미지 변경은 작업 중 발생 가능한 예외로 보고, 이번 작업과 무관하면 건드리지 않는다.
 
