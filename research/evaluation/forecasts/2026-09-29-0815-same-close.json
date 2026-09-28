@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-29-0815-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-09-29.md",
+  "reportSha256": "08da218452acbba6cf772f86f718860019789852a9c4706e03ddebb7098ffcf1",
+  "issuedAt": "2026-09-29T08:15:27+09:00",
+  "dataCutoffAt": "2026-09-29T08:15:27+09:00",
+  "marketState": "preopen",
+  "marketRegime": "risk_off",
+  "evaluationBucket": "preopen",
+  "target": {
+    "sessionDate": "2026-09-29",
+    "horizon": "session_close",
+    "instrument": "KOSPI",
+    "leadSessions": 0,
+    "previousSessionDate": "2026-09-28"
+  },
+  "reference": {
+    "price": 6889.74,
+    "asOf": "2026-09-28T15:30:00+09:00",
+    "kind": "previous_close"
+  },
+  "scenarios": {
+    "bull": {
+      "low": 6950,
+      "high": 7100,
+      "probability": 0.15
+    },
+    "base": {
+      "low": 6800,
+      "high": 6950,
+      "probability": 0.45
+    },
+    "bear": {
+      "low": 6550,
+      "high": 6800,
+      "probability": 0.4
+    }
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {
+    "low": 6450,
+    "high": 7100,
+    "coverage": 0.9
+  },
+  "drivers": [
+    {
+      "id": "us-chip-risk-off",
+      "rank": 1,
+      "claim": "미국 반도체 약세가 국내 메모리주 장전 약세로 이어진다.",
+      "validationMetric": "SOXX·MU·삼성전자·SK하이닉스"
+    },
+    {
+      "id": "oil-yield-pressure",
+      "rank": 2,
+      "claim": "유가 상승과 높은 장기금리가 6,950선 위 추격을 제한한다.",
+      "validationMetric": "Brent·미 10년물·KOSPI"
+    },
+    {
+      "id": "domestic-flow",
+      "rank": 3,
+      "claim": "6,900선 회복은 외국인과 프로그램 수급의 동행이 확인해야 한다.",
+      "validationMetric": "외국인·프로그램·KOSPI"
+    }
+  ],
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-09-29T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 6950,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "bull-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급 (억원)"
+        },
+        {
+          "id": "bull-program",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급 (억원)"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-09-29T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-floor",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 6800,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "base-cap",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 6950,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "base-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gte",
+          "threshold": -10000,
+          "source": "Naver Finance KOSPI 수급 (억원)"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-09-29T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 6800,
+          "source": "Naver Finance KOSPI"
+        },
+        {
+          "id": "bear-foreign",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급 (억원)"
+        },
+        {
+          "id": "bear-program",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급 (억원)"
+        }
+      ]
+    }
+  },
+  "hypothesisTrials": [],
+  "posture": {
+    "attack": 15,
+    "wait": 40,
+    "defense": 45
+  },
+  "supersedes": null,
+  "contentHash": "d28d15068f10f48db2bfcca5a6de8480998541649a968177c70c5ab0c6c4fc01"
+}

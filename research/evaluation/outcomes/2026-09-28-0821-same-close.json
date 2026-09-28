@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-28-0821-same-close",
+  "recordedAt": "2026-09-29T08:15:27+09:00",
+  "actualRef": "2026-09-28",
+  "realizedScenario": "bear",
+  "errorCodes": [
+    "range_too_narrow_down"
+  ],
+  "triggerResults": [
+    {
+      "id": "all",
+      "status": "unavailable",
+      "reason": "15시 20분 정확 시각 수급 원문 미확보"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "ai-capacity-contract",
+      "status": "rejected"
+    },
+    {
+      "id": "long-yield",
+      "status": "confirmed"
+    },
+    {
+      "id": "domestic-flow",
+      "status": "unavailable"
+    }
+  ],
+  "hypothesisTests": []
+}

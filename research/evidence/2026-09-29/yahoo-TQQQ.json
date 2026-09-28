@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/TQQQ?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-09-29T08:15:27+09:00",
+  "rawHash": "2f78132d259e79c4b4d8c8d376649b7d7cc4d0f8692444015b865a9ba1232ded",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "TQQQ",
+            "exchangeName": "NGM",
+            "fullExchangeName": "NasdaqGM",
+            "instrumentType": "ETF",
+            "firstTradeDate": 1265898600,
+            "regularMarketTime": 1790625600,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 77.04,
+            "regularMarketChangePercent": -3.216,
+            "fulldayPrice": 77.255,
+            "fulldayChange": -2.35,
+            "fulldayChangePercent": -2.952,
+            "fiftyTwoWeekHigh": 88.09,
+            "fiftyTwoWeekLow": 37.32,
+            "regularMarketDayHigh": 78.595,
+            "regularMarketDayLow": 75.465,
+            "regularMarketVolume": 57334117,
+            "longName": "ProShares UltraPro QQQ",
+            "shortName": "ProShares UltraPro QQQ",
+            "chartPreviousClose": 78.91,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "start": 1790582400,
+                "end": 1790602200,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "start": 1790602200,
+                "end": 1790625600,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "start": 1790625600,
+                "end": 1790640000,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1790083800,
+            1790170200,
+            1790256600,
+            1790343000,
+            1790602200
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "open": [
+                  78.7699966430664,
+                  80.52999877929688,
+                  76.75,
+                  79.08999633789062,
+                  78.30000305175781
+                ],
+                "low": [
+                  78.7699966430664,
+                  77.69000244140625,
+                  76.55000305175781,
+                  78.05999755859375,
+                  75.46499633789062
+                ],
+                "close": [
+                  80.83000183105469,
+                  78.66000366210938,
+                  78.58000183105469,
+                  79.5999984741211,
+                  77.04000091552734
+                ],
+                "volume": [
+                  45285000,
+                  52118700,
+                  58181700,
+                  57694700,
+                  57334117
+                ],
+                "high": [
+                  81.12000274658203,
+                  80.56999969482422,
+                  79.0999984741211,
+                  80.05999755859375,
+                  78.59500122070312
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  80.67400360107422,
+                  78.66000366210938,
+                  78.58000183105469,
+                  79.5999984741211,
+                  77.04000091552734
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}

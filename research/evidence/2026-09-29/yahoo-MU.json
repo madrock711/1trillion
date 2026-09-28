@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/MU?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-09-29T08:15:27+09:00",
+  "rawHash": "55714c46c8bd95011fb79469f5e72e14f0183ed73bca5c05a669ea4b15295f34",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "MU",
+            "exchangeName": "NMS",
+            "fullExchangeName": "NasdaqGS",
+            "instrumentType": "EQUITY",
+            "firstTradeDate": 454944600,
+            "regularMarketTime": 1790625601,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 1053.98,
+            "regularMarketChangePercent": -2.615,
+            "fulldayPrice": 1055.065,
+            "fulldayChange": -26.78,
+            "fulldayChangePercent": -2.474,
+            "fiftyTwoWeekHigh": 1255.0,
+            "fiftyTwoWeekLow": 159.97,
+            "regularMarketDayHigh": 1084.81,
+            "regularMarketDayLow": 1032.0,
+            "regularMarketVolume": 21888708,
+            "longName": "Micron Technology, Inc.",
+            "shortName": "Micron Technology, Inc.",
+            "chartPreviousClose": 1043.96,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "start": 1790582400,
+                "end": 1790602200,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "start": 1790602200,
+                "end": 1790625600,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "start": 1790625600,
+                "end": 1790640000,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1790083800,
+            1790170200,
+            1790256600,
+            1790343000,
+            1790602200
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "high": [
+                  1097.25,
+                  1105.5,
+                  1081.0400390625,
+                  1108.719970703125,
+                  1084.81005859375
+                ],
+                "open": [
+                  1032.8499755859375,
+                  1100.0699462890625,
+                  1049.75,
+                  1095.8299560546875,
+                  1075.5999755859375
+                ],
+                "close": [
+                  1096.1600341796875,
+                  1071.8800048828125,
+                  1080.530029296875,
+                  1082.280029296875,
+                  1053.97998046875
+                ],
+                "low": [
+                  1030.02001953125,
+                  1064.25,
+                  1044.0,
+                  1073.0,
+                  1032.0
+                ],
+                "volume": [
+                  29189700,
+                  21572800,
+                  22069900,
+                  20870400,
+                  21888708
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  1096.1600341796875,
+                  1071.8800048828125,
+                  1080.530029296875,
+                  1082.280029296875,
+                  1053.97998046875
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}
