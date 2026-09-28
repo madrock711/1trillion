@@ -101,6 +101,12 @@ write('reports/2026-09-29.md', report)
 
 old = read('articles/market-2026-09-28.html')
 prefix = old.split('<article class="editorial-article reading-article">')[0]
+prefix = (prefix.replace('AI 수요 계약은 이어졌지만, KOSPI 7,155선 앞엔 금리가 남았다', TITLE)
+               .replace('미국 반도체 강세와 AI 장기 용량 계약이 하단을 지지합니다. KOSPI 7,155선 위는 장기금리와 국내 수급을 함께 넘어야 합니다.', SUMMARY)
+               .replace('market-2026-09-28.html', 'market-2026-09-29.html')
+               .replace('market-2026-09-28-ai-demand-yield-gate-1200x630.png', IMAGE)
+               .replace('2026-09-28T08:21:05+09:00', issued.isoformat())
+               .replace('서울 아침빛과 데이터센터 서버, 푸른 빛의 컴퓨팅 흐름과 금빛 장기금리 곡선', ALT))
 suffix = old[old.index('</div></article></main>'):]
 header = f'<article class="editorial-article reading-article"><header class="article-hero"><h1>{TITLE}</h1><p class="article-dek">{SUMMARY}</p><div class="article-meta"><strong><a href="../about.html">HPMPLab</a></strong><time datetime="{issued.isoformat()}">2026.09.29 · {issued:%H:%M} KST</time><span>장전 브리핑</span></div><p class="article-disclosure">작성 {issued:%H:%M} KST · 데이터 최종 확인 {cutoff}. 미국 정규장은 9월 28일, 국내 NXT·환율·미국 선물은 장전 표의 개별 시각 기준이다. 특정 상품의 매매 권유가 아닌 조건부 시장 분석이다.</p><figure class="article-hero-media"><img src="../assets/images/articles/{IMAGE}" width="1200" height="630" decoding="async" fetchpriority="high" alt="{ALT}"></figure></header><div class="article-body" id="article-body">'
 charts = '<figure class="article-chart article-inline-media"><img src="../charts/us_yield_spreads_90d_2026-09-29.png" width="1600" height="900" loading="lazy" alt="미국 장단기 금리차 최근 90일"><figcaption>FRED 최신 금리차 관측일은 9월 28일이다.</figcaption></figure><figure class="article-chart article-inline-media"><img src="../charts/us_yield_spreads_long_term_2026-09-29.png" width="1600" height="900" loading="lazy" alt="미국 장단기 금리차 최근 2년"></figure>'
