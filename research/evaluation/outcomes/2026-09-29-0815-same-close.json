@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-29-0815-same-close",
+  "recordedAt": "2026-09-30T08:12:34+09:00",
+  "actualRef": "2026-09-29",
+  "realizedScenario": "base",
+  "errorCodes": [],
+  "triggerResults": [
+    {
+      "id": "all",
+      "status": "unavailable",
+      "reason": "15시 20분 정확 시각 수급 원문 미확보"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "us-chip-risk-off",
+      "status": "partially_confirmed"
+    },
+    {
+      "id": "oil-yield-pressure",
+      "status": "confirmed"
+    },
+    {
+      "id": "domestic-flow",
+      "status": "unavailable"
+    }
+  ],
+  "hypothesisTests": []
+}
