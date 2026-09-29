@@ -1,0 +1,8 @@
+{
+  "event": "pushed",
+  "forecastId": "2026-09-30-0812-same-close",
+  "contentHash": "85a0f8ba81ba1b5a2b68b20b3be758080f09e406201f8528d37a8e0edbb5d784",
+  "commitSha": "0fc23c11e7c6d9a7b3faf2c1c0e51afe917819de",
+  "issuedAt": "2026-09-30T08:14:10+09:00",
+  "visibility": "public"
+}
