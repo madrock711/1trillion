@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-09-30-0812-same-close",
+  "recordedAt": "2026-10-01T08:16:15+09:00",
+  "actualRef": "2026-09-30",
+  "realizedScenario": "base",
+  "errorCodes": [],
+  "triggerResults": [
+    {
+      "id": "all",
+      "status": "unavailable",
+      "reason": "15시 20분 정확 시각 수급 원문 미확보"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "us-chip-rebound",
+      "status": "partially_confirmed"
+    },
+    {
+      "id": "high-yield-ceiling",
+      "status": "confirmed"
+    },
+    {
+      "id": "domestic-flow",
+      "status": "unavailable"
+    }
+  ],
+  "hypothesisTests": []
+}
