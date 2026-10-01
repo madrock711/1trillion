@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-10-02T08:11:20+09:00",
+  "rawHash": "c598e8a6ea0dce2232944b51464dc2cbc241e99f2a23a3c0e464dc626db5227c",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "SMH",
+            "exchangeName": "NGM",
+            "fullExchangeName": "NasdaqGM",
+            "instrumentType": "ETF",
+            "firstTradeDate": 960211800,
+            "regularMarketTime": 1790884801,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 617.81,
+            "regularMarketChangePercent": 1.447,
+            "fulldayPrice": 619.25,
+            "fulldayChange": 10.25,
+            "fulldayChangePercent": 1.683,
+            "fiftyTwoWeekHigh": 671.83,
+            "fiftyTwoWeekLow": 315.05,
+            "regularMarketDayHigh": 620.9,
+            "regularMarketDayLow": 607.25,
+            "regularMarketVolume": 5099222,
+            "longName": "VanEck Semiconductor ETF",
+            "shortName": "VanEck Semiconductor ETF",
+            "chartPreviousClose": 600.52,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "end": 1790861400,
+                "start": 1790841600,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "end": 1790884800,
+                "start": 1790861400,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "end": 1790899200,
+                "start": 1790884800,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1790343000,
+            1790602200,
+            1790688600,
+            1790775000,
+            1790861400
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "close": [
+                  606.5599975585938,
+                  600.010009765625,
+                  606.9000244140625,
+                  609.0,
+                  617.8099975585938
+                ],
+                "volume": [
+                  4656600,
+                  5823900,
+                  5671500,
+                  4423600,
+                  5099222
+                ],
+                "low": [
+                  602.219970703125,
+                  591.9199829101562,
+                  604.989990234375,
+                  606.010009765625,
+                  607.25
+                ],
+                "high": [
+                  609.6599731445312,
+                  607.9500122070312,
+                  613.27001953125,
+                  611.9500122070312,
+                  620.9000244140625
+                ],
+                "open": [
+                  605.5700073242188,
+                  605.2899780273438,
+                  609.0,
+                  609.760009765625,
+                  610.7899780273438
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  606.5599975585938,
+                  600.010009765625,
+                  606.9000244140625,
+                  609.0,
+                  617.8099975585938
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}
