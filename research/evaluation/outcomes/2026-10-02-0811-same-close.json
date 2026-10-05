@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-10-02-0811-same-close",
+  "recordedAt": "2026-10-06T08:18:15+09:00",
+  "actualRef": "2026-10-02",
+  "realizedScenario": "base",
+  "errorCodes": [],
+  "triggerResults": [
+    {
+      "id": "all",
+      "status": "unavailable",
+      "reason": "15시 20분 정확 시각 수급 원문 미확보"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "us-chip-strength",
+      "status": "partially_confirmed"
+    },
+    {
+      "id": "yield-fx-ceiling",
+      "status": "partially_confirmed"
+    },
+    {
+      "id": "domestic-flow",
+      "status": "unavailable"
+    }
+  ],
+  "hypothesisTests": []
+}

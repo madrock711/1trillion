@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-10-06T08:18:15+09:00",
+  "rawHash": "f79f650f6fc107e97a02ec845c516ada3a33b2dab5958c3318d8b1f0c2af35c5",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "AMD",
+            "exchangeName": "NMS",
+            "fullExchangeName": "NasdaqGS",
+            "instrumentType": "EQUITY",
+            "firstTradeDate": 322151400,
+            "regularMarketTime": 1791230401,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 631.75,
+            "regularMarketChangePercent": -0.341,
+            "fulldayPrice": 631.75,
+            "fulldayChange": -1.42,
+            "fulldayChangePercent": -0.224,
+            "fiftyTwoWeekHigh": 645.46,
+            "fiftyTwoWeekLow": 188.22,
+            "regularMarketDayHigh": 633.5,
+            "regularMarketDayLow": 620.0,
+            "regularMarketVolume": 13607612,
+            "longName": "Advanced Micro Devices, Inc.",
+            "shortName": "Advanced Micro Devices, Inc.",
+            "chartPreviousClose": 607.87,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "start": 1791187200,
+                "end": 1791207000,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "start": 1791207000,
+                "end": 1791230400,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "start": 1791230400,
+                "end": 1791244800,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1790688600,
+            1790775000,
+            1790861400,
+            1790947800,
+            1791207000
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "close": [
+                  607.5700073242188,
+                  611.760009765625,
+                  615.72998046875,
+                  633.9099731445312,
+                  631.75
+                ],
+                "low": [
+                  605.25,
+                  600.0999755859375,
+                  601.5,
+                  628.5499877929688,
+                  620.0
+                ],
+                "open": [
+                  616.739990234375,
+                  609.8900146484375,
+                  612.7000122070312,
+                  635.9500122070312,
+                  630.3400268554688
+                ],
+                "high": [
+                  624.1300048828125,
+                  615.1699829101562,
+                  619.2999877929688,
+                  645.4600219726562,
+                  633.5
+                ],
+                "volume": [
+                  16513900,
+                  16749100,
+                  17134500,
+                  19825500,
+                  13607612
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  607.5700073242188,
+                  611.760009765625,
+                  615.72998046875,
+                  633.9099731445312,
+                  631.75
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}
