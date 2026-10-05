@@ -3,9 +3,9 @@
   "forecastId": "2026-10-06-0818-same-close",
   "visibility": "public",
   "reportPath": "reports/2026-10-06.md",
-  "reportSha256": "f0f78111c543464bbf7307c0f63c9a00a7c8fc33aba668c6ec410fd16dc35c5c",
-  "issuedAt": "2026-10-06T08:18:15+09:00",
-  "dataCutoffAt": "2026-10-06T08:18:15+09:00",
+  "reportSha256": "9c21e7f2ffde1e278959f09ed2a0014321fb2d883e184d434e9fdd1d32159c0b",
+  "issuedAt": "2026-10-06T08:34:44+09:00",
+  "dataCutoffAt": "2026-10-06T08:34:44+09:00",
   "marketState": "preopen",
   "marketRegime": "mixed",
   "evaluationBucket": "preopen",
@@ -163,5 +163,5 @@
     "defense": 20
   },
   "supersedes": null,
-  "contentHash": "dc2ccf89cca6df7d1f0eb6978fce1348f416982333f41a60459c48c41bc3dcfe"
+  "contentHash": "10c8bbeed03b38be99146fa3dfd72f675daf28691c5bcfe18cfac6b3bbd6f5ee"
 }

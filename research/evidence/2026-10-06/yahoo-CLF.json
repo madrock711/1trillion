@@ -1,7 +1,7 @@
 {
   "url": "https://query1.finance.yahoo.com/v8/finance/chart/CL=F?range=5d&interval=1d&includePrePost=true",
-  "fetchedAt": "2026-10-06T08:18:15+09:00",
-  "rawHash": "ecf7753a17202a840958e253ceb8bfb3b5c2bb6d7e3071b4219a5b38c0163323",
+  "fetchedAt": "2026-10-06T08:34:44+09:00",
+  "rawHash": "7650fe9460f4fea2c8309e36522c1316d513ccc87d735a05dfea9c8ad25b28d8",
   "data": {
     "chart": {
       "result": [
@@ -13,21 +13,21 @@
             "fullExchangeName": "NY Mercantile",
             "instrumentType": "FUTURE",
             "firstTradeDate": 967003200,
-            "regularMarketTime": 1791241618,
+            "regularMarketTime": 1791242642,
             "hasPrePostMarketData": false,
             "gmtoffset": -14400,
             "timezone": "EDT",
             "exchangeTimezoneName": "America/New_York",
-            "regularMarketPrice": 89.28,
-            "regularMarketChangePercent": -0.168,
-            "fulldayPrice": 89.28,
-            "fulldayChange": -0.15,
-            "fulldayChangePercent": -0.168,
+            "regularMarketPrice": 89.15,
+            "regularMarketChangePercent": -0.313,
+            "fulldayPrice": 89.15,
+            "fulldayChange": -0.28,
+            "fulldayChangePercent": -0.313,
             "fiftyTwoWeekHigh": 119.48,
             "fiftyTwoWeekLow": 54.98,
             "regularMarketDayHigh": 89.36,
-            "regularMarketDayLow": 89.2,
-            "regularMarketVolume": 946,
+            "regularMarketDayLow": 89.14,
+            "regularMarketVolume": 1113,
             "shortName": "Crude Oil Nov 26",
             "chartPreviousClose": 90.42,
             "priceHint": 2,
@@ -76,11 +76,11 @@
           "indicators": {
             "quote": [
               {
-                "open": [
-                  89.0,
-                  90.4000015258789,
-                  93.45999908447266,
-                  89.2699966430664
+                "close": [
+                  90.41999816894531,
+                  92.87000274658203,
+                  91.11000061035156,
+                  89.1500015258789
                 ],
                 "high": [
                   91.95999908447266,
@@ -92,19 +92,19 @@
                   285604,
                   337181,
                   337181,
-                  946
+                  1113
                 ],
                 "low": [
                   88.58000183105469,
                   88.79000091552734,
                   88.05999755859375,
-                  89.19999694824219
+                  89.13999938964844
                 ],
-                "close": [
-                  90.41999816894531,
-                  92.87000274658203,
-                  91.11000061035156,
-                  89.27999877929688
+                "open": [
+                  89.0,
+                  90.4000015258789,
+                  93.45999908447266,
+                  89.2699966430664
                 ]
               }
             ],
@@ -114,7 +114,7 @@
                   90.41999816894531,
                   92.87000274658203,
                   91.11000061035156,
-                  89.27999877929688
+                  89.1500015258789
                 ]
               }
             ]

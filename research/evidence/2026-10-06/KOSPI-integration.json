@@ -1,7 +1,7 @@
 {
   "url": "https://m.stock.naver.com/api/index/KOSPI/integration",
-  "fetchedAt": "2026-10-06T08:18:15+09:00",
-  "rawHash": "4589aea5c12d28905c1f869bbe251f96a4b6cd863d6562a2e7f4cba3557f9820",
+  "fetchedAt": "2026-10-06T08:34:44+09:00",
+  "rawHash": "f01b6d8fb18c4167b93e44188d398fccaf2bc3da6fb7cff72620bb6e00efc24d",
   "data": {
     "stockEndType": "index",
     "itemCode": "KOSPI",
@@ -57,6 +57,7 @@
       "institutionalValue": "0"
     },
     "programTrendInfo": {
+      "bizdate": "20261006",
       "indexDifferenceReal": "0",
       "indexBiDifferenceReal": "0",
       "indexTotalReal": "0"
@@ -84,8 +85,8 @@
           "name": "UNCHANGED"
         },
         "fluctuationsRatio": "0.00",
-        "accumulatedTradingVolume": "738,349",
-        "accumulatedTradingValue": "205,084",
+        "accumulatedTradingVolume": "932,675",
+        "accumulatedTradingValue": "259,172",
         "localTradedAt": "2026-10-06T00:00:00+09:00",
         "marketValue": "16,135,729",
         "nav": "N/A",
@@ -121,8 +122,8 @@
         "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/stock/Stock005930.png",
         "closePriceRaw": "276000",
         "compareToPreviousClosePriceRaw": "0",
-        "accumulatedTradingVolumeRaw": "738349",
-        "accumulatedTradingValueRaw": "205084000000",
+        "accumulatedTradingVolumeRaw": "932675",
+        "accumulatedTradingValueRaw": "259172000000",
         "marketValueRaw": "1613572895808000"
       },
       {
@@ -140,8 +141,8 @@
           "name": "UNCHANGED"
         },
         "fluctuationsRatio": "0.00",
-        "accumulatedTradingVolume": "98,351",
-        "accumulatedTradingValue": "181,247",
+        "accumulatedTradingVolume": "133,493",
+        "accumulatedTradingValue": "246,000",
         "localTradedAt": "2026-10-06T00:00:00+09:00",
         "marketValue": "13,448,364",
         "nav": "N/A",
@@ -177,8 +178,8 @@
         "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/stock/Stock000660.png",
         "closePriceRaw": "1841000",
         "compareToPreviousClosePriceRaw": "0",
-        "accumulatedTradingVolumeRaw": "98351",
-        "accumulatedTradingValueRaw": "181247000000",
+        "accumulatedTradingVolumeRaw": "133493",
+        "accumulatedTradingValueRaw": "246000000000",
         "marketValueRaw": "1344836443965000"
       },
       {
@@ -252,8 +253,8 @@
           "name": "UNCHANGED"
         },
         "fluctuationsRatio": "0.00",
-        "accumulatedTradingVolume": "11,300",
-        "accumulatedTradingValue": "13,141",
+        "accumulatedTradingVolume": "15,656",
+        "accumulatedTradingValue": "18,203",
         "localTradedAt": "2026-10-06T00:00:00+09:00",
         "marketValue": "1,530,318",
         "nav": "N/A",
@@ -289,8 +290,8 @@
         "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/stock/Stock402340.png",
         "closePriceRaw": "1160000",
         "compareToPreviousClosePriceRaw": "0",
-        "accumulatedTradingVolumeRaw": "11300",
-        "accumulatedTradingValueRaw": "13141000000",
+        "accumulatedTradingVolumeRaw": "15656",
+        "accumulatedTradingValueRaw": "18203000000",
         "marketValueRaw": "153031837680000"
       },
       {
@@ -308,8 +309,8 @@
           "name": "UNCHANGED"
         },
         "fluctuationsRatio": "0.00",
-        "accumulatedTradingVolume": "77,330",
-        "accumulatedTradingValue": "124,421",
+        "accumulatedTradingVolume": "113,509",
+        "accumulatedTradingValue": "183,095",
         "localTradedAt": "2026-10-06T00:00:00+09:00",
         "marketValue": "1,180,907",
         "nav": "N/A",
@@ -345,8 +346,8 @@
         "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/stock/Stock009150.png",
         "closePriceRaw": "1581000",
         "compareToPreviousClosePriceRaw": "0",
-        "accumulatedTradingVolumeRaw": "77330",
-        "accumulatedTradingValueRaw": "124421000000",
+        "accumulatedTradingVolumeRaw": "113509",
+        "accumulatedTradingValueRaw": "183095000000",
         "marketValueRaw": "118090733376000"
       },
       {
@@ -364,8 +365,8 @@
           "name": "UNCHANGED"
         },
         "fluctuationsRatio": "0.00",
-        "accumulatedTradingVolume": "10,662",
-        "accumulatedTradingValue": "4,002",
+        "accumulatedTradingVolume": "15,849",
+        "accumulatedTradingValue": "5,951",
         "localTradedAt": "2026-10-06T00:00:00+09:00",
         "marketValue": "868,140",
         "nav": "N/A",
@@ -401,8 +402,8 @@
         "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/stock/Stock373220.png",
         "closePriceRaw": "371000",
         "compareToPreviousClosePriceRaw": "0",
-        "accumulatedTradingVolumeRaw": "10662",
-        "accumulatedTradingValueRaw": "4002000000",
+        "accumulatedTradingVolumeRaw": "15849",
+        "accumulatedTradingValueRaw": "5951000000",
         "marketValueRaw": "86814000000000"
       },
       {
@@ -420,8 +421,8 @@
           "name": "UNCHANGED"
         },
         "fluctuationsRatio": "0.00",
-        "accumulatedTradingVolume": "30,682",
-        "accumulatedTradingValue": "10,706",
+        "accumulatedTradingVolume": "45,839",
+        "accumulatedTradingValue": "16,003",
         "localTradedAt": "2026-10-06T00:00:00+09:00",
         "marketValue": "705,011",
         "nav": "N/A",
@@ -457,8 +458,8 @@
         "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/stock/Stock005380.png",
         "closePriceRaw": "346500",
         "compareToPreviousClosePriceRaw": "0",
-        "accumulatedTradingVolumeRaw": "30682",
-        "accumulatedTradingValueRaw": "10706000000",
+        "accumulatedTradingVolumeRaw": "45839",
+        "accumulatedTradingValueRaw": "16003000000",
         "marketValueRaw": "70501139478000"
       },
       {
@@ -476,8 +477,8 @@
           "name": "UNCHANGED"
         },
         "fluctuationsRatio": "0.00",
-        "accumulatedTradingVolume": "945",
-        "accumulatedTradingValue": "1,292",
+        "accumulatedTradingVolume": "1,516",
+        "accumulatedTradingValue": "2,074",
         "localTradedAt": "2026-10-06T00:00:00+09:00",
         "marketValue": "626,779",
         "nav": "N/A",
@@ -513,8 +514,8 @@
         "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/stock/Stock207940.png",
         "closePriceRaw": "1354000",
         "compareToPreviousClosePriceRaw": "0",
-        "accumulatedTradingVolumeRaw": "945",
-        "accumulatedTradingValueRaw": "1292000000",
+        "accumulatedTradingVolumeRaw": "1516",
+        "accumulatedTradingValueRaw": "2074000000",
         "marketValueRaw": "62677947654000"
       },
       {
@@ -532,8 +533,8 @@
           "name": "UNCHANGED"
         },
         "fluctuationsRatio": "0.00",
-        "accumulatedTradingVolume": "6,046",
-        "accumulatedTradingValue": "1,018",
+        "accumulatedTradingVolume": "10,163",
+        "accumulatedTradingValue": "1,712",
         "localTradedAt": "2026-10-06T00:00:00+09:00",
         "marketValue": "593,747",
         "nav": "N/A",
@@ -569,8 +570,8 @@
         "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/stock/Stock105560.png",
         "closePriceRaw": "167400",
         "compareToPreviousClosePriceRaw": "0",
-        "accumulatedTradingVolumeRaw": "6046",
-        "accumulatedTradingValueRaw": "1018000000",
+        "accumulatedTradingVolumeRaw": "10163",
+        "accumulatedTradingValueRaw": "1712000000",
         "marketValueRaw": "59374726671600"
       },
       {
@@ -588,8 +589,8 @@
           "name": "UNCHANGED"
         },
         "fluctuationsRatio": "0.00",
-        "accumulatedTradingVolume": "1,961",
-        "accumulatedTradingValue": "568",
+        "accumulatedTradingVolume": "3,801",
+        "accumulatedTradingValue": "1,101",
         "localTradedAt": "2026-10-06T00:00:00+09:00",
         "marketValue": "578,000",
         "nav": "N/A",
@@ -625,8 +626,8 @@
         "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/stock/Stock032830.png",
         "closePriceRaw": "289000",
         "compareToPreviousClosePriceRaw": "0",
-        "accumulatedTradingVolumeRaw": "1961",
-        "accumulatedTradingValueRaw": "568000000",
+        "accumulatedTradingVolumeRaw": "3801",
+        "accumulatedTradingValueRaw": "1101000000",
         "marketValueRaw": "57800000000000"
       }
     ],

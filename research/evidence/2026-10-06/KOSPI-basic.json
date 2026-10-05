@@ -1,7 +1,7 @@
 {
   "url": "https://m.stock.naver.com/api/index/KOSPI/basic",
-  "fetchedAt": "2026-10-06T08:18:15+09:00",
-  "rawHash": "a1310e0b4f29c56c07e2a3580ae2294635cde8d8dcc72dc15068d062d3a0deca",
+  "fetchedAt": "2026-10-06T08:34:44+09:00",
+  "rawHash": "bc2076db706a136a86d8168773f4d2a103a31e0863755808024387e4cef543ff",
   "data": {
     "stockEndType": "index",
     "itemCode": "KOSPI",
@@ -19,7 +19,7 @@
     },
     "fluctuationsRatio": "0.00",
     "marketStatus": "PREOPEN",
-    "localTradedAt": "2026-10-06T08:18:15+09:00",
+    "localTradedAt": "2026-10-06T08:34:44+09:00",
     "stockExchangeType": {
       "code": "KS",
       "zoneId": "Asia/Seoul",
@@ -36,17 +36,17 @@
       "name": "KOSPI"
     },
     "imageCharts": {
-      "candleMonth": "https://financial-vn.pstatic.net/chart/mobile/candle/month/KOSPI_end.png",
       "day_up_tablet": "https://financial-vn.pstatic.net/chart/mobile/mini/KOSPI_end_up_tablet.png",
       "day": "https://financial-vn.pstatic.net/chart/mobile/day/KOSPI_end.png",
       "day_up": "https://financial-vn.pstatic.net/chart/mobile/mini/KOSPI_end_up.png",
       "areaYear": "https://financial-vn.pstatic.net/chart/mobile/area/year/KOSPI_end.png",
-      "areaMonthThree": "https://financial-vn.pstatic.net/chart/mobile/area/month3/KOSPI_end.png",
       "candleDay": "https://financial-vn.pstatic.net/chart/mobile/candle/day/KOSPI_end.png",
-      "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/area/year10/KOSPI_end.png",
       "candleWeek": "https://financial-vn.pstatic.net/chart/mobile/candle/week/KOSPI_end.png",
+      "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/area/year10/KOSPI_end.png",
       "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/area/year3/KOSPI_end.png",
-      "transparent": "https://financial-vn.pstatic.net/chart/mobile/mini/KOSPI_transparent.png"
+      "transparent": "https://financial-vn.pstatic.net/chart/mobile/mini/KOSPI_transparent.png",
+      "candleMonth": "https://financial-vn.pstatic.net/chart/mobile/candle/month/KOSPI_end.png",
+      "areaMonthThree": "https://financial-vn.pstatic.net/chart/mobile/area/month3/KOSPI_end.png"
     },
     "scriptChartTypes": [
       "candleMinuteFive",

@@ -1,7 +1,7 @@
 {
   "url": "https://stock.naver.com/api/polling/domestic/NXT/stock?itemCodes=005930,000660",
-  "fetchedAt": "2026-10-06T08:18:15+09:00",
-  "rawHash": "d4651e6b9c2dc0c5ea66b870bd34677629db0234c662fdc48493df6d191f0d05",
+  "fetchedAt": "2026-10-06T08:34:44+09:00",
+  "rawHash": "42e8288d11dbeecd6445b35d5a4f2a4318fb6a6465c677ef37ccd42b0a6bbdce",
   "data": {
     "pollingInterval": 7000,
     "datas": [
@@ -18,10 +18,10 @@
           "closePriceSendTime": "1630",
           "nameKor": "코스피",
           "nameEng": "KOSPI",
+          "name": "KOSPI",
           "nationCode": "KOR",
           "nationName": "대한민국",
-          "stockType": "domestic",
-          "name": "KOSPI"
+          "stockType": "domestic"
         },
         "closePrice": "278,500",
         "compareToPreviousClosePrice": "2,500",
@@ -42,11 +42,11 @@
         "openPrice": "275,000",
         "highPrice": "279,000",
         "lowPrice": "275,000",
-        "accumulatedTradingVolume": "742,538",
-        "accumulatedTradingValue": "2,063억",
+        "accumulatedTradingVolume": "942,339",
+        "accumulatedTradingValue": "2,619억",
         "marketStatus": "OPEN",
         "marketStatusDetailType": "open",
-        "localTradedAt": "2026-10-06T08:18:15.310179+09:00",
+        "localTradedAt": "2026-10-06T08:34:44.545303+09:00",
         "overMarketPriceInfo": null,
         "integratedPriceInfo": null,
         "isinCode": "KR7005930003",
@@ -65,8 +65,8 @@
         "openPriceRaw": "275000",
         "highPriceRaw": "279000",
         "lowPriceRaw": "275000",
-        "accumulatedTradingVolumeRaw": "742538",
-        "accumulatedTradingValueRaw": "206250000000",
+        "accumulatedTradingVolumeRaw": "942339",
+        "accumulatedTradingValueRaw": "261863000000",
         "marketValueFull": "1,628,188,592,328,000",
         "marketValueFullRaw": "1628188592328000"
       },
@@ -83,19 +83,19 @@
           "closePriceSendTime": "1630",
           "nameKor": "코스피",
           "nameEng": "KOSPI",
+          "name": "KOSPI",
           "nationCode": "KOR",
           "nationName": "대한민국",
-          "stockType": "domestic",
-          "name": "KOSPI"
+          "stockType": "domestic"
         },
-        "closePrice": "1,842,000",
-        "compareToPreviousClosePrice": "1,000",
+        "closePrice": "1,843,000",
+        "compareToPreviousClosePrice": "2,000",
         "compareToPreviousPrice": {
           "code": "2",
           "text": "상승",
           "name": "RISING"
         },
-        "fluctuationsRatio": "0.05",
+        "fluctuationsRatio": "0.11",
         "tradeStopType": {
           "code": "1",
           "text": "운영.Trading",
@@ -107,11 +107,11 @@
         "openPrice": "1,845,000",
         "highPrice": "1,847,000",
         "lowPrice": "1,839,000",
-        "accumulatedTradingVolume": "99,752",
-        "accumulatedTradingValue": "1,838억",
+        "accumulatedTradingVolume": "134,000",
+        "accumulatedTradingValue": "2,469억",
         "marketStatus": "OPEN",
         "marketStatusDetailType": "open",
-        "localTradedAt": "2026-10-06T08:18:15.310193+09:00",
+        "localTradedAt": "2026-10-06T08:34:44.545312+09:00",
         "overMarketPriceInfo": null,
         "integratedPriceInfo": null,
         "isinCode": "KR7000660001",
@@ -124,18 +124,18 @@
           "name": "KRW"
         },
         "marketSessionType": "preMarket",
-        "closePriceRaw": "1842000",
-        "compareToPreviousClosePriceRaw": "1000",
-        "fluctuationsRatioRaw": "0.05",
+        "closePriceRaw": "1843000",
+        "compareToPreviousClosePriceRaw": "2000",
+        "fluctuationsRatioRaw": "0.11",
         "openPriceRaw": "1845000",
         "highPriceRaw": "1847000",
         "lowPriceRaw": "1839000",
-        "accumulatedTradingVolumeRaw": "99752",
-        "accumulatedTradingValueRaw": "183828000000",
-        "marketValueFull": "1,345,566,936,330,000",
-        "marketValueFullRaw": "1345566936330000"
+        "accumulatedTradingVolumeRaw": "134000",
+        "accumulatedTradingValueRaw": "246935000000",
+        "marketValueFull": "1,346,297,428,695,000",
+        "marketValueFullRaw": "1346297428695000"
       }
     ],
-    "time": "20261006081815"
+    "time": "20261006083444"
   }
 }

@@ -1,7 +1,7 @@
 {
   "url": "https://m.stock.naver.com/api/stock/005930/price?pageSize=10&page=1",
-  "fetchedAt": "2026-10-06T08:18:15+09:00",
-  "rawHash": "096ff85ced615269e547b318c0154a16134266a6e391461a41a2692d5f497925",
+  "fetchedAt": "2026-10-06T08:34:44+09:00",
+  "rawHash": "51fc33730fb85d9aad6e0f31d47a3838f18b0de5f6199701757491c782d30aa9",
   "data": [
     {
       "localTradedAt": "2026-10-06",
@@ -16,7 +16,7 @@
       "openPrice": "275,000",
       "highPrice": "279,000",
       "lowPrice": "275,000",
-      "accumulatedTradingVolume": 719557
+      "accumulatedTradingVolume": 932675
     },
     {
       "localTradedAt": "2026-10-02",

@@ -1,7 +1,7 @@
 {
   "url": "https://query1.finance.yahoo.com/v8/finance/chart/MU?range=5d&interval=1d&includePrePost=true",
-  "fetchedAt": "2026-10-06T08:18:15+09:00",
-  "rawHash": "13d14dc9f06b39adc11be0cd11d0c9f2cf8cd87f9da4797cfdf97690c12380d3",
+  "fetchedAt": "2026-10-06T08:34:44+09:00",
+  "rawHash": "a7a605c4ee881fac6e174036bb2d61bcb5c39c76a72ddf5e82c67bc8289ec174",
   "data": {
     "chart": {
       "result": [
@@ -21,8 +21,8 @@
             "regularMarketPrice": 1063.96,
             "regularMarketChangePercent": -1.017,
             "fulldayPrice": 1063.96,
-            "fulldayChange": -11.11,
-            "fulldayChangePercent": -1.034,
+            "fulldayChange": -10.4,
+            "fulldayChangePercent": -0.968,
             "fiftyTwoWeekHigh": 1255.0,
             "fiftyTwoWeekLow": 179.61,
             "regularMarketDayHigh": 1074.88,
@@ -35,20 +35,20 @@
             "currentTradingPeriod": {
               "pre": {
                 "timezone": "EDT",
-                "start": 1791187200,
                 "end": 1791207000,
+                "start": 1791187200,
                 "gmtoffset": -14400
               },
               "regular": {
                 "timezone": "EDT",
-                "start": 1791207000,
                 "end": 1791230400,
+                "start": 1791207000,
                 "gmtoffset": -14400
               },
               "post": {
                 "timezone": "EDT",
-                "start": 1791230400,
                 "end": 1791244800,
+                "start": 1791230400,
                 "gmtoffset": -14400
               }
             },
@@ -78,6 +78,27 @@
           "indicators": {
             "quote": [
               {
+                "high": [
+                  1082.6600341796875,
+                  1083.5,
+                  1098.9000244140625,
+                  1108.0,
+                  1074.8800048828125
+                ],
+                "open": [
+                  1076.68994140625,
+                  1076.760009765625,
+                  1054.0799560546875,
+                  1107.3499755859375,
+                  1069.550048828125
+                ],
+                "volume": [
+                  19723100,
+                  31103200,
+                  45735400,
+                  27224500,
+                  17877625
+                ],
                 "low": [
                   1057.699951171875,
                   1062.3599853515625,
@@ -91,27 +112,6 @@
                   1097.3900146484375,
                   1074.8900146484375,
                   1063.9599609375
-                ],
-                "open": [
-                  1076.68994140625,
-                  1076.760009765625,
-                  1054.0799560546875,
-                  1107.3499755859375,
-                  1069.550048828125
-                ],
-                "high": [
-                  1082.6600341796875,
-                  1083.5,
-                  1098.9000244140625,
-                  1108.0,
-                  1074.8800048828125
-                ],
-                "volume": [
-                  19723100,
-                  31103200,
-                  45735400,
-                  27224500,
-                  17877625
                 ]
               }
             ],

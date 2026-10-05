@@ -1,7 +1,7 @@
 {
   "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQ=F?range=5d&interval=1d&includePrePost=true",
-  "fetchedAt": "2026-10-06T08:18:15+09:00",
-  "rawHash": "93a364389ca21c9ca1eff51d31517cca104e5e724ee40502b66ce0b9250e03b4",
+  "fetchedAt": "2026-10-06T08:34:44+09:00",
+  "rawHash": "b85d92983e2b5bf6c15264e598a12eedb40841ad5bbfba7807ca52b45dd79485",
   "data": {
     "chart": {
       "result": [
@@ -13,41 +13,41 @@
             "fullExchangeName": "CME",
             "instrumentType": "FUTURE",
             "firstTradeDate": 969249600,
-            "regularMarketTime": 1791241675,
+            "regularMarketTime": 1791242681,
             "hasPrePostMarketData": false,
             "gmtoffset": -14400,
             "timezone": "EDT",
             "exchangeTimezoneName": "America/New_York",
-            "regularMarketPrice": 31334.0,
-            "regularMarketChangePercent": 0.052,
-            "fulldayPrice": 31334.0,
-            "fulldayChange": 16.25,
-            "fulldayChangePercent": 0.052,
+            "regularMarketPrice": 31361.75,
+            "regularMarketChangePercent": 0.14,
+            "fulldayPrice": 31361.75,
+            "fulldayChange": 44.0,
+            "fulldayChangePercent": 0.14,
             "fiftyTwoWeekHigh": 31385.25,
             "fiftyTwoWeekLow": 22961.5,
             "regularMarketDayHigh": 31385.25,
             "regularMarketDayLow": 31325.5,
-            "regularMarketVolume": 5851,
+            "regularMarketVolume": 6986,
             "shortName": "Nasdaq 100 Dec 26",
             "chartPreviousClose": 30698.75,
             "priceHint": 2,
             "currentTradingPeriod": {
               "pre": {
                 "timezone": "EDT",
-                "start": 1791172800,
                 "end": 1791172800,
+                "start": 1791172800,
                 "gmtoffset": -14400
               },
               "regular": {
                 "timezone": "EDT",
-                "start": 1791172800,
                 "end": 1791259140,
+                "start": 1791172800,
                 "gmtoffset": -14400
               },
               "post": {
                 "timezone": "EDT",
-                "start": 1791259140,
                 "end": 1791259140,
+                "start": 1791259140,
                 "gmtoffset": -14400
               }
             },
@@ -76,11 +76,11 @@
           "indicators": {
             "quote": [
               {
-                "open": [
-                  30657.25,
-                  30707.0,
-                  30771.25,
-                  31346.75
+                "volume": [
+                  610055,
+                  795240,
+                  795240,
+                  6986
                 ],
                 "low": [
                   30512.25,
@@ -94,17 +94,17 @@
                   31282.5,
                   31385.25
                 ],
-                "volume": [
-                  610055,
-                  795240,
-                  795240,
-                  5851
-                ],
                 "close": [
                   30698.75,
                   30760.5,
                   31061.75,
-                  31334.0
+                  31361.75
+                ],
+                "open": [
+                  30657.25,
+                  30707.0,
+                  30771.25,
+                  31346.75
                 ]
               }
             ],
@@ -114,7 +114,7 @@
                   30698.75,
                   30760.5,
                   31061.75,
-                  31334.0
+                  31361.75
                 ]
               }
             ]

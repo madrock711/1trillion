@@ -1,7 +1,7 @@
 {
   "url": "https://api.stock.naver.com/marketindex/exchange/FX_USDKRW",
-  "fetchedAt": "2026-10-06T08:18:15+09:00",
-  "rawHash": "cc7e75dde280bc5e6484f6464f78a1b17803472f9df83ce6d75181444306795c",
+  "fetchedAt": "2026-10-06T08:34:44+09:00",
+  "rawHash": "48f06c35324297e901d7800ccf5cfb241e9870a0745227ea918be8f9f11343ac",
   "data": {
     "exchangeInfo": {
       "stockExchangeType": {
@@ -26,10 +26,10 @@
       "name": "미국 USD",
       "fullName": null,
       "description": "하나은행 고시회차",
-      "localTradedAt": "2026-10-06T05:13:43+09:00",
-      "closePrice": "1,342.50",
-      "fluctuations": "-17.00",
-      "fluctuationsRatio": "-1.25",
+      "localTradedAt": "2026-10-06T08:27:33+09:00",
+      "closePrice": "1,342.00",
+      "fluctuations": "-0.50",
+      "fluctuationsRatio": "-0.04",
       "fluctuationsType": {
         "code": "5",
         "text": "하락",
@@ -40,14 +40,14 @@
       "endUrl": "https://m.stock.naver.com/marketindex/exchange/FX_USDKRW",
       "newPcUrl": "https://stock.naver.com/marketindex/exchange/FX_USDKRW",
       "unit": "KRW",
-      "degreeCount": 3578,
+      "degreeCount": 2,
       "imageCharts": {
-        "areaMonth": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month/FX_USDKRW_end.png",
-        "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year3/FX_USDKRW_end.png",
         "areaYear": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year/FX_USDKRW_end.png",
+        "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year3/FX_USDKRW_end.png",
+        "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year10/FX_USDKRW_end.png",
         "areaYearFive": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year5/FX_USDKRW_end.png",
-        "areaMonthThree": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month3/FX_USDKRW_end.png",
-        "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/marketindex/year10/FX_USDKRW_end.png"
+        "areaMonth": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month/FX_USDKRW_end.png",
+        "areaMonthThree": "https://financial-vn.pstatic.net/chart/mobile/marketindex/month3/FX_USDKRW_end.png"
       },
       "imageChartUrlInfo": {
         "line": {
@@ -68,7 +68,7 @@
         "areaYearFive",
         "areaYearTen"
       ],
-      "calcPrice": "1342.5"
+      "calcPrice": "1342.0"
     },
     "marketIndexCdList": [
       "FX_USDKRW",

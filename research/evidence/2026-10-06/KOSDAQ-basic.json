@@ -1,7 +1,7 @@
 {
   "url": "https://m.stock.naver.com/api/index/KOSDAQ/basic",
-  "fetchedAt": "2026-10-06T08:18:15+09:00",
-  "rawHash": "868b2d1fafe0c8687d7684213b9974b56804e1e641a46795d1eeea8275c86ebc",
+  "fetchedAt": "2026-10-06T08:34:44+09:00",
+  "rawHash": "d096965020d044ec0c257aa1099365ddeb9702ce485ec6e78b89e1ede6a3b8af",
   "data": {
     "stockEndType": "index",
     "itemCode": "KOSDAQ",
@@ -19,7 +19,7 @@
     },
     "fluctuationsRatio": "0.00",
     "marketStatus": "PREOPEN",
-    "localTradedAt": "2026-10-06T08:18:15+09:00",
+    "localTradedAt": "2026-10-06T08:34:44+09:00",
     "stockExchangeType": {
       "code": "KQ",
       "zoneId": "Asia/Seoul",
@@ -36,17 +36,17 @@
       "name": "KOSDAQ"
     },
     "imageCharts": {
-      "candleWeek": "https://financial-vn.pstatic.net/chart/mobile/candle/week/KOSDAQ_end.png",
+      "transparent": "https://financial-vn.pstatic.net/chart/mobile/mini/KOSDAQ_transparent.png",
       "candleMonth": "https://financial-vn.pstatic.net/chart/mobile/candle/month/KOSDAQ_end.png",
       "areaMonthThree": "https://financial-vn.pstatic.net/chart/mobile/area/month3/KOSDAQ_end.png",
       "areaYear": "https://financial-vn.pstatic.net/chart/mobile/area/year/KOSDAQ_end.png",
-      "day": "https://financial-vn.pstatic.net/chart/mobile/day/KOSDAQ_end.png",
-      "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/area/year10/KOSDAQ_end.png",
-      "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/area/year3/KOSDAQ_end.png",
-      "candleDay": "https://financial-vn.pstatic.net/chart/mobile/candle/day/KOSDAQ_end.png",
-      "transparent": "https://financial-vn.pstatic.net/chart/mobile/mini/KOSDAQ_transparent.png",
       "day_up": "https://financial-vn.pstatic.net/chart/mobile/mini/KOSDAQ_end_up.png",
-      "day_up_tablet": "https://financial-vn.pstatic.net/chart/mobile/mini/KOSDAQ_end_up_tablet.png"
+      "day_up_tablet": "https://financial-vn.pstatic.net/chart/mobile/mini/KOSDAQ_end_up_tablet.png",
+      "candleDay": "https://financial-vn.pstatic.net/chart/mobile/candle/day/KOSDAQ_end.png",
+      "candleWeek": "https://financial-vn.pstatic.net/chart/mobile/candle/week/KOSDAQ_end.png",
+      "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/area/year3/KOSDAQ_end.png",
+      "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/area/year10/KOSDAQ_end.png",
+      "day": "https://financial-vn.pstatic.net/chart/mobile/day/KOSDAQ_end.png"
     },
     "scriptChartTypes": [
       "candleMinuteFive",

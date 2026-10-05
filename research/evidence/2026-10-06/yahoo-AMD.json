@@ -1,7 +1,7 @@
 {
   "url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=5d&interval=1d&includePrePost=true",
-  "fetchedAt": "2026-10-06T08:18:15+09:00",
-  "rawHash": "f79f650f6fc107e97a02ec845c516ada3a33b2dab5958c3318d8b1f0c2af35c5",
+  "fetchedAt": "2026-10-06T08:34:44+09:00",
+  "rawHash": "45b16ca467953bd023bbedbff0d2f729d9273f026df5f15e34e11bbd0e302c21",
   "data": {
     "chart": {
       "result": [
@@ -21,8 +21,8 @@
             "regularMarketPrice": 631.75,
             "regularMarketChangePercent": -0.341,
             "fulldayPrice": 631.75,
-            "fulldayChange": -1.42,
-            "fulldayChangePercent": -0.224,
+            "fulldayChange": -1.224,
+            "fulldayChangePercent": -0.193,
             "fiftyTwoWeekHigh": 645.46,
             "fiftyTwoWeekLow": 188.22,
             "regularMarketDayHigh": 633.5,
@@ -35,20 +35,20 @@
             "currentTradingPeriod": {
               "pre": {
                 "timezone": "EDT",
-                "start": 1791187200,
                 "end": 1791207000,
+                "start": 1791187200,
                 "gmtoffset": -14400
               },
               "regular": {
                 "timezone": "EDT",
-                "start": 1791207000,
                 "end": 1791230400,
+                "start": 1791207000,
                 "gmtoffset": -14400
               },
               "post": {
                 "timezone": "EDT",
-                "start": 1791230400,
                 "end": 1791244800,
+                "start": 1791230400,
                 "gmtoffset": -14400
               }
             },
@@ -78,12 +78,12 @@
           "indicators": {
             "quote": [
               {
-                "close": [
-                  607.5700073242188,
-                  611.760009765625,
-                  615.72998046875,
-                  633.9099731445312,
-                  631.75
+                "volume": [
+                  16513900,
+                  16749100,
+                  17134500,
+                  19825500,
+                  13607612
                 ],
                 "low": [
                   605.25,
@@ -92,13 +92,6 @@
                   628.5499877929688,
                   620.0
                 ],
-                "open": [
-                  616.739990234375,
-                  609.8900146484375,
-                  612.7000122070312,
-                  635.9500122070312,
-                  630.3400268554688
-                ],
                 "high": [
                   624.1300048828125,
                   615.1699829101562,
@@ -106,12 +99,19 @@
                   645.4600219726562,
                   633.5
                 ],
-                "volume": [
-                  16513900,
-                  16749100,
-                  17134500,
-                  19825500,
-                  13607612
+                "open": [
+                  616.739990234375,
+                  609.8900146484375,
+                  612.7000122070312,
+                  635.9500122070312,
+                  630.3400268554688
+                ],
+                "close": [
+                  607.5700073242188,
+                  611.760009765625,
+                  615.72998046875,
+                  633.9099731445312,
+                  631.75
                 ]
               }
             ],

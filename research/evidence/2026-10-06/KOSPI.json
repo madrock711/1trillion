@@ -1,6 +1,6 @@
 {
   "url": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1",
-  "fetchedAt": "2026-10-06T08:18:15+09:00",
+  "fetchedAt": "2026-10-06T08:34:44+09:00",
   "rawHash": "2f9b7f028999cb0950169b000a0a196b6613da0e16648d1029dc571ddc1d0ce4",
   "data": [
     {
