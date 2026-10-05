@@ -3,7 +3,7 @@
   "forecastId": "2026-10-06-0818-same-close",
   "visibility": "public",
   "reportPath": "reports/2026-10-06.md",
-  "reportSha256": "4f8dcac34d9c3a7b9f095a2ca60808b8befeafd6d52b8df66030fad5230fb7bb",
+  "reportSha256": "f0f78111c543464bbf7307c0f63c9a00a7c8fc33aba668c6ec410fd16dc35c5c",
   "issuedAt": "2026-10-06T08:18:15+09:00",
   "dataCutoffAt": "2026-10-06T08:18:15+09:00",
   "marketState": "preopen",
@@ -71,6 +71,7 @@
       "conditions": [
         {
           "id": "bull-price",
+          "description": "KOSPI가 7,080을 웃도는지 확인한다.",
           "metricId": "kospi_price",
           "operator": "gt",
           "threshold": 7080,
@@ -78,6 +79,7 @@
         },
         {
           "id": "bull-foreign",
+          "description": "외국인 현물이 순매수인지 확인한다.",
           "metricId": "foreign_cash",
           "operator": "gt",
           "threshold": 0,
@@ -85,6 +87,7 @@
         },
         {
           "id": "bull-program",
+          "description": "프로그램 매매가 순매수인지 확인한다.",
           "metricId": "program_total",
           "operator": "gt",
           "threshold": 0,
@@ -98,6 +101,7 @@
       "conditions": [
         {
           "id": "base-floor",
+          "description": "KOSPI가 6,950 이상인지 확인한다.",
           "metricId": "kospi_price",
           "operator": "gte",
           "threshold": 6950,
@@ -105,6 +109,7 @@
         },
         {
           "id": "base-cap",
+          "description": "KOSPI가 7,080 이하인지 확인한다.",
           "metricId": "kospi_price",
           "operator": "lte",
           "threshold": 7080,
@@ -112,6 +117,7 @@
         },
         {
           "id": "base-foreign",
+          "description": "외국인 현물 매도가 급격히 확대되지 않았는지 확인한다.",
           "metricId": "foreign_cash",
           "operator": "gte",
           "threshold": -10000,
@@ -125,6 +131,7 @@
       "conditions": [
         {
           "id": "bear-price",
+          "description": "KOSPI가 6,950 아래로 내려갔는지 확인한다.",
           "metricId": "kospi_price",
           "operator": "lt",
           "threshold": 6950,
@@ -132,6 +139,7 @@
         },
         {
           "id": "bear-foreign",
+          "description": "외국인 현물이 순매도인지 확인한다.",
           "metricId": "foreign_cash",
           "operator": "lt",
           "threshold": 0,
@@ -139,6 +147,7 @@
         },
         {
           "id": "bear-program",
+          "description": "프로그램 매매가 순매도인지 확인한다.",
           "metricId": "program_total",
           "operator": "lt",
           "threshold": 0,
@@ -154,5 +163,5 @@
     "defense": 20
   },
   "supersedes": null,
-  "contentHash": "96be433150886f1d5eb21ea119c812a2e9855ca7b54c5c1948ebfb55e0101aad"
+  "contentHash": "dc2ccf89cca6df7d1f0eb6978fce1348f416982333f41a60459c48c41bc3dcfe"
 }

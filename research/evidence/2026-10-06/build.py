@@ -198,6 +198,20 @@ outcome = {"schemaVersion": 1, "forecastId": "2026-10-02-0811-same-close", "reco
 dump("research/evaluation/outcomes/2026-10-02-0811-same-close.json", outcome)
 
 forecast = {"schemaVersion": 1, "forecastId": f"{DATE}-{issued:%H%M}-same-close", "visibility": "public", "reportPath": f"reports/{DATE}.md", "reportSha256": hashlib.sha256((ROOT / f"reports/{DATE}.md").read_bytes()).hexdigest(), "issuedAt": issued.isoformat(), "dataCutoffAt": cutoff, "marketState": "preopen", "marketRegime": "mixed", "evaluationBucket": "preopen", "target": {"sessionDate": DATE, "horizon": "session_close", "instrument": "KOSPI", "leadSessions": 0, "previousSessionDate": "2026-10-02"}, "reference": {"price": number(kospi["closePrice"]), "asOf": "2026-10-02T15:30:00+09:00", "kind": "previous_close"}, "scenarios": {"bull": {"low": 6900, "high": 7050, "probability": 0.30}, "base": {"low": 6750, "high": 6900, "probability": 0.50}, "bear": {"low": 6550, "high": 6750, "probability": 0.20}}, "closeEnvelopeCoverage": 0.9, "pathEnvelope": {"low": 6500, "high": 7050, "coverage": 0.9}, "drivers": [{"id": "micron-guidance", "rank": 1, "claim": "Micron의 강한 메모리 가이던스와 국내 NXT 상승이 6,750선 하단을 지지한다.", "validationMetric": "Micron 가이던스·SOXX·삼성전자·SK하이닉스"}, {"id": "yield-fx-ceiling", "rank": 2, "claim": "5%대 미국 10년물과 원/달러 상승이 6,900선 위 추격을 제한한다.", "validationMetric": "미국 10년물·USD/KRW·KOSPI"}, {"id": "domestic-flow", "rank": 3, "claim": "6,900선 회복은 외국인과 프로그램 수급의 동행이 확인해야 한다.", "validationMetric": "외국인·프로그램·KOSPI"}], "scenarioTriggers": {"bull": {"logic": "AND", "observeBy": f"{DATE}T15:20:00+09:00", "conditions": [{"id": "bull-price", "metricId": "kospi_price", "operator": "gt", "threshold": 6900, "source": "Naver Finance KOSPI"}, {"id": "bull-foreign", "metricId": "foreign_cash", "operator": "gt", "threshold": 0, "source": "Naver Finance KOSPI 수급 (억원)"}, {"id": "bull-program", "metricId": "program_total", "operator": "gt", "threshold": 0, "source": "Naver Finance KOSPI 수급 (억원)"}]}, "base": {"logic": "AND", "observeBy": f"{DATE}T15:20:00+09:00", "conditions": [{"id": "base-floor", "metricId": "kospi_price", "operator": "gte", "threshold": 6750, "source": "Naver Finance KOSPI"}, {"id": "base-cap", "metricId": "kospi_price", "operator": "lte", "threshold": 6900, "source": "Naver Finance KOSPI"}, {"id": "base-foreign", "metricId": "foreign_cash", "operator": "gte", "threshold": -10000, "source": "Naver Finance KOSPI 수급 (억원)"}]}, "bear": {"logic": "AND", "observeBy": f"{DATE}T15:20:00+09:00", "conditions": [{"id": "bear-price", "metricId": "kospi_price", "operator": "lt", "threshold": 6750, "source": "Naver Finance KOSPI"}, {"id": "bear-foreign", "metricId": "foreign_cash", "operator": "lt", "threshold": 0, "source": "Naver Finance KOSPI 수급 (억원)"}, {"id": "bear-program", "metricId": "program_total", "operator": "lt", "threshold": 0, "source": "Naver Finance KOSPI 수급 (억원)"}]}}, "hypothesisTrials": [], "posture": {"attack": 30, "wait": 55, "defense": 15}, "supersedes": None}
+trigger_descriptions = {
+    "bull-price": "KOSPI가 6,900을 웃도는지 확인한다.",
+    "bull-foreign": "외국인 현물이 순매수인지 확인한다.",
+    "bull-program": "프로그램 매매가 순매수인지 확인한다.",
+    "base-floor": "KOSPI가 6,750 이상인지 확인한다.",
+    "base-cap": "KOSPI가 6,900 이하인지 확인한다.",
+    "base-foreign": "외국인 현물 매도가 급격히 확대되지 않았는지 확인한다.",
+    "bear-price": "KOSPI가 6,750 아래로 내려갔는지 확인한다.",
+    "bear-foreign": "외국인 현물이 순매도인지 확인한다.",
+    "bear-program": "프로그램 매매가 순매도인지 확인한다.",
+}
+for scenario in forecast["scenarioTriggers"].values():
+    for condition in scenario["conditions"]:
+        condition["description"] = trigger_descriptions[condition["id"]]
 forecast["contentHash"] = hashlib.sha256(json.dumps(forecast, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 dump("research/evaluation/forecasts/" + forecast["forecastId"] + ".json", forecast)
 dump("research/evidence/2026-10-06/seal.json", {"forecastId": forecast["forecastId"], "issuedAt": issued.isoformat(), "dataCutoffAt": cutoff, "snapshotId": snapshot_id, "articleTitle": TITLE})

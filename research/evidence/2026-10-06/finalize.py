@@ -21,6 +21,20 @@ forecast["scenarioTriggers"] = {
     "base": {"logic": "AND", "observeBy": "2026-10-06T15:20:00+09:00", "conditions": [{"id": "base-floor", "metricId": "kospi_price", "operator": "gte", "threshold": 6950, "source": "Naver Finance KOSPI"}, {"id": "base-cap", "metricId": "kospi_price", "operator": "lte", "threshold": 7080, "source": "Naver Finance KOSPI"}, {"id": "base-foreign", "metricId": "foreign_cash", "operator": "gte", "threshold": -10000, "source": "Naver Finance KOSPI 수급 (억원)"}]},
     "bear": {"logic": "AND", "observeBy": "2026-10-06T15:20:00+09:00", "conditions": [{"id": "bear-price", "metricId": "kospi_price", "operator": "lt", "threshold": 6950, "source": "Naver Finance KOSPI"}, {"id": "bear-foreign", "metricId": "foreign_cash", "operator": "lt", "threshold": 0, "source": "Naver Finance KOSPI 수급 (억원)"}, {"id": "bear-program", "metricId": "program_total", "operator": "lt", "threshold": 0, "source": "Naver Finance KOSPI 수급 (억원)"}]},
 }
+trigger_descriptions = {
+    "bull-price": "KOSPI가 7,080을 웃도는지 확인한다.",
+    "bull-foreign": "외국인 현물이 순매수인지 확인한다.",
+    "bull-program": "프로그램 매매가 순매수인지 확인한다.",
+    "base-floor": "KOSPI가 6,950 이상인지 확인한다.",
+    "base-cap": "KOSPI가 7,080 이하인지 확인한다.",
+    "base-foreign": "외국인 현물 매도가 급격히 확대되지 않았는지 확인한다.",
+    "bear-price": "KOSPI가 6,950 아래로 내려갔는지 확인한다.",
+    "bear-foreign": "외국인 현물이 순매도인지 확인한다.",
+    "bear-program": "프로그램 매매가 순매도인지 확인한다.",
+}
+for scenario in forecast["scenarioTriggers"].values():
+    for condition in scenario["conditions"]:
+        condition["description"] = trigger_descriptions[condition["id"]]
 forecast["posture"] = {"attack": 30, "wait": 50, "defense": 20}
 forecast["reportSha256"] = hashlib.sha256((ROOT / "reports/2026-10-06.md").read_bytes()).hexdigest()
 sealed = dict(forecast)
