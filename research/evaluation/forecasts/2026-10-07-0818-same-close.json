@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-10-07-0818-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-10-07.md",
+  "reportSha256": "53ad0d8fc77dc16033cf727c8721a35ca74da1c5f00574641790ab0d2f6092d6",
+  "issuedAt": "2026-10-07T08:18:19+09:00",
+  "dataCutoffAt": "2026-10-07T08:16:11+09:00",
+  "marketState": "preopen",
+  "marketRegime": "mixed",
+  "evaluationBucket": "preopen",
+  "target": {
+    "sessionDate": "2026-10-07",
+    "horizon": "session_close",
+    "instrument": "KOSPI",
+    "leadSessions": 0,
+    "previousSessionDate": "2026-10-06"
+  },
+  "reference": {
+    "price": 6941.39,
+    "asOf": "2026-10-06T15:30:00+09:00",
+    "kind": "previous_close"
+  },
+  "scenarios": {
+    "bull": {
+      "low": 6990,
+      "high": 7070,
+      "probability": 0.25
+    },
+    "base": {
+      "low": 6880,
+      "high": 6990,
+      "probability": 0.5
+    },
+    "bear": {
+      "low": 6780,
+      "high": 6880,
+      "probability": 0.25
+    }
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {
+    "low": 6760,
+    "high": 7090,
+    "coverage": 0.9
+  },
+  "drivers": [
+    {
+      "id": "us-record-yields",
+      "rank": 1,
+      "claim": "유가와 장기금리 완화가 미국 신고가를 지지한다.",
+      "validationMetric": "QQQ·미국 10년물·브렌트"
+    },
+    {
+      "id": "selective-chip-signal",
+      "rank": 2,
+      "claim": "반도체 ETF와 Micron 약세, 국내 메모리 장전 약세가 국내 반등을 제한한다.",
+      "validationMetric": "SOXX·SMH·Micron·삼성전자·SK하이닉스"
+    },
+    {
+      "id": "domestic-flow",
+      "rank": 3,
+      "claim": "6,990 회복은 외국인과 프로그램 수급의 동행이 필요하다.",
+      "validationMetric": "외국인·프로그램·KOSPI"
+    }
+  ],
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-10-07T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 6990,
+          "source": "Naver Finance KOSPI",
+          "description": "KOSPI가 6,990을 웃도는지 확인한다."
+        },
+        {
+          "id": "bull-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급 (억원)",
+          "description": "외국인 현물이 순매수인지 확인한다."
+        },
+        {
+          "id": "bull-program",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급 (억원)",
+          "description": "프로그램 매매가 순매수인지 확인한다."
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-10-07T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-floor",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 6880,
+          "source": "Naver Finance KOSPI",
+          "description": "KOSPI가 6,880 이상인지 확인한다."
+        },
+        {
+          "id": "base-cap",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 6990,
+          "source": "Naver Finance KOSPI",
+          "description": "KOSPI가 6,990 이하인지 확인한다."
+        },
+        {
+          "id": "base-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gte",
+          "threshold": -10000,
+          "source": "Naver Finance KOSPI 수급 (억원)",
+          "description": "외국인 현물 매도가 급격히 확대되지 않았는지 확인한다."
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-10-07T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 6880,
+          "source": "Naver Finance KOSPI",
+          "description": "KOSPI가 6,880 아래로 내려갔는지 확인한다."
+        },
+        {
+          "id": "bear-foreign",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급 (억원)",
+          "description": "외국인 현물이 순매도인지 확인한다."
+        },
+        {
+          "id": "bear-program",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급 (억원)",
+          "description": "프로그램 매매가 순매도인지 확인한다."
+        }
+      ]
+    }
+  },
+  "hypothesisTrials": [],
+  "posture": {
+    "attack": 25,
+    "wait": 50,
+    "defense": 25
+  },
+  "supersedes": null,
+  "contentHash": "7ca8c681fa508426825580e9f9cc07851eebcecd6573dbf1b583fa4c2eb2dc5d"
+}

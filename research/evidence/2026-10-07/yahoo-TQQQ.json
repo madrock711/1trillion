@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/TQQQ?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-10-07T08:16:11+09:00",
+  "rawHash": "c09788b1f3a9e4a2f62865eed5e0e38a39cde56138599d2972302b192eb53fad",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "TQQQ",
+            "exchangeName": "NGM",
+            "fullExchangeName": "NasdaqGM",
+            "instrumentType": "ETF",
+            "firstTradeDate": 1265898600,
+            "regularMarketTime": 1791316801,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 84.25,
+            "regularMarketChangePercent": 1.359,
+            "fulldayPrice": 84.43,
+            "fulldayChange": 1.31,
+            "fulldayChangePercent": 1.576,
+            "fiftyTwoWeekHigh": 88.09,
+            "fiftyTwoWeekLow": 37.32,
+            "regularMarketDayHigh": 85.32,
+            "regularMarketDayLow": 84.09,
+            "regularMarketVolume": 36842783,
+            "longName": "ProShares UltraPro QQQ",
+            "shortName": "ProShares UltraPro QQQ",
+            "chartPreviousClose": 77.46,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "end": 1791293400,
+                "start": 1791273600,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "end": 1791316800,
+                "start": 1791293400,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "end": 1791331200,
+                "start": 1791316800,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1790775000,
+            1790861400,
+            1790947800,
+            1791207000,
+            1791293400
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "volume": [
+                  47391300,
+                  66281200,
+                  60886500,
+                  36928700,
+                  36842783
+                ],
+                "low": [
+                  77.94000244140625,
+                  76.87000274658203,
+                  80.37000274658203,
+                  80.8499984741211,
+                  84.08999633789062
+                ],
+                "high": [
+                  79.68000030517578,
+                  79.52999877929688,
+                  82.61000061035156,
+                  83.37999725341797,
+                  85.31999969482422
+                ],
+                "close": [
+                  78.02999877929688,
+                  78.7300033569336,
+                  81.01000213623047,
+                  83.12000274658203,
+                  84.25
+                ],
+                "open": [
+                  78.12999725341797,
+                  78.87999725341797,
+                  81.58999633789062,
+                  80.94999694824219,
+                  84.54000091552734
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  78.02999877929688,
+                  78.7300033569336,
+                  81.01000213623047,
+                  83.12000274658203,
+                  84.25
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}

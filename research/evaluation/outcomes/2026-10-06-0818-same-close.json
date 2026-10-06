@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-10-06-0818-same-close",
+  "recordedAt": "2026-10-07T08:16:11+09:00",
+  "actualRef": "2026-10-06",
+  "realizedScenario": "bear",
+  "errorCodes": [],
+  "triggerResults": [
+    {
+      "id": "price",
+      "status": "confirmed",
+      "value": 6941.39,
+      "threshold": 6950
+    },
+    {
+      "id": "flows",
+      "status": "unavailable",
+      "reason": "15시 20분 정확 시각 수급 원문 미확보"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "us-tech-strength",
+      "status": "not_confirmed"
+    },
+    {
+      "id": "selective-chip-signal",
+      "status": "confirmed"
+    },
+    {
+      "id": "domestic-flow",
+      "status": "unavailable"
+    }
+  ],
+  "hypothesisTests": []
+}
