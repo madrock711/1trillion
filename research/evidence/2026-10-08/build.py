@@ -44,6 +44,22 @@ def refresh_collection_jsonld(content):
         return '<script type="application/ld+json">' + json.dumps(node, ensure_ascii=False, indent=2) + '</script>'
     return re.sub(r'<script type="application/ld\+json">(.*?)</script>', replace, content, flags=re.S)
 
+def refresh_article_jsonld(content):
+    def replace(match):
+        node = json.loads(match.group(1))
+        if node.get('@type') != 'Article':
+            return match.group(0)
+        node.update({
+            'headline': TITLE,
+            'description': SUMMARY,
+            'image': {'@type': 'ImageObject', 'url': 'https://www.hpmplab.com/assets/images/articles/' + IMAGE, 'width': 1200, 'height': 630},
+            'datePublished': ISSUED,
+            'dateModified': ISSUED,
+            'mainEntityOfPage': URL,
+        })
+        return '<script type="application/ld+json">' + json.dumps(node, ensure_ascii=False, separators=(',', ':')) + '</script>'
+    return re.sub(r'<script type="application/ld\+json">(.*?)</script>', replace, content, flags=re.S)
+
 article_body = '''<p>10월 7일 미국 시장은 금리가 다시 중심에 섰다. 9월 FOMC 의사록에서 연준은 인플레이션 상방 위험을 경계했고, 일부 참가자는 에너지 충격과 AI 수요에서 나온 가격 압력이 더 넓게 번지지 않도록 높은 금리가 필요하다고 봤다. 장기금리가 올라가자 QQQ는 0.25%, SOXX는 1.13%, SMH는 1.18% 내렸다.</p>
 <p>반도체 전체가 같은 방향으로 움직인 것은 아니다. Micron은 4.06% 반등했고 Broadcom도 0.19% 올랐다. 반면 Nvidia는 0.74%, AMD는 0.55% 하락했다. 메모리 수요의 중기 흐름과 당일 ETF 수급을 같은 신호로 읽으면 안 되는 장면이다.</p>
 <p>국내장은 이미 수급 충격을 한 차례 겪었다. KOSPI는 10월 7일 6,803.90으로 1.98% 하락했다. 장중 6,977.77까지 올랐지만 6,803.81까지 밀렸고, 외국인 현물은 2조6,188억원, 프로그램 전체는 1조9,315억원 순매도였다. 삼성전자는 1.10%, SK하이닉스는 3.27% 내렸고 KODEX 레버리지는 4.09% 하락했다.</p>
@@ -62,6 +78,7 @@ prefix = re.sub(r'(<meta name="description" content=")[^"]+', r'\1' + SUMMARY, p
 for prop, value in [('og:title', TITLE), ('og:description', SUMMARY), ('twitter:title', TITLE), ('twitter:description', SUMMARY)]:
     prefix = re.sub(r'(<meta (?:property|name)="' + re.escape(prop) + r'" content=")[^"]+', r'\1' + value, prefix)
 prefix = re.sub(r'2026-10-07T08:18:19\+09:00', ISSUED, prefix)
+prefix = refresh_article_jsonld(prefix)
 header = f'<article class="editorial-article reading-article"><header class="article-hero"><h1>{TITLE}</h1><p class="article-dek">{SUMMARY}</p><div class="article-meta"><strong><a href="../about.html">HPMPLab</a></strong><time datetime="{ISSUED}">2026.10.08 · 08:15 KST</time><span>장전 브리핑</span></div><p class="article-disclosure">작성 08:15 KST · 데이터 최종 확인 {CUTOFF}. 미국 정규장은 10월 7일, 국내 NXT·환율·미국 선물은 장전 표의 개별 시각 기준이다. 특정 상품의 매매 권유가 아닌 조건부 시장 분석이다.</p><figure class="article-hero-media"><img src="../assets/images/articles/{IMAGE}" width="1200" height="630" decoding="async" fetchpriority="high" alt="{ALT}"></figure></header><div class="article-body" id="article-body">'
 suffix = old_article[old_article.index('</div></article></main>'):]
 write('articles/market-2026-10-08.html', prefix + header + article_body + charts + suffix)
@@ -128,7 +145,8 @@ actual={'schemaVersion':1,'sessionDate':'2026-10-07','bizdate':'20261007','fetch
 dump('research/evaluation/actuals/2026-10-07.json',actual)
 outcome={'schemaVersion':1,'forecastId':'2026-10-07-0818-same-close','recordedAt':CUTOFF,'actualRef':'2026-10-07','realizedScenario':'bear','errorCodes':['range_too_narrow_down'],'triggerResults':[{'id':'price','status':'confirmed','value':6803.90,'threshold':6880},{'id':'flows','status':'unavailable','reason':'15시 20분 정확 시각 수급 원문 미확보'}],'driverAssessment':[{'id':'us-record-yields','status':'not_confirmed'},{'id':'selective-chip-signal','status':'confirmed'},{'id':'domestic-flow','status':'unavailable'}],'hypothesisTests':[]}
 dump('research/evaluation/outcomes/2026-10-07-0818-same-close.json',outcome)
-forecast={'schemaVersion':1,'forecastId':'2026-10-08-0815-same-close','visibility':'public','reportPath':'reports/2026-10-08.md','reportSha256':hashlib.sha256((ROOT/'reports/2026-10-08.md').read_bytes()).hexdigest(),'issuedAt':ISSUED,'dataCutoffAt':CUTOFF,'marketState':'preopen','marketRegime':'risk-off','evaluationBucket':'preopen','target':{'sessionDate':DATE,'horizon':'session_close','instrument':'KOSPI','leadSessions':0,'previousSessionDate':'2026-10-07'},'reference':{'price':6803.90,'asOf':'2026-10-07T15:30:00+09:00','kind':'previous_close'},'scenarios':{'bull':{'low':6860,'high':6990,'probability':0.2},'base':{'low':6730,'high':6860,'probability':0.5},'bear':{'low':6580,'high':6730,'probability':0.3}},'closeEnvelopeCoverage':0.9,'pathEnvelope':{'low':6550,'high':7000,'coverage':0.9},'drivers':[{'id':'fomc-yield-pressure','rank':1,'claim':'FOMC 의사록과 장기금리 경계가 성장주·반도체 ETF를 누른다.','validationMetric':'QQQ·SOXX·미국 10년물'},{'id':'mixed-memory-signal','rank':2,'claim':'Micron 반등은 메모리 수요를 받치지만 국내 반등에는 수급 전환이 필요하다.','validationMetric':'Micron·삼성전자·SK하이닉스·KOSPI'},{'id':'domestic-flow','rank':3,'claim':'6,860 회복은 외국인과 프로그램 수급의 동행이 필요하다.','validationMetric':'외국인·프로그램·KOSPI'}],'scenarioTriggers':{},'hypothesisTrials':[],'posture':{'attack':15,'wait':55,'defense':30},'supersedes':None}
+report_bytes = (ROOT / 'reports/2026-10-08.md').read_text(encoding='utf-8').encode('utf-8')
+forecast={'schemaVersion':1,'forecastId':'2026-10-08-0815-same-close','visibility':'public','reportPath':'reports/2026-10-08.md','reportSha256':hashlib.sha256(report_bytes).hexdigest(),'issuedAt':ISSUED,'dataCutoffAt':CUTOFF,'marketState':'preopen','marketRegime':'risk-off','evaluationBucket':'preopen','target':{'sessionDate':DATE,'horizon':'session_close','instrument':'KOSPI','leadSessions':0,'previousSessionDate':'2026-10-07'},'reference':{'price':6803.90,'asOf':'2026-10-07T15:30:00+09:00','kind':'previous_close'},'scenarios':{'bull':{'low':6860,'high':6990,'probability':0.2},'base':{'low':6730,'high':6860,'probability':0.5},'bear':{'low':6580,'high':6730,'probability':0.3}},'closeEnvelopeCoverage':0.9,'pathEnvelope':{'low':6550,'high':7000,'coverage':0.9},'drivers':[{'id':'fomc-yield-pressure','rank':1,'claim':'FOMC 의사록과 장기금리 경계가 성장주·반도체 ETF를 누른다.','validationMetric':'QQQ·SOXX·미국 10년물'},{'id':'mixed-memory-signal','rank':2,'claim':'Micron 반등은 메모리 수요를 받치지만 국내 반등에는 수급 전환이 필요하다.','validationMetric':'Micron·삼성전자·SK하이닉스·KOSPI'},{'id':'domestic-flow','rank':3,'claim':'6,860 회복은 외국인과 프로그램 수급의 동행이 필요하다.','validationMetric':'외국인·프로그램·KOSPI'}],'scenarioTriggers':{},'hypothesisTrials':[],'posture':{'attack':15,'wait':55,'defense':30},'supersedes':None}
 for name,conds in {'bull':[('bull-price','kospi_price','gt',6860),('bull-foreign','foreign_cash','gt',0),('bull-program','program_total','gt',0)],'base':[('base-floor','kospi_price','gte',6730),('base-cap','kospi_price','lte',6860),('base-foreign','foreign_cash','gte',-10000)],'bear':[('bear-price','kospi_price','lt',6730),('bear-foreign','foreign_cash','lt',0),('bear-program','program_total','lt',0)]}.items():
     forecast['scenarioTriggers'][name]={'logic':'AND','observeBy':'2026-10-08T15:20:00+09:00','conditions':[{'id':i,'metricId':m,'operator':o,'threshold':t,'source':'Naver Finance KOSPI 수급' if 'cash' in m or 'program' in m else 'Naver Finance KOSPI','description':i} for i,m,o,t in conds]}
 forecast['contentHash']=hashlib.sha256(json.dumps(forecast,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()).hexdigest()
