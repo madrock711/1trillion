@@ -7,6 +7,8 @@ ROOT = Path(__file__).resolve().parents[3]
 DATE = '2026-10-08'
 ISSUED = '2026-10-08T08:15:00+09:00'
 CUTOFF = '2026-10-08T08:14:07+09:00'
+PUBLISHED = '2026-10-08T08:29:25+09:00'
+MODIFIED = '2026-10-08T08:33:38+09:00'
 TITLE = 'FOMC 의사록이 다시 올린 금리 경계…KOSPI는 6,800선 수급부터'
 SUMMARY = '미국 반도체 ETF는 밀렸지만 Micron은 반등했습니다. 전일 대규모 순매도 뒤 KOSPI는 6,800선에서 수급을 먼저 확인해야 합니다.'
 IMAGE = 'market-2026-10-08-fomc-yield-memory-1200x630.png'
@@ -29,7 +31,7 @@ def refresh_collection_jsonld(content):
         if current is None:
             current = {'@type':'ListItem','position':1,'url':URL}
             items.insert(0, current)
-        current.update({'name':TITLE,'description':SUMMARY,'datePublished':ISSUED,'dateModified':ISSUED,'image':{'@type':'ImageObject','url':'https://www.hpmplab.com/assets/images/articles/' + IMAGE}})
+        current.update({'name':TITLE,'description':SUMMARY,'datePublished':PUBLISHED,'dateModified':MODIFIED,'image':{'@type':'ImageObject','url':'https://www.hpmplab.com/assets/images/articles/' + IMAGE}})
         current_items = [item for item in items if item.get('url') == URL]
         for item in current_items[1:]: items.remove(item)
         prior_url = 'https://www.hpmplab.com/articles/market-2026-10-07.html'
@@ -53,8 +55,8 @@ def refresh_article_jsonld(content):
             'headline': TITLE,
             'description': SUMMARY,
             'image': {'@type': 'ImageObject', 'url': 'https://www.hpmplab.com/assets/images/articles/' + IMAGE, 'width': 1200, 'height': 630},
-            'datePublished': ISSUED,
-            'dateModified': ISSUED,
+            'datePublished': PUBLISHED,
+            'dateModified': MODIFIED,
             'mainEntityOfPage': URL,
         })
         return '<script type="application/ld+json">' + json.dumps(node, ensure_ascii=False, separators=(',', ':')) + '</script>'
@@ -75,11 +77,11 @@ prefix = old_article.split('<article class="editorial-article reading-article">'
 prefix = prefix.replace('market-2026-10-07.html', 'market-2026-10-08.html').replace('market-2026-10-07-yield-oil-memory-1200x630.png', IMAGE)
 prefix = re.sub(r'(<title>).*?( \| 연마</title>)', r'\1' + TITLE + r'\2', prefix)
 prefix = re.sub(r'(<meta name="description" content=")[^"]+', r'\1' + SUMMARY, prefix)
-for prop, value in [('og:title', TITLE), ('og:description', SUMMARY), ('twitter:title', TITLE), ('twitter:description', SUMMARY)]:
+for prop, value in [('og:title', TITLE), ('og:description', SUMMARY), ('twitter:title', TITLE), ('twitter:description', SUMMARY), ('article:published_time', PUBLISHED), ('article:modified_time', MODIFIED)]:
     prefix = re.sub(r'(<meta (?:property|name)="' + re.escape(prop) + r'" content=")[^"]+', r'\1' + value, prefix)
 prefix = re.sub(r'2026-10-07T08:18:19\+09:00', ISSUED, prefix)
 prefix = refresh_article_jsonld(prefix)
-header = f'<article class="editorial-article reading-article"><header class="article-hero"><h1>{TITLE}</h1><p class="article-dek">{SUMMARY}</p><div class="article-meta"><strong><a href="../about.html">HPMPLab</a></strong><time datetime="{ISSUED}">2026.10.08 · 08:15 KST</time><span>장전 브리핑</span></div><p class="article-disclosure">작성 08:15 KST · 데이터 최종 확인 {CUTOFF}. 미국 정규장은 10월 7일, 국내 NXT·환율·미국 선물은 장전 표의 개별 시각 기준이다. 특정 상품의 매매 권유가 아닌 조건부 시장 분석이다.</p><figure class="article-hero-media"><img src="../assets/images/articles/{IMAGE}" width="1200" height="630" decoding="async" fetchpriority="high" alt="{ALT}"></figure></header><div class="article-body" id="article-body">'
+header = f'<article class="editorial-article reading-article"><header class="article-hero"><h1>{TITLE}</h1><p class="article-dek">{SUMMARY}</p><div class="article-meta"><strong><a href="../about.html">HPMPLab</a></strong><time datetime="{PUBLISHED}">2026.10.08 · 작성 08:15 · 발행 08:29 KST</time><span>장전 브리핑</span></div><p class="article-disclosure">작성 08:15 KST · 데이터 최종 확인 {CUTOFF} · 최초 발행 08:29 KST. 미국 정규장은 10월 7일, 국내 NXT·환율·미국 선물은 장전 표의 개별 시각 기준이다. 특정 상품의 매매 권유가 아닌 조건부 시장 분석이다.</p><figure class="article-hero-media"><img src="../assets/images/articles/{IMAGE}" width="1200" height="630" decoding="async" fetchpriority="high" alt="{ALT}"></figure></header><div class="article-body" id="article-body">'
 suffix = old_article[old_article.index('</div></article></main>'):]
 write('articles/market-2026-10-08.html', prefix + header + article_body + charts + suffix)
 
@@ -89,12 +91,12 @@ def card(old, css, date_label):
     if matches:
         for match in reversed(matches[1:]):
             old = old[:match.start()] + old[match.end():]
-        return old.replace('2026.10.08 · 08:09 KST', date_label).replace('2026-10-08T08:09:00+09:00', ISSUED)
+        return old.replace('2026.10.08 · 08:09 KST', date_label).replace('2026.10.08 · 08:15 KST', date_label).replace('2026-10-08T08:09:00+09:00', PUBLISHED).replace(ISSUED, PUBLISHED)
     item = next(x.group(0) for x in re.finditer(pat, old, re.S) if 'market-2026-10-07.html' in x.group(0))
     fresh = item.replace('market-2026-10-07.html', 'market-2026-10-08.html').replace('market-2026-10-07-yield-oil-memory-1200x630.png', IMAGE).replace('미국은 신고가, 국내 메모리주는 장전 약세…KOSPI는 6,940선 확인부터', TITLE).replace('유가와 금리 완화는 미국 신고가를 이끌었지만, 반도체 ETF와 국내 메모리 장전 호가는 약합니다. KOSPI는 6,940선의 수급을 먼저 봐야 합니다.', SUMMARY).replace('2026-10-07T08:16:11+09:00', ISSUED).replace('2026.10.07 · 08:16 KST', date_label).replace('10월 7일', '10월 8일')
     return old.replace(item, fresh + '\n' + item, 1)
 
-for page, css, label in [('index.html','article-card home-article-card','2026.10.08 · 08:15 KST'),('articles/index.html','article-card','2026.10.08 · 08:15 KST'),('articles/market.html','market-article-item','2026.10.08 · 08:15 KST')]:
+for page, css, label in [('index.html','article-card home-article-card','2026.10.08 · 08:29 KST'),('articles/index.html','article-card','2026.10.08 · 08:29 KST'),('articles/market.html','market-article-item','2026.10.08 · 08:29 KST')]:
     content = card(read(page), css, label)
     head, tail = content.split('</head>', 1)
     for prop, value in [('og:title', TITLE), ('og:description', SUMMARY), ('twitter:title', TITLE), ('twitter:description', SUMMARY)]:
