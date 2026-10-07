@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-10-08-0815-same-close",
+  "contentHash": "66be7b752f1d8520732fd164da472e75cf3ea3c7a4ff458b2ae1cd7d26196835",
+  "commitSha": "2df00b57254a51be5042f90e13074e474b28cb60",
+  "eventType": "deploy_verified",
+  "occurredAt": "2026-10-08T08:29:25.981000+09:00",
+  "publicUrl": "https://www.hpmplab.com/articles/market-2026-10-08.html",
+  "availabilityStatus": "available",
+  "deployment": {
+    "amplifyJobId": "649",
+    "commitSha": "2df00b57254a51be5042f90e13074e474b28cb60",
+    "completedAt": "2026-10-08T08:29:25.981000+09:00"
+  }
+}
