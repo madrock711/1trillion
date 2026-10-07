@@ -1,0 +1,17 @@
+{
+  "url": "https://m.stock.naver.com/api/stock/122630/price?pageSize=5&page=1",
+  "fetchedAt": "2026-10-08T08:14:07+09:00",
+  "rawHash": "captured-20261008-preopen",
+  "data": [
+    {
+      "localTradedAt": "2026-10-07",
+      "closePrice": "107,230",
+      "compareToPreviousClosePrice": "-4,575",
+      "fluctuationsRatio": "-4.09",
+      "openPrice": "109,475",
+      "highPrice": "113,430",
+      "lowPrice": "107,175",
+      "accumulatedTradingVolume": 12955432
+    }
+  ]
+}

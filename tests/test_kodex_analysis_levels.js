@@ -7,7 +7,7 @@ const html = fs.readFileSync(path.join(root, 'articles/market.html'), 'utf8');
 const js = fs.readFileSync(path.join(root, 'assets/market-dashboard.js'), 'utf8');
 const css = fs.readFileSync(path.join(root, 'assets/market-dashboard.css'), 'utf8');
 const snapshot = JSON.parse(fs.readFileSync(path.join(root, 'assets/data/market-dashboard-latest.json'), 'utf8'));
-const evidence = JSON.parse(fs.readFileSync(path.join(root, 'research/evidence/2026-10-07/122630.json'), 'utf8'));
+const evidence = JSON.parse(fs.readFileSync(path.join(root, 'research/evidence/2026-10-08/122630.json'), 'utf8'));
 
 assert(!html.includes('data-technical-card="kodex-technical"'), '별도 KODEX OHLC 비교 카드는 없어야 한다.');
 assert(!html.includes('id="market-technical-chart"'), '제거한 OHLC 비교 SVG가 남아 있으면 안 된다.');
@@ -38,7 +38,7 @@ assert(kodex, '최신 발행 스냅샷에 KODEX 기술 데이터가 필요하다
     const level = kodex.levels.find((item) => item.label === label);
     assert(level && Number.isFinite(level.value), `${label} 숫자가 최신 발행 스냅샷에 있어야 한다.`);
 });
-const issuedSession = evidence.data.find((row) => row.localTradedAt === '2026-10-06');
+const issuedSession = evidence.data.find((row) => row.localTradedAt === '2026-10-07');
 assert(issuedSession, '발행 전일 KODEX 원시 일봉이 보존돼야 한다.');
 assert.deepStrictEqual(
     kodex.points.map((point) => point.value),
@@ -47,7 +47,7 @@ assert.deepStrictEqual(
 );
 assert.deepStrictEqual(
     kodex.levels.map((level) => level.value),
-    [110265, 111805, 114395],
+    [107175, 107230, 109475],
     'KODEX 지지·반등 기준·저항은 최신 발행 시나리오와 같아야 한다.'
 );
 
