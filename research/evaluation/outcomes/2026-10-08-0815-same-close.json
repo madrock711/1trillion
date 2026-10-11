@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-10-08-0815-same-close",
+  "recordedAt": "2026-10-12T08:13:40+09:00",
+  "actualRef": "2026-10-08",
+  "realizedScenario": "bear",
+  "errorCodes": [
+    "range_too_narrow_down"
+  ],
+  "triggerResults": [
+    {
+      "id": "price",
+      "status": "confirmed",
+      "value": 6625.93,
+      "threshold": 6730
+    },
+    {
+      "id": "flows",
+      "status": "unavailable",
+      "reason": "15시 20분 정확 시각 수급 원문 미확보"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "fomc-yield-pressure",
+      "status": "confirmed"
+    },
+    {
+      "id": "mixed-memory-signal",
+      "status": "not_confirmed"
+    },
+    {
+      "id": "domestic-flow",
+      "status": "unavailable"
+    }
+  ],
+  "hypothesisTests": []
+}

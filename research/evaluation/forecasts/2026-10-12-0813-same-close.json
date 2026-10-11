@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-10-12-0805-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-10-12.md",
+  "reportSha256": "96e45988efd9b0181c033a3796e29b0d2f66e0aa3626cbf4d8e2772e96ad2e67",
+  "issuedAt": "2026-10-12T08:13:40+09:00",
+  "dataCutoffAt": "2026-10-12T08:13:40+09:00",
+  "marketState": "preopen",
+  "marketRegime": "risk-off",
+  "evaluationBucket": "preopen",
+  "target": {
+    "sessionDate": "2026-10-12",
+    "horizon": "session_close",
+    "instrument": "KOSPI",
+    "leadSessions": 0,
+    "previousSessionDate": "2026-10-08"
+  },
+  "reference": {
+    "price": 6625.93,
+    "asOf": "2026-10-08T15:30:00+09:00",
+    "kind": "previous_close"
+  },
+  "scenarios": {
+    "bull": {
+      "low": 6700,
+      "high": 6830,
+      "probability": 0.2
+    },
+    "base": {
+      "low": 6530,
+      "high": 6700,
+      "probability": 0.45
+    },
+    "bear": {
+      "low": 6360,
+      "high": 6530,
+      "probability": 0.35
+    }
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {
+    "low": 6310,
+    "high": 6850,
+    "coverage": 0.9
+  },
+  "drivers": [
+    {
+      "id": "ai-financing-chip-selloff",
+      "rank": 1,
+      "claim": "AI 투자 자금조달 우려가 미국 반도체 ETF를 크게 눌렀다.",
+      "validationMetric": "SOXX·SMH·Nvidia·AMD·Micron"
+    },
+    {
+      "id": "memory-contract-resilience",
+      "rank": 2,
+      "claim": "서버 DRAM 장기계약과 HBM 공급 제약은 중기 메모리 수요를 지지한다.",
+      "validationMetric": "TrendForce DDR5·DDR4 현물과 계약 코멘트"
+    },
+    {
+      "id": "domestic-flow",
+      "rank": 3,
+      "claim": "6,700 회복은 외국인과 프로그램 수급의 동행이 필요하다.",
+      "validationMetric": "외국인·프로그램·KOSPI"
+    }
+  ],
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-10-12T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 6700,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-price"
+        },
+        {
+          "id": "bull-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급",
+          "description": "bull-foreign"
+        },
+        {
+          "id": "bull-program",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급",
+          "description": "bull-program"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-10-12T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-floor",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 6530,
+          "source": "Naver Finance KOSPI",
+          "description": "base-floor"
+        },
+        {
+          "id": "base-cap",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 6700,
+          "source": "Naver Finance KOSPI",
+          "description": "base-cap"
+        },
+        {
+          "id": "base-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gte",
+          "threshold": -8000,
+          "source": "Naver Finance KOSPI 수급",
+          "description": "base-foreign"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-10-12T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 6530,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-price"
+        },
+        {
+          "id": "bear-foreign",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급",
+          "description": "bear-foreign"
+        },
+        {
+          "id": "bear-program",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI 수급",
+          "description": "bear-program"
+        }
+      ]
+    }
+  },
+  "hypothesisTrials": [],
+  "posture": {
+    "attack": 10,
+    "wait": 50,
+    "defense": 40
+  },
+  "supersedes": null,
+  "contentHash": "2c96e75c978d983513da06551dbb24727a8227cdf71509f026f77ef9d083c086"
+}

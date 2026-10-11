@@ -1,31 +1,31 @@
 {
   "schemaVersion": 1,
-  "snapshotId": "20261008-0815",
-  "generatedAt": "2026-10-08T08:15:00+09:00",
-  "asOf": "2026-10-08T08:14:07+09:00",
-  "asOfDisplay": "2026-10-08T08:14:07+09:00",
+  "snapshotId": "20261012-0813",
+  "generatedAt": "2026-10-12T08:13:40+09:00",
+  "asOf": "2026-10-12T08:13:40+09:00",
+  "asOfDisplay": "2026-10-12T08:13:40+09:00",
   "marketState": "한국 장전",
-  "sourceLabel": "미국 10월 7일 정규장 · 국내 10월 7일 종가 · 10월 8일 장전",
+  "sourceLabel": "미국 10월 9일 정규장 · 국내 10월 8일 종가 · 10월 12일 장전",
   "latestArticle": {
-    "title": "FOMC 의사록이 다시 올린 금리 경계…KOSPI는 6,800선 수급부터",
-    "href": "market-2026-10-08.html"
+    "title": "미국 반도체 급락의 월요일…KOSPI는 6,530선 수급부터",
+    "href": "market-2026-10-12.html"
   },
-  "headline": "FOMC 의사록이 다시 올린 금리 경계…KOSPI는 6,800선 수급부터",
-  "summary": "미국 반도체 ETF는 밀렸지만 Micron은 반등했습니다. 전일 대규모 순매도 뒤 KOSPI는 6,800선에서 수급을 먼저 확인해야 합니다.",
+  "headline": "미국 반도체 급락의 월요일…KOSPI는 6,530선 수급부터",
+  "summary": "미국 지수는 반등했지만 SOXX는 5% 밀렸습니다. AI 자금조달 우려와 메모리 수요를 분리해 보며 KOSPI 6,530선 수급을 확인해야 합니다.",
   "markets": [
     {
       "id": "KOSPI",
       "label": "KOSPI",
       "symbol": "K",
-      "value": 6803.9,
-      "changePercent": -1.98,
-      "asOf": "2026-10-07T15:30:00+09:00",
-      "asOfLabel": "10월 7일 종가",
+      "value": 6625.93,
+      "changePercent": -2.62,
+      "asOf": "2026-10-08T15:30:00+09:00",
+      "asOfLabel": "10월 8일 종가",
       "stateLabel": "정규장 종가",
-      "open": 6864.25,
-      "high": 6977.77,
-      "low": 6803.81,
-      "previousClose": 6941.39,
+      "open": 6808.68,
+      "high": 6810.83,
+      "low": 6625.93,
+      "previousClose": 6803.9,
       "flows": []
     },
     {
@@ -45,75 +45,75 @@
     }
   ],
   "stance": {
-    "label": "6,800선과 수급 공백",
-    "attack": 15,
-    "wait": 55,
-    "defense": 30,
-    "note": "장기금리 경계와 전일 대규모 순매도 뒤 6,800선 수급을 확인한다."
+    "label": "반도체 급락과 6,530선",
+    "attack": 10,
+    "wait": 50,
+    "defense": 40,
+    "note": "AI 자금조달 우려로 미국 반도체가 급락한 뒤 6,530선과 국내 수급을 확인한다."
   },
   "checkpoints": [
     {
-      "label": "S&P500 선물",
-      "value": "7,853.25 · +0.01%",
-      "detail": "2026-10-08T07:47:09+09:00 · 지연",
-      "tone": "info"
-    },
-    {
-      "label": "원/달러",
-      "value": "1,341.00원",
-      "detail": "2026-10-08T07:09:29+09:00 하나은행 고시",
+      "label": "WTI 최근 거래",
+      "value": "92.42달러 · +3.33%",
+      "detail": "2026-10-12T07:52:44+09:00",
       "tone": "warning"
     },
     {
+      "label": "원/달러",
+      "value": "1,341.31원 · -0.18%",
+      "detail": "2026-10-12T08:12:32+09:00",
+      "tone": "info"
+    },
+    {
       "label": "삼성전자 NXT",
-      "value": "273,000원 · +1.68%",
-      "detail": "2026-10-08T08:13:59+09:00",
-      "tone": "positive"
+      "value": "259,000원 · -1.15%",
+      "detail": "2026-10-12T08:13:40+09:00",
+      "tone": "warning"
     },
     {
       "label": "SK하이닉스 NXT",
-      "value": "1,740,000원 · +0.99%",
-      "detail": "2026-10-08T08:14:07+09:00",
-      "tone": "positive"
+      "value": "1,646,000원 · -2.08%",
+      "detail": "2026-10-12T08:13:40+09:00",
+      "tone": "warning"
     }
   ],
   "changes": [
     {
       "label": "KOSPI",
-      "before": "6,941.39",
-      "after": "6,803.90",
-      "meaning": "10월 7일 외국인·프로그램 동반 순매도 속 1.98% 하락했습니다."
+      "before": "6,803.90",
+      "after": "6,625.93",
+      "meaning": "10월 8일 KOSPI가 2.61% 하락했습니다."
     },
     {
       "label": "미국 반도체",
-      "before": "SOXX -0.01%",
-      "after": "SOXX -1.13%",
-      "meaning": "FOMC 의사록 뒤 장기금리 경계가 다시 커졌습니다."
+      "before": "SOXX +0.23%",
+      "after": "SOXX -5.01%",
+      "meaning": "AI 자금조달 우려로 10월 9일 반도체 ETF 낙폭이 확대됐습니다."
     }
   ],
   "factors": [
     {
       "label": "미국 기술주",
-      "metric": "QQQ -0.25% · NVDA -0.74%",
-      "detail": "10월 7일 미국 정규장",
+      "metric": "QQQ +0.23% · NVDA -2.00%",
+      "detail": "10월 9일 미국 정규장",
       "tone": "warning"
     },
     {
       "label": "미국 반도체",
-      "metric": "SOXX -1.13% · MU +4.06%",
-      "detail": "10월 7일 미국 정규장",
+      "metric": "SOXX -5.01% · MU -4.27%",
+      "detail": "10월 9일 미국 정규장",
       "tone": "warning"
     },
     {
       "label": "미 국채",
-      "metric": "10년-2년 +0.51%p",
-      "detail": "10월 7일 FRED 최신 관측",
+      "metric": "10년-2년 +0.44%p",
+      "detail": "10월 9일 FRED 최신 관측",
       "tone": "warning"
     },
     {
-      "label": "전일 국내 수급",
-      "metric": "외국인 -2.62조원 · 프로그램 -1.93조원",
-      "detail": "10월 7일 정규장",
+      "label": "직전 국내 종가",
+      "metric": "KOSPI -2.61% · KODEX -5.44%",
+      "detail": "10월 8일 정규장",
       "tone": "warning"
     }
   ],
@@ -139,64 +139,64 @@
     {
       "id": "bull",
       "label": "강세 · 20%",
-      "range": "KOSPI 6,860 초과~6,990",
+      "range": "KOSPI 6,700 초과~6,830",
       "summary": "외국인·프로그램 동반 순매수 전환 구간이다.",
       "conditions": [
-        "6,860 초과",
+        "6,700 초과",
         "외국인 현물 순매수",
         "프로그램 전체 순매수"
       ],
-      "invalidation": "6,860 아래 재진입"
+      "invalidation": "6,700 아래 재진입"
     },
     {
       "id": "base",
-      "label": "기본 · 50%",
-      "range": "KOSPI 6,730~6,860",
-      "summary": "6,730 방어와 순매도 둔화를 확인하는 구간이다.",
+      "label": "기본 · 45%",
+      "range": "KOSPI 6,530~6,700",
+      "summary": "6,530 방어와 순매도 둔화를 확인하는 구간이다.",
       "conditions": [
-        "6,730 이상",
-        "6,860 이하",
-        "외국인 순매도 1조원 미만"
+        "6,530 이상",
+        "6,700 이하",
+        "외국인 순매도 8천억원 미만"
       ],
       "invalidation": "범위 이탈"
     },
     {
       "id": "bear",
-      "label": "약세 · 30%",
-      "range": "KOSPI 6,580~6,730 미만",
-      "summary": "전일 매도 압력이 다시 확대되는 경우다.",
+      "label": "약세 · 35%",
+      "range": "KOSPI 6,360~6,530 미만",
+      "summary": "미국 반도체 급락과 국내 매도가 겹치는 경우다.",
       "conditions": [
-        "6,730 미만",
+        "6,530 미만",
         "외국인 현물 순매도",
         "프로그램 전체 순매도"
       ],
-      "invalidation": "6,730 회복"
+      "invalidation": "6,530 회복"
     }
   ],
   "strategyLevels": [
     {
       "asset": "KOSPI",
-      "support": "6,730 / 6,580",
-      "pivot": "6,860",
-      "resistance": "6,990"
+      "support": "6,530 / 6,360",
+      "pivot": "6,700",
+      "resistance": "6,830"
     },
     {
       "asset": "KODEX 레버리지",
-      "support": "107,175원",
-      "pivot": "107,230원",
-      "resistance": "109,475원"
+      "support": "99,350원",
+      "pivot": "101,400원",
+      "resistance": "103,250원"
     }
   ],
   "events": [
     {
-      "time": "10월 7일 미국 정규장",
-      "name": "FOMC 의사록과 장기금리 경계",
-      "path": "성장주 할인율과 반도체 수급"
+      "time": "10월 9일 미국 정규장",
+      "name": "AI 자금조달 우려와 반도체 ETF 급락",
+      "path": "AI 투자 수익화·성장주 할인율"
     },
     {
-      "time": "10월 8일 08:00 KST",
-      "name": "한국 8월 경상수지",
-      "path": "원/달러와 수출 흐름"
+      "time": "10월 12일 장전",
+      "name": "유가 재상승과 국내 메모리주 NXT 약세",
+      "path": "수입물가·국내 수급"
     },
     {
       "time": "10월 14일 21:30 KST",
@@ -207,99 +207,99 @@
   "checklist": [
     {
       "id": "support",
-      "label": "KOSPI 6,730 방어"
+      "label": "KOSPI 6,530 방어"
     },
     {
       "id": "rebound",
-      "label": "6,860 회복과 메모리 동반 강세"
+      "label": "6,700 회복과 외국인·프로그램 전환"
     },
     {
       "id": "flows",
-      "label": "외국인·프로그램 수급 동행 여부"
+      "label": "삼성전자·SK하이닉스 정규장 회복 여부"
     }
   ],
   "technical": {
-    "note": "10월 7일 확정 일봉과 10월 8일 장전 분석 기준선입니다.",
+    "note": "10월 8일 확정 일봉과 10월 12일 장전 분석 기준선입니다.",
     "instruments": [
       {
         "id": "KOSPI",
         "label": "KOSPI",
         "unit": "pt",
-        "asOf": "2026-10-07T15:30:00+09:00",
-        "asOfLabel": "10월 7일 정규장 종가",
+        "asOf": "2026-10-08T15:30:00+09:00",
+        "asOfLabel": "10월 8일 정규장 종가",
         "points": [
           {
             "label": "시가",
-            "value": 6864.25
+            "value": 6808.68
           },
           {
             "label": "고가",
-            "value": 6977.77
+            "value": 6810.83
           },
           {
             "label": "저가",
-            "value": 6803.81
+            "value": 6625.93
           },
           {
             "label": "종가",
-            "value": 6803.9
+            "value": 6625.93
           }
         ],
         "levels": [
           {
             "label": "1차 지지",
-            "value": 6730
+            "value": 6530
           },
           {
             "label": "반등 기준",
-            "value": 6860
+            "value": 6700
           },
           {
             "label": "저항",
-            "value": 6990
+            "value": 6830
           }
         ],
-        "interpretation": "1차 지지 6,730 · 반등 기준 6,860 · 저항 6,990"
+        "interpretation": "1차 지지 6,530 · 반등 기준 6,700 · 저항 6,830"
       },
       {
         "id": "KODEX",
         "label": "KODEX 레버리지",
         "unit": "원",
-        "asOf": "2026-10-07T15:30:00+09:00",
-        "asOfLabel": "10월 7일 정규장 종가",
+        "asOf": "2026-10-08T15:30:00+09:00",
+        "asOfLabel": "10월 8일 정규장 종가",
         "points": [
           {
             "label": "시가",
-            "value": 109475
+            "value": 106985
           },
           {
             "label": "고가",
-            "value": 113430
+            "value": 107475
           },
           {
             "label": "저가",
-            "value": 107175
+            "value": 101400
           },
           {
             "label": "종가",
-            "value": 107230
+            "value": 101400
           }
         ],
         "levels": [
           {
             "label": "1차 지지",
-            "value": 107175
+            "value": 99350
           },
           {
             "label": "반등 기준",
-            "value": 107230
+            "value": 101400
           },
           {
             "label": "저항",
-            "value": 109475
+            "value": 103250
           }
         ],
-        "interpretation": "1차 지지 107,175 · 반등 기준 107,230 · 저항 109,475"
+        "interpretation": "1차 지지 99,350 · 반등 기준 101,400 · 저항 103,250"
       }
     ]
   },
