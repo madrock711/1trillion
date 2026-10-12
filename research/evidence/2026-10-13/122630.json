@@ -1,0 +1,13 @@
+{
+  "source": "https://m.stock.naver.com/api/stock/122630/price?pageSize=5&page=1",
+  "data": [
+    {
+      "localTradedAt": "2026-10-12",
+      "closePrice": "93,620",
+      "openPrice": "99,080",
+      "highPrice": "100,130",
+      "lowPrice": "92,965",
+      "accumulatedTradingVolume": 19270773
+    }
+  ]
+}

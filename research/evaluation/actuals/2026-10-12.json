@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-10-12",
+  "bizdate": "20261012",
+  "fetchedAt": "2026-10-13T08:09:54+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6578.17,
+    "high": 6589.69,
+    "low": 6368.49,
+    "close": 6384.24,
+    "asOf": "2026-10-12T15:30:00+09:00",
+    "source": "https://fchart.stock.naver.com/sise.nhn?symbol=KOSPI&timeframe=day&count=10&requestType=0",
+    "rawHash": "captured-20261013-preopen"
+  },
+  "kodex": {
+    "open": 99080,
+    "high": 100130,
+    "low": 92965,
+    "close": 93620,
+    "volume": 19270773,
+    "source": "https://m.stock.naver.com/api/stock/122630/price?pageSize=5&page=1",
+    "rawHash": "captured-20261013-preopen"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "15시 20분 정확 시각 외국인·프로그램·시장 폭 원문 미확보. 종가로 소급하지 않음",
+  "flowTrajectory": null,
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-10-12T15:30:00+09:00",
+    "fetchedAt": "2026-10-13T08:09:54+09:00",
+    "missingReason": "09:30·10:00·14:00·15:20 동일 시각 수급 앵커 원문 미확보",
+    "rawHash": "captured-20261013-preopen"
+  }
+}

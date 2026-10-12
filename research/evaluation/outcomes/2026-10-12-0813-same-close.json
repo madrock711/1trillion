@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-10-12-0813-same-close",
+  "recordedAt": "2026-10-13T08:09:54+09:00",
+  "actualRef": "2026-10-12",
+  "realizedScenario": "bear",
+  "errorCodes": [],
+  "triggerResults": [
+    {
+      "id": "price",
+      "status": "confirmed",
+      "value": 6384.24,
+      "threshold": 6530
+    },
+    {
+      "id": "flows",
+      "status": "unavailable",
+      "reason": "15시 20분 정확 시각 수급 원문 미확보"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "ai-financing-chip-selloff",
+      "status": "confirmed"
+    },
+    {
+      "id": "memory-contract-resilience",
+      "status": "not_assessed"
+    },
+    {
+      "id": "domestic-flow",
+      "status": "unavailable"
+    }
+  ],
+  "hypothesisTests": []
+}
