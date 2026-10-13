@@ -8,3 +8,4 @@
 - 보고서 reports/2026-10-14.md, 취재 research/notes/2026-10-14.md, 대시보드 assets/data/market-dashboard-20261014-0809.json.
 - 차트 charts/us_yield_spreads_*_2026-10-14.png. 직전 전망은 하단도 이탈해 낙폭 과소평가. 수급 앵커 미확보.
 - 평가 전체 실행은 기존 2026-09-21 보고서 해시 불일치로 실패.
+- 최신 검증 전망 research/evaluation/forecasts/2026-10-14-0815-same-close.json. 최초 공개 08:14:06 KST. 준비 계약 검증 실패와 보존 이유는 research/evidence/2026-10-14/contract-correction.md.

@@ -1,31 +1,31 @@
 [
   {
-    "url": "https://www.hpmplab.com/articles/market-2026-10-14.html?verify=1791933314351452000",
+    "url": "https://www.hpmplab.com/articles/market-2026-10-14.html?verify=1791933484301574600",
     "status": 200,
-    "bytes": 11443
+    "bytes": 11544
   },
   {
-    "url": "https://www.hpmplab.com/assets/images/articles/market-2026-10-14-memory-competition-cpi-1200x630.png?verify=1791933314351453800",
+    "url": "https://www.hpmplab.com/assets/images/articles/market-2026-10-14-memory-competition-cpi-1200x630.png?verify=1791933484301578100",
     "status": 200,
     "bytes": 1089330
   },
   {
-    "url": "https://www.hpmplab.com/assets/data/market-dashboard-latest.json?verify=1791933314351454500",
+    "url": "https://www.hpmplab.com/assets/data/market-dashboard-latest.json?verify=1791933484301578900",
     "status": 200,
     "bytes": 7681
   },
   {
-    "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market-2026-10-14.html?verify=1791933314351455500",
+    "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market-2026-10-14.html?verify=1791933484301579700",
     "status": 200,
-    "bytes": 11443
+    "bytes": 11544
   },
   {
-    "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/images/articles/market-2026-10-14-memory-competition-cpi-1200x630.png?verify=1791933314351456000",
+    "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/images/articles/market-2026-10-14-memory-competition-cpi-1200x630.png?verify=1791933484301580500",
     "status": 200,
     "bytes": 1089330
   },
   {
-    "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-latest.json?verify=1791933314351456500",
+    "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-latest.json?verify=1791933484301580900",
     "status": 200,
     "bytes": 7681
   }
