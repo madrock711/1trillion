@@ -84,6 +84,43 @@
         'kodex-market-context'
     ];
     var technicalChartCardIds = ['kospi-flow', 'kodex-history', 'composite-momentum', 'tqqq-history'];
+    var technicalAnalysisSignatures = {};
+    var technicalAnalysisRequestedDates = {};
+    window.TechnicalAnalysisContexts = window.TechnicalAnalysisContexts || {};
+
+    function publishTechnicalAnalysisData(symbol, mode, bars, options) {
+        var settings = options || {};
+        var interval = mode === 'daily' ? 1 : Math.max(1, Number(settings.interval) || selectedKodexIntradayInterval);
+        var snapshots = (bars || []).map(function (row) {
+            var snapshot = {
+                date: row.date,
+                open: row.open,
+                high: row.high,
+                low: row.low,
+                close: row.close,
+                volume: row.volume
+            };
+            ['sessionDate', 'time', 'endTime', 'timestamp'].forEach(function (key) {
+                if (row[key] !== undefined) snapshot[key] = row[key];
+            });
+            return snapshot;
+        });
+        var latest = snapshots[snapshots.length - 1];
+        var asOf = latest
+            ? [latest.sessionDate || latest.date, latest.endTime || latest.time].filter(Boolean).join(' ')
+            : String(settings.date || '');
+        var key = symbol + ':' + mode;
+        var requestedDate = String(settings.date || '');
+        var signature = JSON.stringify([interval, asOf, requestedDate, snapshots]);
+        if (technicalAnalysisSignatures[key] === signature) return;
+        technicalAnalysisSignatures[key] = signature;
+        technicalAnalysisRequestedDates[key] = requestedDate;
+        var context = { symbol: symbol, mode: mode, interval: interval, bars: snapshots, asOf: asOf };
+        window.TechnicalAnalysisContexts[key] = context;
+        if (typeof window.dispatchEvent === 'function' && typeof window.CustomEvent === 'function') {
+            window.dispatchEvent(new window.CustomEvent('technical-analysis-data', { detail: context }));
+        }
+    }
 
     function normalizedTechnicalChartState(state) {
         var source = state && typeof state === 'object' ? state : {};
@@ -2409,6 +2446,7 @@
         }).catch(function () {
             window.clearTimeout(timeoutId);
             if (requestToken !== kospiHistoryRequestToken) return false;
+            publishTechnicalAnalysisData('KOSPI', 'daily', []);
             setKospiFlowRefreshState('error', '불러오기 실패 · 다시 시도');
             if (readout) readout.textContent = 'KOSPI 가격·외국인 수급 이력을 불러오지 못했습니다.';
             return false;
@@ -2423,6 +2461,7 @@
         }).sort(function (left, right) {
             return parseHistoryDate(left.date) - parseHistoryDate(right.date);
         });
+        publishTechnicalAnalysisData('KOSPI', 'daily', history.length >= 5 ? history : []);
         if (!history.length) return [];
         var priceOverlays = priceOverlayRows(history);
         var flowMacd = window.MarketDashboardLive.calculateMacd(history.map(function (row) { return row.foreign; }), 12, 26, 9);
@@ -2851,6 +2890,7 @@
             : 'KOSPI 일봉과 외국인 현물 순매수는 Naver Finance의 KRX 공개 데이터 기준입니다.';
         updatePriceOverlayLegend(intraday);
         if (rows.length < 5) {
+            publishTechnicalAnalysisData('KOSPI', options.mode, [], options);
             var empty = makeSvg('text', { x: 500, y: 350, 'class': 'kodex-history-empty', 'text-anchor': 'middle' });
             empty.textContent = '선택한 기준의 KOSPI 가격·수급 데이터를 확인하고 있습니다.';
             svg.appendChild(empty);
@@ -2859,6 +2899,7 @@
         if (intraday) {
             rows = priceOverlayRows(rows);
             rows = intradayDisplayRows(rows, options.day);
+            publishTechnicalAnalysisData('KOSPI', 'intraday', rows, options);
         }
         updateTechnicalRangeNavigator(rows);
         rememberTechnicalRangePreview(svg, rows, '0 0 1000 720', [{ key: 'close' }]);
@@ -3335,6 +3376,10 @@
                     : ' 가격 기준'));
         }).catch(function (error) {
             if (token !== kospiIntradayRenderToken) return;
+            publishTechnicalAnalysisData('KOSPI', 'intraday', [], {
+                date: selectedDate,
+                interval: selectedKodexIntradayInterval
+            });
             if (error && error.name === 'AbortError') {
                 setKospiFlowRefreshState(cached ? 'ready' : 'error', cached
                     ? formatHistoryDate(selectedDate) + ' 이전 수급 유지'
@@ -3399,6 +3444,8 @@
         }).sort(function (left, right) {
             return parseHistoryDate(left.date) - parseHistoryDate(right.date);
         });
+
+        publishTechnicalAnalysisData('KODEX', 'daily', history.length >= 5 ? history : []);
 
         if (history.length < 5) {
             readout.textContent = kospiPeriodLabel() + ' 일봉·거래량 차트를 불러오지 못했습니다. 최근 거래일 수급표는 아래에서 확인할 수 있습니다.';
@@ -3640,6 +3687,8 @@
         var overlayRows = priceOverlayRows(rollingIntradayRows(day, interval));
         if (settings.showStochasticSlow) overlayRows = stochasticSlowRows(overlayRows, 20, 12, 12);
         var displayRows = intradayDisplayRows(overlayRows, day);
+        var symbol = svg.id === 'tqqq-history-chart' ? 'TQQQ' : 'KODEX';
+        publishTechnicalAnalysisData(symbol, 'intraday', displayRows, { interval: interval, date: day && day.date });
         rememberTechnicalRangePreview(svg, displayRows, '0 0 1000 590', [{ key: 'close' }]);
         var rows = technicalRangeSlice(displayRows);
         svg.setAttribute('viewBox', '0 0 1000 590');
@@ -3812,6 +3861,7 @@
         var previousEntry = visibleEntries.filter(function (row) { return row.date < selectedKodexIntradayDate && row.path; }).slice(-1)[0] || null;
         if (!indexRows.length || !selectedEntry || !selectedKodexIntradayDate || !indexUrl
             || !window.MarketDashboardLive || typeof window.MarketDashboardLive.fetchKodexIntradayDay !== 'function') {
+            publishTechnicalAnalysisData('KODEX', 'intraday', [], { date: selectedKodexIntradayDate });
             readout.textContent = '보존된 분봉 거래일을 불러오지 못했습니다.';
             var empty = makeSvg('text', { x: 500, y: 300, 'class': 'kodex-history-empty', 'text-anchor': 'middle' });
             empty.textContent = '분봉 데이터를 확인하고 있습니다.';
@@ -3819,6 +3869,11 @@
             return;
         }
         var token = ++kodexIntradayRenderToken;
+        var currentContext = window.TechnicalAnalysisContexts['KODEX:intraday'];
+        if (!currentContext || currentContext.interval !== selectedKodexIntradayInterval
+            || technicalAnalysisRequestedDates['KODEX:intraday'] !== selectedKodexIntradayDate) {
+            publishTechnicalAnalysisData('KODEX', 'intraday', [], { date: selectedKodexIntradayDate });
+        }
         readout.textContent = previousEntry
             ? formatHistoryDate(previousEntry.date) + '과 ' + formatHistoryDate(selectedKodexIntradayDate)
                 + (selectedIsCurrent ? ' 실시간' : '') + ' 분봉을 연결하고 있습니다.'
@@ -3850,6 +3905,7 @@
             renderKodexIntradayRows(day, interval, svg, summary, readout, kodexIntradayRenderOptions);
         }).catch(function () {
             if (token !== kodexIntradayRenderToken) return;
+            publishTechnicalAnalysisData('KODEX', 'intraday', [], { date: selectedKodexIntradayDate });
             readout.textContent = '선택한 거래일의 분봉을 불러오지 못했습니다.';
             clear(svg);
             var empty = makeSvg('text', { x: 500, y: 300, 'class': 'kodex-history-empty', 'text-anchor': 'middle' });
@@ -3920,6 +3976,8 @@
         }).sort(function (left, right) {
             return parseHistoryDate(left.date) - parseHistoryDate(right.date);
         });
+
+        publishTechnicalAnalysisData('TQQQ', 'daily', history.length >= 5 ? history : []);
 
         if (history.length < 5) {
             readout.textContent = 'TQQQ ' + kospiPeriodLabel() + ' 일봉과 거래량을 확인하고 있습니다.';
@@ -4132,6 +4190,7 @@
         var title = document.getElementById('tqqq-history-title');
         var sourceNote = document.getElementById('tqqq-history-source-note');
         if (!day) {
+            publishTechnicalAnalysisData('TQQQ', 'intraday', [], { date: selectedKodexIntradayDate });
             if (title) title.textContent = 'TQQQ';
             readout.textContent = '선택 기준에 대응하는 TQQQ 분봉을 확인하고 있습니다.';
             var empty = makeSvg('text', { x: 500, y: 300, 'class': 'kodex-history-empty', 'text-anchor': 'middle' });
