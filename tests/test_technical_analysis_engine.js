@@ -213,7 +213,7 @@ assert.equal(engine.evaluateConditions(conditionRows, [{ field: 'secret', operat
 
 // CSV의 결측 셀은 공란, 지표는 이용 가능한 열만 포함하며 수식 주입을 막는다.
 const csv = engine.toCSV(derived);
-assert(csv.startsWith('date,time,open,high,low,close,volume,ema20,ema50,rsi,macd,macdSignal,macdHistogram,atr,supertrend,supertrendDirection,avwap,avwapUpper,avwapLower\r\n'));
+assert(csv.startsWith('date,time,open,high,low,close,volume,ema20,ema50,rsi,mfi,macd,macdSignal,macdHistogram,atr,supertrend,supertrendDirection,avwap,avwapUpper,avwapLower\r\n'));
 const initialCells = csv.split('\r\n')[1].split(',');
 assert.equal(initialCells[7], '');
 assert.equal(initialCells[10], '');
@@ -224,3 +224,20 @@ assert(malicious.includes('"\'=HYPERLINK(""https://example.com"")"'));
 assert(malicious.includes("'@SUM(1)"));
 
 console.log('기술적 분석 엔진: 수치·집계·거래량·패턴·재생·조건·CSV 검증 통과');
+
+// MFI의 거래량 가중치, 예열·결측 복구와 영거래량을 독립 수치로 확인한다.
+const mfiFixture = [bar(10, 0), bar(12, 1, { volume: 2 }), bar(11, 2, { volume: 3 }), bar(13, 3, { volume: 4 })];
+const mfiValues = engine.indicators(mfiFixture, { mfiPeriod: 3 });
+assert.equal(mfiValues[2].mfi, null);
+near(mfiValues[3].mfi, 100 * (24 + 52) / (24 + 52 + 33));
+const flat = Array.from({ length: 18 }, (_, i) => bar(10, i, { volume: 0 }));
+near(engine.indicators(flat)[14].mfi, 50);
+const rising = Array.from({ length: 32 }, (_, i) => bar(10 + i, i));
+near(engine.indicators(rising)[14].mfi, 100);
+near(engine.indicators(rising.slice().reverse().map((r, i) => bar(r.close, i)))[14].mfi, 0);
+rising[15].volume = null;
+const missingMfi = engine.indicators(rising);
+assert.equal(missingMfi[15].mfi, null);
+assert.equal(missingMfi[28].mfi, null);
+near(missingMfi[29].mfi, 100);
+near(engine.indicators(mfiFixture.slice(0, 3), { mfiPeriod: 2 })[2].mfi, engine.indicators(mfiFixture, { mfiPeriod: 2 })[2].mfi);

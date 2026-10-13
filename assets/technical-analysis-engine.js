@@ -7,7 +7,7 @@
 }(typeof window !== 'undefined' ? window : typeof globalThis !== 'undefined' ? globalThis : this, function () {
     'use strict';
 
-    var indicatorFields = ['ema20', 'ema50', 'rsi', 'macd', 'macdSignal', 'macdHistogram', 'atr', 'supertrend', 'supertrendDirection', 'avwap', 'avwapUpper', 'avwapLower'];
+    var indicatorFields = ['ema20', 'ema50', 'rsi', 'mfi', 'macd', 'macdSignal', 'macdHistogram', 'atr', 'supertrend', 'supertrendDirection', 'avwap', 'avwapUpper', 'avwapLower'];
 
     function number(value) {
         if (value === null || value === undefined || typeof value === 'boolean' || typeof value === 'object' || (typeof value === 'string' && !value.trim())) return null;
@@ -125,6 +125,8 @@
         options = options || {};
         var atrPeriod = periodOption(options.atrPeriod, 10);
         var rsiPeriod = periodOption(options.rsiPeriod, 14);
+        var mfiPeriod = periodOption(options.mfiPeriod, 14);
+        var flows = [];
         var multiplier = number(options.atrMultiplier);
         if (multiplier === null || multiplier <= 0) multiplier = 3;
         var anchor = number(options.anchorIndex);
@@ -173,6 +175,17 @@
                     loss = (loss * (rsiPeriod - 1) + down) / rsiPeriod;
                 }
                 if (index >= rsiPeriod) result.rsi = loss === 0 ? (gain === 0 ? 50 : 100) : 100 - 100 / (1 + gain / loss);
+            }
+            var typicalPrice = (bar.high + bar.low + bar.close) / 3;
+            var previousTypical = index ? (rows[index - 1].high + rows[index - 1].low + rows[index - 1].close) / 3 : null;
+            flows.push({ positive: previousTypical !== null && typicalPrice > previousTypical ? typicalPrice * bar.volume : 0,
+                negative: previousTypical !== null && typicalPrice < previousTypical ? typicalPrice * bar.volume : 0,
+                valid: index > 0 && bar.volume !== null });
+            if (flows.length > mfiPeriod) flows.shift();
+            if (flows.length === mfiPeriod && flows.every(function (flow) { return flow.valid; })) {
+                var positiveFlow = flows.reduce(function (sum, flow) { return sum + flow.positive; }, 0);
+                var negativeFlow = flows.reduce(function (sum, flow) { return sum + flow.negative; }, 0);
+                result.mfi = positiveFlow + negativeFlow === 0 ? 50 : 100 * positiveFlow / (positiveFlow + negativeFlow);
             }
             if (atr !== null) {
                 var mid = (bar.high + bar.low) / 2;

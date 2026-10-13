@@ -3100,3 +3100,12 @@
         transition: none;
     }
 }
+
+/* X-ray 위 RSI·MFI는 거래량/CVD와 별개의 고정 0~100 축을 쓴다. */
+.kodex-history-legend .is-rsi::before { background: #bd9dff; }
+.kodex-history-legend .is-mfi::before { background: #61e4ba; }
+.kodex-momentum-guide { stroke: currentColor; opacity: .16; stroke-dasharray: 2 5; pointer-events: none; }
+.kodex-momentum-axis { fill: currentColor; opacity: .7; font-size: 9px; pointer-events: none; }
+.kodex-momentum-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; pointer-events: none; }
+.kodex-momentum-line.is-rsi { stroke: #bd9dff; stroke-dasharray: 5 3; }
+.kodex-momentum-line.is-mfi { stroke: #61e4ba; }

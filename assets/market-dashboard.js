@@ -1376,6 +1376,41 @@
         return path;
     }
 
+    function rsiMfiRows(rows) {
+        var engine = window.TechnicalAnalysisEngine;
+        if (!engine) return rows;
+        var values = Object.create(null);
+        engine.indicators(rows).forEach(function (row) { values[row.date + 'T' + (row.time || '')] = row; });
+        return rows.map(function (row) {
+            var value = values[row.date + 'T' + (row.time || '')];
+            return Object.assign({}, row, { rsi: value ? value.rsi : null, mfi: value ? value.mfi : null });
+        });
+    }
+
+    function rsiMfiReadout(row) {
+        return 'RSI 14 ' + (Number.isFinite(row.rsi) ? row.rsi.toFixed(1) : '—')
+            + ' · MFI 14 ' + (Number.isFinite(row.mfi) ? row.mfi.toFixed(1) : '—');
+    }
+
+    function appendRsiMfiOverlay(svg, rows, xFor, left, right, top, bottom) {
+        function yFor(value) { return bottom - value / 100 * (bottom - top); }
+        [0, 20, 30, 50, 70, 80, 100].forEach(function (value) {
+            svg.appendChild(makeSvg('line', { x1: left, x2: right, y1: yFor(value), y2: yFor(value), 'class': 'kodex-momentum-guide' }));
+            var label = makeSvg('text', { x: right + 7, y: yFor(value) + 3, 'class': 'kodex-momentum-axis' });
+            label.textContent = value;
+            svg.appendChild(label);
+        });
+        ['rsi', 'mfi'].forEach(function (key) {
+            var path = '', connected = false;
+            rows.forEach(function (row, index) {
+                if (!Number.isFinite(row[key])) { connected = false; return; }
+                path += (connected ? ' L ' : ' M ') + xFor(index).toFixed(2) + ' ' + yFor(row[key]).toFixed(2);
+                connected = true;
+            });
+            if (path) svg.appendChild(makeSvg('path', { d: path, 'class': 'kodex-momentum-line is-' + key, 'aria-label': key.toUpperCase() + ' 14, 0~100' }));
+        });
+    }
+
     function appendStochasticSlowOverlay(svg, rows, xFor, priceTop, priceBottom) {
         var hasValues = rows.some(function (row) {
             return Number.isFinite(row.stochSlowK) || Number.isFinite(row.stochSlowD);
@@ -3466,6 +3501,7 @@
         startIndex = Math.max(0, history.indexOf(rows[0]));
         var endIndex = startIndex + rows.length;
         var priceOverlays = stochasticSlowRows(priceOverlayRows(history), 20, 12, 12);
+        var momentumRows = rsiMfiRows(history).slice(startIndex, endIndex);
 
         svg.setAttribute('viewBox', '0 0 1000 530');
         var width = 1000;
@@ -3555,6 +3591,8 @@
                 parts.push('CVD ' + formatSigned(pressure.cvd, '주', 0));
                 parts.push('분봉 포착률 ' + formatNumber(pressure.coverageRatio * 100, 1) + '%');
             }
+            var momentum = momentumRows[rows.indexOf(row)];
+            if (momentum) parts.push(rsiMfiReadout(momentum));
             readout.textContent = parts.join(' · ');
         }
 
@@ -3628,6 +3666,7 @@
             cvdPath += (cvdPath ? ' L ' : 'M ') + xFor(index).toFixed(2) + ' ' + cvdY(pressure.cvd).toFixed(2);
         });
         if (cvdPath) svg.appendChild(makeSvg('path', { d: cvdPath, 'class': 'kodex-history-cvd' }));
+        appendRsiMfiOverlay(svg, momentumRows, xFor, margin.left, width - margin.right, volumePlotTop, volumeBottom);
 
         [
             { key: 'ma5', className: 'is-ma5' },
@@ -3686,6 +3725,7 @@
             : function (value) { return formatNumber(value, 0); };
         var overlayRows = priceOverlayRows(rollingIntradayRows(day, interval));
         if (settings.showStochasticSlow) overlayRows = stochasticSlowRows(overlayRows, 20, 12, 12);
+        if (svg.id === 'kodex-history-chart') overlayRows = rsiMfiRows(overlayRows);
         var displayRows = intradayDisplayRows(overlayRows, day);
         var symbol = svg.id === 'tqqq-history-chart' ? 'TQQQ' : 'KODEX';
         publishTechnicalAnalysisData(symbol, 'intraday', displayRows, { interval: interval, date: day && day.date });
@@ -3747,7 +3787,8 @@
                 + ' · 저가 ' + priceText(row.low)
                 + ' · 거래량 ' + formatNumber(row.volume, 0) + '주'
                 + ' · 추정 순압력 ' + formatPressurePercent(row.delta, row.volume)
-                + ' · CVD ' + formatSigned(row.cumulativeDelta, '주', 0);
+                + ' · CVD ' + formatSigned(row.cumulativeDelta, '주', 0)
+                + (svg.id === 'kodex-history-chart' ? ' · ' + rsiMfiReadout(row) : '');
         }
 
         var cvdPath = '';
@@ -3801,6 +3842,7 @@
             cvdPath += (cvdPath ? ' L ' : 'M ') + x.toFixed(2) + ' ' + cvdY(row.cumulativeDelta).toFixed(2);
         });
         if (cvdPath) svg.appendChild(makeSvg('path', { d: cvdPath, 'class': 'kodex-history-cvd' }));
+        if (svg.id === 'kodex-history-chart') appendRsiMfiOverlay(svg, rows, xFor, margin.left, right, volumePlotTop, volumeBottom);
 
         [
             { key: 'ma5', className: 'is-ma5' },

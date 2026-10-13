@@ -36,6 +36,7 @@ const context = vm.createContext({
     mergeCurrentKospiHistory: rows => rows.slice(),
     priceOverlayRows: rows => rows.map(row => ({ ...row, ma20: row.close })),
     stochasticSlowRows: rows => rows,
+    rsiMfiRows: rows => rows,
     kospiPeriodMonths: () => 1,
     estimateDailyVolumePressure: row => ({ delta: 0, volume: row.volume }),
     rollingIntradayRows: day => day && day.bars || [],
