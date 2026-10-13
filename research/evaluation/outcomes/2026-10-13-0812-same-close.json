@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-10-13-0812-same-close",
+  "recordedAt": "2026-10-14T08:05:27+09:00",
+  "actualRef": "2026-10-13",
+  "realizedScenario": "bear",
+  "errorCodes": [
+    "range_too_narrow_down"
+  ],
+  "triggerResults": [
+    {
+      "id": "price",
+      "status": "confirmed",
+      "value": 6035.35,
+      "threshold": 6250
+    },
+    {
+      "id": "flows",
+      "status": "unavailable",
+      "reason": "15:20 수급 앵커 원문 미확보"
+    }
+  ],
+  "driverAssessment": [],
+  "hypothesisTests": []
+}

@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "snapshotId": "20261014-0809",
+  "generatedAt": "2026-10-14T08:09:40+09:00",
+  "asOf": "2026-10-14T08:05:28+09:00",
+  "asOfDisplay": "2026-10-14T08:05:28+09:00",
+  "marketState": "한국 장전",
+  "sourceLabel": "미국 10월 13일 정규장 · 국내 10월 13일 종가 · 10월 14일 장전",
+  "latestArticle": {
+    "title": "중국 메모리 경쟁 우려 뒤 급락…오늘은 6,000선과 CPI",
+    "href": "market-2026-10-14.html"
+  },
+  "headline": "중국 메모리 경쟁 우려 뒤 급락…오늘은 6,000선과 CPI",
+  "summary": "국내 급락 뒤 미국 메모리주는 더 밀렸지만 Nvidia·AMD는 반등했습니다. KOSPI 6,000선 방어와 국내 메모리주 반등의 지속성을 봐야 합니다.",
+  "markets": [
+    {
+      "id": "KOSPI",
+      "label": "KOSPI",
+      "symbol": "K",
+      "value": 6035.35,
+      "changePercent": -5.46,
+      "asOf": "2026-10-13T15:30:00+09:00",
+      "asOfLabel": "10월 13일 종가",
+      "stateLabel": "정규장 종가",
+      "open": 6186.08,
+      "high": 6198.46,
+      "low": 5911.11,
+      "previousClose": 6384.24,
+      "flows": []
+    },
+    {
+      "id": "KOSDAQ",
+      "label": "KOSDAQ",
+      "symbol": "Q",
+      "value": null,
+      "changePercent": null,
+      "asOf": "2026-10-14T08:05:28+09:00",
+      "asOfLabel": "장전 미개시",
+      "stateLabel": "정규장 종가",
+      "open": null,
+      "high": null,
+      "low": null,
+      "previousClose": null,
+      "flows": []
+    }
+  ],
+  "stance": {
+    "label": "급락 뒤 6,000선과 CPI",
+    "attack": 10,
+    "wait": 50,
+    "defense": 40,
+    "note": "국내 메모리 반등과 외국인·프로그램 수급의 동행을 본다."
+  },
+  "checkpoints": [
+    {
+      "label": "삼성전자 NXT",
+      "value": "236,500원 · 1.94%",
+      "detail": "2026-10-14T08:05:28.07995+09:00",
+      "tone": "info"
+    },
+    {
+      "label": "SK하이닉스 NXT",
+      "value": "1,475,000원 · 2.22%",
+      "detail": "2026-10-14T08:05:28.079958+09:00",
+      "tone": "info"
+    },
+    {
+      "label": "하나은행 USD/KRW",
+      "value": "1,343.00원",
+      "detail": "2026-10-14T06:24:20+09:00",
+      "tone": "warning"
+    }
+  ],
+  "changes": [
+    {
+      "label": "KOSPI",
+      "before": "6,384.24",
+      "after": "6,035.35",
+      "meaning": "국내 메모리 경쟁 우려가 전일 급락에 반영됐습니다."
+    }
+  ],
+  "factors": [
+    {
+      "label": "미국 반도체",
+      "metric": "MU -3.62% · NVDA +0.97%",
+      "detail": "10월 13일 정규장",
+      "tone": "warning"
+    },
+    {
+      "label": "미 국채",
+      "metric": "10년 5.24% · 2년 4.80%",
+      "detail": "10월 9일 FRED 개별 금리",
+      "tone": "warning"
+    }
+  ],
+  "flows": {
+    "program": null,
+    "kospi200FuturesForeign": null,
+    "futuresUnit": "계약",
+    "futuresAsOfLabel": "장전 미개시"
+  },
+  "memory": [
+    {
+      "label": "DDR5 16Gb · 10/13",
+      "value": "$59.90",
+      "change": "+0.79%"
+    },
+    {
+      "label": "DDR4 16Gb · 10/13",
+      "value": "$83.858",
+      "change": "+0.06%"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "bull",
+      "label": "강세 · 20%",
+      "range": "KOSPI 6,200 초과~6,350",
+      "summary": "수급이 동반 회복하는 반등",
+      "conditions": [
+        "6,200 초과",
+        "외국인 순매수",
+        "프로그램 순매수"
+      ],
+      "invalidation": "6,200 재이탈"
+    },
+    {
+      "id": "base",
+      "label": "기본 · 45%",
+      "range": "KOSPI 5,900~6,200",
+      "summary": "급락을 소화하는 구간",
+      "conditions": [
+        "5,900 이상",
+        "6,200 이하",
+        "외국인 순매도 8천억원 이하"
+      ],
+      "invalidation": "범위 이탈"
+    },
+    {
+      "id": "bear",
+      "label": "약세 · 35%",
+      "range": "KOSPI 5,750~5,900 미만",
+      "summary": "반등 실패와 매도 지속",
+      "conditions": [
+        "5,900 미만",
+        "외국인 순매도",
+        "프로그램 순매도"
+      ],
+      "invalidation": "5,900 회복"
+    }
+  ],
+  "strategyLevels": [
+    {
+      "asset": "KOSPI",
+      "support": "5,900 / 5,750",
+      "pivot": "6,200",
+      "resistance": "6,350"
+    },
+    {
+      "asset": "KODEX 레버리지",
+      "support": "78,780원",
+      "pivot": "81,965원",
+      "resistance": "88,340원"
+    }
+  ],
+  "events": [
+    {
+      "time": "10월 13일 국내 정규장",
+      "name": "메모리 경쟁 우려와 급락",
+      "path": "국내에 이미 반영된 재료"
+    },
+    {
+      "time": "10월 14일 21:30 KST",
+      "name": "미국 9월 CPI",
+      "path": "다음 한국장 금리·환율"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "support",
+      "label": "5,900 방어"
+    },
+    {
+      "id": "rebound",
+      "label": "6,200 회복과 수급 동행"
+    }
+  ],
+  "technical": {
+    "note": "10월 13일 확정 일봉과 10월 14일 장전 분석 기준선입니다.",
+    "instruments": [
+      {
+        "id": "KOSPI",
+        "label": "KOSPI",
+        "unit": "pt",
+        "asOf": "2026-10-13T15:30:00+09:00",
+        "asOfLabel": "10월 13일 정규장 종가",
+        "points": [
+          {
+            "label": "시가",
+            "value": 6186.08
+          },
+          {
+            "label": "고가",
+            "value": 6198.46
+          },
+          {
+            "label": "저가",
+            "value": 5911.11
+          },
+          {
+            "label": "종가",
+            "value": 6035.35
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 5900
+          },
+          {
+            "label": "반등 기준",
+            "value": 6200
+          },
+          {
+            "label": "저항",
+            "value": 6350
+          }
+        ],
+        "interpretation": "1차 지지 5,900 · 반등 기준 6,200 · 저항 6,350"
+      },
+      {
+        "id": "KODEX",
+        "label": "KODEX 레버리지",
+        "unit": "원",
+        "asOf": "2026-10-13T15:30:00+09:00",
+        "asOfLabel": "10월 13일 정규장 종가",
+        "points": [
+          {
+            "label": "시가",
+            "value": 88000.0
+          },
+          {
+            "label": "고가",
+            "value": 88340.0
+          },
+          {
+            "label": "저가",
+            "value": 78780.0
+          },
+          {
+            "label": "종가",
+            "value": 81965.0
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 78780
+          },
+          {
+            "label": "반등 기준",
+            "value": 81965
+          },
+          {
+            "label": "저항",
+            "value": 88340
+          }
+        ],
+        "interpretation": "1차 지지 78,780 · 반등 기준 81,965 · 저항 88,340"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "label": "KOSPI·국내 종가",
+      "href": "https://m.stock.naver.com/domestic/index/KOSPI/total"
+    },
+    {
+      "label": "미국 ETF·종목 정규장",
+      "href": "https://finance.yahoo.com/quote/SOXX/"
+    },
+    {
+      "label": "중국 메모리 경쟁과 AI 투자 경계",
+      "href": "https://www.marketscreener.com/news/us-chip-stocks-extend-slide-as-china-memory-report-ai-spending-jitters-hit-sector-ce785dddd18ff02c"
+    },
+    {
+      "label": "메모리 현물",
+      "href": "https://www.trendforce.com/price/dram/dram_spot"
+    },
+    {
+      "label": "CPI·PPI 일정",
+      "href": "https://www.bls.gov/schedule/2026/10_sched.htm"
+    },
+    {
+      "label": "미국 금리",
+      "href": "https://fred.stlouisfed.org/series/T10Y2Y"
+    }
+  ]
+}

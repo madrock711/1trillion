@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-10-13",
+  "bizdate": "20261013",
+  "fetchedAt": "2026-10-14T08:05:27+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6186.08,
+    "high": 6198.46,
+    "low": 5911.11,
+    "close": 6035.35,
+    "asOf": "2026-10-13T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1",
+    "rawHash": "280cdf84671c1c4e697b2977fe602817c4a851deb5b3a9b412068cff56769a97"
+  },
+  "kodex": {
+    "open": 88000.0,
+    "high": 88340.0,
+    "low": 78780.0,
+    "close": 81965.0,
+    "asOf": "2026-10-13T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/stock/122630/price?pageSize=10&page=1",
+    "rawHash": "42a098704e9a1f701db1fe3dfc95dd74ea475c995d481d0f459d66b93bdac9b5",
+    "volume": 28474359
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "15시 20분 정확 시각 외국인·프로그램·시장 폭 원문 미확보. 종가로 소급하지 않음",
+  "flowTrajectory": null,
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-10-13T15:30:00+09:00",
+    "fetchedAt": "2026-10-14T08:05:27+09:00",
+    "missingReason": "09:30·10:00·14:00·15:20 동일 시각 수급 앵커 원문 미확보",
+    "rawHash": "635c1ad00f82d9125ea73f83c763ca70a40b4213eca27e60122e5fcca4749608"
+  }
+}
