@@ -25,9 +25,9 @@ def substitute(s):
  for a,b in sorted(replacements.items(),key=lambda x:-len(x[0])): s=s.replace(a,b)
  return s
 for p in ['reports/2026-10-14.md','articles/market-2026-10-14.html','STATE.md']: write(p,substitute(read(p)))
-snap=json.loads(substitute(json.dumps(snap,ensure_ascii=False))); snap['generatedAt']=now; snap['asOf']=now; snap['asOfDisplay']=now
+snap=json.loads(substitute(json.dumps(snap,ensure_ascii=False))); snap['generatedAt']=now; snap['asOf']=now; snap['asOfDisplay']=now; snap['snapshotId']='20261014-'+now[11:16].replace(':','')
 dump('assets/data/market-dashboard-'+snap['snapshotId']+'.json',snap); dump('assets/data/market-dashboard-latest.json',snap)
-fp=next(R.glob('research/evaluation/forecasts/2026-10-14-*-same-close.json')); f=json.loads(fp.read_text(encoding='utf-8')); f.update(issuedAt=now,dataCutoffAt=now,reportSha256=hashlib.sha256(read('reports/2026-10-14.md').encode()).hexdigest()); f.pop('contentHash',None); f['contentHash']=hashlib.sha256(json.dumps(f,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()).hexdigest(); dump(str(fp.relative_to(R)),f)
+fp=next(R.glob('research/evaluation/forecasts/2026-10-14-0809-same-close.json')); f=json.loads(fp.read_text(encoding='utf-8')); f.update(forecastId='2026-10-14-'+now[11:16].replace(':','')+'-same-close',supersedes=f['forecastId'],issuedAt=now,dataCutoffAt=now,reportSha256=hashlib.sha256(read('reports/2026-10-14.md').encode()).hexdigest()); f.pop('contentHash',None); f['contentHash']=hashlib.sha256(json.dumps(f,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()).hexdigest(); dump('research/evaluation/forecasts/'+f['forecastId']+'.json',f)
 for p in ['index.html','articles/index.html','articles/market.html']:
  s=read(p); s=s.replace(issued,now).replace('2026.10.14 · '+issued[11:16]+' KST','2026.10.14 · '+now[11:16]+' KST'); write(p,s)
 print(now,f['forecastId'],f['contentHash'])
