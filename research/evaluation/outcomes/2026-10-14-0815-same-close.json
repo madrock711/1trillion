@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-10-14-0815-same-close",
+  "recordedAt": "2026-10-15T07:58:33+09:00",
+  "actualRef": "2026-10-14",
+  "realizedScenario": "base",
+  "errorCodes": [
+    "cause_unverifiable"
+  ],
+  "triggerResults": [
+    {
+      "id": "base-price",
+      "status": "confirmed",
+      "value": 6008.81,
+      "threshold": 5900
+    },
+    {
+      "id": "flows",
+      "status": "unavailable",
+      "reason": "15:20 정확 시각 수급 앵커 미확보. 최종 외국인 -11,614억원은 -8천억원 조건 이탈"
+    }
+  ],
+  "driverAssessment": [],
+  "hypothesisTests": []
+}

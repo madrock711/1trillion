@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-10-14",
+  "bizdate": "20261014",
+  "fetchedAt": "2026-10-15T07:58:33+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6062.08,
+    "high": 6190.65,
+    "low": 5944.65,
+    "close": 6008.81,
+    "asOf": "2026-10-14T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1",
+    "rawHash": "f49d9cc806b6794517fd258cca99473e2f54dca4bdff5b2c392eb232dd981702"
+  },
+  "kodex": {
+    "open": 82400.0,
+    "high": 86295.0,
+    "low": 79070.0,
+    "close": 81100.0,
+    "asOf": "2026-10-14T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/stock/122630/price?pageSize=10&page=1",
+    "rawHash": "9a191c9ffe822aeac94675737bc19f74a40d366939cfd5a5c4c1166177b44ff9",
+    "volume": 19256204
+  },
+  "closeSnapshot": {
+    "kodex": {
+      "open": 82400.0,
+      "high": 86295.0,
+      "low": 79070.0,
+      "close": 81100.0,
+      "asOf": "2026-10-14T15:30:00+09:00",
+      "source": "https://m.stock.naver.com/api/stock/122630/price?pageSize=10&page=1",
+      "rawHash": "9a191c9ffe822aeac94675737bc19f74a40d366939cfd5a5c4c1166177b44ff9",
+      "volume": 19256204
+    },
+    "cashFlow": {
+      "foreign": -11614.0,
+      "institution": 7876.0,
+      "personal": -3203.0,
+      "unit": "억원",
+      "asOf": "2026-10-14T20:15:00+09:00",
+      "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+      "rawHash": "020f1a4b46dcbbf4837680f222655b69fcb1024fdfbd067ce18f0e26ce12884b"
+    },
+    "program": {
+      "arbitrage": 634.0,
+      "nonArbitrage": -631.0,
+      "total": 3.0,
+      "unit": "억원",
+      "asOf": "2026-10-14T20:15:00+09:00",
+      "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+      "rawHash": "020f1a4b46dcbbf4837680f222655b69fcb1024fdfbd067ce18f0e26ce12884b"
+    },
+    "breadth": {
+      "up": 507,
+      "flat": 44,
+      "down": 371,
+      "unit": "종목",
+      "asOf": "2026-10-14T20:15:00+09:00",
+      "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+      "rawHash": "020f1a4b46dcbbf4837680f222655b69fcb1024fdfbd067ce18f0e26ce12884b"
+    }
+  },
+  "flowTrajectory": {
+    "contract": "flow_trajectory_v1",
+    "unit": "억원",
+    "anchors": {
+      "open30": {
+        "status": "missing",
+        "expectedAsOf": "2026-10-14T09:30:00+09:00",
+        "attemptedAt": "2026-10-15T07:58:33+09:00",
+        "sourceStatus": "unavailable",
+        "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+        "missingReason": "최종 누적 응답만 확보. 해당 시각으로 소급하지 않음",
+        "rawHash": "020f1a4b46dcbbf4837680f222655b69fcb1024fdfbd067ce18f0e26ce12884b"
+      },
+      "open60": {
+        "status": "missing",
+        "expectedAsOf": "2026-10-14T10:00:00+09:00",
+        "attemptedAt": "2026-10-15T07:58:33+09:00",
+        "sourceStatus": "unavailable",
+        "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+        "missingReason": "최종 누적 응답만 확보. 해당 시각으로 소급하지 않음",
+        "rawHash": "020f1a4b46dcbbf4837680f222655b69fcb1024fdfbd067ce18f0e26ce12884b"
+      },
+      "at1400": {
+        "status": "missing",
+        "expectedAsOf": "2026-10-14T14:00:00+09:00",
+        "attemptedAt": "2026-10-15T07:58:33+09:00",
+        "sourceStatus": "unavailable",
+        "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+        "missingReason": "최종 누적 응답만 확보. 해당 시각으로 소급하지 않음",
+        "rawHash": "020f1a4b46dcbbf4837680f222655b69fcb1024fdfbd067ce18f0e26ce12884b"
+      },
+      "close": {
+        "status": "available",
+        "asOf": "2026-10-14T15:30:00+09:00",
+        "foreignCash": -11614.0,
+        "programNonArbitrage": -631.0,
+        "programTotal": 3.0,
+        "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+        "rawHash": "020f1a4b46dcbbf4837680f222655b69fcb1024fdfbd067ce18f0e26ce12884b"
+      }
+    }
+  }
+}

@@ -1,0 +1,89 @@
+[
+  {
+    "id": "CPI",
+    "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+    "status": "unavailable",
+    "reason": "HTTP Error 403: Forbidden"
+  },
+  {
+    "id": "ASML",
+    "url": "https://www.investor.asml.com/news-releases/news-release-details/asml-reports-eu11.7-billion-total-net-sales-and-eu5.0-billion-net-income-q3-2026",
+    "status": "unavailable",
+    "reason": "HTTP Error 403: Forbidden"
+  },
+  {
+    "id": "TrendForce",
+    "url": "https://www.trendforce.com/price/dram/dram_spot",
+    "fetchedAt": "2026-10-15T07:59:51.950224+09:00",
+    "rawHash": "eac541fb4b3ce1ecc8e840cb9ba4c901a45c1416bc3c1487624dc722102e8905",
+    "status": "available"
+  },
+  {
+    "id": "TSMC",
+    "url": "https://investor.tsmc.com/english/quarterly-results/2026/q3",
+    "status": "unavailable",
+    "reason": "HTTP Error 403: Forbidden"
+  },
+  {
+    "id": "BLS-calendar",
+    "url": "https://www.bls.gov/schedule/2026/10_sched.htm",
+    "status": "unavailable",
+    "reason": "HTTP Error 403: Forbidden"
+  },
+  {
+    "id": "BAC-Treasury",
+    "url": "https://home.treasury.gov/news/press-releases/sb0657",
+    "fetchedAt": "2026-10-15T07:59:51.898022+09:00",
+    "rawHash": "543ae34adc47be42734900adf100a14af08de9ded5185b51c6227c427afaf4a9",
+    "status": "available"
+  },
+  {
+    "id": "BeigeBook",
+    "url": "https://www.federalreserve.gov/monetarypolicy/beigebook202610.htm",
+    "fetchedAt": "2026-10-15T07:59:51.927989+09:00",
+    "rawHash": "93bcd144df95c51c592451623586c132a748be87b35eab2d6fbf561b4f397554",
+    "status": "available"
+  },
+  {
+    "id": "KOSPI-fchart",
+    "url": "https://fchart.stock.naver.com/sise.nhn?symbol=KOSPI&timeframe=day&count=5&requestType=0",
+    "fetchedAt": "2026-10-15T07:59:51.684787+09:00",
+    "rawHash": "c134beb8a095589deb2eaf59104055f87a8b2942f286f889896d4c06a22d03e1",
+    "status": "available"
+  },
+  {
+    "id": "KODEX-fchart",
+    "url": "https://fchart.stock.naver.com/sise.nhn?symbol=122630&timeframe=day&count=5&requestType=0",
+    "fetchedAt": "2026-10-15T07:59:51.698208+09:00",
+    "rawHash": "672f28d76ae2997599c1298aaed8c08a41a006f3eebb2bf8de877ee0946b6978",
+    "status": "available"
+  },
+  {
+    "id": "after-NVDA",
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?range=1d&interval=5m&includePrePost=true",
+    "fetchedAt": "2026-10-15T07:59:52.018060+09:00",
+    "rawHash": "6b6e3ee0cf2c556804a23481b0575129c96b38c91bff3c2aafde93fa2891a18d",
+    "status": "available"
+  },
+  {
+    "id": "after-AMD",
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=1d&interval=5m&includePrePost=true",
+    "fetchedAt": "2026-10-15T07:59:52.024343+09:00",
+    "rawHash": "1dd1c38272ae1f946195d4bb9eb4b29c10dccec27a094f409c6032245c50c697",
+    "status": "available"
+  },
+  {
+    "id": "after-MU",
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/MU?range=1d&interval=5m&includePrePost=true",
+    "fetchedAt": "2026-10-15T07:59:52.028857+09:00",
+    "rawHash": "e0fff1544c555825f4b5f4a3b147281d6ef6dc593157f0b7e97a81dfe2a801cc",
+    "status": "available"
+  },
+  {
+    "id": "after-AVGO",
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/AVGO?range=1d&interval=5m&includePrePost=true",
+    "fetchedAt": "2026-10-15T07:59:52.037677+09:00",
+    "rawHash": "599da0b590e21d690cf30c51b0a1fc4dbb07f9dd6d5d40bc216c2b018a5a66b7",
+    "status": "available"
+  }
+]

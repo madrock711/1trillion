@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-10-15T07:58:33+09:00",
+  "rawHash": "a46763ee16e0ba39e87f6926903feb3e8c084563aa508fd8299feab9c11e8668",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "AMD",
+            "exchangeName": "NMS",
+            "fullExchangeName": "NasdaqGS",
+            "instrumentType": "EQUITY",
+            "firstTradeDate": 322151400,
+            "regularMarketTime": 1792008001,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 570.82,
+            "regularMarketChangePercent": -5.732,
+            "fulldayPrice": 561.719,
+            "fulldayChange": -43.53,
+            "fulldayChangePercent": -7.189,
+            "fiftyTwoWeekHigh": 658.52,
+            "fiftyTwoWeekLow": 188.22,
+            "regularMarketDayHigh": 591.88,
+            "regularMarketDayLow": 567.0,
+            "regularMarketVolume": 22119483,
+            "longName": "Advanced Micro Devices, Inc.",
+            "shortName": "Advanced Micro Devices, Inc.",
+            "chartPreviousClose": 645.86,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "end": 1791984600,
+                "start": 1791964800,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "end": 1792008000,
+                "start": 1791984600,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "end": 1792022400,
+                "start": 1792008000,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1791466200,
+            1791552600,
+            1791811800,
+            1791898200,
+            1791984600
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "volume": [
+                  23488200,
+                  13733300,
+                  15379900,
+                  17932700,
+                  22119483
+                ],
+                "high": [
+                  643.8499755859375,
+                  627.3699951171875,
+                  601.77001953125,
+                  606.2000122070312,
+                  591.8800048828125
+                ],
+                "low": [
+                  613.3400268554688,
+                  606.0,
+                  586.5399780273438,
+                  570.5999755859375,
+                  567.0
+                ],
+                "close": [
+                  620.6799926757812,
+                  608.0999755859375,
+                  594.239990234375,
+                  605.530029296875,
+                  570.8200073242188
+                ],
+                "open": [
+                  639.3599853515625,
+                  626.8900146484375,
+                  599.9299926757812,
+                  577.5,
+                  589.6525268554688
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  620.6799926757812,
+                  608.0999755859375,
+                  594.239990234375,
+                  605.530029296875,
+                  570.8200073242188
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}
