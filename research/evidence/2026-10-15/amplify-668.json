@@ -1,0 +1,10 @@
+{
+    "jobArn": "arn:aws:amplify:us-east-1:514670561185:apps/d2pg7r2qjjb9u9/branches/main/jobs/0000000668",
+    "jobId": "668",
+    "commitId": "28de5096b129baaee1456409752cd4e7b19c681a",
+    "commitMessage": "발행: 10월 15일 CPI 재가속과 반도체 장전 리서치",
+    "commitTime": "2026-10-15T08:08:07+09:00",
+    "startTime": "2026-10-15T08:08:12.934000+09:00",
+    "status": "SUCCEED",
+    "endTime": "2026-10-15T08:09:08.371000+09:00"
+}

@@ -8,3 +8,4 @@
 - 보고서 reports/2026-10-15.md, 취재 research/notes/2026-10-15.md, 대시보드 assets/data/market-dashboard-20261015-0807.json, 차트 charts/us_yield_spreads_*_2026-10-15.png.
 - 직전 기본 범위는 적중했으나 외국인 매도 조건은 이탈. 정확 시각 앵커 미확보로 조건 미검증.
 - 누적 평가 갱신 실패: 기존 2026-09-21 보고서 해시 불일치. 최종 계약 research/evaluation/forecasts/2026-10-15-0807-same-close.json. 스킬 전용 검증기는 없음(SKIP).
+- 최초 공개 2026-10-15T08:09:08.371000+09:00, Amplify 668. 발행 이벤트 publications/2026-10-15-0807-same-close-*.json.

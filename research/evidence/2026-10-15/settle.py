@@ -1,5 +1,5 @@
 """전일 확정값과 정확 시각 앵커 누락을 분리 보존한다."""
-import hashlib, importlib.util, json, re
+import base64, hashlib, importlib.util, json, re
 from pathlib import Path
 R=Path(__file__).resolve().parents[3];P=Path(__file__).parent
 def ev(k):return json.loads((P/(k+'.json')).read_text(encoding='utf-8'))
@@ -13,7 +13,7 @@ for code,key in [('KOSPI','kospi'),('122630','kodex')]:
  v=next(x for x in ev(code)['data'] if x['localTradedAt']==day)
  values={k:n(v[b]) for k,b in [('open','openPrice'),('high','highPrice'),('low','lowPrice'),('close','closePrice')]}
  # 독립 일봉 원문과 일치하는지 확인한다.
- raw=(P/('KOSPI-fchart.txt' if key=='kospi' else 'KODEX-fchart.txt')).read_bytes(); row=re.search(rb'20261014\|([^"\s]+)',raw).group(1).decode().split('|')
+ raw=base64.b64decode(json.loads((P/('KOSPI-fchart.raw.json' if key=='kospi' else 'KODEX-fchart.raw.json')).read_text())['raw']); row=re.search(rb'20261014\|([^"\s]+)',raw).group(1).decode().split('|')
  assert [values[k] for k in ['open','high','low','close']]==list(map(float,row[:4]))
  values.update(asOf=day+'T15:30:00+09:00',source=ev(code)['url'],rawHash=ev(code)['rawHash'])
  if key=='kodex':values['volume']=v['accumulatedTradingVolume']
