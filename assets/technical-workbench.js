@@ -585,6 +585,7 @@
             var value = el('template').value; if (value === '') return;
             templates.splice(Number(value), 1); persist(); renderTemplates(); el('template-status').textContent = '설정을 삭제했습니다.';
         });
+        window.addEventListener('technical-dashboard-ready', applyMode);
         window.addEventListener('technical-analysis-data', function (event) {
             if (!event.detail) return;
             evaluateAlerts(event.detail);

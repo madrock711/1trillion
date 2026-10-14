@@ -55,3 +55,8 @@ assert.strictEqual(data.markets[0].asOf, opened.asOf);
 assert.strictEqual(data.flows.program.total, 0);
 assert(data.changes.find(item => item.label === 'KOSPI').meaning.includes('0% 보합'));
 console.log('market preopen preservation tests passed');
+
+const completedBars = [{date:'2026-09-03',open:10,high:12,low:9,close:11,volume:100}];
+context.replaceTechnicalObservation(instrument, {...preopenInstrument, priceHistory: completedBars});
+assert.deepStrictEqual(instrument.priceHistory, completedBars, '개장 전에도 확정된 일봉 이력을 전달해야 한다');
+assert.deepStrictEqual(instrument.points, originalInstrument.points);

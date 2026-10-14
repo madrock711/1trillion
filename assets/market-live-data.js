@@ -1737,6 +1737,26 @@
         return kodexHistoryCache.pending;
     }
 
+    // 차트 이력은 전체 시세 요청의 타임아웃과 별개로 불러온다.
+    function fetchTechnicalPriceHistory(symbol, fetchImpl, baseUrl, options) {
+        var settings = options || {};
+        var now = Number.isFinite(settings.now) ? settings.now : Date.now();
+        var ttl = settings.forceRefresh ? 0 : 15 * 60 * 1000;
+        if (symbol === 'KODEX') {
+            if (settings.forceRefresh) kodexHistoryCache.expiresAt = 0;
+            return Promise.all([
+                fetchKodexHistory(fetchImpl, baseUrl, settings.signal, now, now, ttl),
+                fetchKodexVolumePressure(fetchImpl, settings.volumePressureUrl || new URL('../assets/data/kodex-volume-pressure.json', baseUrl).href,
+                    settings.signal, now, now, ttl).catch(function () { return null; })
+            ]).then(function (results) { return mergeKodexVolumePressure(results[0], results[1]); });
+        }
+        if (symbol === 'TQQQ') {
+            if (settings.forceRefresh) tqqqHistoryCache.expiresAt = 0;
+            return fetchTqqqHistory(fetchImpl, baseUrl, settings.signal, now, now, ttl);
+        }
+        return Promise.reject(new Error('지원하지 않는 차트 종목입니다.'));
+    }
+
     function fetchTqqqHistory(fetchImpl, baseUrl, signal, nonce, now, ttlMs) {
         if (tqqqHistoryCache.value && tqqqHistoryCache.expiresAt > now) {
             return Promise.resolve(tqqqHistoryCache.value);
@@ -2464,6 +2484,7 @@
     return {
         fetchCurrentSession: fetchCurrentSession,
         fetchLatest: fetchLatest,
+        fetchTechnicalPriceHistory: fetchTechnicalPriceHistory,
         fetchTqqqLatest: fetchTqqqLatest,
         isUsRegularMarketOpen: isUsRegularMarketOpen,
         liveRefreshDelay: liveRefreshDelay,

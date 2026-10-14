@@ -4546,6 +4546,11 @@
     function replaceTechnicalObservation(instrument, liveInstrument) {
         if (!instrument || !liveInstrument) return false;
         if (liveInstrument.marketStatus === 'PREOPEN') {
+            // 당일 초기화 가격은 보존하되 이미 확정된 차트 이력은 받아야 한다.
+            if (Array.isArray(liveInstrument.priceHistory) && liveInstrument.priceHistory.length) {
+                instrument.priceHistory = liveInstrument.priceHistory;
+            }
+            if (Array.isArray(liveInstrument.indicatorWarmupDays)) instrument.indicatorWarmupDays = liveInstrument.indicatorWarmupDays;
             if (Array.isArray(liveInstrument.intradayIndex)) {
                 instrument.intradayIndex = window.MarketDashboardLive.mergeRuntimeIntradayIndex(
                     instrument.intradayIndex || [], liveInstrument.intradayIndex
@@ -4921,6 +4926,7 @@
     function refreshLiveMarketData(data, options) {
         if (!liveMarketSource || !window.MarketDashboardLive) return Promise.resolve(false);
         var settings = options || {};
+        if (settings.force) loadTechnicalPriceHistories(data, true);
         if (liveRefreshPromise) {
             if (settings.force) {
                 return liveRefreshPromise.then(function () {
@@ -4998,6 +5004,35 @@
         });
     }
 
+    var technicalPriceHistoryRequest = null;
+    function loadTechnicalPriceHistories(data, forceRefresh) {
+        var api = window.MarketDashboardLive;
+        if (!liveMarketSource || !api || typeof api.fetchTechnicalPriceHistory !== 'function') return Promise.resolve(false);
+        if (technicalPriceHistoryRequest) return technicalPriceHistoryRequest;
+        var baseUrl = new URL(liveMarketSource, window.location.href).href;
+        technicalPriceHistoryRequest = Promise.all(['KODEX', 'TQQQ'].map(function (symbol) {
+            var controller = typeof AbortController === 'function' ? new AbortController() : null;
+            var timeout = window.setTimeout(function () { if (controller) controller.abort(); }, 30000);
+            return api.fetchTechnicalPriceHistory(symbol, window.fetch.bind(window), baseUrl, {
+                signal: controller ? controller.signal : undefined, forceRefresh: Boolean(forceRefresh)
+            }).then(function (rows) {
+                if (symbol === 'KODEX') {
+                    var instrument = findById(data.technical.instruments, symbol);
+                    if (!instrument) return false;
+                    instrument.priceHistory = rows;
+                    if (instrument.liveSnapshot) instrument.liveSnapshot.priceHistory = rows;
+                } else {
+                    data.tqqqHistory = rows;
+                    if (latestLiveData) latestLiveData.tqqqHistory = rows;
+                }
+                publishTechnicalAnalysisData(symbol, 'daily', rows);
+                renderKodex(data);
+                return true;
+            }).catch(function () { return false; }).finally(function () { window.clearTimeout(timeout); });
+        })).then(function (results) { return results.some(Boolean); }).finally(function () { technicalPriceHistoryRequest = null; });
+        return technicalPriceHistoryRequest;
+    }
+
     function loadKodexIntradayIndex(data) {
         if (!kodexIntradaySource || !window.MarketDashboardLive
             || typeof window.MarketDashboardLive.normalizeKodexIntradayIndex !== 'function') return Promise.resolve(false);
@@ -5046,7 +5081,9 @@
         .then(validateData)
         .then(function (data) {
             render(data);
+            window.dispatchEvent(new window.CustomEvent('technical-dashboard-ready'));
             return Promise.all([
+                loadTechnicalPriceHistories(data, false),
                 primeCurrentSession(data).then(function () { return refreshLiveMarketData(data); }),
                 loadKodexIntradayIndex(data),
                 loadKospiTechnicalHistory(false),
