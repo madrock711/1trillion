@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-10-15-0807-same-close",
+  "contentHash": "93c8da6d264584573dc3c20b05e9c3c04260c4afb4e5448ff8fcdfc7bfbf1458",
+  "commitSha": "28de5096b129baaee1456409752cd4e7b19c681a",
+  "eventType": "deploy_verified",
+  "occurredAt": "2026-10-15T08:11:25+09:00",
+  "publicUrl": "https://www.hpmplab.com/articles/market-2026-10-15.html",
+  "availabilityStatus": "available"
+}

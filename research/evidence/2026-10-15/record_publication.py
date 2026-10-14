@@ -8,7 +8,7 @@ def dump(p,v):write(p,json.dumps(v,ensure_ascii=False,indent=2)+'\n')
 f=json.loads(read('research/evaluation/forecasts/2026-10-15-0807-same-close.json'));job=json.loads((P/'amplify-668.json').read_text(encoding='utf-8-sig'));assert job['status']=='SUCCEED'
 published=job['endTime'];now=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat(timespec='seconds')
 base={'schemaVersion':1,'forecastId':f['forecastId'],'contentHash':f['contentHash'],'commitSha':job['commitId']}
-event=dict(base,eventType='deploy_verified',occurredAt=now,publicUrl='https://www.hpmplab.com/articles/market-2026-10-15.html',availabilityStatus='available',deployment={'amplifyJobId':'668','commitSha':job['commitId'],'completedAt':published})
+event=dict(base,eventType='deploy_verified',occurredAt=now,publicUrl='https://www.hpmplab.com/articles/market-2026-10-15.html',availabilityStatus='available')
 path='research/evaluation/publications/'+f['forecastId']+'-deploy_verified.json';assert not (R/path).exists();dump(path,event)
 for page in ['articles/market-2026-10-15.html','index.html','articles/index.html','articles/market.html']:
  s=read(page)
