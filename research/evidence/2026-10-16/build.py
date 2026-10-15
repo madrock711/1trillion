@@ -151,6 +151,7 @@ for x in s['markets']:
  if x['id']=='KOSPI':x.update(value=K['close'],changePercent=-7.57,open=K['open'],high=K['high'],low=K['low'],previousClose=6008.81,asOf=OLD+'T15:30:00+09:00',asOfLabel='10월 15일 정규장 종가',flows=[])
  else:x.update(value=None,changePercent=None,open=None,high=None,low=None,previousClose=None,flows=[],asOf=NOW,asOfLabel='장전 미개시')
 s['stance']={'label':'반등 지속에는 수급 회복 필요','attack':10,'wait':50,'defense':40,'note':'Micron 반등과 물가·AI 금융비용 부담이 공존합니다.'}
+s['flows']={'program':{'arbitrage':None,'nonArbitrage':None,'total':None,'unit':'억원','asOfLabel':'전일 확정값 미확인'},'kospi200FuturesForeign':None,'futuresUnit':'억원','futuresAsOfLabel':'미확인'}
 s['changes']=[{'label':'KOSPI','before':'6,008.81','after':'5,554.22','meaning':'전일 급락 뒤 5,450선 방어와 수급 회복을 봅니다.'}]
 s['factors']=[{'label':'생산자물가','metric':'전월 +1.3% · 전년 +6.3%','detail':'10월 15일 BLS 발표','tone':'warning'},{'label':'미국 반도체','metric':'SOXX -0.91% · MU +1.87%','detail':'10월 15일 정규장','tone':'warning'}]
 s['memory']=[{'label':'DDR5 16Gb · 10/15','value':'$60.433','change':'+0.55%'},{'label':'DDR4 16Gb · 10/15','value':'$83.66','change':'+0.06%'}]

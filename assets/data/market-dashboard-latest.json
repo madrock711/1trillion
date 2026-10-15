@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "snapshotId": "20261016-0810",
+  "snapshotId": "20261016-0814-flow-correction",
   "generatedAt": "2026-10-16T08:10:34+09:00",
   "asOf": "2026-10-16T08:10:34+09:00",
   "asOfDisplay": "2026-10-16T08:10:34+09:00",
@@ -95,14 +95,14 @@
   ],
   "flows": {
     "program": {
-      "arbitrage": 634,
-      "nonArbitrage": -631,
-      "total": 3,
+      "arbitrage": null,
+      "nonArbitrage": null,
+      "total": null,
       "unit": "억원",
-      "asOfLabel": "10월 14일 최종"
+      "asOfLabel": "전일 확정값 미확인"
     },
     "kospi200FuturesForeign": null,
-    "futuresUnit": "계약",
+    "futuresUnit": "억원",
     "futuresAsOfLabel": "미확인"
   },
   "memory": [
