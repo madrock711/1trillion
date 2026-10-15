@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-10-15",
+  "bizdate": "20261015",
+  "fetchedAt": "2026-10-16T08:01:20+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 5673.01,
+    "high": 5751.45,
+    "low": 5450.81,
+    "close": 5554.22,
+    "asOf": "2026-10-15T15:30:00+09:00",
+    "source": "https://fchart.stock.naver.com/sise.nhn?symbol=KOSPI&timeframe=day&count=5&requestType=0",
+    "rawHash": "104f77645e898a61036170885fda599dd8591ebee74f99d998773171519043fb"
+  },
+  "kodex": {
+    "open": 72505.0,
+    "high": 73800.0,
+    "low": 64920.0,
+    "close": 67785.0,
+    "asOf": "2026-10-15T15:30:00+09:00",
+    "source": "https://fchart.stock.naver.com/sise.nhn?symbol=122630&timeframe=day&count=5&requestType=0",
+    "rawHash": "d51f42b218d9c5a098dcb6ce40853815950e8d6619e473ebc44b219484ad21fb",
+    "volume": 35584318
+  },
+  "closeSnapshotMissingReason": "오늘 장전 integration이 10/16으로 초기화. 전일 최종 수급·프로그램·시장 폭 묶음 원문을 복구하지 못함. 언론 수급 수치 충돌로 대체하지 않음.",
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-10-15T15:30:00+09:00",
+    "fetchedAt": "2026-10-16T08:01:20+09:00",
+    "missingReason": "오늘 장전 integration이 10/16으로 초기화. 전일 최종 수급·프로그램·시장 폭 묶음 원문을 복구하지 못함. 언론 수급 수치 충돌로 대체하지 않음.",
+    "rawHash": "12bca0110f2c6ea7c299f579d3877299bfd5802a90ccc39ec3d55d9eb87e383f"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-10-15-0807-same-close",
+  "recordedAt": "2026-10-16T08:01:20+09:00",
+  "actualRef": "2026-10-15",
+  "realizedScenario": "bear",
+  "errorCodes": [
+    "range_too_narrow_down",
+    "cause_unverifiable"
+  ],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "unavailable",
+      "reason": "정확 시각 앵커 미확보"
+    },
+    {
+      "id": "bull-foreign",
+      "status": "unavailable",
+      "reason": "정확 시각 앵커 미확보"
+    },
+    {
+      "id": "bull-program",
+      "status": "unavailable",
+      "reason": "정확 시각 앵커 미확보"
+    },
+    {
+      "id": "base-floor",
+      "status": "unavailable",
+      "reason": "정확 시각 앵커 미확보"
+    },
+    {
+      "id": "base-cap",
+      "status": "unavailable",
+      "reason": "정확 시각 앵커 미확보"
+    },
+    {
+      "id": "base-foreign",
+      "status": "unavailable",
+      "reason": "정확 시각 앵커 미확보"
+    },
+    {
+      "id": "bear-price",
+      "status": "unavailable",
+      "reason": "정확 시각 앵커 미확보"
+    },
+    {
+      "id": "bear-foreign",
+      "status": "unavailable",
+      "reason": "정확 시각 앵커 미확보"
+    },
+    {
+      "id": "bear-program",
+      "status": "unavailable",
+      "reason": "정확 시각 앵커 미확보"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "cpi",
+      "status": "unverifiable"
+    },
+    {
+      "id": "domestic-flow",
+      "status": "unverifiable"
+    }
+  ],
+  "hypothesisTests": []
+}

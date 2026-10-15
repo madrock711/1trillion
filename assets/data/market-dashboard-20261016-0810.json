@@ -1,0 +1,313 @@
+{
+  "schemaVersion": 1,
+  "snapshotId": "20261016-0810",
+  "generatedAt": "2026-10-16T08:10:34+09:00",
+  "asOf": "2026-10-16T08:10:34+09:00",
+  "asOfDisplay": "2026-10-16T08:10:34+09:00",
+  "marketState": "한국 장전",
+  "sourceLabel": "미국 10월 15일 정규장 · 국내 10월 15일 종가 · 10월 16일 장전",
+  "latestArticle": {
+    "title": "TSMC 호실적에도 반도체 약세…급락한 KOSPI의 반등 조건",
+    "href": "market-2026-10-16.html"
+  },
+  "headline": "TSMC 호실적에도 반도체 약세…급락한 KOSPI의 반등 조건",
+  "summary": "TSMC의 주문 전망은 강했지만 미국 생산자물가와 AI 자금조달 부담이 남았습니다. Micron 반등 속에서 KOSPI 5,450선 방어와 5,650선 회복을 봅니다.",
+  "markets": [
+    {
+      "id": "KOSPI",
+      "label": "KOSPI",
+      "symbol": "K",
+      "value": 5554.22,
+      "changePercent": -7.57,
+      "asOf": "2026-10-15T15:30:00+09:00",
+      "asOfLabel": "10월 15일 정규장 종가",
+      "stateLabel": "정규장 종가",
+      "open": 5673.01,
+      "high": 5751.45,
+      "low": 5450.81,
+      "previousClose": 6008.81,
+      "flows": []
+    },
+    {
+      "id": "KOSDAQ",
+      "label": "KOSDAQ",
+      "symbol": "Q",
+      "value": null,
+      "changePercent": null,
+      "asOf": "2026-10-16T08:05:28+09:00",
+      "asOfLabel": "장전 미개시",
+      "stateLabel": "정규장 종가",
+      "open": null,
+      "high": null,
+      "low": null,
+      "previousClose": null,
+      "flows": []
+    }
+  ],
+  "stance": {
+    "label": "반등 지속에는 수급 회복 필요",
+    "attack": 10,
+    "wait": 50,
+    "defense": 40,
+    "note": "Micron 반등과 물가·AI 금융비용 부담이 공존합니다."
+  },
+  "checkpoints": [
+    {
+      "label": "삼성전자 NXT",
+      "value": "218,500원 · 4.05%",
+      "detail": "OPEN · 2026-10-16T08:10:34.820407+09:00",
+      "tone": "warning"
+    },
+    {
+      "label": "SK하이닉스 NXT",
+      "value": "1,312,000원 · 3.96%",
+      "detail": "OPEN · 2026-10-16T08:10:34.82042+09:00",
+      "tone": "warning"
+    },
+    {
+      "label": "하나은행 USD/KRW",
+      "value": "1,342.50원",
+      "detail": "2026-10-16T07:35:02+09:00",
+      "tone": "warning"
+    }
+  ],
+  "changes": [
+    {
+      "label": "KOSPI",
+      "before": "6,008.81",
+      "after": "5,554.22",
+      "meaning": "전일 급락 뒤 5,450선 방어와 수급 회복을 봅니다."
+    }
+  ],
+  "factors": [
+    {
+      "label": "생산자물가",
+      "metric": "전월 +1.3% · 전년 +6.3%",
+      "detail": "10월 15일 BLS 발표",
+      "tone": "warning"
+    },
+    {
+      "label": "미국 반도체",
+      "metric": "SOXX -0.91% · MU +1.87%",
+      "detail": "10월 15일 정규장",
+      "tone": "warning"
+    }
+  ],
+  "flows": {
+    "program": {
+      "arbitrage": 634,
+      "nonArbitrage": -631,
+      "total": 3,
+      "unit": "억원",
+      "asOfLabel": "10월 14일 최종"
+    },
+    "kospi200FuturesForeign": null,
+    "futuresUnit": "계약",
+    "futuresAsOfLabel": "미확인"
+  },
+  "memory": [
+    {
+      "label": "DDR5 16Gb · 10/15",
+      "value": "$60.433",
+      "change": "+0.55%"
+    },
+    {
+      "label": "DDR4 16Gb · 10/15",
+      "value": "$83.66",
+      "change": "+0.06%"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "bull",
+      "label": "강세 · 25%",
+      "range": "KOSPI 5,650 초과~5,800",
+      "summary": "수급이 함께 회복하는 반등",
+      "conditions": [
+        "5,650 초과",
+        "외국인 순매수",
+        "프로그램 순매수"
+      ],
+      "invalidation": "5,650 재이탈"
+    },
+    {
+      "id": "base",
+      "label": "기본 · 45%",
+      "range": "KOSPI 5,450~5,650",
+      "summary": "급락 이후 가격 탐색",
+      "conditions": [
+        "5,450 이상",
+        "5,650 이하",
+        "외국인 순매도 8천억원 이하"
+      ],
+      "invalidation": "범위 이탈 또는 매도 확대"
+    },
+    {
+      "id": "bear",
+      "label": "약세 · 30%",
+      "range": "KOSPI 5,200~5,450 미만",
+      "summary": "전일 저점 이탈",
+      "conditions": [
+        "5,450 미만",
+        "외국인 순매도",
+        "프로그램 순매도"
+      ],
+      "invalidation": "5,450 회복"
+    }
+  ],
+  "strategyLevels": [
+    {
+      "asset": "KOSPI",
+      "support": "5,450",
+      "pivot": "5,650",
+      "resistance": "5,800"
+    },
+    {
+      "asset": "KODEX 레버리지",
+      "support": "64,920원",
+      "pivot": "67,785원",
+      "resistance": "73,800원"
+    }
+  ],
+  "events": [
+    {
+      "time": "10월 16일 21:30 KST",
+      "name": "미국 수출입물가",
+      "path": "물가·금리 기대 변화"
+    },
+    {
+      "time": "10월 19일 한국장",
+      "name": "다음 정규 거래일",
+      "path": "주말 정책·신용 뉴스 반영"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "support",
+      "label": "5,450 방어"
+    },
+    {
+      "id": "rebound",
+      "label": "5,650 회복과 수급 동행"
+    }
+  ],
+  "technical": {
+    "note": "10월 15일 확정 일봉과 10월 16일 장전 분석 기준선입니다.",
+    "instruments": [
+      {
+        "id": "KOSPI",
+        "label": "KOSPI",
+        "unit": "pt",
+        "asOf": "2026-10-15T15:30:00+09:00",
+        "asOfLabel": "10월 15일 정규장 종가",
+        "points": [
+          {
+            "label": "시가",
+            "value": 5673.01
+          },
+          {
+            "label": "고가",
+            "value": 5751.45
+          },
+          {
+            "label": "저가",
+            "value": 5450.81
+          },
+          {
+            "label": "종가",
+            "value": 5554.22
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 5450
+          },
+          {
+            "label": "반등 기준",
+            "value": 5650
+          },
+          {
+            "label": "저항",
+            "value": 5800
+          }
+        ],
+        "interpretation": "1차 지지 5,450 · 반등 기준 5,650 · 저항 5,800"
+      },
+      {
+        "id": "KODEX",
+        "label": "KODEX 레버리지",
+        "unit": "원",
+        "asOf": "2026-10-15T15:30:00+09:00",
+        "asOfLabel": "10월 15일 정규장 종가",
+        "points": [
+          {
+            "label": "시가",
+            "value": 72505.0
+          },
+          {
+            "label": "고가",
+            "value": 73800.0
+          },
+          {
+            "label": "저가",
+            "value": 64920.0
+          },
+          {
+            "label": "종가",
+            "value": 67785.0
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 64920
+          },
+          {
+            "label": "반등 기준",
+            "value": 67785
+          },
+          {
+            "label": "저항",
+            "value": 73800
+          }
+        ],
+        "interpretation": "1차 지지 64,920 · 반등 기준 67,785 · 저항 73,800"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "label": "TSMC 공식 실적",
+      "href": "https://investor.tsmc.com/english/quarterly-results/2026/q3"
+    },
+    {
+      "label": "미국 PPI",
+      "href": "https://www.bls.gov/news.release/ppi.nr0.htm"
+    },
+    {
+      "label": "AI 금융비용 Reuters",
+      "href": "https://www.investing.com/news/stock-market-news/coreweave-shares-bonds-slide-further-as-ai-debt-fears-mount-4951350"
+    },
+    {
+      "label": "미국 가격",
+      "href": "https://finance.yahoo.com/quote/SOXX/"
+    },
+    {
+      "label": "국내 일봉",
+      "href": "https://fchart.stock.naver.com/sise.nhn?symbol=KOSPI&timeframe=day&count=5&requestType=0"
+    },
+    {
+      "label": "메모리 현물",
+      "href": "https://www.trendforce.com/price/dram/dram_spot"
+    },
+    {
+      "label": "경제 일정",
+      "href": "https://www.bls.gov/schedule/2026/10_sched.htm"
+    },
+    {
+      "label": "FRED 금리차",
+      "href": "https://fred.stlouisfed.org/series/T10Y2Y"
+    }
+  ]
+}
