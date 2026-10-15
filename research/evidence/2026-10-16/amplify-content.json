@@ -1,0 +1,10 @@
+{
+    "jobArn": "arn:aws:amplify:us-east-1:514670561185:apps/d2pg7r2qjjb9u9/branches/main/jobs/0000000672",
+    "jobId": "672",
+    "commitId": "822712406675129080c371d3768d2455c3efdfcd",
+    "commitMessage": "Publish October 16 KOSPI premarket research",
+    "commitTime": "2026-10-16T08:10:37+09:00",
+    "startTime": "2026-10-16T08:10:44.138000+09:00",
+    "status": "SUCCEED",
+    "endTime": "2026-10-16T08:11:42.719000+09:00"
+}

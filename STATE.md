@@ -8,3 +8,4 @@
 - 보고서 reports/2026-10-16.md, 취재 research/notes/2026-10-16.md, 차트 charts/us_yield_spreads_*_2026-10-16.png.
 - 직전 전망 약세 하단도 이탈. 수급 앵커 미확보로 조건 미검증. 누적 전체 평가는 기존 9/21 해시 불일치로 중단.
 - 대시보드 assets/data/market-dashboard-20261016-0810.json, 전망 research/evaluation/forecasts/2026-10-16-0810-same-close.json.
+- 최초 공개 2026-10-16T08:11:42.719000+09:00, Amplify 672. pushed/deploy_verified 계약 검증 통과.
