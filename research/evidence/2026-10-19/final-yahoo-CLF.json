@@ -1,0 +1,187 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/CL=F?range=1d&interval=5m&includePrePost=true",
+  "fetchedAt": "2026-10-19T08:03:26+09:00",
+  "rawHash": "51722c9ab345531524755b64e618ee35db8a639f49a7d0318ea88a27dd7acb8f",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "CL=F",
+            "exchangeName": "NYM",
+            "fullExchangeName": "NY Mercantile",
+            "instrumentType": "FUTURE",
+            "firstTradeDate": 967003200,
+            "regularMarketTime": 1792364002,
+            "hasPrePostMarketData": false,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 98.21,
+            "regularMarketChangePercent": -0.818,
+            "fulldayPrice": 98.21,
+            "fulldayChange": -0.81,
+            "fulldayChangePercent": -0.818,
+            "fiftyTwoWeekHigh": 119.48,
+            "fiftyTwoWeekLow": 54.98,
+            "regularMarketDayHigh": 99.24,
+            "regularMarketDayLow": 98.2,
+            "regularMarketVolume": 4485,
+            "shortName": "Crude Oil Dec 26",
+            "chartPreviousClose": 99.02,
+            "previousClose": 99.02,
+            "scale": 3,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "start": 1792296000,
+                "end": 1792296000,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "start": 1792296000,
+                "end": 1792382340,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "start": 1792382340,
+                "end": 1792382340,
+                "gmtoffset": -14400
+              }
+            },
+            "tradingPeriods": {
+              "pre": [
+                [
+                  {
+                    "timezone": "EDT",
+                    "start": 1792296000,
+                    "end": 1792296000,
+                    "gmtoffset": -14400
+                  }
+                ]
+              ],
+              "post": [
+                [
+                  {
+                    "timezone": "EDT",
+                    "start": 1792382340,
+                    "end": 1792382340,
+                    "gmtoffset": -14400
+                  }
+                ]
+              ],
+              "regular": [
+                [
+                  {
+                    "timezone": "EDT",
+                    "start": 1792296000,
+                    "end": 1792382340,
+                    "gmtoffset": -14400
+                  }
+                ]
+              ]
+            },
+            "dataGranularity": "5m",
+            "range": "1d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1792361400,
+            1792361700,
+            1792362000,
+            1792362300,
+            1792362600,
+            1792362900,
+            1792363200,
+            1792363500,
+            1792363800,
+            1792364002
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "volume": [
+                  334,
+                  238,
+                  253,
+                  90,
+                  138,
+                  197,
+                  171,
+                  177,
+                  225,
+                  0
+                ],
+                "high": [
+                  98.33000183105469,
+                  98.43000030517578,
+                  98.45999908447266,
+                  98.44000244140625,
+                  98.4000015258789,
+                  98.37999725341797,
+                  98.30000305175781,
+                  98.2699966430664,
+                  98.29000091552734,
+                  98.20999908447266
+                ],
+                "close": [
+                  98.26000213623047,
+                  98.41000366210938,
+                  98.41999816894531,
+                  98.41999816894531,
+                  98.33999633789062,
+                  98.25,
+                  98.23999786376953,
+                  98.2699966430664,
+                  98.20999908447266,
+                  98.20999908447266
+                ],
+                "low": [
+                  98.19999694824219,
+                  98.2300033569336,
+                  98.38999938964844,
+                  98.37999725341797,
+                  98.33000183105469,
+                  98.2300033569336,
+                  98.19999694824219,
+                  98.19999694824219,
+                  98.18000030517578,
+                  98.20999908447266
+                ],
+                "open": [
+                  98.30000305175781,
+                  98.26000213623047,
+                  98.41999816894531,
+                  98.41000366210938,
+                  98.4000015258789,
+                  98.31999969482422,
+                  98.25,
+                  98.22000122070312,
+                  98.2699966430664,
+                  98.20999908447266
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}

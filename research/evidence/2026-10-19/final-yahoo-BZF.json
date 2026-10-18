@@ -1,0 +1,188 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F?range=1d&interval=5m&includePrePost=true",
+  "fetchedAt": "2026-10-19T08:03:26+09:00",
+  "rawHash": "28f1aa81310696660d9d76b86d82a6a5ac545386f424eecaa08c8b6dd4a6e4db",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "BZ=F",
+            "exchangeName": "NYM",
+            "fullExchangeName": "NY Mercantile",
+            "instrumentType": "FUTURE",
+            "firstTradeDate": 1185768000,
+            "regularMarketTime": 1792363920,
+            "hasPrePostMarketData": false,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 108.83,
+            "regularMarketChangePercent": -0.938,
+            "fulldayPrice": 108.83,
+            "fulldayChange": -1.03,
+            "fulldayChangePercent": -0.938,
+            "fiftyTwoWeekHigh": 126.1,
+            "fiftyTwoWeekLow": 58.72,
+            "regularMarketDayHigh": 110.25,
+            "regularMarketDayLow": 108.75,
+            "regularMarketVolume": 498,
+            "longName": "Brent Crude Oil Last Day Financial Futures",
+            "shortName": "Brent Crude Oil Last Day Financ",
+            "chartPreviousClose": 109.86,
+            "previousClose": 109.86,
+            "scale": 3,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "end": 1792296000,
+                "start": 1792296000,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "end": 1792382340,
+                "start": 1792296000,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "end": 1792382340,
+                "start": 1792382340,
+                "gmtoffset": -14400
+              }
+            },
+            "tradingPeriods": {
+              "pre": [
+                [
+                  {
+                    "timezone": "EDT",
+                    "end": 1792296000,
+                    "start": 1792296000,
+                    "gmtoffset": -14400
+                  }
+                ]
+              ],
+              "post": [
+                [
+                  {
+                    "timezone": "EDT",
+                    "end": 1792382340,
+                    "start": 1792382340,
+                    "gmtoffset": -14400
+                  }
+                ]
+              ],
+              "regular": [
+                [
+                  {
+                    "timezone": "EDT",
+                    "end": 1792382340,
+                    "start": 1792296000,
+                    "gmtoffset": -14400
+                  }
+                ]
+              ]
+            },
+            "dataGranularity": "5m",
+            "range": "1d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1792361400,
+            1792361700,
+            1792362000,
+            1792362300,
+            1792362600,
+            1792362900,
+            1792363200,
+            1792363500,
+            1792363800,
+            1792363920
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "high": [
+                  108.9000015258789,
+                  108.9800033569336,
+                  109.0999984741211,
+                  109.04000091552734,
+                  109.02999877929688,
+                  109.0,
+                  108.80999755859375,
+                  108.83000183105469,
+                  108.8499984741211,
+                  108.83000183105469
+                ],
+                "low": [
+                  108.75,
+                  108.80000305175781,
+                  109.0199966430664,
+                  109.01000213623047,
+                  108.95999908447266,
+                  108.81999969482422,
+                  108.80000305175781,
+                  108.77999877929688,
+                  108.80999755859375,
+                  108.83000183105469
+                ],
+                "volume": [
+                  21,
+                  14,
+                  17,
+                  7,
+                  12,
+                  16,
+                  5,
+                  67,
+                  13,
+                  0
+                ],
+                "open": [
+                  108.88999938964844,
+                  108.83000183105469,
+                  109.02999877929688,
+                  109.04000091552734,
+                  108.95999908447266,
+                  108.95999908447266,
+                  108.80999755859375,
+                  108.83000183105469,
+                  108.8499984741211,
+                  108.83000183105469
+                ],
+                "close": [
+                  108.75,
+                  108.9800033569336,
+                  109.05000305175781,
+                  109.01000213623047,
+                  108.9800033569336,
+                  108.83999633789062,
+                  108.80000305175781,
+                  108.77999877929688,
+                  108.80999755859375,
+                  108.83000183105469
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}
