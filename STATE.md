@@ -8,3 +8,4 @@
 - 보고서 reports/2026-10-19.md, 취재 research/notes/2026-10-19.md, 차트 charts/us_yield_spreads_*_2026-10-19.png.
 - 직전 기본실패·강세종가 적중, 수급조건 미검증. actuals/2026-10-16.json·outcomes/2026-10-16-0810-same-close.json. 누적 기존9/21 해시 오류로 중단.
 - 대시보드 assets/data/market-dashboard-20261019-0803.json, 전망 research/evaluation/forecasts/2026-10-19-0803-same-close.json.
+- 최초 공개 2026-10-19T08:04:43.557000+09:00, Amplify 676. pushed/deploy_verified 계약 검증 통과.

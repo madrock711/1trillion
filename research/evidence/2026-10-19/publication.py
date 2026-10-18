@@ -20,7 +20,7 @@ if kind=='deploy_verified':
  for page in ['articles/market-2026-10-19.html','index.html','articles/index.html','articles/market.html']:
   s=read(page)
   if page.endswith('market-2026-10-19.html'):
-   s=re.sub(r'(<meta property="article:published_time" content=")[^"]+',lambda m:m[1]+published,s);s=s.replace('데이터 최종 확인 '+sealed['cutoff']+'.','데이터 최종 확인 '+sealed['cutoff']+' · 최초 공개 '+published+'.');s=s.replace(' · 작성 '+sealed['issuedAt'][11:16]+' KST',' · 작성 '+sealed['issuedAt'][11:16]+' · 발행 '+published[11:16]+' KST');s=re.sub(r'(<time datetime=")[^"]+',lambda m:m[1]+published,s)
+   s=re.sub(r'(<meta property="article:(?:published_time|modified_time)" content=")[^"]+',lambda m:m[1]+published,s);s=s.replace('데이터 최종 확인 '+sealed['cutoff']+'.','데이터 최종 확인 '+sealed['cutoff']+' · 최초 공개 '+published+'.');s=s.replace(' · 작성 '+sealed['issuedAt'][11:16]+' KST',' · 작성 '+sealed['issuedAt'][11:16]+' · 발행 '+published[11:16]+' KST');s=re.sub(r'(<time datetime=")[^"]+',lambda m:m[1]+published,s)
   else:
    def card(match):
     if 'market-2026-10-19.html' not in match[0]:return match[0]
@@ -28,10 +28,10 @@ if kind=='deploy_verified':
    s=re.sub(r'<article class="(?:article-card(?: home-article-card)?|market-article-item)"[^>]*>.*?</article>',card,s,flags=re.S)
   def ld(match):
    j=json.loads(match[1])
-   if j.get('@type')=='Article':j['datePublished']=published
+   if j.get('@type')=='Article':j.update(datePublished=published,dateModified=published)
    for n in j.get('@graph',[j]):
     for x in n.get('mainEntity',{}).get('itemListElement',[]):
-     if x.get('url','').endswith('market-2026-10-19.html'):x['datePublished']=published
+     if x.get('url','').endswith('market-2026-10-19.html'):x.update(datePublished=published,dateModified=published)
    return '<script type="application/ld+json">'+json.dumps(j,ensure_ascii=False,indent=2)+'</script>'
   s=re.sub(r'<script type="application/ld\+json">(.*?)</script>',ld,s,flags=re.S);write(page,s)
  write('STATE.md',read('STATE.md')+f'- 최초 공개 {published}, Amplify {job["jobId"]}. pushed/deploy_verified 계약 검증 통과.\n')
