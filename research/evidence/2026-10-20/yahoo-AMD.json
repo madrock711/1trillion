@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-10-20T07:57:25+09:00",
+  "rawHash": "2ceaa6c2f927aea0b6eafb7e7d92a327f751e851b5034b713c412d4dddd24464",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "AMD",
+            "exchangeName": "NMS",
+            "fullExchangeName": "NasdaqGS",
+            "instrumentType": "EQUITY",
+            "firstTradeDate": 322151400,
+            "regularMarketTime": 1792440001,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 538.05,
+            "regularMarketChangePercent": 1.759,
+            "fulldayPrice": 540.44,
+            "fulldayChange": 11.69,
+            "fulldayChangePercent": 2.211,
+            "fiftyTwoWeekHigh": 658.52,
+            "fiftyTwoWeekLow": 188.22,
+            "regularMarketDayHigh": 554.409,
+            "regularMarketDayLow": 535.67,
+            "regularMarketVolume": 20120889,
+            "longName": "Advanced Micro Devices, Inc.",
+            "shortName": "Advanced Micro Devices, Inc.",
+            "chartPreviousClose": 594.24,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "end": 1792416600,
+                "start": 1792396800,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "end": 1792440000,
+                "start": 1792416600,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "end": 1792454400,
+                "start": 1792440000,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1791898200,
+            1791984600,
+            1792071000,
+            1792157400,
+            1792416600
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "open": [
+                  577.5,
+                  589.5700073242188,
+                  540.0,
+                  547.5499877929688,
+                  551.969970703125
+                ],
+                "close": [
+                  605.530029296875,
+                  570.8200073242188,
+                  562.22998046875,
+                  528.75,
+                  538.0499877929688
+                ],
+                "volume": [
+                  17932700,
+                  22319500,
+                  28834600,
+                  22481800,
+                  20120889
+                ],
+                "high": [
+                  606.2000122070312,
+                  591.8800048828125,
+                  568.6199951171875,
+                  550.9600219726562,
+                  554.4094848632812
+                ],
+                "low": [
+                  570.5999755859375,
+                  567.0,
+                  530.0900268554688,
+                  526.8300170898438,
+                  535.6699829101562
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  605.530029296875,
+                  570.8200073242188,
+                  562.22998046875,
+                  528.75,
+                  538.0499877929688
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}

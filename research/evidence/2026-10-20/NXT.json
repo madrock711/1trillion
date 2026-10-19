@@ -1,0 +1,141 @@
+{
+  "url": "https://stock.naver.com/api/polling/domestic/NXT/stock?itemCodes=005930,000660",
+  "fetchedAt": "2026-10-20T07:57:25+09:00",
+  "rawHash": "c5a9a1ad69f7aeb4e4e4208f86ad6757a34d0f3625c16cef51d506995681a4ef",
+  "data": {
+    "pollingInterval": 70000,
+    "datas": [
+      {
+        "itemCode": "005930",
+        "stockName": "삼성전자",
+        "stockExchangeType": {
+          "code": "KS",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스피",
+          "nameEng": "KOSPI",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "stockType": "domestic",
+          "name": "KOSPI"
+        },
+        "closePrice": "218,000",
+        "compareToPreviousClosePrice": "0",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        },
+        "fluctuationsRatio": "0.00",
+        "tradeStopType": {
+          "code": "1",
+          "text": "운영.Trading",
+          "name": "TRADING"
+        },
+        "tradableStatus": "tradable",
+        "tradableStatusCode": "ok",
+        "tradableStatusUpdatedAt": "2026-10-20T07:10:13.306+09:00",
+        "openPrice": "-",
+        "highPrice": "-",
+        "lowPrice": "-",
+        "accumulatedTradingVolume": "-",
+        "accumulatedTradingValue": "-",
+        "marketStatus": "PREOPEN",
+        "marketStatusDetailType": "preopen",
+        "localTradedAt": "2026-10-20T07:57:26.224225+09:00",
+        "overMarketPriceInfo": null,
+        "integratedPriceInfo": null,
+        "isinCode": "KR7005930003",
+        "myDataCode": null,
+        "stockEndUrl": null,
+        "symbolCode": "005930",
+        "currencyType": {
+          "code": "KRW",
+          "text": "Republic of Korea won",
+          "name": "KRW"
+        },
+        "fluctuationsRatioRaw": "0.00",
+        "openPriceRaw": "",
+        "highPriceRaw": "",
+        "lowPriceRaw": "",
+        "accumulatedTradingVolumeRaw": "",
+        "accumulatedTradingValueRaw": "",
+        "marketValueFull": "1,274,488,736,544,000",
+        "marketValueFullRaw": "1274488736544000",
+        "marketSessionType": null,
+        "closePriceRaw": "218000",
+        "compareToPreviousClosePriceRaw": "0"
+      },
+      {
+        "itemCode": "000660",
+        "stockName": "SK하이닉스",
+        "stockExchangeType": {
+          "code": "KS",
+          "zoneId": "Asia/Seoul",
+          "nationType": "KOR",
+          "delayTime": 0,
+          "startTime": "0900",
+          "endTime": "1530",
+          "closePriceSendTime": "1630",
+          "nameKor": "코스피",
+          "nameEng": "KOSPI",
+          "nationCode": "KOR",
+          "nationName": "대한민국",
+          "stockType": "domestic",
+          "name": "KOSPI"
+        },
+        "closePrice": "1,277,000",
+        "compareToPreviousClosePrice": "0",
+        "compareToPreviousPrice": {
+          "code": "3",
+          "text": "보합",
+          "name": "UNCHANGED"
+        },
+        "fluctuationsRatio": "0.00",
+        "tradeStopType": {
+          "code": "1",
+          "text": "운영.Trading",
+          "name": "TRADING"
+        },
+        "tradableStatus": "tradable",
+        "tradableStatusCode": "ok",
+        "tradableStatusUpdatedAt": "2026-10-20T07:10:12.272+09:00",
+        "openPrice": "-",
+        "highPrice": "-",
+        "lowPrice": "-",
+        "accumulatedTradingVolume": "-",
+        "accumulatedTradingValue": "-",
+        "marketStatus": "PREOPEN",
+        "marketStatusDetailType": "preopen",
+        "localTradedAt": "2026-10-20T07:57:26.224236+09:00",
+        "overMarketPriceInfo": null,
+        "integratedPriceInfo": null,
+        "isinCode": "KR7000660001",
+        "myDataCode": null,
+        "stockEndUrl": null,
+        "symbolCode": "000660",
+        "currencyType": {
+          "code": "KRW",
+          "text": "Republic of Korea won",
+          "name": "KRW"
+        },
+        "fluctuationsRatioRaw": "0.00",
+        "openPriceRaw": "",
+        "highPriceRaw": "",
+        "lowPriceRaw": "",
+        "accumulatedTradingVolumeRaw": "",
+        "accumulatedTradingValueRaw": "",
+        "marketValueFull": "932,838,750,105,000",
+        "marketValueFullRaw": "932838750105000",
+        "marketSessionType": null,
+        "closePriceRaw": "1277000",
+        "compareToPreviousClosePriceRaw": "0"
+      }
+    ],
+    "time": "20261020075726"
+  }
+}
