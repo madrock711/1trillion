@@ -9,7 +9,7 @@
     "buyColor": "#ff4f5e",
     "sellColor": "#4f8dff"
   },
-  "updatedAt": "2026-10-19T23:44:54+09:00",
+  "updatedAt": "2026-10-20T21:47:13+09:00",
   "days": [
     {
       "date": "2026-07-29",
@@ -442,6 +442,14 @@
       "coverageRatio": 0.998842,
       "sourceLastAt": "2026-10-19T15:30:00+09:00",
       "collectedAt": "2026-10-19T23:44:54+09:00"
+    },
+    {
+      "date": "2026-10-20",
+      "path": "kodex-intraday/2026-10-20.json",
+      "minuteBars": 381,
+      "coverageRatio": 0.997646,
+      "sourceLastAt": "2026-10-20T15:30:00+09:00",
+      "collectedAt": "2026-10-20T21:47:13+09:00"
     }
   ]
 }
