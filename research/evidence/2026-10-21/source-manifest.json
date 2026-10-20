@@ -126,5 +126,18 @@
     "fetchedAt": "2026-10-21T07:58:53.612317+09:00",
     "rawHash": "147b2e105cb177af29f138e9e017657beb829d71691c687bbc82493ae3a2c910",
     "status": "available"
+  },
+  {
+    "id": "Supermicro",
+    "url": "https://ir.supermicro.com/news/news-details/2026/Supermicro-Provides-First-Quarter-of-Fiscal-Year-2027-Preliminary-Business-Update/default.aspx",
+    "status": "web_tool_verified",
+    "directFetchStatus": "HTTP403",
+    "facts": "Q1FY27 preliminary revenue18.5-19.5B vs14.5-15.5B; gross margin12.0-12.5%"
+  },
+  {
+    "id": "Reuters-GPU",
+    "status": "web_tool_verified",
+    "directFetchStatus": "HTTP403",
+    "url": "https://www.investing.com/news/stock-market-news/exclusivebytedance-alibaba-tencent-place-over-35-billion-worth-of-nvidia-chip-orders-4959231"
   }
 ]
