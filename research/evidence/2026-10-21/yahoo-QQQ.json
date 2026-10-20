@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-10-21T08:00:06+09:00",
+  "rawHash": "3b7f020341407c9502e29ac6b17b6c8ce72ad9d7be55a73aba3bcdce486e7249",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "QQQ",
+            "exchangeName": "NGM",
+            "fullExchangeName": "NasdaqGM",
+            "instrumentType": "ETF",
+            "firstTradeDate": 921076200,
+            "regularMarketTime": 1792526400,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 717.63,
+            "regularMarketChangePercent": -0.102,
+            "fulldayPrice": 723.024,
+            "fulldayChange": 4.664,
+            "fulldayChangePercent": 0.649,
+            "fiftyTwoWeekHigh": 762.86,
+            "fiftyTwoWeekLow": 555.6,
+            "regularMarketDayHigh": 722.747,
+            "regularMarketDayLow": 710.39,
+            "regularMarketVolume": 29494120,
+            "longName": "Invesco QQQ Trust",
+            "shortName": "Invesco QQQ Trust, Series 1",
+            "chartPreviousClose": 743.57,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "end": 1792503000,
+                "start": 1792483200,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "end": 1792526400,
+                "start": 1792503000,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "end": 1792540800,
+                "start": 1792526400,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1791984600,
+            1792071000,
+            1792157400,
+            1792416600,
+            1792503000
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "close": [
+                  728.9500122070312,
+                  728.0,
+                  709.7999877929688,
+                  718.3599853515625,
+                  717.6300048828125
+                ],
+                "open": [
+                  737.97998046875,
+                  718.5499877929688,
+                  725.52001953125,
+                  719.6099853515625,
+                  715.25
+                ],
+                "volume": [
+                  52383600,
+                  49828700,
+                  66926700,
+                  37196700,
+                  29494120
+                ],
+                "low": [
+                  726.3900146484375,
+                  715.4400024414062,
+                  707.22998046875,
+                  716.5700073242188,
+                  710.3900146484375
+                ],
+                "high": [
+                  740.530029296875,
+                  729.4299926757812,
+                  725.9600219726562,
+                  724.5499877929688,
+                  722.7465209960938
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  728.9500122070312,
+                  728.0,
+                  709.7999877929688,
+                  718.3599853515625,
+                  717.6300048828125
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}

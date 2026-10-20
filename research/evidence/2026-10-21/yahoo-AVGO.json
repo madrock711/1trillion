@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AVGO?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-10-21T08:00:06+09:00",
+  "rawHash": "e880e2d87cd776c7ecbdf7e19325f6f1705c94d9d4599475045c3cc0384ae3c6",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "AVGO",
+            "exchangeName": "NMS",
+            "fullExchangeName": "NasdaqGS",
+            "instrumentType": "EQUITY",
+            "firstTradeDate": 1249565400,
+            "regularMarketTime": 1792526401,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 334.37,
+            "regularMarketChangePercent": -0.066,
+            "fulldayPrice": 338.838,
+            "fulldayChange": 4.248,
+            "fulldayChangePercent": 1.27,
+            "fiftyTwoWeekHigh": 495.0,
+            "fiftyTwoWeekLow": 289.96,
+            "regularMarketDayHigh": 341.09,
+            "regularMarketDayLow": 330.8,
+            "regularMarketVolume": 15742796,
+            "longName": "Broadcom Inc.",
+            "shortName": "Broadcom Inc.",
+            "chartPreviousClose": 357.31,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "end": 1792503000,
+                "start": 1792483200,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "end": 1792526400,
+                "start": 1792503000,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "end": 1792540800,
+                "start": 1792526400,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1791984600,
+            1792071000,
+            1792157400,
+            1792416600,
+            1792503000
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "close": [
+                  346.25,
+                  344.3299865722656,
+                  328.75,
+                  334.5899963378906,
+                  334.3699951171875
+                ],
+                "volume": [
+                  23127400,
+                  28455800,
+                  29839600,
+                  17457600,
+                  15742796
+                ],
+                "high": [
+                  354.25,
+                  344.70001220703125,
+                  339.5899963378906,
+                  340.20001220703125,
+                  341.0899963378906
+                ],
+                "open": [
+                  352.19000244140625,
+                  338.3399963378906,
+                  338.4800109863281,
+                  338.75,
+                  334.2799987792969
+                ],
+                "low": [
+                  342.82000732421875,
+                  334.6099853515625,
+                  328.5799865722656,
+                  333.82000732421875,
+                  330.80010986328125
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  346.25,
+                  344.3299865722656,
+                  328.75,
+                  334.5899963378906,
+                  334.3699951171875
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}

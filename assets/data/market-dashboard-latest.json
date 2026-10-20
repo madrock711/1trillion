@@ -1,31 +1,31 @@
 {
   "schemaVersion": 1,
-  "snapshotId": "20261020-0801",
-  "generatedAt": "2026-10-20T08:01:07+09:00",
-  "asOf": "2026-10-20T08:01:07+09:00",
-  "asOfDisplay": "2026-10-20T08:01:07+09:00",
+  "snapshotId": "20261021-0804",
+  "generatedAt": "2026-10-21T08:04:40+09:00",
+  "asOf": "2026-10-21T08:04:40+09:00",
+  "asOfDisplay": "2026-10-21T08:04:40+09:00",
   "marketState": "한국 장전",
-  "sourceLabel": "미국 10월 19일 정규장 · 국내 10월 19일 종가 · 10월 20일 장전",
+  "sourceLabel": "미국 10월 20일 정규장 · 국내 10월 20일 종가 · 10월 21일 장전",
   "latestArticle": {
-    "title": "미국 반도체 반등…KOSPI 5,768선 위에서 매수 지속을 본다",
-    "href": "market-2026-10-20.html"
+    "title": "AI 서버 실적에 시간외 반등…KOSPI 5,550선 회복을 본다",
+    "href": "market-2026-10-21.html"
   },
-  "headline": "미국 반도체 반등…KOSPI 5,768선 위에서 매수 지속을 본다",
-  "summary": "미국 반도체주가 반등하고 국내 지수는 전일 고점에서 마쳤습니다. KOSPI 5,768선 유지와 외국인·프로그램 매수 동행이 상승 연장의 조건입니다.",
+  "headline": "AI 서버 실적에 시간외 반등…KOSPI 5,550선 회복을 본다",
+  "summary": "미국 반도체주는 정규장 약세 뒤 시간외에서 반등했습니다. AI 서버 잠정실적과 중국 GPU 주문 수요가 부각된 가운데 KOSPI는 5,550선 회복과 국내 매도 완화가 관건입니다.",
   "markets": [
     {
       "id": "KOSPI",
       "label": "KOSPI",
       "symbol": "K",
-      "value": 5768.01,
-      "changePercent": 1.76,
-      "asOf": "2026-10-19T15:30:00+09:00",
-      "asOfLabel": "10월 19일 정규장 종가",
+      "value": 5552.74,
+      "changePercent": -3.73,
+      "asOf": "2026-10-20T15:30:00+09:00",
+      "asOfLabel": "10월 20일 정규장 종가",
       "stateLabel": "정규장 종가",
-      "open": 5488.41,
-      "high": 5768.01,
-      "low": 5488.41,
-      "previousClose": 5668.05,
+      "open": 5733.57,
+      "high": 5733.57,
+      "low": 5493.24,
+      "previousClose": 5768.01,
       "flows": []
     },
     {
@@ -34,7 +34,7 @@
       "symbol": "Q",
       "value": null,
       "changePercent": null,
-      "asOf": "2026-10-20T08:00:13+09:00",
+      "asOf": "2026-10-21T08:02:30+09:00",
       "asOfLabel": "확정값 미확인",
       "stateLabel": "정규장 종가",
       "open": null,
@@ -45,51 +45,57 @@
     }
   ],
   "stance": {
-    "label": "반등 지속 확인",
-    "attack": 25,
-    "wait": 50,
-    "defense": 25,
-    "note": "미국 반도체 반등과 국내 종가 고점, 매수 지속이 관건입니다."
+    "label": "지지 회복 확인",
+    "attack": 10,
+    "wait": 45,
+    "defense": 45,
+    "note": "AI 서버 수요에 미국 시간외 반등이 나타났습니다. 국내 매도 완화와 5,550선 회복이 먼저입니다."
   },
   "checkpoints": [
     {
       "label": "삼성전자 NXT",
-      "value": "222,500원 · 2.06%",
-      "detail": "OPEN · 2026-10-20T08:01:07.566817+09:00",
+      "value": "217,000원 · 2.60%",
+      "detail": "OPEN · 2026-10-21T08:04:40.021326+09:00",
       "tone": "warning"
     },
     {
       "label": "SK하이닉스 NXT",
-      "value": "1,293,000원 · 1.25%",
-      "detail": "OPEN · 2026-10-20T08:01:07.566833+09:00",
+      "value": "1,252,000원 · 2.37%",
+      "detail": "OPEN · 2026-10-21T08:04:40.021336+09:00",
       "tone": "warning"
     },
     {
       "label": "하나은행 USD/KRW",
-      "value": "1,333.50원",
-      "detail": "2026-10-20T06:56:40+09:00",
+      "value": "1,327.00원",
+      "detail": "2026-10-21T07:02:35+09:00",
       "tone": "warning"
     }
   ],
   "changes": [
     {
       "label": "KOSPI",
-      "before": "5,668.05",
-      "after": "5,768.01",
-      "meaning": "전일 저점에서 반등해 고점에서 마쳤습니다."
+      "before": "5,768.01",
+      "after": "5,552.74",
+      "meaning": "반등 다음 날 다시 밀려 전일 상승분을 반납했습니다."
     }
   ],
   "factors": [
     {
-      "label": "미국 반도체",
-      "metric": "SOXX +1.73% · MU +2.97%",
-      "detail": "10월 19일 정규장",
+      "label": "미국 시간외",
+      "metric": "NVDA +2.04% · MU +2.50%",
+      "detail": "10월21일07:58 KST 무렵 최근 유효봉 · 정규장 종가 대비",
       "tone": "positive"
     },
     {
-      "label": "미국 금리차",
-      "metric": "10Y-2Y +0.38%p",
-      "detail": "10월 19일 FRED",
+      "label": "미국 반도체",
+      "metric": "SOXX -0.38% · MU -0.98%",
+      "detail": "10월 20일 정규장",
+      "tone": "negative"
+    },
+    {
+      "label": "수요와 납품",
+      "metric": "GPU 주문 · AI 서버 잠정매출",
+      "detail": "수요가 실제 납품·현금흐름으로 이어질지가 관건입니다.",
       "tone": "neutral"
     }
   ],
@@ -107,182 +113,177 @@
   },
   "memory": [
     {
-      "label": "DDR5 16Gb · 10/19",
-      "value": "$60.633",
-      "change": "+0.05%"
+      "label": "DDR5 16Gb · 10/20",
+      "value": "$60.70",
+      "change": "+0.11%"
     },
     {
-      "label": "DDR4 16Gb · 10/19",
-      "value": "$83.414",
-      "change": "-0.29%"
+      "label": "DDR4 16Gb · 10/20",
+      "value": "$83.364",
+      "change": "-0.06%"
     }
   ],
   "scenarios": [
     {
       "id": "bull",
-      "label": "강세 · 25%",
-      "range": "KOSPI 5,900 초과~6,050",
-      "summary": "매수세가 동행하는 상승",
+      "label": "강세 · 20%",
+      "range": "KOSPI 5,650 초과~5,800",
+      "summary": "매수가 동행하는 회복",
       "conditions": [
-        "5,900 초과",
+        "5,650 초과",
         "외국인 순매수",
         "프로그램 순매수"
       ],
-      "invalidation": "5,900 재이탈"
+      "invalidation": "5,650 재이탈"
     },
     {
       "id": "base",
-      "label": "기본 · 50%",
-      "range": "KOSPI 5,700~5,900",
-      "summary": "반등 유지력 시험",
+      "label": "기본 · 45%",
+      "range": "KOSPI 5,450~5,650",
+      "summary": "지지 회복 시험",
       "conditions": [
-        "5,700 이상",
-        "5,900 이하",
+        "5,450 이상",
+        "5,650 이하",
         "외국인 순매도 8천억원 이하"
       ],
       "invalidation": "범위 이탈 또는 매도 확대"
     },
     {
       "id": "bear",
-      "label": "약세 · 25%",
-      "range": "KOSPI 5,450~5,700 미만",
+      "label": "약세 · 35%",
+      "range": "KOSPI 5,200~5,450 미만",
       "summary": "하단 지지 실패",
       "conditions": [
-        "5,700 미만",
+        "5,450 미만",
         "외국인 순매도",
         "프로그램 순매도"
       ],
-      "invalidation": "5,700 회복"
+      "invalidation": "5,450 회복"
     }
   ],
   "strategyLevels": [
     {
       "asset": "KOSPI",
-      "support": "5,700",
-      "pivot": "5,768",
-      "resistance": "5,900"
+      "support": "5,450",
+      "pivot": "5,550",
+      "resistance": "5,650"
     },
     {
       "asset": "KODEX 레버리지",
-      "support": "70,000원",
-      "pivot": "72,255원",
-      "resistance": "73,980원"
+      "support": "65,335원",
+      "pivot": "67,170원",
+      "resistance": "71,300원"
     }
   ],
   "events": [
     {
-      "time": "10월 20일 23:00 KST",
-      "name": "미국 주별 고용",
-      "path": "노동시장"
+      "time": "10월 21일 23:00 KST",
+      "name": "미국 분기 통상주급",
+      "path": "노동비용"
     },
     {
-      "time": "10월 21일 05:01 KST",
-      "name": "Netflix 실적",
-      "path": "성장주 실적 평가"
-    },
-    {
-      "time": "10월 22일 새벽 KST",
-      "name": "Tesla 실적",
-      "path": "기술주 투자 심리"
+      "time": "10월 22일 06:30 KST",
+      "name": "Tesla 실적 설명회",
+      "path": "성장주 수익성"
     },
     {
       "time": "10월 27~28일 ET",
       "name": "FOMC",
-      "path": "금리·자금조달 여건"
+      "path": "금리·자금 조달"
     }
   ],
   "checklist": [
     {
       "id": "support",
-      "label": "5,700선 방어"
+      "label": "5,450선 방어"
     },
     {
       "id": "rebound",
-      "label": "5,768선 유지와 수급 동행"
+      "label": "5,550선 회복과 매도 완화"
     }
   ],
   "technical": {
-    "note": "10월 19일 확정 일봉과 10월 20일 장전 분석 기준선입니다.",
+    "note": "10월 20일 확정 일봉과 10월 21일 장전 분석 기준선입니다.",
     "instruments": [
       {
         "id": "KOSPI",
         "label": "KOSPI",
         "unit": "pt",
-        "asOf": "2026-10-19T15:30:00+09:00",
-        "asOfLabel": "10월 19일 정규장 종가",
+        "asOf": "2026-10-20T15:30:00+09:00",
+        "asOfLabel": "10월 20일 정규장 종가",
         "points": [
           {
             "label": "시가",
-            "value": 5488.41
+            "value": 5733.57
           },
           {
             "label": "고가",
-            "value": 5768.01
+            "value": 5733.57
           },
           {
             "label": "저가",
-            "value": 5488.41
+            "value": 5493.24
           },
           {
             "label": "종가",
-            "value": 5768.01
+            "value": 5552.74
           }
         ],
         "levels": [
           {
             "label": "1차 지지",
-            "value": 5700
+            "value": 5450
           },
           {
             "label": "반등 기준",
-            "value": 5768
+            "value": 5550
           },
           {
             "label": "저항",
-            "value": 5900
+            "value": 5650
           }
         ],
-        "interpretation": "1차 지지 5,700 · 반등 기준 5,768 · 저항 5,900"
+        "interpretation": "1차 지지 5,450 · 반등 기준 5,550 · 저항 5,650"
       },
       {
         "id": "KODEX",
         "label": "KODEX 레버리지",
         "unit": "원",
-        "asOf": "2026-10-19T15:30:00+09:00",
-        "asOfLabel": "10월 19일 정규장 종가",
+        "asOf": "2026-10-20T15:30:00+09:00",
+        "asOfLabel": "10월 20일 정규장 종가",
         "points": [
           {
             "label": "시가",
-            "value": 65920.0
+            "value": 71265.0
           },
           {
             "label": "고가",
-            "value": 72255.0
+            "value": 71300.0
           },
           {
             "label": "저가",
-            "value": 65750.0
+            "value": 65335.0
           },
           {
             "label": "종가",
-            "value": 72255.0
+            "value": 67170.0
           }
         ],
         "levels": [
           {
             "label": "1차 지지",
-            "value": 70000
+            "value": 65335
           },
           {
             "label": "반등 기준",
-            "value": 72255
+            "value": 67170
           },
           {
             "label": "저항",
-            "value": 73980
+            "value": 71300
           }
         ],
-        "interpretation": "1차 지지 70,000 · 반등 기준 72,255 · 저항 73,980"
+        "interpretation": "1차 지지 65,335 · 반등 기준 67,170 · 저항 71,300"
       }
     ]
   },
@@ -300,15 +301,27 @@
       "href": "https://www.trendforce.com/price/dram/dram_spot"
     },
     {
+      "label": "중국 GPU 주문 Reuters",
+      "href": "https://www.investing.com/news/stock-market-news/exclusivebytedance-alibaba-tencent-place-over-35-billion-worth-of-nvidia-chip-orders-4959231"
+    },
+    {
+      "label": "Netflix 주주서한",
+      "href": "https://ir.netflix.net/files/doc_financials/2026/q3/FINAL-Q3-26-Shareholder-Letter.pdf"
+    },
+    {
+      "label": "Supermicro 잠정실적",
+      "href": "https://ir.supermicro.com/news/news-details/2026/Supermicro-Provides-First-Quarter-of-Fiscal-Year-2027-Preliminary-Business-Update/default.aspx"
+    },
+    {
+      "label": "Amazon 독일 투자",
+      "href": "https://press.aboutamazon.com/de/2026/10/invest-in-germany-summit-amazon-kuendigt-16-milliarden-euro-investitionen-fuer-2027-in-deutschland-an"
+    },
+    {
       "label": "BLS 일정",
       "href": "https://www.bls.gov/schedule/2026/10_sched.htm"
     },
     {
-      "label": "Netflix 실적",
-      "href": "https://ir.netflix.net/investor-news-and-events/financial-releases/press-release-details/2026/Netflix-to-Announce-Third-Quarter-2026-Financial-Results/default.aspx"
-    },
-    {
-      "label": "Tesla 실적",
+      "label": "Tesla 일정",
       "href": "https://ir.tesla.com/press-release/tesla-third-quarter-2026-production-deliveries-and-deployments"
     },
     {
