@@ -1,0 +1,317 @@
+{
+  "schemaVersion": 1,
+  "snapshotId": "20261022-prepared",
+  "generatedAt": "2026-10-22T08:07:14+09:00",
+  "asOf": "2026-10-22T08:07:14+09:00",
+  "asOfDisplay": "2026-10-22T08:07:14+09:00",
+  "marketState": "한국 장전",
+  "sourceLabel": "미국10월21일 정규장·국내10월21일 종가·10월22일 장전",
+  "latestArticle": {
+    "title": "Nvidia 공급망 투자에도 시간외 약세…금통위 앞둔 KOSPI",
+    "href": "market-2026-10-22.html"
+  },
+  "headline": "Nvidia 공급망 투자에도 시간외 약세…금통위 앞둔 KOSPI",
+  "summary": "미국 반도체 ETF는 올랐지만 주요 종목은 시간외에서 밀렸습니다. Nvidia의 국내 기판·패키징 투자와 금통위 결과가 KOSPI 반등의 지속성을 가를 변수입니다.",
+  "markets": [
+    {
+      "id": "KOSPI",
+      "label": "KOSPI",
+      "symbol": "K",
+      "value": 5735.66,
+      "changePercent": 3.29,
+      "asOf": "2026-10-21T15:30:00+09:00",
+      "asOfLabel": "10월21일 정규장 종가",
+      "stateLabel": "정규장 종가",
+      "open": 5666.34,
+      "high": 5816.43,
+      "low": 5630.14,
+      "previousClose": 5552.74,
+      "flows": []
+    },
+    {
+      "id": "KOSDAQ",
+      "label": "KOSDAQ",
+      "symbol": "Q",
+      "value": null,
+      "changePercent": null,
+      "asOf": "2026-10-22T08:07:14+09:00",
+      "asOfLabel": "확정값 미확인",
+      "stateLabel": "정규장 종가",
+      "open": null,
+      "high": null,
+      "low": null,
+      "previousClose": null,
+      "flows": []
+    }
+  ],
+  "stance": {
+    "label": "금통위 뒤 매수 확인",
+    "attack": 15,
+    "wait": 50,
+    "defense": 35,
+    "note": "공급망 투자가 확대돼도 시간외 주가는 약합니다. 금통위 뒤 원화와 국내 매수를 함께 봅니다."
+  },
+  "checkpoints": [
+    {
+      "label": "삼성전자 NXT",
+      "value": "217,000원 · 2.60%",
+      "detail": "OPEN · 2026-10-21T08:04:40.021326+09:00",
+      "tone": "warning"
+    },
+    {
+      "label": "SK하이닉스 NXT",
+      "value": "1,252,000원 · 2.37%",
+      "detail": "OPEN · 2026-10-21T08:04:40.021336+09:00",
+      "tone": "warning"
+    },
+    {
+      "label": "하나은행 USD/KRW",
+      "value": "1,327.00원",
+      "detail": "2026-10-21T07:02:35+09:00",
+      "tone": "warning"
+    }
+  ],
+  "changes": [
+    {
+      "label": "KOSPI",
+      "before": "5,552.74",
+      "after": "5,735.66",
+      "meaning": "반등했지만 전일 고점에서는 밀렸습니다."
+    }
+  ],
+  "factors": [
+    {
+      "label": "미국 반도체",
+      "metric": "SOXX +2.07% · SMH +1.89%",
+      "detail": "10월21일 정규장, 시간외 주요종목 약세",
+      "tone": "neutral"
+    },
+    {
+      "label": "국내 공급망",
+      "metric": "삼성전기 기판 · Amkor 패키징",
+      "detail": "Nvidia 생산능력 확대 계획",
+      "tone": "positive"
+    }
+  ],
+  "flows": {
+    "program": {
+      "arbitrage": null,
+      "nonArbitrage": null,
+      "total": null,
+      "unit": "억원",
+      "asOfLabel": "최종 묶음 검증 보류"
+    },
+    "kospi200FuturesForeign": null,
+    "futuresUnit": "억원",
+    "futuresAsOfLabel": "미확인"
+  },
+  "memory": [
+    {
+      "label": "DDR5 16Gb · 10/21",
+      "value": "$60.867",
+      "change": "+0.28%"
+    },
+    {
+      "label": "DDR4 16Gb · 10/21",
+      "value": "$83.117",
+      "change": "-0.30%"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "bull",
+      "label": "강세 · 20%",
+      "range": "KOSPI 5,800 초과~5,950",
+      "summary": "매수가 동행하는 회복",
+      "conditions": [
+        "5,800 초과",
+        "외국인 순매수",
+        "프로그램 순매수"
+      ],
+      "invalidation": "5,800 재이탈"
+    },
+    {
+      "id": "base",
+      "label": "기본 · 50%",
+      "range": "KOSPI 5,600~5,800",
+      "summary": "반등 유지력 시험",
+      "conditions": [
+        "5,600 이상",
+        "5,800 이하",
+        "외국인 순매도 8천억원 이하"
+      ],
+      "invalidation": "범위 이탈 또는 매도 확대"
+    },
+    {
+      "id": "bear",
+      "label": "약세 · 30%",
+      "range": "KOSPI 5,350~5,600 미만",
+      "summary": "하단 지지 실패",
+      "conditions": [
+        "5,600 미만",
+        "외국인 순매도",
+        "프로그램 순매도"
+      ],
+      "invalidation": "5,600 회복"
+    }
+  ],
+  "strategyLevels": [
+    {
+      "asset": "KOSPI",
+      "support": "5,600",
+      "pivot": "5,700",
+      "resistance": "5,800"
+    },
+    {
+      "asset": "KODEX 레버리지",
+      "support": "69,220원",
+      "pivot": "71,740원",
+      "resistance": "74,365원"
+    }
+  ],
+  "events": [
+    {
+      "time": "10월22일 KST",
+      "name": "한국은행 금통위",
+      "path": "금리·원화·외국인 수급"
+    },
+    {
+      "time": "10월27~28일 ET",
+      "name": "FOMC",
+      "path": "금리·AI 자금 조달"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "support",
+      "label": "5,600선 방어"
+    },
+    {
+      "id": "rebound",
+      "label": "금통위 뒤 5,700선 유지와 수급 동행"
+    }
+  ],
+  "technical": {
+    "note": "10월21일 확정 일봉과 10월22일 장전 분석 기준선입니다.",
+    "instruments": [
+      {
+        "id": "KOSPI",
+        "label": "KOSPI",
+        "unit": "pt",
+        "asOf": "2026-10-21T15:30:00+09:00",
+        "asOfLabel": "10월21일 정규장 종가",
+        "points": [
+          {
+            "label": "시가",
+            "value": 5666.34
+          },
+          {
+            "label": "고가",
+            "value": 5816.43
+          },
+          {
+            "label": "저가",
+            "value": 5630.14
+          },
+          {
+            "label": "종가",
+            "value": 5735.66
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 5600
+          },
+          {
+            "label": "반등 기준",
+            "value": 5700
+          },
+          {
+            "label": "저항",
+            "value": 5800
+          }
+        ],
+        "interpretation": "1차 지지 5,600 · 반등 기준 5,700 · 저항 5,800"
+      },
+      {
+        "id": "KODEX",
+        "label": "KODEX 레버리지",
+        "unit": "원",
+        "asOf": "2026-10-21T15:30:00+09:00",
+        "asOfLabel": "10월21일 정규장 종가",
+        "points": [
+          {
+            "label": "시가",
+            "value": 69940.0
+          },
+          {
+            "label": "고가",
+            "value": 74365.0
+          },
+          {
+            "label": "저가",
+            "value": 69220.0
+          },
+          {
+            "label": "종가",
+            "value": 71740.0
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 69220
+          },
+          {
+            "label": "반등 기준",
+            "value": 71740
+          },
+          {
+            "label": "저항",
+            "value": 74365
+          }
+        ],
+        "interpretation": "1차 지지 69,220 · 반등 기준 71,740 · 저항 74,365"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "label": "Nvidia 공급망 발표",
+      "href": "https://nvidianews.nvidia.com/news/nvidia-and-supply-chain-partners-expand-capacity-to-accelerate-ai-infrastructure-buildout/"
+    },
+    {
+      "label": "Tesla 공시",
+      "href": "https://ir.tesla.com/_flysystem/s3/sec/000162828026066738/tsla-20261021-gen.pdf"
+    },
+    {
+      "label": "Meta 실적 AP",
+      "href": "https://apnews.com/article/13ecd6c459e39a3602f302bcc2412fe9"
+    },
+    {
+      "label": "DRAM 현물",
+      "href": "https://www.trendforce.com/price/dram/dram_spot"
+    },
+    {
+      "label": "한국은행 금통위 일정",
+      "href": "https://www.bok.or.kr/eng/main/contents.do?menuNo=400020"
+    },
+    {
+      "label": "미 재무부 금리",
+      "href": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value=2026"
+    },
+    {
+      "label": "미국 시세",
+      "href": "https://finance.yahoo.com/quote/SOXX/"
+    },
+    {
+      "label": "국내 일봉",
+      "href": "https://fchart.stock.naver.com/sise.nhn?symbol=KOSPI&timeframe=day&count=5&requestType=0"
+    },
+    {
+      "label": "FOMC",
+      "href": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+    }
+  ]
+}

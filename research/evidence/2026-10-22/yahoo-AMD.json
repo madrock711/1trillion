@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-10-22T08:02:44+09:00",
+  "rawHash": "f81546077533d095d65963ed5b59eb988a4b0cb5c5283a4e2ece5061ffdf8bd8",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "AMD",
+            "exchangeName": "NMS",
+            "fullExchangeName": "NasdaqGS",
+            "instrumentType": "EQUITY",
+            "firstTradeDate": 322151400,
+            "regularMarketTime": 1792612801,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 552.72,
+            "regularMarketChangePercent": 3.362,
+            "fulldayPrice": 545.5,
+            "fulldayChange": 10.76,
+            "fulldayChangePercent": 2.012,
+            "fiftyTwoWeekHigh": 658.52,
+            "fiftyTwoWeekLow": 188.22,
+            "regularMarketDayHigh": 556.79,
+            "regularMarketDayLow": 537.3,
+            "regularMarketVolume": 17756841,
+            "longName": "Advanced Micro Devices, Inc.",
+            "shortName": "Advanced Micro Devices, Inc.",
+            "chartPreviousClose": 570.82,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "end": 1792589400,
+                "start": 1792569600,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "end": 1792612800,
+                "start": 1792589400,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "end": 1792627200,
+                "start": 1792612800,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1792071000,
+            1792157400,
+            1792416600,
+            1792503000,
+            1792589400
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "open": [
+                  540.0,
+                  547.5499877929688,
+                  551.780029296875,
+                  530.02001953125,
+                  545.6920166015625
+                ],
+                "volume": [
+                  28834600,
+                  22575500,
+                  20199700,
+                  15187000,
+                  17756841
+                ],
+                "close": [
+                  562.22998046875,
+                  528.75,
+                  538.0499877929688,
+                  534.739990234375,
+                  552.719970703125
+                ],
+                "high": [
+                  568.6199951171875,
+                  550.9600219726562,
+                  554.4099731445312,
+                  548.1099853515625,
+                  556.7899780273438
+                ],
+                "low": [
+                  530.0900268554688,
+                  526.8300170898438,
+                  535.6699829101562,
+                  524.5999755859375,
+                  537.2999877929688
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  562.22998046875,
+                  528.75,
+                  538.0499877929688,
+                  534.739990234375,
+                  552.719970703125
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}
