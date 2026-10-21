@@ -8,6 +8,7 @@ const checks = [
     'tests/test_precommit_hook_runner.js',
     'tests/test_home_article_feed.js',
     'tests/test_home_article_search.js',
+    'tests/test_market_analysis_entry.js',
     'tests/test_market_dashboard_validation.js'
 ];
 
