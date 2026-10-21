@@ -1,0 +1,10 @@
+{
+    "jobArn": "arn:aws:amplify:us-east-1:514670561185:apps/d2pg7r2qjjb9u9/branches/main/jobs/0000000687",
+    "jobId": "687",
+    "commitId": "1251d2d71ce657645af5f3e5906072b9d4f9e32c",
+    "commitMessage": "10�� 22�� KOSPI ���� ����ġ�� ������ ��Ȳ ����",
+    "commitTime": "2026-10-22T08:09:01+09:00",
+    "startTime": "2026-10-22T08:09:09.985000+09:00",
+    "status": "SUCCEED",
+    "endTime": "2026-10-22T08:10:06.278000+09:00"
+}
