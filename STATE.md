@@ -1,11 +1,10 @@
 # KOSPI·KODEX 리서치 상태
 
-- 작성 2026-10-22T08:08:32+09:00, 데이터 최종 확인 2026-10-22T08:08:32+09:00, 한국 장전.
-- 전일 KOSPI5735.66(+3.29%), KODEX71740(+6.80%). 수급정본 묶음 미확인.
-- Nvidia 국내기판·패키징 증설, 미국정규장반등 뒤 시간외약세. 기존국내반등 중복가산 제외.
-- 다음 한국은행10/22 금통위·FOMC10/27~28 ET.
-- 기본5600~5800(50%),강세5800초과~5950(20%),약세5350~5600미만(30%),대응15/50/35.
-- 보고서 reports/2026-10-22.md,취재 research/notes/2026-10-22.md,차트 charts/us_yield_spreads_*_2026-10-22.png.
-- 직전 기본실패·강세종가적중. exact수급앵커미확보. actuals/2026-10-21.json 및 outcomes/2026-10-21-0804-same-close.json. 누적 기존9/21해시오류.
-- 대시보드 assets/data/market-dashboard-20261022-0808.json, 전망 research/evaluation/forecasts/2026-10-22-0808-same-close.json.
-- 최초 공개 2026-10-22T08:10:06.278000+09:00, Amplify 687. pushed/deploy_verified 계약 검증 통과.
+- 작성 2026-10-23T08:03:37+09:00, 데이터 최종 확인 2026-10-23T08:03:37+09:00, 한국 장전.
+- 전일 KOSPI5533.77(-3.52%),KODEX66770(-6.93%). 투자주체합계정합·정본묶음 미확인.
+- Meta AI투자비·FCF적자와 미국반도체매도. 전일한국반영분 중복가산 제외.
+- 다음 미시간대10/23 23KST·FOMC10/27~28ET.
+- 기본5350~5550(45%),강세5550초과~5700(15%),약세5100~5350미만(40%),대응5/40/55.
+- 보고서 reports/2026-10-23.md,취재 research/notes/2026-10-23.md,차트 charts/us_yield_spreads_*_2026-10-23.png.
+- 직전기본실패·약세종가적중. 수급exact앵커미확보. actuals/2026-10-22.json·outcomes/2026-10-22-0808-same-close.json. 누적 기존9/21해시불일치.
+- 대시보드 assets/data/market-dashboard-20261023-0803.json, 전망 research/evaluation/forecasts/2026-10-23-0803-same-close.json.
