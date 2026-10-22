@@ -2,80 +2,62 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const source = fs.readFileSync('assets/market-analysis-entry.js', 'utf8');
+const dashboard = fs.readFileSync('assets/market-dashboard.js', 'utf8');
+const clickBinding = dashboard.slice(dashboard.indexOf('    viewLinks.forEach(function (link) {\n        link.addEventListener'), dashboard.indexOf("    window.addEventListener('popstate'"));
 
-function scenario({ type = 'reload', view = 'analysis', hash = '', hidden = false } = {}) {
-    const listeners = new Map();
+function scenario(initialView, mobile = false) {
+    const handlers = new Map();
     const frames = new Map();
-    const timers = new Map();
-    let next = 0;
-    let resized;
-    let disconnected = false;
     const calls = [];
-    const latest = { scrollIntoView: options => calls.push(options) };
-    const panel = { hidden };
-    function add(name, fn) {
-        if (!listeners.has(name)) listeners.set(name, new Set());
-        listeners.get(name).add(fn);
-    }
+    const links = {};
+    let next = 0;
+    let current = initialView;
+    const panel = { hidden: current !== 'analysis' };
     const window = {
-        location: { search: '?view=' + view, hash },
-        performance: { getEntriesByType: () => [{ type }] },
-        history: { scrollRestoration: 'auto' },
-        addEventListener: add,
-        removeEventListener: (name, fn) => listeners.get(name)?.delete(fn),
+        addEventListener: (name, fn) => handlers.set(name, fn),
+        dispatchEvent: event => handlers.get(event.type)?.(event),
+        CustomEvent: function (type, options) { this.type = type; this.detail = options.detail; },
         requestAnimationFrame: fn => { frames.set(++next, fn); return next; },
         cancelAnimationFrame: id => frames.delete(id),
-        setTimeout: fn => { timers.set(++next, fn); return next; },
-        clearTimeout: id => timers.delete(id),
-        ResizeObserver: class {
-            constructor(fn) { resized = fn; }
-            observe() {}
-            disconnect() { disconnected = true; }
-        }
+        matchMedia: () => ({ matches: mobile })
     };
+    const viewLinks = ['analysis', 'technical', 'strategy'].map(view => links[view] = {
+        getAttribute: () => view,
+        addEventListener: (name, fn) => { links[view].click = fn; },
+        focus: options => assert(options.preventScroll)
+    });
     const document = {
-        addEventListener: add,
-        getElementById: id => id === 'market-view-analysis' ? panel : {},
-        querySelector: () => latest
+        getElementById: () => panel,
+        querySelector: selector => ({ scrollIntoView: options => calls.push({ selector, block: options.block }) })
     };
-    vm.runInNewContext(source, { window, document, URLSearchParams });
+    const context = vm.createContext({ window, document, viewLinks,
+        currentViewFromUrl: () => current,
+        setView: view => { current = view; panel.hidden = view !== 'analysis'; }
+    });
+    vm.runInContext(source, context);
+    vm.runInContext(clickBinding, context);
     return {
-        window, calls,
-        emit(name) { for (const fn of [...(listeners.get(name) || [])]) fn(); },
-        flush() { const pending = [...frames.values()]; frames.clear(); pending.forEach(fn => fn()); },
-        resize() { resized?.(); },
-        expire() { for (const fn of [...timers.values()]) fn(); },
-        get disconnected() { return disconnected; }
+        calls,
+        click(view, modifiers = {}) { links[view].click({ button: 0, preventDefault() {}, ...modifiers }); },
+        flush() { const pending = [...frames.values()]; frames.clear(); pending.forEach(fn => fn()); }
     };
 }
-
-for (const options of [{ type: 'navigate' }, { type: 'back_forward' }, { view: 'technical' }, { view: 'strategy' }, { hash: '#factor-title' }]) {
-    const run = scenario(options);
-    run.emit('DOMContentLoaded'); run.emit('load'); run.flush();
-    assert.equal(run.calls.length, 0, JSON.stringify(options));
-    assert.equal(run.window.history.scrollRestoration, 'auto');
+for (const mobile of [false, true]) {
+    for (const from of ['technical', 'strategy']) {
+        const run = scenario(from, mobile);
+        assert.equal(run.calls.length, 0, 'No automatic scroll on initial load or reload');
+        run.click('analysis'); run.flush();
+        assert.equal(run.calls.length, 1, 'One positioning action per transition, including mobile');
+        assert.equal(run.calls[0].selector, '#research-archive .market-article-item');
+        assert.equal(run.calls[0].block, 'end');
+        run.click('analysis'); run.flush();
+        assert.equal(run.calls.length, 1, 'Clicking the active tab must not reset reading position');
+    }
 }
-for (const hash of ['', '#research-archive']) {
-    const run = scenario({ hash });
-    assert.equal(run.window.history.scrollRestoration, 'manual');
-    run.emit('DOMContentLoaded'); run.flush();
-    assert.equal(run.calls.length, 1);
-    assert.equal(run.calls[0].block, 'end');
-    run.emit('technical-dashboard-ready'); run.resize(); run.flush();
-    assert.equal(run.calls.length, 2, 'Delayed data layout gets a single coalesced alignment');
-    run.expire(); run.resize(); run.flush();
-    assert.equal(run.calls.length, 2);
-    assert(run.disconnected);
-    assert.equal(run.window.history.scrollRestoration, 'auto');
-}
-for (const gesture of ['wheel', 'touchstart', 'pointerdown', 'keydown', 'pagehide']) {
-    const run = scenario();
-    run.emit('DOMContentLoaded');
-    run.emit(gesture); run.emit('load'); run.emit('technical-dashboard-ready'); run.resize(); run.flush();
-    assert.equal(run.calls.length, 0, gesture + ' cancels pending scrolling');
-    assert.equal(run.window.history.scrollRestoration, 'auto');
-}
-const hidden = scenario({ hidden: true });
-hidden.emit('DOMContentLoaded'); hidden.flush();
-assert.equal(hidden.calls.length, 0, 'Never jump to a hidden analysis panel');
-console.log('Market analysis reload positioning: passed');
+const fastSwitch = scenario('technical');
+fastSwitch.click('analysis'); fastSwitch.click('technical'); fastSwitch.flush();
+assert.equal(fastSwitch.calls.length, 0, 'Cancelled transition must not scroll a now-hidden panel');
+const modified = scenario('technical');
+modified.click('analysis', { ctrlKey: true }); modified.flush();
+assert.equal(modified.calls.length, 0, 'New-tab modifier retains browser navigation');
+console.log('Market analysis tab transition positioning: passed');

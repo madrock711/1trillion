@@ -559,9 +559,13 @@
             if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
             event.preventDefault();
             var selectedView = link.getAttribute('data-market-view');
+            var previousView = currentViewFromUrl();
             setView(selectedView, 'push');
+            if (selectedView !== previousView) {
+                window.dispatchEvent(new window.CustomEvent('market-view-changed', { detail: { view: selectedView } }));
+            }
             link.focus({ preventScroll: true });
-            if (window.matchMedia('(max-width: 720px)').matches) {
+            if (selectedView !== 'analysis' && window.matchMedia('(max-width: 720px)').matches) {
                 var selectedPanel = document.querySelector('[data-view-panel="' + selectedView + '"]');
                 if (selectedPanel) selectedPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
