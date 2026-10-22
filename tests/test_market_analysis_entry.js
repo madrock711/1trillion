@@ -15,6 +15,9 @@ function scenario(initialView, mobile = false) {
     const panel = { hidden: current !== 'analysis' };
     const window = {
         addEventListener: (name, fn) => handlers.set(name, fn),
+        removeEventListener: (name, fn) => { if (handlers.get(name) === fn) handlers.delete(name); },
+        setTimeout: () => 1,
+        clearTimeout() {},
         dispatchEvent: event => handlers.get(event.type)?.(event),
         CustomEvent: function (type, options) { this.type = type; this.detail = options.detail; },
         requestAnimationFrame: fn => { frames.set(++next, fn); return next; },
