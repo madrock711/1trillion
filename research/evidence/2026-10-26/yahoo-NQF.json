@@ -1,0 +1,134 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQ=F?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-10-26T08:01:05+09:00",
+  "rawHash": "220374f2e1d797b6c4096f09565f7c40bdf14c6f09417f264fb84b3abdd5e085",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "NQ=F",
+            "exchangeName": "CME",
+            "fullExchangeName": "CME",
+            "instrumentType": "FUTURE",
+            "firstTradeDate": 969249600,
+            "regularMarketTime": 1792968662,
+            "hasPrePostMarketData": false,
+            "gmtoffset": -14400,
+            "timezone": "EDT",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 29322.25,
+            "regularMarketChangePercent": 0.702,
+            "fulldayPrice": 29322.25,
+            "fulldayChange": 204.5,
+            "fulldayChangePercent": 0.702,
+            "fiftyTwoWeekHigh": 31616.5,
+            "fiftyTwoWeekLow": 22961.5,
+            "regularMarketDayHigh": 29345.0,
+            "regularMarketDayLow": 29228.25,
+            "regularMarketVolume": 8880,
+            "shortName": "Nasdaq 100 Dec 26",
+            "chartPreviousClose": 29675.25,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "start": 1792900800,
+                "end": 1792900800,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "start": 1792900800,
+                "end": 1792987140,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EDT",
+                "start": 1792987140,
+                "end": 1792987140,
+                "gmtoffset": -14400
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1792468800,
+            1792555200,
+            1792641600,
+            1792728000,
+            1792968662
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "high": [
+                  29903.5,
+                  30113.0,
+                  29993.25,
+                  29326.0,
+                  29345.0
+                ],
+                "low": [
+                  29391.75,
+                  29727.5,
+                  29033.0,
+                  28987.0,
+                  29228.25
+                ],
+                "volume": [
+                  690870,
+                  666845,
+                  855326,
+                  855326,
+                  8880
+                ],
+                "open": [
+                  29745.5,
+                  29925.0,
+                  29984.0,
+                  29116.5,
+                  29268.0
+                ],
+                "close": [
+                  29675.25,
+                  30007.0,
+                  29142.0,
+                  29117.75,
+                  29322.25
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  29675.25,
+                  30007.0,
+                  29142.0,
+                  29117.75,
+                  29322.25
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}

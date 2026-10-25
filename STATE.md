@@ -1,11 +1,10 @@
 # KOSPI·KODEX 리서치 상태
 
-- 작성 2026-10-23T08:03:37+09:00, 데이터 최종 확인 2026-10-23T08:03:37+09:00, 한국 장전.
-- 전일 KOSPI5533.77(-3.52%),KODEX66770(-6.93%). 투자주체합계정합·정본묶음 미확인.
-- Meta AI투자비·FCF적자와 미국반도체매도. 전일한국반영분 중복가산 제외.
-- 다음 미시간대10/23 23KST·FOMC10/27~28ET.
-- 기본5350~5550(45%),강세5550초과~5700(15%),약세5100~5350미만(40%),대응5/40/55.
-- 보고서 reports/2026-10-23.md,취재 research/notes/2026-10-23.md,차트 charts/us_yield_spreads_*_2026-10-23.png.
-- 직전기본실패·약세종가적중. 수급exact앵커미확보. actuals/2026-10-22.json·outcomes/2026-10-22-0808-same-close.json. 누적 기존9/21해시불일치.
-- 대시보드 assets/data/market-dashboard-20261023-0803.json, 전망 research/evaluation/forecasts/2026-10-23-0803-same-close.json.
-- 최초 공개 2026-10-23T08:05:30.113000+09:00, Amplify 691. pushed/deploy_verified 계약 검증 통과.
+- 작성 2026-10-26T08:05:24+09:00, 데이터 최종 확인 2026-10-26T08:05:24+09:00, 한국 장전.
+- 전일 KOSPI5550.30(+0.30%),KODEX67415(+0.97%). 최종 수급 묶음 미확인.
+- 반도체 회복 차별화·유가/금리 부담. 솔리다임·Meta 전일한국반영분 중복가산제외.
+- 다음 FOMC10/27~28ET·MS10/28ET·GDP/PCE10/29 21:30KST·Amazon10/29ET.
+- 기본5400~5600(50%),강세5600초과~5750(25%),약세5200~5400미만(25%),대응20/55/25.
+- 보고서 reports/2026-10-26.md,취재 research/notes/2026-10-26.md,차트 charts/us_yield_spreads_*_2026-10-26.png.
+- 이전기본0.30p상회·강세종가,장중약세범위통과,수급exact앵커미확보. 누적기존9/21해시불일치.
+- 대시보드 assets/data/market-dashboard-20261026-0805.json, 전망 research/evaluation/forecasts/2026-10-26-0805-same-close.json.

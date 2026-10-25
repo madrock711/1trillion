@@ -151,9 +151,9 @@
     <image:image><image:loc>https://www.hpmplab.com/charts/us_yield_spreads_long_term_2026-08-12.png</image:loc></image:image>
   </url>
   <url><loc>https://www.hpmplab.com/articles/market-2026-08-11.html</loc><lastmod>2026-08-11</lastmod><image:image><image:loc>https://www.hpmplab.com/assets/images/articles/market-2026-08-11-oil-chip-cpi-1200x630.webp</image:loc></image:image></url>
-  <url><loc>https://www.hpmplab.com/</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://www.hpmplab.com/articles/</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://www.hpmplab.com/articles/market.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://www.hpmplab.com/</loc><lastmod>2026-10-26</lastmod></url>
+  <url><loc>https://www.hpmplab.com/articles/</loc><lastmod>2026-10-26</lastmod></url>
+  <url><loc>https://www.hpmplab.com/articles/market.html</loc><lastmod>2026-10-26</lastmod></url>
   <url>
     <loc>https://www.hpmplab.com/articles/market-2026-08-10.html</loc>
     <lastmod>2026-08-10</lastmod>
@@ -387,4 +387,5 @@
 <url><loc>https://www.hpmplab.com/articles/market-2026-10-21.html</loc><lastmod>2026-10-21</lastmod><image:image><image:loc>https://www.hpmplab.com/assets/images/articles/market-2026-10-21-gpu-bottleneck-1200x630.png</image:loc></image:image></url>
 <url><loc>https://www.hpmplab.com/articles/market-2026-10-22.html</loc><lastmod>2026-10-22</lastmod><image:image><image:loc>https://www.hpmplab.com/assets/images/articles/market-2026-10-22-ai-capacity-bok-1200x630.png</image:loc></image:image></url>
 <url><loc>https://www.hpmplab.com/articles/market-2026-10-23.html</loc><lastmod>2026-10-23</lastmod><image:image><image:loc>https://www.hpmplab.com/assets/images/articles/market-2026-10-23-ai-cash-oil-1200x630.png</image:loc></image:image></url>
+<url><loc>https://www.hpmplab.com/articles/market-2026-10-26.html</loc><lastmod>2026-10-26</lastmod><image:image><image:loc>https://www.hpmplab.com/assets/images/articles/market-2026-10-26-chips-rates-1200x630.png</image:loc></image:image></url>
 </urlset>
