@@ -8,3 +8,4 @@
 - 보고서 reports/2026-10-26.md,취재 research/notes/2026-10-26.md,차트 charts/us_yield_spreads_*_2026-10-26.png.
 - 이전기본0.30p상회·강세종가,장중약세범위통과,수급exact앵커미확보. 누적기존9/21해시불일치.
 - 대시보드 assets/data/market-dashboard-20261026-0805.json, 전망 research/evaluation/forecasts/2026-10-26-0805-same-close.json.
+- 최초 공개 2026-10-26T08:06:44.514000+09:00, Amplify 696. pushed/deploy_verified 계약 검증 통과.
