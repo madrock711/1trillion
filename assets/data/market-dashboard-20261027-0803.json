@@ -1,0 +1,335 @@
+{
+  "schemaVersion": 1,
+  "snapshotId": "20261027-0803",
+  "generatedAt": "2026-10-27T08:03:44+09:00",
+  "asOf": "2026-10-27T08:03:44+09:00",
+  "asOfDisplay": "2026-10-27T08:03:44+09:00",
+  "marketState": "한국 장전",
+  "sourceLabel": "미국10월26일 정규장·국내10월26일 종가·10월27일 장전",
+  "latestArticle": {
+    "title": "AI 자금 조달에 반도체 동반 반등…KOSPI는 5,500선 회복 시험",
+    "href": "market-2026-10-27.html"
+  },
+  "headline": "AI 자금 조달에 반도체 동반 반등…KOSPI는 5,500선 회복 시험",
+  "summary": "Meta의 공모와 SpaceX의 GPU 금융 약정이 AI 투자 지속 기대를 높였습니다. 미국 반도체주가 동반 상승한 가운데 KOSPI는 5,500선 회복과 국내 매수 동행을 시험합니다.",
+  "markets": [
+    {
+      "id": "KOSPI",
+      "label": "KOSPI",
+      "symbol": "K",
+      "value": 5469.47,
+      "changePercent": -1.46,
+      "asOf": "2026-10-26T15:30:00+09:00",
+      "asOfLabel": "10월26일 정규장 종가",
+      "stateLabel": "정규장 종가",
+      "open": 5499.05,
+      "high": 5565.67,
+      "low": 5455.11,
+      "previousClose": 5550.3,
+      "flows": []
+    },
+    {
+      "id": "KOSDAQ",
+      "label": "KOSDAQ",
+      "symbol": "Q",
+      "value": null,
+      "changePercent": null,
+      "asOf": "2026-10-27T08:02:44+09:00",
+      "asOfLabel": "확정값 미확인",
+      "stateLabel": "정규장 종가",
+      "open": null,
+      "high": null,
+      "low": null,
+      "previousClose": null,
+      "flows": []
+    }
+  ],
+  "stance": {
+    "label": "반등과 매수 동행 확인",
+    "attack": 30,
+    "wait": 50,
+    "defense": 20,
+    "note": "AI 자금 조달 소식에 미국 반도체가 동반 상승했습니다. 국내 매수 지속을 봅니다."
+  },
+  "checkpoints": [
+    {
+      "label": "삼성전자 NXT",
+      "value": "219,000원 · 2.82%",
+      "detail": "OPEN · 2026-10-27T08:03:45.459855+09:00",
+      "tone": "warning"
+    },
+    {
+      "label": "SK하이닉스 NXT",
+      "value": "1,320,000원 · 3.53%",
+      "detail": "OPEN · 2026-10-27T08:03:45.459864+09:00",
+      "tone": "warning"
+    },
+    {
+      "label": "하나은행 USD/KRW",
+      "value": "1,327.00원",
+      "detail": "2026-10-27T07:51:22+09:00",
+      "tone": "warning"
+    }
+  ],
+  "changes": [
+    {
+      "label": "KOSPI",
+      "before": "5,550.30",
+      "after": "5,469.47",
+      "meaning": "월요일 장중 반등 뒤 다시 밀려 마쳤습니다."
+    }
+  ],
+  "factors": [
+    {
+      "label": "미국 반도체",
+      "metric": "SOXX +2.85% · SMH +2.74%",
+      "detail": "10월26일 정규장·주요 종목 동반상승",
+      "tone": "positive"
+    },
+    {
+      "label": "AI 금융",
+      "metric": "Meta 공모 · SpaceX GPU 약정",
+      "detail": "투자 지속 기대와 자금 회수 부담",
+      "tone": "warning"
+    }
+  ],
+  "flows": {
+    "program": {
+      "arbitrage": null,
+      "nonArbitrage": null,
+      "total": null,
+      "unit": "억원",
+      "asOfLabel": "최종 묶음 검증 보류"
+    },
+    "kospi200FuturesForeign": null,
+    "futuresUnit": "억원",
+    "futuresAsOfLabel": "미확인"
+  },
+  "memory": [
+    {
+      "label": "DDR5 16Gb · 10/26",
+      "value": "$61.333",
+      "change": "+0.11%"
+    },
+    {
+      "label": "DDR4 16Gb · 10/26",
+      "value": "$82.623",
+      "change": "-0.30%"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "bull",
+      "label": "강세 · 30%",
+      "range": "KOSPI 5,600 초과~5,750",
+      "summary": "매수가 동행하는 회복",
+      "conditions": [
+        "5,600 초과",
+        "외국인 순매수",
+        "프로그램 순매수"
+      ],
+      "invalidation": "5,600 재이탈"
+    },
+    {
+      "id": "base",
+      "label": "기본 · 50%",
+      "range": "KOSPI 5,400~5,600",
+      "summary": "반등 지속력 시험",
+      "conditions": [
+        "5,400 이상",
+        "5,600 이하",
+        "외국인 순매도 8천억원 이하"
+      ],
+      "invalidation": "범위 이탈 또는 매도 확대"
+    },
+    {
+      "id": "bear",
+      "label": "약세 · 20%",
+      "range": "KOSPI 5,200~5,400 미만",
+      "summary": "하단 지지 실패",
+      "conditions": [
+        "5,400 미만",
+        "외국인 순매도",
+        "프로그램 순매도"
+      ],
+      "invalidation": "5,400 회복"
+    }
+  ],
+  "strategyLevels": [
+    {
+      "asset": "KOSPI",
+      "support": "5,400",
+      "pivot": "5,500",
+      "resistance": "5,600"
+    },
+    {
+      "asset": "KODEX 레버리지",
+      "support": "65,115원",
+      "pivot": "66,075원",
+      "resistance": "67,985원"
+    }
+  ],
+  "events": [
+    {
+      "time": "10월27~28일 ET",
+      "name": "FOMC",
+      "path": "금리·자금조달"
+    },
+    {
+      "time": "10월28일 ET",
+      "name": "Microsoft 실적",
+      "path": "AI 수요·현금흐름"
+    },
+    {
+      "time": "10월29일 21:30 KST",
+      "name": "GDP·개인소득소비/PCE",
+      "path": "성장·물가"
+    },
+    {
+      "time": "10월29일 ET",
+      "name": "Amazon 실적",
+      "path": "클라우드·AI 투자"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "support",
+      "label": "5,400선 방어"
+    },
+    {
+      "id": "rebound",
+      "label": "5,500선 회복과 외국인·프로그램 매수 동행"
+    }
+  ],
+  "technical": {
+    "note": "10월26일 확정 일봉과 10월27일 장전 분석 기준선입니다.",
+    "instruments": [
+      {
+        "id": "KOSPI",
+        "label": "KOSPI",
+        "unit": "pt",
+        "asOf": "2026-10-26T15:30:00+09:00",
+        "asOfLabel": "10월26일 정규장 종가",
+        "points": [
+          {
+            "label": "시가",
+            "value": 5499.05
+          },
+          {
+            "label": "고가",
+            "value": 5565.67
+          },
+          {
+            "label": "저가",
+            "value": 5455.11
+          },
+          {
+            "label": "종가",
+            "value": 5469.47
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 5400
+          },
+          {
+            "label": "반등 기준",
+            "value": 5500
+          },
+          {
+            "label": "저항",
+            "value": 5600
+          }
+        ],
+        "interpretation": "1차 지지 5,400 · 반등 기준 5,500 · 저항 5,600"
+      },
+      {
+        "id": "KODEX",
+        "label": "KODEX 레버리지",
+        "unit": "원",
+        "asOf": "2026-10-26T15:30:00+09:00",
+        "asOfLabel": "10월26일 정규장 종가",
+        "points": [
+          {
+            "label": "시가",
+            "value": 66075.0
+          },
+          {
+            "label": "고가",
+            "value": 67985.0
+          },
+          {
+            "label": "저가",
+            "value": 65115.0
+          },
+          {
+            "label": "종가",
+            "value": 65475.0
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 65115
+          },
+          {
+            "label": "반등 기준",
+            "value": 66075
+          },
+          {
+            "label": "저항",
+            "value": 67985
+          }
+        ],
+        "interpretation": "1차 지지 65,115 · 반등 기준 66,075 · 저항 67,985"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "label": "Meta 회사 발표",
+      "href": "https://finance.yahoo.com/markets/stocks/articles/meta-announces-launch-offering-depositary-105800284.html"
+    },
+    {
+      "label": "SpaceX 금융 약정",
+      "href": "https://ir.spacex.com/updates/releases-details/2026/SPACEX-SECURES-40-BILLION-IN-THE-LARGEST-GPU-FINANCING-EVER-2026-EnDqGhTAB3/default.aspx"
+    },
+    {
+      "label": "Anthropic S-1",
+      "href": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/anthropicpbc-sx1.htm"
+    },
+    {
+      "label": "DRAM 현물",
+      "href": "https://www.trendforce.com/price/dram/dram_spot"
+    },
+    {
+      "label": "미 재무부",
+      "href": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value=2026"
+    },
+    {
+      "label": "미국 시세",
+      "href": "https://finance.yahoo.com/quote/SOXX/"
+    },
+    {
+      "label": "국내 일봉",
+      "href": "https://fchart.stock.naver.com/sise.nhn?symbol=KOSPI&timeframe=day&count=5&requestType=0"
+    },
+    {
+      "label": "FOMC",
+      "href": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+    },
+    {
+      "label": "BEA 일정",
+      "href": "https://www.bea.gov/news/schedule"
+    },
+    {
+      "label": "Microsoft IR",
+      "href": "https://www.microsoft.com/en-us/investor/default"
+    },
+    {
+      "label": "Amazon 실적 일정",
+      "href": "https://www.aboutamazon.com/news/company-news/amazon-earnings-q3-2026-report"
+    }
+  ]
+}
