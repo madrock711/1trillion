@@ -1,0 +1,62 @@
+[
+  {
+    "url": "https://www.hpmplab.com/articles/market-2026-10-27.html?verify=1793055953493690900",
+    "status": 200,
+    "sha256": "18443e015595577c50a3de2fe58bcbe4a7ee1b8fe2210fb4ce00df35b8472a50",
+    "checkedAt": "2026-10-27T08:05:53+09:00"
+  },
+  {
+    "url": "https://www.hpmplab.com/assets/images/articles/market-2026-10-27-ai-financing-1200x630.png?verify=1793055953494110400",
+    "status": 200,
+    "sha256": "126c4955067125c2f1275511ebd5ee68befeac18e082846fab1d9a07f6bcbc99",
+    "checkedAt": "2026-10-27T08:05:54+09:00"
+  },
+  {
+    "url": "https://www.hpmplab.com/assets/data/market-dashboard-latest.json?verify=1793055953494441000",
+    "status": 200,
+    "sha256": "82e6763233b33d1411c96ccc2f95ca059c4f3e0898030cea4f7034e22638516d",
+    "checkedAt": "2026-10-27T08:05:53+09:00"
+  },
+  {
+    "url": "https://www.hpmplab.com/charts/us_yield_spreads_90d_2026-10-27.png?verify=1793055953494902100",
+    "status": 200,
+    "sha256": "67dc9bcdaccc2470624f80f399409cb6740b5f730b6754cb29ea7edb7a8f2658",
+    "checkedAt": "2026-10-27T08:05:53+09:00"
+  },
+  {
+    "url": "https://www.hpmplab.com/charts/us_yield_spreads_long_term_2026-10-27.png?verify=1793055953495319000",
+    "status": 200,
+    "sha256": "a63797cf8c9be3b586a1820a385c412439a2d70b23fec02d17a1cb18a4bcfb2c",
+    "checkedAt": "2026-10-27T08:05:53+09:00"
+  },
+  {
+    "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market-2026-10-27.html?verify=1793055953571258100",
+    "status": 200,
+    "sha256": "18443e015595577c50a3de2fe58bcbe4a7ee1b8fe2210fb4ce00df35b8472a50",
+    "checkedAt": "2026-10-27T08:05:53+09:00"
+  },
+  {
+    "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/images/articles/market-2026-10-27-ai-financing-1200x630.png?verify=1793055953618021800",
+    "status": 200,
+    "sha256": "126c4955067125c2f1275511ebd5ee68befeac18e082846fab1d9a07f6bcbc99",
+    "checkedAt": "2026-10-27T08:05:54+09:00"
+  },
+  {
+    "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/assets/data/market-dashboard-latest.json?verify=1793055953631962200",
+    "status": 200,
+    "sha256": "82e6763233b33d1411c96ccc2f95ca059c4f3e0898030cea4f7034e22638516d",
+    "checkedAt": "2026-10-27T08:05:53+09:00"
+  },
+  {
+    "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_90d_2026-10-27.png?verify=1793055953632609700",
+    "status": 200,
+    "sha256": "67dc9bcdaccc2470624f80f399409cb6740b5f730b6754cb29ea7edb7a8f2658",
+    "checkedAt": "2026-10-27T08:05:53+09:00"
+  },
+  {
+    "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/charts/us_yield_spreads_long_term_2026-10-27.png?verify=1793055953632915600",
+    "status": 200,
+    "sha256": "a63797cf8c9be3b586a1820a385c412439a2d70b23fec02d17a1cb18a4bcfb2c",
+    "checkedAt": "2026-10-27T08:05:53+09:00"
+  }
+]

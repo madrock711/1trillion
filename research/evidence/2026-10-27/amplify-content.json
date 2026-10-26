@@ -1,0 +1,10 @@
+{
+    "jobArn": "arn:aws:amplify:us-east-1:514670561185:apps/d2pg7r2qjjb9u9/branches/main/jobs/0000000700",
+    "jobId": "700",
+    "commitId": "284fe656c7397919241156a33425a40a3e035ffe",
+    "commitMessage": "publish: 10월 27일 AI 금융·반도체 장전 리서치",
+    "commitTime": "2026-10-27T08:04:27+09:00",
+    "startTime": "2026-10-27T08:04:35.465000+09:00",
+    "status": "SUCCEED",
+    "endTime": "2026-10-27T08:05:36.599000+09:00"
+}
