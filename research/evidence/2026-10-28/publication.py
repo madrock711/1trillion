@@ -24,7 +24,7 @@ if kind=='deploy_verified':
   else:
    def card(match):
     if 'market-2026-10-28.html' not in match[0]:return match[0]
-    c=re.sub(r'(<time datetime=")[^"]+',lambda m:m[1]+published,match[0]);c=re.sub(r'2026\.10\.27 · [^<]+','2026.10.27 · '+published[11:16]+' KST',c);return c.replace('밝은 자연광 속 반도체 칩과 금빛 고리, 실리콘 웨이퍼','밝은 하늘 아래 웨이퍼 다리와 호박색 압력 아치')
+    c=re.sub(r'(<time datetime=")[^"]+',lambda m:m[1]+published,match[0]);c=re.sub(r'2026\.10\.28 · [^<]+','2026.10.28 · '+published[11:16]+' KST',c);return c.replace('밝은 자연광 속 반도체 칩과 금빛 고리, 실리콘 웨이퍼','밝은 하늘 아래 웨이퍼 다리와 호박색 압력 아치')
    s=re.sub(r'<article class="(?:article-card(?: home-article-card)?|market-article-item)"[^>]*>.*?</article>',card,s,flags=re.S)
   def ld(match):
    j=json.loads(match[1])

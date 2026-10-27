@@ -1,0 +1,10 @@
+{
+  "jobArn": "arn:aws:amplify:us-east-1:514670561185:apps/d2pg7r2qjjb9u9/branches/main/jobs/0000000703",
+  "jobId": "703",
+  "commitId": "cf83c2185323bbf2509e51f9706a682d3e2fba10",
+  "commitMessage": "10월 28일 장전 시황과 실적 발표 썸네일 발행",
+  "commitTime": "2026-10-28T08:34:02+09:00",
+  "startTime": "2026-10-28T08:34:09.329000+09:00",
+  "status": "SUCCEED",
+  "endTime": "2026-10-28T08:35:04.390000+09:00"
+}
