@@ -1,11 +1,10 @@
 # KOSPI·KODEX 리서치 상태
 
-- 작성 2026-10-27T08:03:44+09:00, 데이터 최종 확인 2026-10-27T08:03:44+09:00, 한국 장전.
-- 전일 KOSPI5469.47(-1.46%), KODEX65475(-2.88%). 최종 수급 묶음 미확인.
-- Meta공모·SpaceX GPU약정·Anthropic S1공개와 반도체동반상승. 기존Meta/솔리다임한국반영분중복제외.
-- 다음 FOMC10/27~28ET·MS10/28ET·GDP/PCE10/29 21:30KST·Amazon10/29ET.
-- 기본5400~5600(50%),강세5600초과~5750(30%),약세5200~5400미만(20%),대응30/50/20.
-- 보고서 reports/2026-10-27.md,취재 research/notes/2026-10-27.md,차트 charts/us_yield_spreads_*_2026-10-27.png.
-- 직전기본범위내·장중포락내,수급exact앵커미확보. 누적기존9/21해시불일치.
-- 대시보드 assets/data/market-dashboard-20261027-0803.json, 전망 research/evaluation/forecasts/2026-10-27-0803-same-close.json.
-- 최초 공개 2026-10-27T08:05:36.599000+09:00, Amplify 700. pushed/deploy_verified 계약 검증 통과.
+- 작성 2026-10-28T08:33:51+09:00, 데이터 최종 확인 2026-10-28T08:33:51+09:00, 한국 장전.
+- 전일 KOSPI5638.34(+3.09%), KODEX69955(+6.84%). 최종 수급 묶음 미확인.
+- 미국반도체 추가상승·SK당일실적·Meta공모증액. 기존한국반영AI/주주환원기대중복제외.
+- 다음 SK10/28 09시·FOMC10/29 03시·MS10/28ET·GDP/PCE10/29 21:30KST·Amazon10/29ET.
+- 기본5600~5800(50%),강세5800초과~5950(25%),약세5400~5600미만(25%),대응25/50/25.
+- 보고서 reports/2026-10-28.md,취재 research/notes/2026-10-28.md,차트 charts/us_yield_spreads_*_2026-10-28.png.
+- 직전기본초과·강세종가내·장중포락내,수급exact앵커미확보. 누적기존9/21해시불일치.
+- 대시보드 assets/data/market-dashboard-20261028-0833.json, 전망 research/evaluation/forecasts/2026-10-28-0833-same-close.json.

@@ -1,0 +1,336 @@
+{
+  "schemaVersion": 1,
+  "snapshotId": "20261028-0833",
+  "generatedAt": "2026-10-28T08:33:51+09:00",
+  "asOf": "2026-10-28T08:33:51+09:00",
+  "asOfDisplay": "2026-10-28T08:33:51+09:00",
+  "marketState": "한국 장전",
+  "sourceLabel": "미국10월27일 정규장·국내10월27일 종가·10월28일 장전",
+  "latestArticle": {
+    "title": "반도체 랠리 뒤 실적 시험대…KOSPI 5,700선과 SK하이닉스 발표 주목",
+    "href": "market-2026-10-28.html"
+  },
+  "headline": "반도체 랠리 뒤 실적 시험대…KOSPI 5,700선과 SK하이닉스 발표 주목",
+  "summary": "미국 반도체주가 추가 상승했습니다. 전일 급등한 KOSPI는 오늘 SK하이닉스 실적과 매수 지속성을 시험하며, 밤사이에는 FOMC와 빅테크 실적이 이어집니다.",
+  "markets": [
+    {
+      "id": "KOSPI",
+      "label": "KOSPI",
+      "symbol": "K",
+      "value": 5638.34,
+      "changePercent": 3.09,
+      "asOf": "2026-10-27T15:30:00+09:00",
+      "asOfLabel": "10월27일 정규장 종가",
+      "stateLabel": "정규장 종가",
+      "open": 5658.65,
+      "high": 5737.61,
+      "low": 5612.92,
+      "previousClose": 5469.47,
+      "flows": []
+    },
+    {
+      "id": "KOSDAQ",
+      "label": "KOSDAQ",
+      "symbol": "Q",
+      "value": null,
+      "changePercent": null,
+      "asOf": "2026-10-28T08:32:34+09:00",
+      "asOfLabel": "확정값 미확인",
+      "stateLabel": "정규장 종가",
+      "open": null,
+      "high": null,
+      "low": null,
+      "previousClose": null,
+      "flows": []
+    }
+  ],
+  "stance": {
+    "label": "실적 발표 뒤 매수 지속 확인",
+    "attack": 25,
+    "wait": 50,
+    "defense": 25,
+    "note": "전일 급등 뒤 SK하이닉스 실적과 매수 지속성을 시험합니다."
+  },
+  "checkpoints": [
+    {
+      "label": "삼성전자 NXT",
+      "value": "229,000원 · 3.15%",
+      "detail": "OPEN · 2026-10-28T08:33:51.637236+09:00",
+      "tone": "warning"
+    },
+    {
+      "label": "SK하이닉스 NXT",
+      "value": "1,377,000원 · 2.68%",
+      "detail": "OPEN · 2026-10-28T08:33:51.637245+09:00",
+      "tone": "warning"
+    },
+    {
+      "label": "하나은행 USD/KRW",
+      "value": "1,327.00원",
+      "detail": "2026-10-28T08:24:14+09:00",
+      "tone": "warning"
+    }
+  ],
+  "changes": [
+    {
+      "label": "KOSPI",
+      "before": "5,469.47",
+      "after": "5,638.34",
+      "meaning": "3.09% 올랐지만 장중 고점에서 상승 폭을 줄였습니다."
+    }
+  ],
+  "factors": [
+    {
+      "label": "미국 반도체",
+      "metric": "SOXX +3.91% · SMH +3.02%",
+      "detail": "10월27일 정규장·AMD +5.45%",
+      "tone": "positive"
+    },
+    {
+      "label": "오늘 실적",
+      "metric": "SK하이닉스 09시 설명회",
+      "detail": "HBM·현금흐름·주주환원 조건",
+      "tone": "warning"
+    }
+  ],
+  "flows": {
+    "program": {
+      "arbitrage": null,
+      "nonArbitrage": null,
+      "total": null,
+      "unit": "억원",
+      "asOfLabel": "최종 묶음 미확인"
+    },
+    "kospi200FuturesForeign": null,
+    "futuresUnit": "억원",
+    "futuresAsOfLabel": "미확인"
+  },
+  "memory": [
+    {
+      "label": "DDR5 16Gb · 10/27",
+      "value": "$61.333",
+      "change": "보합"
+    },
+    {
+      "label": "DDR4 16Gb · 10/27",
+      "value": "$82.623",
+      "change": "보합"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "bull",
+      "label": "강세 · 25%",
+      "range": "KOSPI 5,800 초과~5,950",
+      "summary": "실적과 매수 동행",
+      "conditions": [
+        "5,800 초과",
+        "외국인 순매수",
+        "프로그램 순매수"
+      ],
+      "invalidation": "5,800 재이탈"
+    },
+    {
+      "id": "base",
+      "label": "기본 · 50%",
+      "range": "KOSPI 5,600~5,800",
+      "summary": "급등 뒤 지지력 시험",
+      "conditions": [
+        "5,600 이상",
+        "5,800 이하",
+        "외국인 순매도 8천억원 이하"
+      ],
+      "invalidation": "범위 이탈 또는 매도 확대"
+    },
+    {
+      "id": "bear",
+      "label": "약세 · 25%",
+      "range": "KOSPI 5,400~5,600 미만",
+      "summary": "실적 뒤 매도 확대",
+      "conditions": [
+        "5,600 미만",
+        "외국인 순매도",
+        "프로그램 순매도"
+      ],
+      "invalidation": "5,600 회복"
+    }
+  ],
+  "strategyLevels": [
+    {
+      "asset": "KOSPI",
+      "support": "5,600",
+      "pivot": "5,700",
+      "resistance": "5,800"
+    },
+    {
+      "asset": "KODEX 레버리지",
+      "support": "69,465원",
+      "pivot": "69,955원",
+      "resistance": "72,745원"
+    }
+  ],
+  "events": [
+    {
+      "time": "10월28일 09:00 KST",
+      "name": "SK하이닉스 실적 설명회",
+      "path": "HBM·현금흐름·주주환원"
+    },
+    {
+      "time": "10월29일 03:00 KST",
+      "name": "FOMC 결정",
+      "path": "금리·자금조달"
+    },
+    {
+      "time": "10월28일 ET",
+      "name": "Microsoft 실적",
+      "path": "AI 수요·현금흐름"
+    },
+    {
+      "time": "10월29일 21:30 KST",
+      "name": "GDP·개인소득소비/PCE",
+      "path": "성장·물가"
+    },
+    {
+      "time": "10월29일 ET",
+      "name": "Amazon 실적",
+      "path": "클라우드·AI 투자"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "support",
+      "label": "5,600선 방어"
+    },
+    {
+      "id": "rebound",
+      "label": "실적 뒤 5,700선 회복과 외국인·프로그램 매수 동행"
+    }
+  ],
+  "technical": {
+    "note": "10월27일 확정 일봉과 10월28일 장전 분석 기준선입니다.",
+    "instruments": [
+      {
+        "id": "KOSPI",
+        "label": "KOSPI",
+        "unit": "pt",
+        "asOf": "2026-10-27T15:30:00+09:00",
+        "asOfLabel": "10월27일 정규장 종가",
+        "points": [
+          {
+            "label": "시가",
+            "value": 5658.65
+          },
+          {
+            "label": "고가",
+            "value": 5737.61
+          },
+          {
+            "label": "저가",
+            "value": 5612.92
+          },
+          {
+            "label": "종가",
+            "value": 5638.34
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 5600
+          },
+          {
+            "label": "반등 기준",
+            "value": 5700
+          },
+          {
+            "label": "저항",
+            "value": 5800
+          }
+        ],
+        "interpretation": "1차 지지 5,600 · 반등 기준 5,700 · 저항 5,800"
+      },
+      {
+        "id": "KODEX",
+        "label": "KODEX 레버리지",
+        "unit": "원",
+        "asOf": "2026-10-27T15:30:00+09:00",
+        "asOfLabel": "10월27일 정규장 종가",
+        "points": [
+          {
+            "label": "시가",
+            "value": 69965.0
+          },
+          {
+            "label": "고가",
+            "value": 72745.0
+          },
+          {
+            "label": "저가",
+            "value": 69465.0
+          },
+          {
+            "label": "종가",
+            "value": 69955.0
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 69465
+          },
+          {
+            "label": "반등 기준",
+            "value": 69955
+          },
+          {
+            "label": "저항",
+            "value": 72745
+          }
+        ],
+        "interpretation": "1차 지지 69,465 · 반등 기준 69,955 · 저항 72,745"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "label": "SK하이닉스 실적 일정",
+      "href": "https://news.skhynix.com/en/q3-2026-earnings-conference-call-invitation/"
+    },
+    {
+      "label": "Meta 공모 가격 확정",
+      "href": "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Announces-Pricing-of-Offering-of-Depositary-Shares-Representing-Series-A-Mandatory-Convertible-Preferred-Stock-and-Offering-of-Class-A-Common-Stock-in-Connection-with-Forward-Sale-Agreements/default.aspx"
+    },
+    {
+      "label": "DRAM 현물",
+      "href": "https://www.trendforce.com/price/dram/dram_spot"
+    },
+    {
+      "label": "미 재무부",
+      "href": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value=2026"
+    },
+    {
+      "label": "미국 시세",
+      "href": "https://finance.yahoo.com/quote/SOXX/"
+    },
+    {
+      "label": "국내 일봉",
+      "href": "https://fchart.stock.naver.com/sise.nhn?symbol=KOSPI&timeframe=day&count=5&requestType=0"
+    },
+    {
+      "label": "FOMC",
+      "href": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+    },
+    {
+      "label": "BEA 일정",
+      "href": "https://www.bea.gov/news/schedule"
+    },
+    {
+      "label": "Microsoft IR",
+      "href": "https://www.microsoft.com/en-us/investor/default"
+    },
+    {
+      "label": "Amazon 실적 일정",
+      "href": "https://www.aboutamazon.com/news/company-news/amazon-earnings-q3-2026-report"
+    }
+  ]
+}

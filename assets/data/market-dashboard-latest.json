@@ -1,31 +1,31 @@
 {
   "schemaVersion": 1,
-  "snapshotId": "20261027-0803",
-  "generatedAt": "2026-10-27T08:03:44+09:00",
-  "asOf": "2026-10-27T08:03:44+09:00",
-  "asOfDisplay": "2026-10-27T08:03:44+09:00",
+  "snapshotId": "20261028-0833",
+  "generatedAt": "2026-10-28T08:33:51+09:00",
+  "asOf": "2026-10-28T08:33:51+09:00",
+  "asOfDisplay": "2026-10-28T08:33:51+09:00",
   "marketState": "한국 장전",
-  "sourceLabel": "미국10월26일 정규장·국내10월26일 종가·10월27일 장전",
+  "sourceLabel": "미국10월27일 정규장·국내10월27일 종가·10월28일 장전",
   "latestArticle": {
-    "title": "AI 자금 조달에 반도체 동반 반등…KOSPI는 5,500선 회복 시험",
-    "href": "market-2026-10-27.html"
+    "title": "반도체 랠리 뒤 실적 시험대…KOSPI 5,700선과 SK하이닉스 발표 주목",
+    "href": "market-2026-10-28.html"
   },
-  "headline": "AI 자금 조달에 반도체 동반 반등…KOSPI는 5,500선 회복 시험",
-  "summary": "Meta의 공모와 SpaceX의 GPU 금융 약정이 AI 투자 지속 기대를 높였습니다. 미국 반도체주가 동반 상승한 가운데 KOSPI는 5,500선 회복과 국내 매수 동행을 시험합니다.",
+  "headline": "반도체 랠리 뒤 실적 시험대…KOSPI 5,700선과 SK하이닉스 발표 주목",
+  "summary": "미국 반도체주가 추가 상승했습니다. 전일 급등한 KOSPI는 오늘 SK하이닉스 실적과 매수 지속성을 시험하며, 밤사이에는 FOMC와 빅테크 실적이 이어집니다.",
   "markets": [
     {
       "id": "KOSPI",
       "label": "KOSPI",
       "symbol": "K",
-      "value": 5469.47,
-      "changePercent": -1.46,
-      "asOf": "2026-10-26T15:30:00+09:00",
-      "asOfLabel": "10월26일 정규장 종가",
+      "value": 5638.34,
+      "changePercent": 3.09,
+      "asOf": "2026-10-27T15:30:00+09:00",
+      "asOfLabel": "10월27일 정규장 종가",
       "stateLabel": "정규장 종가",
-      "open": 5499.05,
-      "high": 5565.67,
-      "low": 5455.11,
-      "previousClose": 5550.3,
+      "open": 5658.65,
+      "high": 5737.61,
+      "low": 5612.92,
+      "previousClose": 5469.47,
       "flows": []
     },
     {
@@ -34,7 +34,7 @@
       "symbol": "Q",
       "value": null,
       "changePercent": null,
-      "asOf": "2026-10-27T08:02:44+09:00",
+      "asOf": "2026-10-28T08:32:34+09:00",
       "asOfLabel": "확정값 미확인",
       "stateLabel": "정규장 종가",
       "open": null,
@@ -45,51 +45,51 @@
     }
   ],
   "stance": {
-    "label": "반등과 매수 동행 확인",
-    "attack": 30,
+    "label": "실적 발표 뒤 매수 지속 확인",
+    "attack": 25,
     "wait": 50,
-    "defense": 20,
-    "note": "AI 자금 조달 소식에 미국 반도체가 동반 상승했습니다. 국내 매수 지속을 봅니다."
+    "defense": 25,
+    "note": "전일 급등 뒤 SK하이닉스 실적과 매수 지속성을 시험합니다."
   },
   "checkpoints": [
     {
       "label": "삼성전자 NXT",
-      "value": "219,000원 · 2.82%",
-      "detail": "OPEN · 2026-10-27T08:03:45.459855+09:00",
+      "value": "229,000원 · 3.15%",
+      "detail": "OPEN · 2026-10-28T08:33:51.637236+09:00",
       "tone": "warning"
     },
     {
       "label": "SK하이닉스 NXT",
-      "value": "1,320,000원 · 3.53%",
-      "detail": "OPEN · 2026-10-27T08:03:45.459864+09:00",
+      "value": "1,377,000원 · 2.68%",
+      "detail": "OPEN · 2026-10-28T08:33:51.637245+09:00",
       "tone": "warning"
     },
     {
       "label": "하나은행 USD/KRW",
       "value": "1,327.00원",
-      "detail": "2026-10-27T07:51:22+09:00",
+      "detail": "2026-10-28T08:24:14+09:00",
       "tone": "warning"
     }
   ],
   "changes": [
     {
       "label": "KOSPI",
-      "before": "5,550.30",
-      "after": "5,469.47",
-      "meaning": "월요일 장중 반등 뒤 다시 밀려 마쳤습니다."
+      "before": "5,469.47",
+      "after": "5,638.34",
+      "meaning": "3.09% 올랐지만 장중 고점에서 상승 폭을 줄였습니다."
     }
   ],
   "factors": [
     {
       "label": "미국 반도체",
-      "metric": "SOXX +2.85% · SMH +2.74%",
-      "detail": "10월26일 정규장·주요 종목 동반상승",
+      "metric": "SOXX +3.91% · SMH +3.02%",
+      "detail": "10월27일 정규장·AMD +5.45%",
       "tone": "positive"
     },
     {
-      "label": "AI 금융",
-      "metric": "Meta 공모 · SpaceX GPU 약정",
-      "detail": "투자 지속 기대와 자금 회수 부담",
+      "label": "오늘 실적",
+      "metric": "SK하이닉스 09시 설명회",
+      "detail": "HBM·현금흐름·주주환원 조건",
       "tone": "warning"
     }
   ],
@@ -99,7 +99,7 @@
       "nonArbitrage": null,
       "total": null,
       "unit": "억원",
-      "asOfLabel": "최종 묶음 검증 보류"
+      "asOfLabel": "최종 묶음 미확인"
     },
     "kospi200FuturesForeign": null,
     "futuresUnit": "억원",
@@ -107,72 +107,77 @@
   },
   "memory": [
     {
-      "label": "DDR5 16Gb · 10/26",
+      "label": "DDR5 16Gb · 10/27",
       "value": "$61.333",
-      "change": "+0.11%"
+      "change": "보합"
     },
     {
-      "label": "DDR4 16Gb · 10/26",
+      "label": "DDR4 16Gb · 10/27",
       "value": "$82.623",
-      "change": "-0.30%"
+      "change": "보합"
     }
   ],
   "scenarios": [
     {
       "id": "bull",
-      "label": "강세 · 30%",
-      "range": "KOSPI 5,600 초과~5,750",
-      "summary": "매수가 동행하는 회복",
+      "label": "강세 · 25%",
+      "range": "KOSPI 5,800 초과~5,950",
+      "summary": "실적과 매수 동행",
       "conditions": [
-        "5,600 초과",
+        "5,800 초과",
         "외국인 순매수",
         "프로그램 순매수"
       ],
-      "invalidation": "5,600 재이탈"
+      "invalidation": "5,800 재이탈"
     },
     {
       "id": "base",
       "label": "기본 · 50%",
-      "range": "KOSPI 5,400~5,600",
-      "summary": "반등 지속력 시험",
+      "range": "KOSPI 5,600~5,800",
+      "summary": "급등 뒤 지지력 시험",
       "conditions": [
-        "5,400 이상",
-        "5,600 이하",
+        "5,600 이상",
+        "5,800 이하",
         "외국인 순매도 8천억원 이하"
       ],
       "invalidation": "범위 이탈 또는 매도 확대"
     },
     {
       "id": "bear",
-      "label": "약세 · 20%",
-      "range": "KOSPI 5,200~5,400 미만",
-      "summary": "하단 지지 실패",
+      "label": "약세 · 25%",
+      "range": "KOSPI 5,400~5,600 미만",
+      "summary": "실적 뒤 매도 확대",
       "conditions": [
-        "5,400 미만",
+        "5,600 미만",
         "외국인 순매도",
         "프로그램 순매도"
       ],
-      "invalidation": "5,400 회복"
+      "invalidation": "5,600 회복"
     }
   ],
   "strategyLevels": [
     {
       "asset": "KOSPI",
-      "support": "5,400",
-      "pivot": "5,500",
-      "resistance": "5,600"
+      "support": "5,600",
+      "pivot": "5,700",
+      "resistance": "5,800"
     },
     {
       "asset": "KODEX 레버리지",
-      "support": "65,115원",
-      "pivot": "66,075원",
-      "resistance": "67,985원"
+      "support": "69,465원",
+      "pivot": "69,955원",
+      "resistance": "72,745원"
     }
   ],
   "events": [
     {
-      "time": "10월27~28일 ET",
-      "name": "FOMC",
+      "time": "10월28일 09:00 KST",
+      "name": "SK하이닉스 실적 설명회",
+      "path": "HBM·현금흐름·주주환원"
+    },
+    {
+      "time": "10월29일 03:00 KST",
+      "name": "FOMC 결정",
       "path": "금리·자금조달"
     },
     {
@@ -194,110 +199,106 @@
   "checklist": [
     {
       "id": "support",
-      "label": "5,400선 방어"
+      "label": "5,600선 방어"
     },
     {
       "id": "rebound",
-      "label": "5,500선 회복과 외국인·프로그램 매수 동행"
+      "label": "실적 뒤 5,700선 회복과 외국인·프로그램 매수 동행"
     }
   ],
   "technical": {
-    "note": "10월26일 확정 일봉과 10월27일 장전 분석 기준선입니다.",
+    "note": "10월27일 확정 일봉과 10월28일 장전 분석 기준선입니다.",
     "instruments": [
       {
         "id": "KOSPI",
         "label": "KOSPI",
         "unit": "pt",
-        "asOf": "2026-10-26T15:30:00+09:00",
-        "asOfLabel": "10월26일 정규장 종가",
+        "asOf": "2026-10-27T15:30:00+09:00",
+        "asOfLabel": "10월27일 정규장 종가",
         "points": [
           {
             "label": "시가",
-            "value": 5499.05
+            "value": 5658.65
           },
           {
             "label": "고가",
-            "value": 5565.67
+            "value": 5737.61
           },
           {
             "label": "저가",
-            "value": 5455.11
+            "value": 5612.92
           },
           {
             "label": "종가",
-            "value": 5469.47
+            "value": 5638.34
           }
         ],
         "levels": [
           {
             "label": "1차 지지",
-            "value": 5400
+            "value": 5600
           },
           {
             "label": "반등 기준",
-            "value": 5500
+            "value": 5700
           },
           {
             "label": "저항",
-            "value": 5600
+            "value": 5800
           }
         ],
-        "interpretation": "1차 지지 5,400 · 반등 기준 5,500 · 저항 5,600"
+        "interpretation": "1차 지지 5,600 · 반등 기준 5,700 · 저항 5,800"
       },
       {
         "id": "KODEX",
         "label": "KODEX 레버리지",
         "unit": "원",
-        "asOf": "2026-10-26T15:30:00+09:00",
-        "asOfLabel": "10월26일 정규장 종가",
+        "asOf": "2026-10-27T15:30:00+09:00",
+        "asOfLabel": "10월27일 정규장 종가",
         "points": [
           {
             "label": "시가",
-            "value": 66075.0
+            "value": 69965.0
           },
           {
             "label": "고가",
-            "value": 67985.0
+            "value": 72745.0
           },
           {
             "label": "저가",
-            "value": 65115.0
+            "value": 69465.0
           },
           {
             "label": "종가",
-            "value": 65475.0
+            "value": 69955.0
           }
         ],
         "levels": [
           {
             "label": "1차 지지",
-            "value": 65115
+            "value": 69465
           },
           {
             "label": "반등 기준",
-            "value": 66075
+            "value": 69955
           },
           {
             "label": "저항",
-            "value": 67985
+            "value": 72745
           }
         ],
-        "interpretation": "1차 지지 65,115 · 반등 기준 66,075 · 저항 67,985"
+        "interpretation": "1차 지지 69,465 · 반등 기준 69,955 · 저항 72,745"
       }
     ]
   },
   "sources": [
     {
-      "label": "Meta 회사 발표",
-      "href": "https://finance.yahoo.com/markets/stocks/articles/meta-announces-launch-offering-depositary-105800284.html"
+      "label": "SK하이닉스 실적 일정",
+      "href": "https://news.skhynix.com/en/q3-2026-earnings-conference-call-invitation/"
     },
     {
-      "label": "SpaceX 금융 약정",
-      "href": "https://ir.spacex.com/updates/releases-details/2026/SPACEX-SECURES-40-BILLION-IN-THE-LARGEST-GPU-FINANCING-EVER-2026-EnDqGhTAB3/default.aspx"
-    },
-    {
-      "label": "Anthropic S-1",
-      "href": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/anthropicpbc-sx1.htm"
+      "label": "Meta 공모 가격 확정",
+      "href": "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Announces-Pricing-of-Offering-of-Depositary-Shares-Representing-Series-A-Mandatory-Convertible-Preferred-Stock-and-Offering-of-Class-A-Common-Stock-in-Connection-with-Forward-Sale-Agreements/default.aspx"
     },
     {
       "label": "DRAM 현물",
