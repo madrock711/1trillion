@@ -1,0 +1,10 @@
+{
+  "jobArn": "arn:aws:amplify:us-east-1:514670561185:apps/d2pg7r2qjjb9u9/branches/main/jobs/0000000706",
+  "jobId": "706",
+  "commitId": "a6ca17ce645ec498ef2f06091b6ba657ffc8e8fa",
+  "commitMessage": "10월 29일 클라우드 실적과 KOSPI 장전 리서치 발행",
+  "commitTime": "2026-10-29T08:52:41+09:00",
+  "startTime": "2026-10-29T08:52:55.756000+09:00",
+  "status": "SUCCEED",
+  "endTime": "2026-10-29T08:53:49.955000+09:00"
+}

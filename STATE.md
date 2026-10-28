@@ -8,3 +8,4 @@
 - 보고서 reports/2026-10-29.md, 취재 research/notes/2026-10-29.md.
 - 직전전망강세상단초과, 경로6100내. 평가 generated/latest.md,수급앵커미정산.
 - 대시보드 assets/data/market-dashboard-20261029-0852.json, 전망 research/evaluation/forecasts/2026-10-29-0852-same-close.json.
+- 최초 공개 2026-10-29T08:53:49.955000+09:00, Amplify 706. pushed/deploy_verified 계약 검증 통과.
