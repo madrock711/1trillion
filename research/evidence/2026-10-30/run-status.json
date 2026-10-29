@@ -1,7 +1,10 @@
 {
   "startedAt": "2026-10-30T07:59:40.9433900+09:00",
   "stages": {
-    "푸시": "대기",
+    "푸시": {
+      "completedAt": "2026-10-30T08:05:38.011056+09:00",
+      "commit": "eea2d7d20184f97dbe7d02cc94ae1298aeeb0c6b"
+    },
     "집필": {
       "completedAt": "2026-10-30T08:03:21.687831+09:00",
       "path": "articles/market-2026-10-30.html"
@@ -15,9 +18,15 @@
       "completedAt": "2026-10-30T08:03:21.687831+09:00",
       "path": "research/notes/2026-10-30.md"
     },
-    "최종조회": "대기",
-    "검증": "대기",
+    "최종조회": {
+      "completedAt": "2026-10-30T08:04:05+09:00",
+      "path": "sealed.json"
+    },
+    "검증": {
+      "completedAt": "2026-10-30T08:05:38.011056+09:00",
+      "result": "53 regression + preflight + Bash hooks passed; historical 9/21 hash error separate"
+    },
     "배포": "대기"
   },
-  "status": "검증"
+  "status": "배포"
 }

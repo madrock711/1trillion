@@ -8,3 +8,4 @@
 - reports/2026-10-30.md, research/notes/2026-10-30.md.
 - 수급 최종묶음과 정확시각 앵커 미정산.
 - 대시보드 assets/data/market-dashboard-20261030-0804.json, 전망 research/evaluation/forecasts/2026-10-30-0804-same-close.json.
+- 최초 공개 2026-10-30T08:05:47.308000+09:00, Amplify 709. pushed/deploy_verified 계약 검증 통과.

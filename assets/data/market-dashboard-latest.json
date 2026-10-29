@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "snapshotId": "20261030-0804",
+  "snapshotId": "20261030-0804-levels",
   "generatedAt": "2026-10-30T08:04:05+09:00",
   "asOf": "2026-10-30T08:04:05+09:00",
   "asOfDisplay": "2026-10-30T08:04:05+09:00",
@@ -158,15 +158,15 @@
   "strategyLevels": [
     {
       "asset": "KOSPI",
-      "support": "5,900",
-      "pivot": "6,000",
-      "resistance": "6,100"
+      "support": "5,750",
+      "pivot": "5,937.66",
+      "resistance": "5,950"
     },
     {
       "asset": "KODEX 레버리지",
-      "support": "78,000원",
-      "pivot": "80,280원",
-      "resistance": "81,010원"
+      "support": "75,200원",
+      "pivot": "78,550원",
+      "resistance": "80,595원"
     }
   ],
   "events": [
@@ -179,11 +179,11 @@
   "checklist": [
     {
       "id": "support",
-      "label": "5,900선 지지와 6,000선 안착"
+      "label": "5,900선 지지와 5,950선 회복"
     },
     {
       "id": "flow",
-      "label": "외국인·프로그램 매수 동행"
+      "label": "외국인·프로그램 매수 복귀"
     }
   ],
   "technical": {
@@ -220,14 +220,14 @@
           },
           {
             "label": "반등 기준",
-            "value": 6000
+            "value": 5937.66
           },
           {
             "label": "저항",
             "value": 5950
           }
         ],
-        "interpretation": "급등 뒤 지지력과 매수 동행을 확인합니다."
+        "interpretation": "반도체 매도 이후 지지력과 외국인 매수 복귀를 확인합니다."
       },
       {
         "id": "KODEX",
@@ -267,7 +267,7 @@
             "value": 80595
           }
         ],
-        "interpretation": "급등 뒤 지지력과 매수 동행을 확인합니다."
+        "interpretation": "반도체 매도 이후 지지력과 외국인 매수 복귀를 확인합니다."
       }
     ]
   },

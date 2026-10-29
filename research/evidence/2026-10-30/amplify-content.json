@@ -1,0 +1,10 @@
+{
+    "jobArn": "arn:aws:amplify:us-east-1:514670561185:apps/d2pg7r2qjjb9u9/branches/main/jobs/0000000709",
+    "jobId": "709",
+    "commitId": "eea2d7d20184f97dbe7d02cc94ae1298aeeb0c6b",
+    "commitMessage": "Publish October 30 premarket research on Intel outlook and AI spending",
+    "commitTime": "2026-10-30T08:04:37+09:00",
+    "startTime": "2026-10-30T08:04:48.457000+09:00",
+    "status": "SUCCEED",
+    "endTime": "2026-10-30T08:05:47.308000+09:00"
+}
