@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-10-29",
+  "bizdate": "20261029",
+  "fetchedAt": "2026-10-30T07:59:58+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 6017.22,
+    "high": 6100.11,
+    "low": 5817.92,
+    "close": 5937.66,
+    "asOf": "2026-10-29T15:30:00+09:00",
+    "source": "https://fchart.stock.naver.com/sise.nhn?symbol=KOSPI&timeframe=day&count=5&requestType=0",
+    "rawHash": "8af3e2d81528695454a4b9ac00cc3d6ceb1899653f9b42193e09685dea9c8be5"
+  },
+  "kodex": {
+    "open": 80595.0,
+    "high": 83815.0,
+    "low": 75200.0,
+    "close": 78550.0,
+    "asOf": "2026-10-29T15:30:00+09:00",
+    "source": "https://fchart.stock.naver.com/sise.nhn?symbol=122630&timeframe=day&count=5&requestType=0",
+    "rawHash": "fb34e21c755ac054caf7ea8c7317252d7beb10e9fd13045f59950aa0a7aa6d3e",
+    "volume": 29541250
+  },
+  "closeSnapshotMissingReason": "10/28 integration 최종 묶음과 정확시각 수급앵커 미확보. 원문 evidence 보존, 15:20 앵커 미확보.",
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-10-29T15:30:00+09:00",
+    "fetchedAt": "2026-10-30T07:59:58+09:00",
+    "missingReason": "10/28 integration 최종 묶음과 정확시각 수급앵커 미확보. 원문 evidence 보존, 15:20 앵커 미확보.",
+    "rawHash": "5469c8cabe56a1d93ebe111994c3ba06752775f48489a444751e60955ddb9211"
+  }
+}
