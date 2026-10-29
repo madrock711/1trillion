@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "snapshotId": "20261030-0804-levels",
+  "snapshotId": "20261030-0804-labels",
   "generatedAt": "2026-10-30T08:04:05+09:00",
   "asOf": "2026-10-30T08:04:05+09:00",
   "asOfDisplay": "2026-10-30T08:04:05+09:00",
@@ -20,7 +20,7 @@
       "value": 5937.66,
       "changePercent": -1.24,
       "asOf": "2026-10-29T15:30:00+09:00",
-      "asOfLabel": "10월28일 정규장 종가",
+      "asOfLabel": "10월29일 정규장 종가",
       "stateLabel": "정규장 종가",
       "open": 6017.22,
       "high": 6100.11,
@@ -187,14 +187,14 @@
     }
   ],
   "technical": {
-    "note": "10월28일 확정 일봉과 10월29일 분석 기준선입니다.",
+    "note": "10월29일 확정 일봉과 10월29일 분석 기준선입니다.",
     "instruments": [
       {
         "id": "KOSPI",
         "label": "KOSPI",
         "unit": "pt",
         "asOf": "2026-10-29T15:30:00+09:00",
-        "asOfLabel": "10월28일 정규장 종가",
+        "asOfLabel": "10월29일 정규장 종가",
         "points": [
           {
             "label": "시가",
@@ -234,7 +234,7 @@
         "label": "KODEX 레버리지",
         "unit": "원",
         "asOf": "2026-10-29T15:30:00+09:00",
-        "asOfLabel": "10월28일 정규장 종가",
+        "asOfLabel": "10월29일 정규장 종가",
         "points": [
           {
             "label": "시가",
@@ -274,7 +274,7 @@
   "sources": [
     {
       "label": "연준 10월 결정",
-      "href": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261029a.htm"
+      "href": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm"
     },
     {
       "label": "Microsoft 실적",
