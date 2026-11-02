@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-10-30T07:59:40.9433900+09:00",
+  "startedAt": "2026-10-30T07:59:40.94339+09:00",
   "stages": {
     "푸시": {
       "completedAt": "2026-10-30T08:05:38.011056+09:00",
@@ -13,7 +13,11 @@
       "completedAt": "2026-10-30T08:03:21.687831+09:00",
       "path": "assets/images/articles/market-2026-10-30-cloud-capex-1200x630.png"
     },
-    "라이브확인": "대기",
+    "라이브확인": {
+      "result": "10 cache-busted assets HTTP200 and Git HEAD byte match; browser tab closed",
+      "path": "live-check.json",
+      "completedAt": "2026-10-30T08:09:46.2902737+09:00"
+    },
     "조사": {
       "completedAt": "2026-10-30T08:03:21.687831+09:00",
       "path": "research/notes/2026-10-30.md"
@@ -26,7 +30,11 @@
       "completedAt": "2026-10-30T08:05:38.011056+09:00",
       "result": "53 regression + preflight + Bash hooks passed; historical 9/21 hash error separate"
     },
-    "배포": "대기"
+    "배포": {
+      "completedAt": "2026-10-30T08:09:16.334000+09:00",
+      "commit": "5cf1c830151c412b93acf4018724eccf285854be",
+      "jobId": "712"
+    }
   },
-  "status": "배포"
+  "status": "발행완료"
 }
