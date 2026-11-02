@@ -1,0 +1,135 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-11-03T07:58:38+09:00",
+  "rawHash": "ef27defc8ed9bcd4c9c42eea327a182eda5dc18d374dd5a1966d5c540185ab77",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "AMD",
+            "exchangeName": "NMS",
+            "fullExchangeName": "NasdaqGS",
+            "instrumentType": "EQUITY",
+            "firstTradeDate": 322151400,
+            "regularMarketTime": 1793653202,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -18000,
+            "timezone": "EST",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 466.84,
+            "regularMarketChangePercent": -7.52,
+            "fulldayPrice": 470.81,
+            "fulldayChange": -33.99,
+            "fulldayChangePercent": -6.733,
+            "fiftyTwoWeekHigh": 658.52,
+            "fiftyTwoWeekLow": 188.22,
+            "regularMarketDayHigh": 512.82,
+            "regularMarketDayLow": 466.072,
+            "regularMarketVolume": 31757911,
+            "longName": "Advanced Micro Devices, Inc.",
+            "shortName": "Advanced Micro Devices, Inc.",
+            "chartPreviousClose": 531.28,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EST",
+                "start": 1793610000,
+                "end": 1793629800,
+                "gmtoffset": -18000
+              },
+              "regular": {
+                "timezone": "EST",
+                "start": 1793629800,
+                "end": 1793653200,
+                "gmtoffset": -18000
+              },
+              "post": {
+                "timezone": "EST",
+                "start": 1793653200,
+                "end": 1793667600,
+                "gmtoffset": -18000
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1793107800,
+            1793194200,
+            1793280600,
+            1793367000,
+            1793629800
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "volume": [
+                  20599900,
+                  18848600,
+                  16873300,
+                  39589800,
+                  31757911
+                ],
+                "close": [
+                  560.260009765625,
+                  578.4400024414062,
+                  566.4199829101562,
+                  504.79998779296875,
+                  466.8399963378906
+                ],
+                "high": [
+                  563.9199829101562,
+                  579.1799926757812,
+                  575.0999755859375,
+                  520.4000244140625,
+                  512.8200073242188
+                ],
+                "open": [
+                  539.489990234375,
+                  573.0800170898438,
+                  562.27001953125,
+                  508.5299987792969,
+                  510.6499938964844
+                ],
+                "low": [
+                  538.5,
+                  560.52001953125,
+                  560.5700073242188,
+                  492.2099914550781,
+                  466.0716857910156
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  560.260009765625,
+                  578.4400024414062,
+                  566.4199829101562,
+                  504.79998779296875,
+                  466.8399963378906
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}

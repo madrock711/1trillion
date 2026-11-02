@@ -1,0 +1,311 @@
+{
+  "schemaVersion": 1,
+  "snapshotId": "20261103-0803",
+  "generatedAt": "2026-11-03T08:03:54+09:00",
+  "asOf": "2026-11-03T08:03:54+09:00",
+  "asOfDisplay": "2026-11-03T08:03:54+09:00",
+  "marketState": "한국 장전",
+  "sourceLabel": "미국 11월 2일 정규장 · 한국 11월 3일 장전",
+  "latestArticle": {
+    "title": "미국 반도체는 더 내리고 유가는 급락…코스피 반등의 지지력 시험",
+    "href": "market-2026-11-03.html"
+  },
+  "headline": "미국 반도체는 더 내리고 유가는 급락…코스피 반등의 지지력 시험",
+  "summary": "미국 반도체주의 추가 하락과 유가 급락이 엇갈렸습니다. 전날 5,859선으로 반등한 코스피는 기관 매수의 지속과 반도체 지지력을 시험합니다.",
+  "markets": [
+    {
+      "id": "KOSPI",
+      "label": "KOSPI",
+      "symbol": "K",
+      "value": 5859.08,
+      "changePercent": 2.24,
+      "asOf": "2026-11-02T15:30:00+09:00",
+      "asOfLabel": "11월 2일 정규장 종가",
+      "stateLabel": "종가",
+      "open": 5637.77,
+      "high": 5910.83,
+      "low": 5616.5,
+      "previousClose": 5730.74,
+      "flows": []
+    },
+    {
+      "id": "KOSDAQ",
+      "label": "KOSDAQ",
+      "symbol": "Q",
+      "value": null,
+      "changePercent": null,
+      "asOf": "2026-11-02T15:30:00+09:00",
+      "asOfLabel": "11월 2일 정규장 종가",
+      "stateLabel": "종가",
+      "open": null,
+      "high": null,
+      "low": null,
+      "previousClose": null,
+      "flows": []
+    }
+  ],
+  "stance": {
+    "label": "반등 지지력 시험",
+    "attack": 10,
+    "wait": 45,
+    "defense": 45,
+    "note": "미국 반도체 추가 매도와 유가 하락이 엇갈립니다."
+  },
+  "checkpoints": [
+    {
+      "label": "NXT",
+      "value": "당일 유효 가격 없음",
+      "detail": "원천 시각·시장 상태 불일치",
+      "tone": "neutral"
+    },
+    {
+      "label": "하나은행 USD/KRW",
+      "value": "1,346.00원",
+      "detail": "2026-11-03T06:58:36+09:00",
+      "tone": "warning"
+    }
+  ],
+  "changes": [
+    {
+      "label": "KOSPI",
+      "before": "5,730.74",
+      "after": "5,859.08",
+      "meaning": "11월 2일 2.24% 반등했습니다."
+    }
+  ],
+  "factors": [
+    {
+      "label": "미국 반도체",
+      "metric": "SOXX -3.79%",
+      "detail": "11월 2일 정규장",
+      "tone": "warning"
+    },
+    {
+      "label": "Apple 매출",
+      "metric": "1,145억달러 · +12%",
+      "detail": "공식 4분기 실적",
+      "tone": "positive"
+    }
+  ],
+  "flows": {
+    "program": {
+      "arbitrage": null,
+      "nonArbitrage": null,
+      "total": null,
+      "unit": "억원",
+      "asOfLabel": "확정 묶음 미확인"
+    },
+    "kospi200FuturesForeign": null,
+    "futuresUnit": "억원",
+    "futuresAsOfLabel": "미확인"
+  },
+  "memory": [
+    {
+      "label": "DDR5 16Gb",
+      "value": "$61.50",
+      "change": "11/2 보합"
+    },
+    {
+      "label": "DDR4 16Gb",
+      "value": "$82.719",
+      "change": "11/2 -0.09%"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "bull",
+      "label": "강세 · 20%",
+      "range": "KOSPI 5,900 초과~6,050",
+      "summary": "반도체 가격과 수급의 동행",
+      "conditions": [
+        "5,900 초과",
+        "외국인 순매수",
+        "프로그램 순매수"
+      ],
+      "invalidation": "5,900 재이탈"
+    },
+    {
+      "id": "base",
+      "label": "기본 · 50%",
+      "range": "KOSPI 5,700~5,900",
+      "summary": "반도체 가격과 수급의 동행",
+      "conditions": [
+        "5,700 이상",
+        "5,900 이하"
+      ],
+      "invalidation": "범위 이탈"
+    },
+    {
+      "id": "bear",
+      "label": "약세 · 30%",
+      "range": "KOSPI 5,450~5,700 미만",
+      "summary": "반도체 가격과 수급의 동행",
+      "conditions": [
+        "5,700 미만",
+        "외국인 순매도",
+        "프로그램 순매도"
+      ],
+      "invalidation": "5,700 회복"
+    }
+  ],
+  "strategyLevels": [
+    {
+      "asset": "KOSPI",
+      "support": "5,700",
+      "pivot": "5,859",
+      "resistance": "5,900"
+    },
+    {
+      "asset": "KODEX 레버리지",
+      "support": "72,000원",
+      "pivot": "75,850원",
+      "resistance": "77,465원"
+    }
+  ],
+  "events": [
+    {
+      "time": "11월 4일 00:00 KST",
+      "name": "미국 JOLTS",
+      "path": "노동시장·금리"
+    },
+    {
+      "time": "11월 4일 07:00 KST",
+      "name": "AMD 실적 설명회",
+      "path": "AI·반도체 수요"
+    },
+    {
+      "time": "11월 6일 22:30 KST",
+      "name": "미국 고용보고서",
+      "path": "금리와 성장주"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "support",
+      "label": "5,700선 지지와 5,900선 회복"
+    },
+    {
+      "id": "flow",
+      "label": "기관 매수 지속과 외국인·프로그램 동행"
+    }
+  ],
+  "technical": {
+    "note": "11월 2일 종가와 11월 3일 장전 분석 기준선입니다.",
+    "instruments": [
+      {
+        "id": "KOSPI",
+        "label": "KOSPI",
+        "unit": "pt",
+        "asOf": "2026-11-02T15:30:00+09:00",
+        "asOfLabel": "11월 2일 종가",
+        "points": [
+          {
+            "label": "시가",
+            "value": 5637.77
+          },
+          {
+            "label": "고가",
+            "value": 5910.83
+          },
+          {
+            "label": "저가",
+            "value": 5616.5
+          },
+          {
+            "label": "현재",
+            "value": 5859.08
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 5700
+          },
+          {
+            "label": "반등 기준",
+            "value": 5859.08
+          },
+          {
+            "label": "저항",
+            "value": 5900
+          }
+        ],
+        "interpretation": "전일 반등의 지지력과 반도체 수급을 살펴봅니다."
+      },
+      {
+        "id": "KODEX",
+        "label": "KODEX 레버리지",
+        "unit": "원",
+        "asOf": "2026-11-03T08:03:54+09:00",
+        "asOfLabel": "11월 2일 종가",
+        "points": [
+          {
+            "label": "시가",
+            "value": 70395.0
+          },
+          {
+            "label": "고가",
+            "value": 77465.0
+          },
+          {
+            "label": "저가",
+            "value": 69410.0
+          },
+          {
+            "label": "현재",
+            "value": 75850.0
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 72000
+          },
+          {
+            "label": "반등 기준",
+            "value": 75850
+          },
+          {
+            "label": "저항",
+            "value": 77465
+          }
+        ],
+        "interpretation": "전일 반등의 지지력과 반도체 수급을 살펴봅니다."
+      }
+    ]
+  },
+  "sources": [
+    {
+      "label": "Apple 실적",
+      "href": "https://www.apple.com/newsroom/2026/11/apple-reports-fourth-quarter-results/"
+    },
+    {
+      "label": "AMD 일정",
+      "href": "https://ir.amd.com/news-events"
+    },
+    {
+      "label": "BLS 일정",
+      "href": "https://www.bls.gov/schedule/2026/11_sched.htm"
+    },
+    {
+      "label": "DRAM 현물",
+      "href": "https://www.trendforce.com/price/dram/dram_spot"
+    },
+    {
+      "label": "미국 시세",
+      "href": "https://finance.yahoo.com/quote/SOXX/"
+    },
+    {
+      "label": "유가·협상",
+      "href": "https://live.euronext.com/en/financial-news/oil-drops-6-iran-signals-openness-peace-talks"
+    },
+    {
+      "label": "국내 종가",
+      "href": "https://markets.hankyung.com/indices/kospi"
+    },
+    {
+      "label": "금리차",
+      "href": "https://fred.stlouisfed.org/series/T10Y2Y"
+    }
+  ]
+}

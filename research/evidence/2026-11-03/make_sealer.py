@@ -1,0 +1,23 @@
+from pathlib import Path
+p=Path('research/evidence/2026-11-03')
+s=Path('research/evidence/2026-11-02/seal_intraday.py').read_text(encoding='utf-8')
+s=s.replace('2026-11-02','2026-11-03').replace('20261102','20261103').replace('2026.11.02','2026.11.03')
+a=s.index('assert len(nxt)');b=s.index('fast=',a)
+s=s[:a]+"assert kp['localTradedAt']=='2026-11-02' and le['localTradedAt']=='2026-11-02'\nnxt=[x for x in nxt if x['localTradedAt'].startswith(DATE) and x['marketStatus']=='OPEN']\n"+s[b:]
+s=s.replace("kb['localTradedAt']","'2026-11-02T15:30:00+09:00'")
+s=s.replace("'KOSPI'","'KOSPI'")
+s=s.replace("sid='20261103-'","sid='20261103-'")
+s=s.replace("f'|", "f'|")
+s=s.replace("f\"|KOSPI|", "f\"|KOSPI 전일 종가|").replace("|KODEX 레버리지|","|KODEX 레버리지 전일 종가|")
+s=s.replace("'marketState':'intraday'","'marketState':'preopen'").replace("marketState='intraday',evaluationBucket=bucket","marketState='preopen',evaluationBucket='preopen'")
+s=s.replace("'kind':'live'","'kind':'previous_close'")
+s=s.replace("previousSessionDate='2026-10-30'","previousSessionDate='2026-11-02'")
+s=s.replace("'KRX 지수 11/02 장중 조회'","'KRX 전일 종가와 BLS 공식 달력 대조, 11/3 정상 거래일'")
+for a,b in [('5750','5900'),('5900','6050'),('5550','5700'),('5350','5450'),('5150','5250'),('6100','6250')]:
+ s=s.replace(a,'X'+a+'X')
+for a,b in [('5750','5900'),('5900','6050'),('5550','5700'),('5350','5450'),('5150','5250'),('6100','6250')]:s=s.replace('X'+a+'X',b)
+s=s.replace("claim':'미국 반도체 약세와 한국 선반영분'","claim':'미국 반도체 추가 매도와 유가 하락'")
+s=s.replace("s['checkpoints']=[", "s['checkpoints']=[")
+s=s.replace("for x in nxt]+[", "for x in nxt]+([{'label':'NXT','value':'당일 유효 가격 없음','detail':'원천 시각·시장 상태 불일치','tone':'neutral'}] if not nxt else [])+[")
+s=s.replace("source='KRX 전일", "source='KRX 전일")
+(p/'seal_today.py').write_text(s,encoding='utf-8',newline='\n')

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-11-02-0917-same-close",
+  "recordedAt": "2026-11-03T08:02:55+09:00",
+  "actualRef": "2026-11-02",
+  "realizedScenario": "bull",
+  "errorCodes": [
+    "cause_unverifiable"
+  ],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    },
+    {
+      "id": "bull-foreign",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    },
+    {
+      "id": "bull-program",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    },
+    {
+      "id": "base-floor",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    },
+    {
+      "id": "base-cap",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    },
+    {
+      "id": "bear-price",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    },
+    {
+      "id": "bear-foreign",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    },
+    {
+      "id": "bear-program",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "semiconductor",
+      "status": "unverifiable"
+    },
+    {
+      "id": "memory",
+      "status": "unverifiable"
+    }
+  ],
+  "hypothesisTests": []
+}
