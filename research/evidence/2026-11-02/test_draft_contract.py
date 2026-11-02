@@ -1,0 +1,9 @@
+import json,hashlib,importlib.util,datetime
+from pathlib import Path
+r=Path.cwd(); f=json.loads((r/'research/evaluation/forecasts/2026-10-30-0804-same-close.json').read_text(encoding='utf-8')); issued='2026-11-02T09:11:18+09:00';f.update(forecastId='2026-11-02-test',reportPath='reports/2026-11-02.md',reportSha256=hashlib.sha256((r/'reports/2026-11-02.md').read_bytes()).hexdigest(),issuedAt=issued,dataCutoffAt=issued,marketState='intraday',evaluationBucket='open_0900_0930',reference={'price':5651.93,'asOf':'2026-11-02T09:10:00+09:00','kind':'live'},scenarios={'bull':{'low':5750,'high':5900,'probability':.20},'base':{'low':5550,'high':5750,'probability':.50},'bear':{'low':5350,'high':5550,'probability':.30}},pathEnvelope={'low':5150,'high':6100,'coverage':.9},posture={'attack':10,'wait':45,'defense':45},drivers=[{'id':'semiconductor','rank':1,'claim':'미국 반도체 약세와 한국 선반영분','validationMetric':'미국 반도체·한국 지수'},{'id':'memory','rank':2,'claim':'소비자 DRAM 현물·계약가 차별화','validationMetric':'TrendForce·국내 수급'}]);f['target'].update(sessionDate='2026-11-02',previousSessionDate='2026-10-30')
+for k,t in f['scenarioTriggers'].items():
+ t['observeBy']='2026-11-02T15:20:00+09:00'
+ if k=='base':t['conditions']=[c for c in t['conditions'] if c['metricId']=='kospi_price']
+ for c in t['conditions']:
+  if c['metricId']=='kospi_price':c['threshold']=5750 if k=='bull' or c['operator']=='lte' else 5550
+f.pop('contentHash');f['contentHash']=hashlib.sha256(json.dumps(f,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()).hexdigest();spec=importlib.util.spec_from_file_location('evaluation',r/'scripts/evaluate_market_research.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);m.validate_forecast(f,r/'research/evaluation/forecasts/test.json',r);print('synthetic contract valid')

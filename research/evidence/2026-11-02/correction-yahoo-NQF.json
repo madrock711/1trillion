@@ -1,0 +1,183 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQ=F?range=1d&interval=5m&includePrePost=true",
+  "fetchedAt": "2026-11-02T09:17:04.945469+09:00",
+  "rawHash": "9e8484796e67341484c4d23641df8bef1ffe973fe2465fea1e63c2138add3ee7",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "NQ=F",
+            "exchangeName": "CME",
+            "fullExchangeName": "CME",
+            "instrumentType": "FUTURE",
+            "firstTradeDate": 969249600,
+            "regularMarketTime": 1793578026,
+            "hasPrePostMarketData": false,
+            "gmtoffset": -18000,
+            "timezone": "EST",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 28700.75,
+            "regularMarketChangePercent": 0.584,
+            "fulldayPrice": 28700.75,
+            "fulldayChange": 166.75,
+            "fulldayChangePercent": 0.584,
+            "fiftyTwoWeekHigh": 31616.5,
+            "fiftyTwoWeekLow": 22961.5,
+            "regularMarketDayHigh": 28717.0,
+            "regularMarketDayLow": 28587.0,
+            "regularMarketVolume": 16498,
+            "shortName": "Nasdaq 100 Dec 26",
+            "chartPreviousClose": 28534.0,
+            "previousClose": 28534.0,
+            "scale": 3,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EDT",
+                "start": 1793505600,
+                "end": 1793505600,
+                "gmtoffset": -14400
+              },
+              "regular": {
+                "timezone": "EDT",
+                "start": 1793505600,
+                "end": 1793595540,
+                "gmtoffset": -14400
+              },
+              "post": {
+                "timezone": "EST",
+                "start": 1793595540,
+                "end": 1793595540,
+                "gmtoffset": -18000
+              }
+            },
+            "tradingPeriods": [
+              [
+                {
+                  "timezone": "EDT",
+                  "start": 1793505600,
+                  "end": 1793595540,
+                  "gmtoffset": -14400
+                }
+              ]
+            ],
+            "dataGranularity": "5m",
+            "range": "1d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1793574600,
+            1793574900,
+            1793575200,
+            1793575500,
+            1793575800,
+            1793576100,
+            1793576400,
+            1793576700,
+            1793577000,
+            1793577300,
+            1793577600,
+            1793577900,
+            1793578026
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "low": [
+                  28629.5,
+                  28627.0,
+                  28644.25,
+                  28612.75,
+                  28612.25,
+                  28633.75,
+                  28659.75,
+                  28647.0,
+                  28649.5,
+                  28652.25,
+                  28666.25,
+                  28700.25,
+                  28700.75
+                ],
+                "open": [
+                  28632.25,
+                  28644.0,
+                  28660.0,
+                  28644.0,
+                  28632.0,
+                  28639.5,
+                  28664.75,
+                  28689.25,
+                  28666.5,
+                  28660.25,
+                  28668.5,
+                  28705.0,
+                  28700.75
+                ],
+                "high": [
+                  28670.75,
+                  28668.75,
+                  28669.25,
+                  28659.5,
+                  28642.25,
+                  28667.0,
+                  28695.5,
+                  28692.5,
+                  28688.5,
+                  28673.0,
+                  28717.0,
+                  28714.25,
+                  28700.75
+                ],
+                "close": [
+                  28645.75,
+                  28657.75,
+                  28645.5,
+                  28632.0,
+                  28641.0,
+                  28663.5,
+                  28691.0,
+                  28668.25,
+                  28661.5,
+                  28665.75,
+                  28703.25,
+                  28710.0,
+                  28700.75
+                ],
+                "volume": [
+                  1088,
+                  1576,
+                  773,
+                  918,
+                  822,
+                  981,
+                  983,
+                  1107,
+                  915,
+                  670,
+                  1579,
+                  281,
+                  0
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  }
+}
