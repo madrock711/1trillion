@@ -8,3 +8,4 @@
 - 다음 JOLTS11/4 00:00, AMD11/4 07:00, 고용11/6 22:30 KST.
 - reports/2026-11-03.md, research/notes/2026-11-03.md.
 - 대시보드 assets/data/market-dashboard-20261103-0803.json, 전망 research/evaluation/forecasts/2026-11-03-0803-same-close.json.
+- 최초 공개 Amplify718 성공 2026-11-03T08:06:27.494000+09:00, 콘텐츠 762ad9a1ae108dffd5d03f010e5a242e0614b829. 양 도메인10자산 일치 확인.
