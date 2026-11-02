@@ -123,6 +123,8 @@ py -3 scripts/update_yield_spreads.py --output-dir charts
 - 이슈 레이더 상위 사건과 제외한 고득점 후보의 제외 이유를 한 줄씩 남긴다.
 - `scripts/evaluate_market_research.py`를 실행해 `research/evaluation/generated/latest.json`과 `latest.md`를 갱신한다.
 - 공개 판본이면 push와 배포 확인 뒤 `research/evaluation/publications/`에 `pushed`, `deploy_verified` 이벤트 JSON을 빠짐없이 각각 새로 추가한다. 둘 중 하나라도 없으면 평가기는 공개 전망을 정산하지 않는다. 내부 판본에는 publication 이벤트를 만들지 않으며 기존 이벤트나 전망 원본에 시각을 사후 덧쓰지 않는다.
+- 실행 중 계속 갱신되는 `research/evidence/YYYY-MM-DD/run-status.json`과 `live-check.json`은 로컬 실행 상태로 유지하고 새 파일은 Git에 추가하지 않는다. 평가용 발행 이벤트와 원천 증거는 별도로 보존·커밋한다. 과거에 이미 추적된 상태 파일은 무시 규칙이 소급 적용되지 않으므로 수정 여부를 확인하고 실제 변경을 보존한다.
+- 종료 전 `git status --short`로 이번 실행이 만든 추적 파일 변경을 확인한다. 발행 후 작성한 평가 이벤트 등 필요한 변경은 선별 커밋·푸시하고 해당 최종 커밋의 배포와 라이브 자산을 다시 확인한다. 최종 검증 결과는 로컬 상태 파일과 자동화 메모리에 기록하여 확인 직후 새 추적 변경이 반복되지 않게 한다.
 - 스크립트나 설정을 바꿨으면 `docs/현재작업중.md`를 갱신한다.
 - `scripts/check_worklog_guard.sh`와 스킬 검증기를 실행한다.
 

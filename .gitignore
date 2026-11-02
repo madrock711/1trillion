@@ -6,6 +6,11 @@ firebase-debug.log
 __pycache__/
 *.py[cod]
 
+# 실행 중과 최종 배포 확인 후에도 갱신되는 로컬 상태 파일.
+# 평가용 발행 이벤트와 보존할 원천 증거는 계속 Git에 기록한다.
+/research/evidence/*/run-status.json
+/research/evidence/*/live-check.json
+
 # impeccable-ignore-start
 # Ephemeral output, runtime state, and per-developer overrides.
 .impeccable/config.local.json
