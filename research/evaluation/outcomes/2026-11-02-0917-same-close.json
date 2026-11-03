@@ -59,5 +59,14 @@
       "status": "unverifiable"
     }
   ],
-  "hypothesisTests": []
+  "hypothesisTests": [],
+  "postForecastPathStatus": "missing",
+  "postForecastPathMissingReason": "보존된 원천은 일별 OHLC로 발행 이후 분봉 경로를 입증하지 못함. 전일 전체 고저를 발행후 경로로 대체하지 않음.",
+  "postForecastPathMissingEvidence": {
+    "sourceStatus": "incomplete",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1",
+    "asOf": "2026-11-02T15:30:00+09:00",
+    "fetchedAt": "2026-11-03T07:58:38+09:00",
+    "rawHash": "7ccb5ac2b5f4e4d4ee3b952246eee49ee5cda9720a2188fd6ec80dd623f982b0"
+  }
 }
