@@ -6,3 +6,4 @@
 - 전일 기본범위 실패·약세범위 종가. 조건수급/발행후경로 미검증.
 - 다음 미국 고용11/6 22:30 KST. reports/2026-11-04.md.
 - 대시보드 assets/data/market-dashboard-20261104-0916.json, 전망 research/evaluation/forecasts/2026-11-04-0916-same-close.json.
+- 최초 공개 Amplify722 2026-11-04T09:17:36.591000+09:00 · 콘텐츠 d8747c6. 양 도메인10자산 일치.

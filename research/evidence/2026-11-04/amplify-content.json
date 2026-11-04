@@ -1,0 +1,10 @@
+{
+    "jobArn": "arn:aws:amplify:us-east-1:514670561185:apps/d2pg7r2qjjb9u9/branches/main/jobs/0000000722",
+    "jobId": "722",
+    "commitId": "d8747c6685dc66fb844c1fb0194fbf17fe5734b1",
+    "commitMessage": "Publish November 4 intraday KOSPI research",
+    "commitTime": "2026-11-04T09:16:28+09:00",
+    "startTime": "2026-11-04T09:16:37.297000+09:00",
+    "status": "SUCCEED",
+    "endTime": "2026-11-04T09:17:36.591000+09:00"
+}
