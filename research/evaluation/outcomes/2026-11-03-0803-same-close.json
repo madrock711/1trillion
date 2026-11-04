@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-11-03-0803-same-close",
+  "recordedAt": "2026-11-04T09:16:07+09:00",
+  "actualRef": "2026-11-03",
+  "realizedScenario": "bear",
+  "errorCodes": [
+    "cause_unverifiable"
+  ],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    },
+    {
+      "id": "bull-foreign",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    },
+    {
+      "id": "bull-program",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    },
+    {
+      "id": "base-floor",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    },
+    {
+      "id": "base-cap",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    },
+    {
+      "id": "bear-price",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    },
+    {
+      "id": "bear-foreign",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    },
+    {
+      "id": "bear-program",
+      "status": "unavailable",
+      "reason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "semiconductor",
+      "status": "unverifiable"
+    },
+    {
+      "id": "memory",
+      "status": "unverifiable"
+    }
+  ],
+  "hypothesisTests": [],
+  "postForecastPathStatus": "missing",
+  "postForecastPathMissingReason": "정확15:20 수급앵커·발행후 분봉경로 미확보; 투자자 합계와 원천 간 차이로 최종 묶음 보류",
+  "postForecastPathMissingEvidence": {
+    "sourceStatus": "incomplete",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1",
+    "asOf": "2026-11-03T15:30:00+09:00",
+    "fetchedAt": "2026-11-04T09:16:07+09:00",
+    "rawHash": "92d2289b66b02f42b41d162b26f9892e05bdba972eb99705c4dd5211d0a57dde"
+  }
+}

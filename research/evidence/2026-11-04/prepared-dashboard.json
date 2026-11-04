@@ -1,0 +1,276 @@
+{
+  "schemaVersion": 1,
+  "snapshotId": "20261103-0803",
+  "generatedAt": "2026-11-03T08:03:54+09:00",
+  "asOf": "2026-11-03T08:03:54+09:00",
+  "asOfDisplay": "2026-11-03T08:03:54+09:00",
+  "marketState": "한국 장중",
+  "sourceLabel": "미국 11월 3일 정규장 · 한국 11월 4일 장중",
+  "latestArticle": {
+    "title": "AMD 실적과 미국 반도체 반등…코스피는 5,800선 안착 시험",
+    "href": "market-2026-11-04.html"
+  },
+  "headline": "AMD 실적과 미국 반도체 반등…코스피는 5,800선 안착 시험",
+  "summary": "AMD의 데이터센터 성장과 미국 반도체 반등에 코스피가 상승 출발했습니다. 5,800선 지지와 외국인·프로그램 수급이 반등의 지속성을 가릅니다.",
+  "markets": [
+    {
+      "id": "KOSPI",
+      "label": "KOSPI",
+      "symbol": "K",
+      "value": 5816.39,
+      "changePercent": 2.97,
+      "asOf": "2026-11-03T15:30:00+09:00",
+      "asOfLabel": "11월 3일 정규장 종가",
+      "stateLabel": "종가",
+      "open": 5786.13,
+      "high": 5824.97,
+      "low": 5773.64,
+      "previousClose": 5859.08,
+      "flows": []
+    },
+    {
+      "id": "KOSDAQ",
+      "label": "KOSDAQ",
+      "symbol": "Q",
+      "value": null,
+      "changePercent": null,
+      "asOf": "2026-11-03T15:30:00+09:00",
+      "asOfLabel": "11월 3일 정규장 종가",
+      "stateLabel": "종가",
+      "open": null,
+      "high": null,
+      "low": null,
+      "previousClose": null,
+      "flows": []
+    }
+  ],
+  "stance": {
+    "label": "실적 반등의 지속성",
+    "attack": 20,
+    "wait": 50,
+    "defense": 30,
+    "note": "AMD 실적과 반도체 반등 뒤 국내 수급을 확인합니다."
+  },
+  "checkpoints": [],
+  "changes": [
+    {
+      "label": "KOSPI 전일",
+      "before": "5,859.08",
+      "after": "5,648.79",
+      "meaning": "11월 3일 3.59% 하락했습니다."
+    }
+  ],
+  "factors": [
+    {
+      "label": "미국 반도체",
+      "metric": "SOXX +2.50%",
+      "detail": "11월 3일 정규장",
+      "tone": "warning"
+    },
+    {
+      "label": "AMD 매출",
+      "metric": "133.77억달러 · +45%",
+      "detail": "공식 4분기 실적",
+      "tone": "positive"
+    }
+  ],
+  "flows": {
+    "program": {
+      "arbitrage": null,
+      "nonArbitrage": null,
+      "total": null,
+      "unit": "억원",
+      "asOfLabel": "확정 묶음 미확인"
+    },
+    "kospi200FuturesForeign": null,
+    "futuresUnit": "억원",
+    "futuresAsOfLabel": "미확인"
+  },
+  "memory": [
+    {
+      "label": "DDR5 16Gb",
+      "value": "$61.50",
+      "change": "11/3 보합"
+    },
+    {
+      "label": "DDR4 16Gb",
+      "value": "$82.719",
+      "change": "11/3 보합"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "bull",
+      "label": "강세 · 25%",
+      "range": "KOSPI 5,900 초과~6,050",
+      "summary": "반도체 가격과 수급의 동행",
+      "conditions": [
+        "5,900 초과",
+        "외국인 순매수",
+        "프로그램 순매수"
+      ],
+      "invalidation": "5,900 재이탈"
+    },
+    {
+      "id": "base",
+      "label": "기본 · 50%",
+      "range": "KOSPI 5,700~5,900",
+      "summary": "반도체 가격과 수급의 동행",
+      "conditions": [
+        "5,700 이상",
+        "5,900 이하"
+      ],
+      "invalidation": "범위 이탈"
+    },
+    {
+      "id": "bear",
+      "label": "약세 · 25%",
+      "range": "KOSPI 5,450~5,700 미만",
+      "summary": "반도체 가격과 수급의 동행",
+      "conditions": [
+        "5,700 미만",
+        "외국인 순매도",
+        "프로그램 순매도"
+      ],
+      "invalidation": "5,700 회복"
+    }
+  ],
+  "strategyLevels": [
+    {
+      "asset": "KOSPI",
+      "support": "5,700",
+      "pivot": "5,800",
+      "resistance": "5,900"
+    },
+    {
+      "asset": "KODEX 레버리지",
+      "support": "73,565원",
+      "pivot": "74,000원",
+      "resistance": "75,090원"
+    }
+  ],
+  "events": [
+    {
+      "time": "11월 6일 22:30 KST",
+      "name": "미국 고용보고서",
+      "path": "금리·성장주"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "support",
+      "label": "5,700선 지지와 5,900선 회복"
+    },
+    {
+      "id": "flow",
+      "label": "기관 매수 지속과 외국인·프로그램 동행"
+    }
+  ],
+  "technical": {
+    "note": "11월 4일 장중 분석 기준선입니다.",
+    "instruments": [
+      {
+        "id": "KOSPI",
+        "label": "KOSPI",
+        "unit": "pt",
+        "asOf": "2026-11-03T15:30:00+09:00",
+        "asOfLabel": "11월 3일 종가",
+        "points": [
+          {
+            "label": "시가",
+            "value": 5786.13
+          },
+          {
+            "label": "고가",
+            "value": 5824.97
+          },
+          {
+            "label": "저가",
+            "value": 5773.64
+          },
+          {
+            "label": "종가",
+            "value": 5816.39
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 5700
+          },
+          {
+            "label": "반등 기준",
+            "value": 5648.79
+          },
+          {
+            "label": "저항",
+            "value": 5900
+          }
+        ],
+        "interpretation": "전일 반등의 지지력과 반도체 수급을 살펴봅니다."
+      },
+      {
+        "id": "KODEX",
+        "label": "KODEX 레버리지",
+        "unit": "원",
+        "asOf": "2026-11-03T15:30:00+09:00",
+        "asOfLabel": "11월 3일 종가",
+        "points": [
+          {
+            "label": "시가",
+            "value": 73605.0
+          },
+          {
+            "label": "고가",
+            "value": 75090.0
+          },
+          {
+            "label": "저가",
+            "value": 73565.0
+          },
+          {
+            "label": "종가",
+            "value": 74890.0
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 73565
+          },
+          {
+            "label": "반등 기준",
+            "value": 74000
+          },
+          {
+            "label": "저항",
+            "value": 75090
+          }
+        ],
+        "interpretation": "전일 반등의 지지력과 반도체 수급을 살펴봅니다."
+      }
+    ]
+  },
+  "sources": [
+    {
+      "label": "AMD 실적",
+      "href": "https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/"
+    },
+    {
+      "label": "DRAM 현물",
+      "href": "https://www.trendforce.com/price/dram/dram_spot"
+    },
+    {
+      "label": "미국 시세",
+      "href": "https://finance.yahoo.com/quote/SOXX/"
+    },
+    {
+      "label": "BLS 일정",
+      "href": "https://www.bls.gov/schedule/2026/11_sched.htm"
+    },
+    {
+      "label": "금리차",
+      "href": "https://fred.stlouisfed.org/series/T10Y2Y"
+    }
+  ]
+}
