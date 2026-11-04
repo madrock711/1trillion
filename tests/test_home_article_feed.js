@@ -122,3 +122,12 @@ for (const pathname of ['', 'articles/', 'articles/market.html']) {
 }
 
 console.log('home article feed: ok');
+
+// Every market card must retain the image belonging to its own article.
+for (const card of fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8').matchAll(/<article class="article-card home-article-card"[^>]*>[\s\S]*?<\/article>/g)) {
+    const href = card[0].match(/href="(articles\/market-\d{4}-\d{2}-\d{2}\.html)"/);
+    if (!href) continue;
+    const source = fs.readFileSync(path.join(__dirname, '..', href[1]), 'utf8');
+    const expected = source.match(/<meta property="og:image" content="([^"]+)"/)[1].replace('https://www.hpmplab.com/', '');
+    assert.ok(card[0].includes('src="' + expected + '"'), href[1] + ': card image must match article');
+}
