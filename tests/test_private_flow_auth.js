@@ -6,6 +6,14 @@ const vm = require('node:vm');
 const source = fs.readFileSync(path.join(__dirname, '../assets/market-dashboard.js'), 'utf8');
 const configSource = fs.readFileSync(path.join(__dirname, '../assets/market-private-config.js'), 'utf8');
 const html = fs.readFileSync(path.join(__dirname, '../articles/market.html'), 'utf8');
+const headerHtml = html.slice(html.indexOf('<header>'), html.indexOf('</header>'));
+assert.match(headerHtml, /id="kodex-private-auth"/, 'account control belongs in the page header');
+assert.match(headerHtml, /id="kodex-private-auth-status"[^>]*role="status"[^>]*aria-live="polite"/);
+assert.equal((html.match(/id="kodex-private-auth"/g) || []).length, 1, 'account controls must not be duplicated');
+assert(!html.slice(html.indexOf('id="kodex-private-flow-panel"'), html.indexOf('id="kodex-history-chart"')).includes('id="kodex-private-auth"'),
+    'the account control must no longer be nested in the chart');
+assert(source.lastIndexOf('    bindPrivateAuth();') < source.lastIndexOf("    fetchJson(root.getAttribute('data-dashboard-source'))"),
+    'header authentication must initialize before market-data fetch');
 const loadedConfig = { window: {} };
 vm.runInNewContext(configSource, loadedConfig);
 assert.equal(loadedConfig.window.YEONMA_PRIVATE_AUTH.clientId, '343043233969-95mv3utlrbafcj1673dpl33ont9mh2j9.apps.googleusercontent.com');

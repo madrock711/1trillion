@@ -30,7 +30,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260913-1">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20261104-auth-01">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20261104-auth-04">
     <link rel="stylesheet" href="../assets/technical-workbench.css?v=20261013-01">
     <script type="application/ld+json">{
   "@context": "https://schema.org",
@@ -619,7 +619,7 @@
     <script defer src="../assets/market-live-data.js?v=20261014-01"></script>
     <script defer src="../assets/technical-analysis-engine.js?v=20261013-02"></script>
     <script defer src="../assets/market-private-config.js?v=20261104-02"></script>
-    <script defer src="../assets/market-dashboard.js?v=20261104-auth-03"></script>
+    <script defer src="../assets/market-dashboard.js?v=20261104-auth-04"></script>
     <script defer src="../assets/technical-workbench.js?v=20261014-01"></script>
 </head>
 <body>
@@ -636,7 +636,13 @@
                     <a href="../app.html">도구</a>
                     <a href="market.html" aria-current="page">시황</a>
                 </nav>
+                <div id="kodex-private-auth" class="market-header-auth" hidden>
+                    <button type="button" id="kodex-private-signin">구글 로그인</button>
+                    <div id="kodex-google-signin" hidden></div>
+                    <button type="button" id="kodex-private-signout" hidden>로그아웃</button>
+                </div>
             </div>
+            <p class="market-header-auth-status" id="kodex-private-auth-status" role="status" aria-live="polite"></p>
         </div>
     </header>
 
@@ -1404,12 +1410,6 @@
                         <h3 id="kodex-history-title">KODEX 레버리지</h3>
                     </div>
                     <div id="kodex-private-flow-panel" hidden>
-                    <div id="kodex-private-auth" class="kodex-private-auth" hidden>
-                        <button type="button" id="kodex-private-signin">구글 로그인</button>
-                        <div id="kodex-google-signin" hidden></div>
-                        <button type="button" id="kodex-private-signout" hidden>로그아웃</button>
-                        <p id="kodex-private-auth-status" role="status" aria-live="polite"></p>
-                    </div>
                     <div id="kodex-private-flow-content">
                     <div class="kodex-flow-controls" role="group" aria-label="코스피 투자자별 수급 겹쳐보기">
                         <span>코스피 투자자</span>

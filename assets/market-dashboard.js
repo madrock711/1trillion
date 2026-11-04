@@ -3824,7 +3824,7 @@
         if (signIn) { signIn.hidden = false; signIn.disabled = false; }
         if (signOut) signOut.hidden = true;
         if (googleButton) googleButton.hidden = true;
-        privateAuthMessage(message || '개인 수급을 보려면 구글 계정으로 로그인하세요.');
+        privateAuthMessage(message || '');
     }
 
     function validPrivateFlowPayload(payload) {
@@ -3916,8 +3916,8 @@
                 googleButton.textContent = '';
                 googleButton.hidden = false;
                 signIn.hidden = true;
-                window.google.accounts.id.renderButton(googleButton, { theme: 'outline', size: 'large', text: 'signin_with', locale: 'ko' });
-                privateAuthMessage('아래 구글 로그인 버튼을 눌러 계정을 선택하세요.');
+                window.google.accounts.id.renderButton(googleButton, { type: 'icon', shape: 'circle', theme: 'outline', size: 'large', locale: 'ko' });
+                privateAuthMessage('구글 아이콘을 눌러 계정을 선택하세요.');
             }
             function fail() {
                 signIn.disabled = false;
@@ -5555,6 +5555,9 @@
             });
         });
     }
+
+    // The account control belongs to the header, independent of market-data loading.
+    bindPrivateAuth();
 
     fetchJson(root.getAttribute('data-dashboard-source'))
         .then(function (result) {
