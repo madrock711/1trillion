@@ -1,0 +1,84 @@
+{
+  "checkedAt": "2026-11-05T08:38:47.774326+09:00",
+  "label": "resolved",
+  "checks": {
+    "git-remote": {
+      "exitCode": 0,
+      "output": "0dd1dffba69db1568c6e000e8917d4dc78973a15\trefs/heads/main",
+      "error": "",
+      "elapsed": 0.74
+    },
+    "node": {
+      "exitCode": 0,
+      "output": "v24.14.0",
+      "error": "",
+      "elapsed": 0.16
+    },
+    "bash": {
+      "exitCode": 0,
+      "output": "GNU bash, version 5.2.26(1)-release (x86_64-pc-msys)\nCopyright (C) 2022 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\nThis is free software; you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.",
+      "error": "",
+      "elapsed": 0.16
+    },
+    "aws-auth": {
+      "exitCode": 0,
+      "output": "{\"Account\": \"514670561185\"}",
+      "error": "",
+      "elapsed": 2.23
+    },
+    "amplify": {
+      "exitCode": 0,
+      "output": "[{\"jobId\": \"729\", \"commitId\": \"0dd1dffba69db1568c6e000e8917d4dc78973a15\", \"status\": \"SUCCEED\", \"endTime\": \"2026-11-05T08:23:24.784000+09:00\"}, {\"jobId\": \"728\", \"commitId\": \"4b5d495121e54d9bbb0b5bba067530ee173d217f\", \"status\": \"SUCCEED\", \"endTime\": \"2026-11-05T00:32:45.514000+09:00\"}, {\"jobId\": \"727\", \"commitId\": \"a0378ef3ec30dee91e6b28ddf90f4877b50a5355\", \"status\": \"SUCCEED\", \"endTime\": \"2026-11-04T12:56:39.046000+09:00\"}, {\"jobId\": \"726\", \"commitId\": \"7a4bc0ded8c26468d3d14e6fe05ee380630ab4f3\", \"status\": \"SUCCEED\", \"endTime\": \"2026-11-04T12:46:50.543000+09:00\"}, {\"jobId\": \"725\", \"commitId\": \"75c47dff356f04ad7823ee2afa5d7b9849204b01\", \"status\": \"SUCCEED\", \"endTime\": \"2026-11-04T09:23:14.509000+09:00\"}]",
+      "error": "",
+      "elapsed": 2.21
+    },
+    "naver": {
+      "status": 200,
+      "bytes": 3203,
+      "url": "https://m.stock.naver.com/api/index/KOSPI/basic",
+      "marketStatus": "PREOPEN",
+      "localTradedAt": "2026-11-05T08:38:33+09:00",
+      "elapsed": 0.21
+    },
+    "yahoo": {
+      "status": 200,
+      "bytes": 1749,
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?range=5d&interval=1d",
+      "elapsed": 0.64
+    },
+    "fred": {
+      "error": "The read operation timed out",
+      "elapsed": 15.21
+    },
+    "treasury": {
+      "status": 200,
+      "bytes": 1357817,
+      "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value=2026",
+      "elapsed": 1.1
+    },
+    "memory": {
+      "status": 200,
+      "bytes": 177671,
+      "url": "https://www.trendforce.com/price/dram/dram_spot",
+      "elapsed": 0.47
+    },
+    "live-custom": {
+      "status": 200,
+      "bytes": 142378,
+      "url": "https://www.hpmplab.com/articles/market.html",
+      "elapsed": 0.1
+    },
+    "live-amplify": {
+      "status": 200,
+      "bytes": 142378,
+      "url": "https://main.d2pg7r2qjjb9u9.amplifyapp.com/articles/market.html",
+      "elapsed": 0.09
+    },
+    "python-modules": {
+      "matplotlib": false,
+      "numpy": true,
+      "PIL": true,
+      "requests": true
+    }
+  }
+}

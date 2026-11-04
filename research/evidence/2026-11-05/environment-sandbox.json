@@ -1,0 +1,70 @@
+{
+  "checkedAt": "2026-11-05T08:33:04.968428+09:00",
+  "label": "sandbox",
+  "checks": {
+    "git-remote": {
+      "exitCode": 128,
+      "output": "",
+      "error": "fatal: unable to access 'https://github.com/madrock711/1trillion.git/': getaddrinfo() thread failed to start",
+      "elapsed": 0.24
+    },
+    "node": {
+      "exitCode": 0,
+      "output": "v24.14.0",
+      "error": "",
+      "elapsed": 0.24
+    },
+    "bash": {
+      "exitCode": 1,
+      "output": "a�8���\u0000� \u0000p���\u0018��ŵ�Ȳ�.\u0000 \u0000\n\u0000\n\u0000$�X� \u0000T�ܴ:\u0000 \u0000B\u0000a\u0000s\u0000h\u0000/\u0000E\u0000_\u0000A\u0000C\u0000C\u0000E\u0000S\u0000S\u0000D\u0000E\u0000N\u0000I\u0000E\u0000D\u0000\n\u0000\n\u0000",
+      "error": "",
+      "elapsed": 0.24
+    },
+    "aws-auth": {
+      "exitCode": 255,
+      "output": "",
+      "error": "aws: [ERROR]: Could not connect to the endpoint URL: \"https://sts.us-east-1.amazonaws.com/\"",
+      "elapsed": 4.7
+    },
+    "amplify": {
+      "exitCode": 255,
+      "output": "",
+      "error": "aws: [ERROR]: Could not connect to the endpoint URL: \"https://amplify.us-east-1.amazonaws.com/apps/d2pg7r2qjjb9u9/branches/main/jobs?maxResults=5\"",
+      "elapsed": 3.44
+    },
+    "naver": {
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "elapsed": 0.23
+    },
+    "yahoo": {
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "elapsed": 0.23
+    },
+    "fred": {
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "elapsed": 0.23
+    },
+    "treasury": {
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "elapsed": 0.23
+    },
+    "memory": {
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "elapsed": 0.23
+    },
+    "live-custom": {
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "elapsed": 0.23
+    },
+    "live-amplify": {
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "elapsed": 0.23
+    },
+    "python-modules": {
+      "matplotlib": false,
+      "numpy": true,
+      "PIL": true,
+      "requests": true
+    }
+  }
+}
