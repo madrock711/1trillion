@@ -1,0 +1,109 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Yeonma NH bootstrap: dedicated runtime and CloudFormation roles, private API and versioned artifact bucket. Review the accompanying guide before use.",
+  "Resources": {
+    "ArtifactBucket": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Retain",
+      "Properties": {
+        "BucketName": {"Fn::Sub": "yeonma-nh-artifacts-${AWS::AccountId}-${AWS::Region}"},
+        "PublicAccessBlockConfiguration": {"BlockPublicAcls": true, "BlockPublicPolicy": true, "IgnorePublicAcls": true, "RestrictPublicBuckets": true},
+        "OwnershipControls": {"Rules": [{"ObjectOwnership": "BucketOwnerEnforced"}]},
+        "BucketEncryption": {"ServerSideEncryptionConfiguration": [{"ServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}]},
+        "VersioningConfiguration": {"Status": "Enabled"}
+      }
+    },
+    "PrivateApi": {
+      "Type": "AWS::ApiGatewayV2::Api",
+      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Retain",
+      "Properties": {
+        "Name": "yeonma-nh-private",
+        "ProtocolType": "HTTP",
+        "CorsConfiguration": {"AllowOrigins": ["https://www.hpmplab.com"], "AllowMethods": ["GET"], "AllowHeaders": ["authorization"], "MaxAge": 600}
+      }
+    },
+    "RuntimeRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "yeonma-nh-runtime",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{"Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]
+        },
+        "Policies": [{
+          "PolicyName": "yeonma-nh-runtime-only",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {"Effect": "Allow", "Action": "ssm:GetParameter", "Resource": {"Fn::Sub": "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/yeonma/private/nhplug"}},
+              {"Effect": "Allow", "Action": ["dynamodb:GetItem", "dynamodb:UpdateItem"], "Resource": {"Fn::Sub": "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/yeonma-nh-token"}},
+              {"Effect": "Allow", "Action": "kms:Decrypt", "Resource": "*", "Condition": {"StringEquals": {"kms:ViaService": {"Fn::Sub": "ssm.${AWS::Region}.${AWS::URLSuffix}"}, "kms:EncryptionContext:PARAMETER_ARN": {"Fn::Sub": "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/yeonma/private/nhplug"}}}},
+              {"Effect": "Allow", "Action": ["logs:CreateLogStream", "logs:PutLogEvents"], "Resource": {"Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/yeonma-nh-private:log-stream:*"}}
+            ]
+          }
+        }]
+      }
+    },
+    "CloudFormationRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "yeonma-nh-cfn",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{"Effect": "Allow", "Principal": {"Service": "cloudformation.amazonaws.com"}, "Action": "sts:AssumeRole"}]
+        },
+        "Policies": [{
+          "PolicyName": "yeonma-nh-stack-resources",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {"Effect": "Allow", "Action": ["lambda:CreateFunction", "lambda:GetFunction", "lambda:GetFunctionConfiguration", "lambda:UpdateFunctionCode", "lambda:UpdateFunctionConfiguration", "lambda:DeleteFunction", "lambda:PutFunctionConcurrency", "lambda:DeleteFunctionConcurrency", "lambda:GetFunctionConcurrency", "lambda:GetPolicy", "lambda:RemovePermission", "lambda:TagResource", "lambda:UntagResource", "lambda:ListTags"], "Resource": {"Fn::Sub": "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:yeonma-nh-private"}},
+              {"Effect": "Allow", "Action": "lambda:AddPermission", "Resource": {"Fn::Sub": "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:yeonma-nh-private"}, "Condition": {"StringEquals": {"lambda:Principal": "apigateway.amazonaws.com"}}},
+              {"Effect": "Allow", "Action": "iam:PassRole", "Resource": {"Fn::GetAtt": ["RuntimeRole", "Arn"]}, "Condition": {"StringEquals": {"iam:PassedToService": "lambda.amazonaws.com"}}},
+              {"Effect": "Allow", "Action": ["logs:CreateLogGroup", "logs:DeleteLogGroup", "logs:PutRetentionPolicy", "logs:DeleteRetentionPolicy", "logs:TagResource", "logs:UntagResource", "logs:ListTagsForResource"], "Resource": [{"Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/yeonma-nh-private"}, {"Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/yeonma-nh-private:*"}]},
+              {"Effect": "Allow", "Action": "logs:DescribeLogGroups", "Resource": "*", "Condition": {"StringEquals": {"aws:RequestedRegion": {"Ref": "AWS::Region"}}}},
+              {"Effect": "Allow", "Action": ["dynamodb:CreateTable", "dynamodb:DescribeTable", "dynamodb:UpdateTable", "dynamodb:DeleteTable", "dynamodb:TagResource", "dynamodb:UntagResource", "dynamodb:ListTagsOfResource", "dynamodb:DescribeContinuousBackups", "dynamodb:UpdateContinuousBackups", "dynamodb:DescribeTimeToLive", "dynamodb:UpdateTimeToLive"], "Resource": {"Fn::Sub": "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/yeonma-nh-token"}},
+              {"Effect": "Allow", "Action": ["apigateway:GET", "apigateway:POST", "apigateway:PUT", "apigateway:PATCH", "apigateway:DELETE"], "Resource": [{"Fn::Sub": "arn:${AWS::Partition}:apigateway:${AWS::Region}::/apis/${PrivateApi}"}, {"Fn::Sub": "arn:${AWS::Partition}:apigateway:${AWS::Region}::/apis/${PrivateApi}/*"}]},
+              {"Sid": "PrivateApiStageTagOnCreate", "Effect": "Allow", "Action": "apigateway:TagResource", "Resource": {"Fn::Sub": "arn:${AWS::Partition}:apigateway:${AWS::Region}::/apis/${PrivateApi}/stages"}, "Condition": {"StringEquals": {"aws:RequestedRegion": {"Ref": "AWS::Region"}}}},
+              {"Sid": "PrivateApiStageUntag", "Effect": "Allow", "Action": "apigateway:UntagResource", "Resource": {"Fn::Sub": "arn:${AWS::Partition}:apigateway:${AWS::Region}::/apis/${PrivateApi}/stages/*"}, "Condition": {"StringEquals": {"aws:RequestedRegion": {"Ref": "AWS::Region"}}}},
+              {"Sid": "PrivateApiStageTagsEndpoint", "Effect": "Allow", "Action": ["apigateway:GET", "apigateway:POST", "apigateway:PUT", "apigateway:PATCH", "apigateway:DELETE"], "Resource": [{"Fn::Sub": "arn:${AWS::Partition}:apigateway:${AWS::Region}::/tags/arn%3A${AWS::Partition}%3Aapigateway%3A${AWS::Region}%3A%3A%2Fapis%2F${PrivateApi}%2Fstages"}, {"Fn::Sub": "arn:${AWS::Partition}:apigateway:${AWS::Region}::/tags/arn%3A${AWS::Partition}%3Aapigateway%3A${AWS::Region}%3A%3A%2Fapis%2F${PrivateApi}%2Fstages%2F*"}], "Condition": {"StringEquals": {"aws:RequestedRegion": {"Ref": "AWS::Region"}}}},
+              {"Effect": "Allow", "Action": ["s3:GetObject", "s3:GetObjectVersion"], "Resource": {"Fn::Sub": "arn:${AWS::Partition}:s3:::yeonma-nh-artifacts-${AWS::AccountId}-${AWS::Region}/deploy/*"}}
+            ]
+          }
+        }]
+      }
+    },
+    "CliDeploymentPolicy": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "ManagedPolicyName": "yeonma-nh-deployment",
+        "Users": ["codex-amplify-manager"],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {"Effect": "Allow", "Action": "cloudformation:CreateChangeSet", "Resource": {"Fn::Sub": "arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/yeonma-nh-private/*"}, "Condition": {"StringEquals": {"cloudformation:RoleARN": {"Fn::GetAtt": ["CloudFormationRole", "Arn"]}}}},
+            {"Effect": "Allow", "Action": ["cloudformation:DescribeChangeSet", "cloudformation:ExecuteChangeSet", "cloudformation:DeleteChangeSet", "cloudformation:ListChangeSets", "cloudformation:DescribeStacks", "cloudformation:DescribeStackEvents", "cloudformation:DescribeStackResources", "cloudformation:DescribeStackResource", "cloudformation:ListStackResources", "cloudformation:GetTemplate"], "Resource": {"Fn::Sub": "arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/yeonma-nh-private/*"}},
+            {"Effect": "Allow", "Action": "cloudformation:DescribeStacks", "Resource": {"Fn::Sub": "arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/yeonma-nh-bootstrap/*"}},
+            {"Effect": "Allow", "Action": "cloudformation:ValidateTemplate", "Resource": "*", "Condition": {"StringEquals": {"aws:RequestedRegion": {"Ref": "AWS::Region"}}}},
+            {"Effect": "Allow", "Action": "iam:PassRole", "Resource": {"Fn::GetAtt": ["CloudFormationRole", "Arn"]}, "Condition": {"StringEquals": {"iam:PassedToService": "cloudformation.amazonaws.com"}}},
+            {"Effect": "Allow", "Action": "apigateway:GET", "Resource": [{"Fn::Sub": "arn:${AWS::Partition}:apigateway:${AWS::Region}::/apis/${PrivateApi}"}, {"Fn::Sub": "arn:${AWS::Partition}:apigateway:${AWS::Region}::/apis/${PrivateApi}/*"}]},
+            {"Effect": "Allow", "Action": ["lambda:GetFunction", "lambda:GetFunctionConfiguration", "lambda:GetPolicy"], "Resource": {"Fn::Sub": "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:yeonma-nh-private"}},
+            {"Effect": "Allow", "Action": ["s3:PutObject", "s3:GetObject", "s3:GetObjectVersion"], "Resource": {"Fn::Sub": "arn:${AWS::Partition}:s3:::yeonma-nh-artifacts-${AWS::AccountId}-${AWS::Region}/deploy/*"}},
+            {"Effect": "Allow", "Action": "s3:GetBucketVersioning", "Resource": {"Fn::Sub": "arn:${AWS::Partition}:s3:::yeonma-nh-artifacts-${AWS::AccountId}-${AWS::Region}"}},
+            {"Effect": "Allow", "Action": "ssm:PutParameter", "Resource": {"Fn::Sub": "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/yeonma/private/nhplug"}},
+            {"Effect": "Allow", "Action": "kms:Encrypt", "Resource": "*", "Condition": {"StringEquals": {"kms:ViaService": {"Fn::Sub": "ssm.${AWS::Region}.${AWS::URLSuffix}"}, "kms:EncryptionContext:PARAMETER_ARN": {"Fn::Sub": "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/yeonma/private/nhplug"}}}},
+            {"Effect": "Allow", "Action": ["dynamodb:DescribeTable", "dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem"], "Resource": {"Fn::Sub": "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/yeonma-nh-token"}}
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "RuntimeRoleArn": {"Value": {"Fn::GetAtt": ["RuntimeRole", "Arn"]}},
+    "CloudFormationRoleArn": {"Value": {"Fn::GetAtt": ["CloudFormationRole", "Arn"]}},
+    "PrivateApiId": {"Value": {"Ref": "PrivateApi"}},
+    "ArtifactBucketName": {"Value": {"Ref": "ArtifactBucket"}}
+  }
+}

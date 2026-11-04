@@ -30,7 +30,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="../style.css?v=20260913-1">
-    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20261013-02">
+    <link rel="stylesheet" href="../assets/market-dashboard.css?v=20261104-auth-01">
     <link rel="stylesheet" href="../assets/technical-workbench.css?v=20261013-01">
     <script type="application/ld+json">{
   "@context": "https://schema.org",
@@ -618,7 +618,8 @@
     <script defer src="../analytics.js?v=20260731-1"></script>
     <script defer src="../assets/market-live-data.js?v=20261014-01"></script>
     <script defer src="../assets/technical-analysis-engine.js?v=20261013-02"></script>
-    <script defer src="../assets/market-dashboard.js?v=20261023-01"></script>
+    <script defer src="../assets/market-private-config.js?v=20261104-02"></script>
+    <script defer src="../assets/market-dashboard.js?v=20261104-auth-03"></script>
     <script defer src="../assets/technical-workbench.js?v=20261014-01"></script>
 </head>
 <body>
@@ -1401,6 +1402,27 @@
                     </div>
                     <div class="market-card-heading-row kodex-history-heading">
                         <h3 id="kodex-history-title">KODEX 레버리지</h3>
+                    </div>
+                    <div id="kodex-private-flow-panel" hidden>
+                    <div id="kodex-private-auth" class="kodex-private-auth" hidden>
+                        <button type="button" id="kodex-private-signin">구글 로그인</button>
+                        <div id="kodex-google-signin" hidden></div>
+                        <button type="button" id="kodex-private-signout" hidden>로그아웃</button>
+                        <p id="kodex-private-auth-status" role="status" aria-live="polite"></p>
+                    </div>
+                    <div id="kodex-private-flow-content">
+                    <div class="kodex-flow-controls" role="group" aria-label="코스피 투자자별 수급 겹쳐보기">
+                        <span>코스피 투자자</span>
+                        <button type="button" data-kodex-flow="off" aria-pressed="true">끄기</button>
+                        <button type="button" data-kodex-flow="amount" aria-pressed="false">금액</button>
+                        <button type="button" data-kodex-flow="quantity" aria-pressed="false">수량</button>
+                    </div>
+                    <p class="kodex-flow-status" id="kodex-flow-status" role="status">분봉에서 투자자별 자료를 겹쳐 볼 수 있습니다.</p>
+                    <div class="kodex-flow-legend" id="kodex-flow-legend" hidden aria-label="코스피 투자자별 순매수 범례">
+                        <span class="is-foreign">외국인</span><span class="is-personal">개인</span><span class="is-institution">기관</span><span id="kodex-flow-legend-unit">별도 축</span>
+                    </div>
+                    <p class="kodex-flow-raw" id="kodex-flow-raw" hidden></p>
+                    </div>
                     </div>
                     <div class="kodex-history-legend" aria-label="차트 범례">
                         <span class="is-cvd">누적 순압력 CVD</span>

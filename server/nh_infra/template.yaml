@@ -1,0 +1,144 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Yeonma private NH flow behind Google JWT authentication.
+
+Parameters:
+  GoogleClientId:
+    Type: String
+    AllowedPattern: '^[0-9]+-[a-z0-9]+\.apps\.googleusercontent\.com$'
+  OwnerGoogleSub:
+    Type: String
+    AllowedPattern: '^[0-9]{1,64}$'
+    NoEcho: true
+  ApiId:
+    Type: String
+    AllowedPattern: '^[a-z0-9]{10}$'
+  RuntimeRoleArn:
+    Type: String
+    AllowedPattern: '^arn:[A-Za-z0-9-]+:iam::[0-9]{12}:role/yeonma-nh-runtime$'
+  CodeBucket:
+    Type: String
+    AllowedPattern: '^yeonma-nh-artifacts-[0-9]{12}-[a-z0-9-]+$'
+  CodeKey:
+    Type: String
+    AllowedPattern: '^deploy/[A-Za-z0-9_.-]+\.zip$'
+  CodeObjectVersion:
+    Type: String
+    MinLength: 1
+
+Resources:
+  TokenTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: yeonma-nh-token
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      SSESpecification:
+        SSEEnabled: true
+
+  ReaderLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/yeonma-nh-private
+      RetentionInDays: 14
+
+  Reader:
+    Type: AWS::Lambda::Function
+    DependsOn: ReaderLogGroup
+    Properties:
+      FunctionName: yeonma-nh-private
+      Runtime: python3.12
+      Architectures: [x86_64]
+      Handler: handler.lambda_handler
+      Role: !Ref RuntimeRoleArn
+      Code:
+        S3Bucket: !Ref CodeBucket
+        S3Key: !Ref CodeKey
+        S3ObjectVersion: !Ref CodeObjectVersion
+      MemorySize: 256
+      Timeout: 25
+      ReservedConcurrentExecutions: 1
+      Environment:
+        Variables:
+          GOOGLE_CLIENT_ID: !Ref GoogleClientId
+          OWNER_GOOGLE_SUB: !Ref OwnerGoogleSub
+          OWNER_EMAIL: madrock711@gmail.com
+          SSM_PARAMETER_NAME: /yeonma/private/nhplug
+          TOKEN_TABLE_NAME: !Ref TokenTable
+          ALLOWED_ORIGIN: https://www.hpmplab.com
+
+  GoogleAuthorizer:
+    Type: AWS::ApiGatewayV2::Authorizer
+    Properties:
+      ApiId: !Ref ApiId
+      AuthorizerType: JWT
+      IdentitySource: ['$request.header.Authorization']
+      JwtConfiguration:
+        Audience: [!Ref GoogleClientId]
+        Issuer: https://accounts.google.com
+      Name: yeonma-google-id-token
+
+  ReaderIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ApiId
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !GetAtt Reader.Arn
+      PayloadFormatVersion: '2.0'
+      TimeoutInMillis: 29000
+
+  ReadFlow:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ApiId
+      RouteKey: GET /api/private/nh/flow
+      AuthorizationType: JWT
+      AuthorizerId: !Ref GoogleAuthorizer
+      Target: !Join ['/', ['integrations', !Ref ReaderIntegration]]
+
+  ReadSession:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ApiId
+      RouteKey: GET /api/private/nh/session
+      AuthorizationType: JWT
+      AuthorizerId: !Ref GoogleAuthorizer
+      Target: !Join ['/', ['integrations', !Ref ReaderIntegration]]
+
+  GatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref Reader
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiId}/*/GET/api/private/nh/flow'
+
+  SessionGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref Reader
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiId}/*/GET/api/private/nh/session'
+
+  LiveStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref ApiId
+      StageName: '$default'
+      AutoDeploy: true
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 4
+        ThrottlingRateLimit: 0.2
+
+Outputs:
+  FlowEndpoint:
+    Value: !Sub 'https://${ApiId}.execute-api.${AWS::Region}.${AWS::URLSuffix}/api/private/nh/flow'
+  SessionEndpoint:
+    Value: !Sub 'https://${ApiId}.execute-api.${AWS::Region}.${AWS::URLSuffix}/api/private/nh/session'

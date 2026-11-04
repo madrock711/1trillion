@@ -1,0 +1,2 @@
+# Experimental Python modules use the standard library. AWS clients must be
+# supplied separately by the eventual runtime integration.
