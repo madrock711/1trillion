@@ -12,6 +12,8 @@
 
 ## KOSPI·KODEX 리서치
 
+- 예약 발행은 `docs/MARKET_AUTOMATION_RELIABILITY.md`를 따른다. 시작과 종료 직전에 `python scripts/check_market_run.py --date YYYY-MM-DD`를 실행한다. exit 2의 `continue`는 남은 작업 진행 지시이며 종료·차단 사유가 아니다. 로컬 검사 통과와 원격 배포·라이브 검증은 구분한다.
+
 - “오늘의 리서치”, “KOSPI 전망”, “KODEX 리서치”, “메모리 수급 리서치” 요청에는 `.agents/skills/kospi-daily-research/SKILL.md`를 사용한다.
 - 실행할 때마다 `RESEARCH_SPEC.md`, `DATA_SOURCES.md`, `STATE.md`를 먼저 읽는다.
 - 이전 보고서의 숫자를 최신값처럼 재사용하지 않는다. 모든 시세·일정·뉴스는 실행 시점에 새로 검증한다.
