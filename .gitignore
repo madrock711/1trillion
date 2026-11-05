@@ -10,6 +10,8 @@ __pycache__/
 # 평가용 발행 이벤트와 보존할 원천 증거는 계속 Git에 기록한다.
 /research/evidence/*/run-status.json
 /research/evidence/*/live-check.json
+/research/evidence/*/pipeline-state.json
+/research/evidence/*/pipeline-state.tmp
 
 # impeccable-ignore-start
 # Ephemeral output, runtime state, and per-developer overrides.

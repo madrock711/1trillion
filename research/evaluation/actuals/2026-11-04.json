@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-11-04",
+  "bizdate": "20261104",
+  "fetchedAt": "2026-11-05T08:56:54+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 5786.13,
+    "high": 5828.13,
+    "low": 5421.72,
+    "close": 5683.8,
+    "asOf": "2026-11-04T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1",
+    "rawHash": "ca6941706912116bf9d77dfbea0a170f37a957f5c70c5d9ec4bff988a928c9a4"
+  },
+  "kodex": {
+    "open": 73605.0,
+    "high": 75205.0,
+    "low": 64115.0,
+    "close": 70500.0,
+    "asOf": "2026-11-04T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/stock/122630/price?pageSize=10&page=1",
+    "rawHash": "b9f3af16d36964001453ec8c02d3f065bc3e4861850f67467006b9e4560c6211",
+    "volume": 35301275
+  },
+  "closeSnapshotMissingReason": "조회시점은다음날장전이며전일최종수급묶음및발행후분봉경로의시각/상태정본을확보하지못함",
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-11-04T15:30:00+09:00",
+    "fetchedAt": "2026-11-05T08:56:54+09:00",
+    "missingReason": "조회시점은다음날장전이며전일최종수급묶음및발행후분봉경로의시각/상태정본을확보하지못함",
+    "rawHash": "81ec4e35e25eb0b21d87504a60961d54d466c035e2f3638d52e6cf8700de15c1"
+  }
+}

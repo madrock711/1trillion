@@ -1,0 +1,137 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AVGO?range=5d&interval=1d&includePrePost=true",
+  "fetchedAt": "2026-11-05T08:35:12.834093+09:00",
+  "httpStatus": 200,
+  "rawHash": "625a9b9630e3e335660eea3527f28e5076eb6274f1c497c1e114b18827e84a05",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "AVGO",
+            "exchangeName": "NMS",
+            "fullExchangeName": "NasdaqGS",
+            "instrumentType": "EQUITY",
+            "firstTradeDate": 1249565400,
+            "regularMarketTime": 1793826001,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -18000,
+            "timezone": "EST",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 325.48,
+            "regularMarketChangePercent": -2.002,
+            "fulldayPrice": 326.0,
+            "fulldayChange": -6.13,
+            "fulldayChangePercent": -1.846,
+            "fiftyTwoWeekHigh": 495.0,
+            "fiftyTwoWeekLow": 289.96,
+            "regularMarketDayHigh": 334.12,
+            "regularMarketDayLow": 321.74,
+            "regularMarketVolume": 23713562,
+            "longName": "Broadcom Inc.",
+            "shortName": "Broadcom Inc.",
+            "chartPreviousClose": 351.81,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EST",
+                "end": 1793802600,
+                "start": 1793782800,
+                "gmtoffset": -18000
+              },
+              "regular": {
+                "timezone": "EST",
+                "end": 1793826000,
+                "start": 1793802600,
+                "gmtoffset": -18000
+              },
+              "post": {
+                "timezone": "EST",
+                "end": 1793840400,
+                "start": 1793826000,
+                "gmtoffset": -18000
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1793280600,
+            1793367000,
+            1793629800,
+            1793716200,
+            1793802600
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "low": [
+                  338.79998779296875,
+                  319.29998779296875,
+                  321.8699951171875,
+                  326.6000061035156,
+                  321.739990234375
+                ],
+                "close": [
+                  345.0,
+                  326.0799865722656,
+                  322.2300109863281,
+                  332.1300048828125,
+                  325.4800109863281
+                ],
+                "high": [
+                  346.1499938964844,
+                  331.9800109863281,
+                  333.55999755859375,
+                  335.739990234375,
+                  334.1199951171875
+                ],
+                "open": [
+                  342.0,
+                  330.7200012207031,
+                  328.3699951171875,
+                  328.9700012207031,
+                  326.8550109863281
+                ],
+                "volume": [
+                  17052700,
+                  36511800,
+                  20326900,
+                  17274500,
+                  23713562
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  345.0,
+                  326.0799865722656,
+                  322.2300109863281,
+                  332.1300048828125,
+                  325.4800109863281
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  },
+  "status": "collected"
+}

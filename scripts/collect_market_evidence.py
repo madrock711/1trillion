@@ -31,7 +31,7 @@ def sources(final=False):
 
 def fetch_one(item, output):
     key, url = item
-    record = {"url": url, "fetchedAt": dt.datetime.now(TZ).isoformat()}
+    record = {"url": url, "requestedAt": dt.datetime.now(TZ).isoformat()}
     try:
         with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"}), timeout=25) as response:
             raw = response.read()
@@ -41,6 +41,7 @@ def fetch_one(item, output):
         record["status"] = "collected"
     except Exception as error:
         record.update(status="failed", error=f"{type(error).__name__}: {error}")
+    record["fetchedAt"] = dt.datetime.now(TZ).isoformat()
     (output / f"{key}.json").write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return key, {k: record[k] for k in ("status", "url", "fetchedAt", "error") if k in record}
 

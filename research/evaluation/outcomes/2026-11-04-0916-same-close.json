@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-11-04-0916-same-close",
+  "recordedAt": "2026-11-05T08:56:54+09:00",
+  "actualRef": "2026-11-04",
+  "realizedScenario": "bear",
+  "errorCodes": [
+    "cause_unverifiable"
+  ],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "unavailable",
+      "reason": "조회시점은다음날장전이며전일최종수급묶음및발행후분봉경로의시각/상태정본을확보하지못함"
+    },
+    {
+      "id": "bull-foreign",
+      "status": "unavailable",
+      "reason": "조회시점은다음날장전이며전일최종수급묶음및발행후분봉경로의시각/상태정본을확보하지못함"
+    },
+    {
+      "id": "bull-program",
+      "status": "unavailable",
+      "reason": "조회시점은다음날장전이며전일최종수급묶음및발행후분봉경로의시각/상태정본을확보하지못함"
+    },
+    {
+      "id": "base-floor",
+      "status": "unavailable",
+      "reason": "조회시점은다음날장전이며전일최종수급묶음및발행후분봉경로의시각/상태정본을확보하지못함"
+    },
+    {
+      "id": "base-cap",
+      "status": "unavailable",
+      "reason": "조회시점은다음날장전이며전일최종수급묶음및발행후분봉경로의시각/상태정본을확보하지못함"
+    },
+    {
+      "id": "bear-price",
+      "status": "unavailable",
+      "reason": "조회시점은다음날장전이며전일최종수급묶음및발행후분봉경로의시각/상태정본을확보하지못함"
+    },
+    {
+      "id": "bear-foreign",
+      "status": "unavailable",
+      "reason": "조회시점은다음날장전이며전일최종수급묶음및발행후분봉경로의시각/상태정본을확보하지못함"
+    },
+    {
+      "id": "bear-program",
+      "status": "unavailable",
+      "reason": "조회시점은다음날장전이며전일최종수급묶음및발행후분봉경로의시각/상태정본을확보하지못함"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "semiconductor",
+      "status": "unverifiable"
+    },
+    {
+      "id": "memory",
+      "status": "unverifiable"
+    }
+  ],
+  "hypothesisTests": [],
+  "postForecastPathStatus": "missing",
+  "postForecastPathMissingReason": "조회시점은다음날장전이며전일최종수급묶음및발행후분봉경로의시각/상태정본을확보하지못함",
+  "postForecastPathMissingEvidence": {
+    "sourceStatus": "incomplete",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1",
+    "asOf": "2026-11-04T15:30:00+09:00",
+    "fetchedAt": "2026-11-05T08:56:54+09:00",
+    "rawHash": "ca6941706912116bf9d77dfbea0a170f37a957f5c70c5d9ec4bff988a928c9a4"
+  }
+}

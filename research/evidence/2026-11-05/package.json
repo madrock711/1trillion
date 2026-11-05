@@ -1,0 +1,195 @@
+{
+  "date": "2026-11-05",
+  "previousSessionDate": "2026-11-04",
+  "title": "미국 증시는 올랐지만 반도체는 하락…코스피는 메모리주 매물 부담",
+  "summary": "미국 기술주 반등 속에서도 Micron은 7% 하락했고 DRAM 현물도 내렸습니다. 유가·달러 약세의 완충 효과와 국내 반도체 매물을 함께 봅니다.",
+  "image": "assets/images/articles/market-2026-11-05-technology-watergate-1200x630.png",
+  "imageAlt": "밝은 광장의 넓은 청색 수로와 좁은 산호색 수문",
+  "bodyPath": "research/evidence/2026-11-05/article-body.html",
+  "reportTemplate": "research/evidence/2026-11-05/report-template.md",
+  "dashboardPath": "research/evidence/2026-11-05/dashboard-input.json",
+  "notesPath": "research/notes/2026-11-05.md",
+  "scenarios": {
+    "bull": {
+      "low": 5750,
+      "high": 5900,
+      "probability": 0.15
+    },
+    "base": {
+      "low": 5500,
+      "high": 5750,
+      "probability": 0.5
+    },
+    "bear": {
+      "low": 5250,
+      "high": 5500,
+      "probability": 0.35
+    }
+  },
+  "pathEnvelope": {
+    "low": 5200,
+    "high": 6000,
+    "coverage": 0.9
+  },
+  "posture": {
+    "attack": 5,
+    "wait": 40,
+    "defense": 55
+  },
+  "marketRegime": "risk_off",
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-11-05T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 5750,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-price"
+        },
+        {
+          "id": "bull-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-foreign"
+        },
+        {
+          "id": "bull-program",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-program"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-11-05T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-floor",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 5500,
+          "source": "Naver Finance KOSPI",
+          "description": "base-floor"
+        },
+        {
+          "id": "base-cap",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 5750,
+          "source": "Naver Finance KOSPI",
+          "description": "base-cap"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-11-05T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 5500,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-price"
+        },
+        {
+          "id": "bear-foreign",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-foreign"
+        },
+        {
+          "id": "bear-program",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-program"
+        }
+      ]
+    }
+  },
+  "drivers": [
+    {
+      "id": "semiconductor",
+      "rank": 1,
+      "claim": "미국 지수 상승과 반도체·메모리 하락의 분화",
+      "validationMetric": "미국 반도체·국내 반도체·KOSPI"
+    },
+    {
+      "id": "memory",
+      "rank": 2,
+      "claim": "범용 DRAM 현물 하락과 국내 수급 부담",
+      "validationMetric": "TrendForce·외국인·프로그램"
+    }
+  ],
+  "stateText": "# KOSPI·KODEX 리서치 상태\n- 전일 KOSPI5683.80(+0.62%), KODEX70500(+0.58%).\n- 미국 지수상승/반도체하락분화·Micron-7%·DRAM현물하락, 유가/달러약세완충.\n- 기본5500~5750(50%),강세5750초과~5900(15%),약세5250~5500미만(35%),대응5/40/55.\n- 전일기본실패·약세종가범위, 수급조건/발행후경로미검증.\n- 다음11/5 22:30생산성·11/6 22:30고용. 전일평가는research/evaluation/outcomes/2026-11-04-0916-same-close.json.\n- 낮은순위제외:확정청산/증자근거없음·NAND공개표시차·AMD전일반영분중복제외.",
+  "charts": [
+    "charts/us_yield_spreads_long_term_2026-11-05.png",
+    "charts/us_yield_spreads_90d_2026-11-05.png"
+  ],
+  "files": [
+    ".gitignore",
+    "AGENTS.md",
+    "scripts/publish_market_research.py",
+    "scripts/collect_market_evidence.py",
+    "tests/test_market_publication_pipeline.py",
+    "docs/MARKET_AUTOMATION_RELIABILITY.md",
+    "docs/현재작업중.md",
+    "assets/images/articles/market-2026-11-05-technology-watergate-1200x630.png",
+    "charts/us_yield_spreads_long_term_2026-11-05.png",
+    "charts/us_yield_spreads_90d_2026-11-05.png",
+    "research/notes/2026-11-05.md",
+    "research/evaluation/actuals/2026-11-04.json",
+    "research/evaluation/outcomes/2026-11-04-0916-same-close.json",
+    "research/evidence/2026-11-05/after-AMD.raw.json",
+    "research/evidence/2026-11-05/after-AVGO.raw.json",
+    "research/evidence/2026-11-05/after-MU.raw.json",
+    "research/evidence/2026-11-05/after-NVDA.raw.json",
+    "research/evidence/2026-11-05/DRAM.raw.json",
+    "research/evidence/2026-11-05/FOMC.raw.json",
+    "research/evidence/2026-11-05/NAND.raw.json",
+    "research/evidence/2026-11-05/Reuters.raw.json",
+    "research/evidence/2026-11-05/Siltronic.raw.json",
+    "research/evidence/2026-11-05/Starlink.raw.json",
+    "research/evidence/2026-11-05/collections/083512-536584/000660.json",
+    "research/evidence/2026-11-05/collections/083512-536584/005930.json",
+    "research/evidence/2026-11-05/collections/083512-536584/122630.json",
+    "research/evidence/2026-11-05/collections/083512-536584/collection-status.json",
+    "research/evidence/2026-11-05/collections/083512-536584/FX.json",
+    "research/evidence/2026-11-05/collections/083512-536584/KOSPI-basic.json",
+    "research/evidence/2026-11-05/collections/083512-536584/KOSPI-integration.json",
+    "research/evidence/2026-11-05/collections/083512-536584/KOSPI.json",
+    "research/evidence/2026-11-05/collections/083512-536584/NXT.json",
+    "research/evidence/2026-11-05/collections/083512-536584/yahoo-AMD.json",
+    "research/evidence/2026-11-05/collections/083512-536584/yahoo-AVGO.json",
+    "research/evidence/2026-11-05/collections/083512-536584/yahoo-BZF.json",
+    "research/evidence/2026-11-05/collections/083512-536584/yahoo-CLF.json",
+    "research/evidence/2026-11-05/collections/083512-536584/yahoo-ESF.json",
+    "research/evidence/2026-11-05/collections/083512-536584/yahoo-MU.json",
+    "research/evidence/2026-11-05/collections/083512-536584/yahoo-NQF.json",
+    "research/evidence/2026-11-05/collections/083512-536584/yahoo-NVDA.json",
+    "research/evidence/2026-11-05/collections/083512-536584/yahoo-QQQ.json",
+    "research/evidence/2026-11-05/collections/083512-536584/yahoo-SMH.json",
+    "research/evidence/2026-11-05/collections/083512-536584/yahoo-SOXX.json",
+    "research/evidence/2026-11-05/collections/083512-536584/yahoo-TQQQ.json",
+    "research/evidence/2026-11-05/prepare_inputs.py",
+    "research/evidence/2026-11-05/fetch_sources.py",
+    "research/evidence/2026-11-05/article-body.html",
+    "research/evidence/2026-11-05/report-template.md",
+    "research/evidence/2026-11-05/dashboard-input.json",
+    "research/evidence/2026-11-05/package.json"
+  ]
+}
