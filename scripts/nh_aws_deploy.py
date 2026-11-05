@@ -10,6 +10,7 @@ import hashlib
 import ast
 import io
 import logging
+import os
 import re
 import secrets
 import sys
@@ -28,9 +29,10 @@ CLIENT_ID = "343043233969-95mv3utlrbafcj1673dpl33ont9mh2j9.apps.googleuserconten
 ROOT = Path(__file__).resolve().parents[1]
 CODE_DIR = ROOT / "server" / "nh_private"
 TEMPLATE = ROOT / "server" / "nh_infra" / "template.yaml"
-CODE_FILES = ("handler.py", "runtime_service.py", "flow_service.py", "token_store.py", "nh_transport.py")
+CODE_FILES = ("handler.py", "runtime_service.py", "flow_service.py", "token_store.py", "nh_transport.py", "session_store.py")
 EXPECTED_LOGICAL_IDS = {"TokenTable", "ReaderLogGroup", "Reader", "GoogleAuthorizer", "ReaderIntegration",
                         "ReadFlow", "GatewayPermission", "ReadSession", "SessionGatewayPermission", "LiveStage"}
+SESSION_LOGICAL_IDS = {"LoginSession", "RestoreSession", "LogoutSession", "SessionFlow", "BrowserSessionPermission"}
 
 
 class DeploymentError(RuntimeError):
@@ -68,7 +70,7 @@ def checked_bootstrap(sts, cloudformation):
 
 
 def package_code(code_dir=CODE_DIR):
-    """검토 범위 5개 파일만 결정적으로 압축한다. 자격증명 파일은 포함하지 않는다."""
+    """검토 범위 파일만 결정적으로 압축한다. 자격증명 파일은 포함하지 않는다."""
     resolved = code_dir.resolve(strict=True)
     if not resolved.is_dir() or code_dir.is_symlink():
         raise DeploymentError("코드 디렉터리를 확인하지 못했습니다.")
@@ -152,7 +154,8 @@ def change_set_type(cloudformation, role_arn):
     if resource_response.get("NextToken"):
         raise DeploymentError("기존 스택의 자원 목록이 예상보다 많아 변경하지 않습니다.")
     resources = resource_response.get("StackResourceSummaries", [])
-    if {item.get("LogicalResourceId") for item in resources} != EXPECTED_LOGICAL_IDS:
+    actual_ids = {item.get("LogicalResourceId") for item in resources}
+    if actual_ids not in (EXPECTED_LOGICAL_IDS, EXPECTED_LOGICAL_IDS | SESSION_LOGICAL_IDS):
         raise DeploymentError("기존 스택 자원이 예상과 달라 변경하지 않습니다.")
     return "UPDATE"
 
@@ -198,13 +201,15 @@ def main():
         logging.disable(logging.CRITICAL)
         import boto3
         from botocore.config import Config
-        from nh_google_identity_check import SUB_FILE
+        # Reading the already verified DPAPI subject does not require importing
+        # the interactive OAuth helper or its cryptography dependencies.
+        subject_path = Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Yeonma" / "google-owner-sub.dpapi"
         config = Config(region_name=REGION, proxies={}, retries={"max_attempts": 2, "mode": "standard"})
         session = boto3.session.Session(region_name=REGION)
         sts = session.client("sts", endpoint_url=f"https://sts.{REGION}.amazonaws.com", config=config, verify=True)
         cf = session.client("cloudformation", endpoint_url=f"https://cloudformation.{REGION}.amazonaws.com", config=config, verify=True)
         s3 = session.client("s3", endpoint_url=f"https://s3.{REGION}.amazonaws.com", config=config, verify=True)
-        result = prepare_change_set(sts, cf, s3, SUB_FILE)
+        result = prepare_change_set(sts, cf, s3, subject_path)
         print("변경 세트를 생성했습니다. 아직 실행하지 않았습니다.")
         print("변경 세트 ID:", result["change_set_id"])
         print("패키지 SHA-256:", result["package_sha256"])

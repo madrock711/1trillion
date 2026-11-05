@@ -1,20 +1,46 @@
 // Offline responsive UI test: Google and the private API are fully mocked.
 const assert = require('node:assert/strict');
 const path = require('node:path');
-const { pathToFileURL } = require('node:url');
+const fs = require('node:fs');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 
-const pageUrl = pathToFileURL(path.resolve(__dirname, '../articles/market.html')).href + '?view=technical';
+const pageUrl = 'https://www.hpmplab.com/articles/market.html?view=technical';
 
 (async () => {
     const browser = await chromium.launch({ channel: 'chrome', headless: true });
     try {
         const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-        await page.route(/^https?:\/\//, route => route.abort());
-        await page.route('**/api/private/nh/session', route => route.fulfill({
-            status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' },
-            body: JSON.stringify({ authenticated: true })
-        }));
+        const token = 's'.repeat(43), csrf = 'a'.repeat(64);
+        let revoked = true, expired = false;
+        await page.route(/^https?:\/\//, async route => {
+            const request = route.request(), url = new URL(request.url());
+            if (url.hostname !== 'www.hpmplab.com') return route.abort();
+            if (url.pathname.startsWith('/api/private/nh/session/')) {
+                const action = url.pathname.split('/').at(-1);
+                const hasCookie = (request.headers().cookie || '').includes('__Host-yeonma_session=' + token);
+                let status = 200, body = { authenticated: false }, setCookie;
+                if (action === 'login') {
+                    assert.equal(request.method(), 'POST');
+                    assert.equal(request.headers().authorization, 'Bearer offline-test-token');
+                    revoked = false; expired = false;
+                    setCookie = '__Host-yeonma_session=' + token + '; Path=/; Max-Age=604800; HttpOnly; Secure; SameSite=Lax';
+                } else if (!hasCookie || revoked || expired) {
+                    status = 401;
+                    setCookie = '__Host-yeonma_session=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax';
+                } else if (action === 'logout') {
+                    assert.equal(request.method(), 'POST');
+                    assert.equal(request.headers()['x-yeonma-csrf'], csrf);
+                    revoked = true;
+                    setCookie = '__Host-yeonma_session=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax';
+                }
+                if (status === 200 && !revoked) body = { authenticated: true, expiresAt: Math.floor(Date.now()/1000)+604800, csrfToken: csrf };
+                return route.fulfill({ status, contentType: 'application/json',
+                    headers: { 'Cache-Control': 'no-store', ...(setCookie ? { 'Set-Cookie': setCookie } : {}) }, body: JSON.stringify(body) });
+            }
+            const file = path.resolve(__dirname, '..', '.' + url.pathname);
+            if (!file.startsWith(path.resolve(__dirname, '..') + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) return route.abort();
+            return route.fulfill({ path: file });
+        });
         await page.addInitScript(() => {
             let callback;
             window.google = { accounts: { id: {
@@ -75,13 +101,30 @@ const pageUrl = pathToFileURL(path.resolve(__dirname, '../articles/market.html')
             await page.getByRole('button', { name: 'Google 계정 선택' }).click();
             await page.locator('#kodex-private-signout').waitFor({ state: 'visible' });
             assert.match(await page.locator('#kodex-private-auth-status').innerText(), /로그인했습니다/);
+            const cookies = await page.context().cookies();
+            const sessionCookie = cookies.find(c => c.name === '__Host-yeonma_session');
+            assert(sessionCookie && sessionCookie.httpOnly && sessionCookie.secure && sessionCookie.sameSite === 'Lax');
+            assert(!(await page.evaluate(() => document.cookie)).includes('__Host-yeonma_session'));
+            await page.reload({ waitUntil: 'domcontentloaded' });
+            await page.locator('#kodex-private-signout').waitFor({ state: 'visible' });
             if (process.env.HEADER_QA_DIR) {
                 await page.locator('header').screenshot({ path: path.join(process.env.HEADER_QA_DIR, `market-header-${width}-signed-in.png`) });
             }
             await page.locator('#kodex-private-signout').click();
+            await page.locator('#kodex-private-signin').waitFor({ state: 'visible' });
             assert(await page.locator('#kodex-private-signin').isVisible());
             assert.match(await page.locator('#kodex-private-auth-status').innerText(), /로그아웃/);
+            await page.reload({ waitUntil: 'domcontentloaded' });
+            await page.locator('#kodex-private-signin').waitFor({ state: 'visible' });
+            assert(await page.locator('#kodex-private-signout').isHidden());
         }
-        console.log('Header account controls: responsive layout, sign-in and sign-out passed (offline mocks).');
+        await page.locator('#kodex-private-signin').click();
+        await page.getByRole('button', { name: 'Google 계정 선택' }).click();
+        await page.locator('#kodex-private-signout').waitFor({ state: 'visible' });
+        expired = true;
+        await page.reload({ waitUntil: 'domcontentloaded' });
+        await page.locator('#kodex-private-signin').waitFor({ state: 'visible' });
+        assert(await page.locator('#kodex-private-signout').isHidden());
+        console.log('Header session: responsive UI, real browser HttpOnly cookie, refresh restoration, server logout, replay and expiry passed (offline API/Google mocks).');
     } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

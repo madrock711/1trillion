@@ -5,6 +5,9 @@ import json
 import os
 import re
 import threading
+import hmac
+
+from session_store import Sessions, cookie, read_cookie, LIFETIME
 
 PATH = "/api/private/nh/flow"
 SESSION_PATH = "/api/private/nh/session"
@@ -16,6 +19,11 @@ FIELDS = ("bsop_hour", "timez12", "prsn_val", "frgn_val", "orgn_val")
 TOKEN_CACHE_READY = False
 FLOW_SERVICE = None
 _service_lock = threading.Lock()
+SESSION_LOGIN = SESSION_PATH + "/login"
+SESSION_STATE = SESSION_PATH + "/state"
+SESSION_LOGOUT = SESSION_PATH + "/logout"
+SESSION_FLOW = SESSION_PATH + "/flow"
+SESSION_STORE = None
 
 
 def _configuration():
@@ -36,7 +44,7 @@ def _response(status, value, origin=""):
         "Cache-Control": "private, no-store, max-age=0",
         "Pragma": "no-cache",
         "X-Content-Type-Options": "nosniff",
-        "Vary": "Origin",
+        "Vary": "Origin, Cookie",
     }
     if origin == "https://www.hpmplab.com":
         headers["Access-Control-Allow-Origin"] = origin
@@ -106,6 +114,51 @@ def _flow(config):
     return FLOW_SERVICE.get()
 
 
+def _sessions(config):
+    global SESSION_STORE
+    if SESSION_STORE is None:
+        import boto3
+        SESSION_STORE = Sessions(boto3.client("dynamodb"), os.environ["TOKEN_TABLE_NAME"],
+                                 config["OWNER_GOOGLE_SUB"] + ":" + config["OWNER_EMAIL"].lower())
+    return SESSION_STORE
+
+
+def _session_response(event, config, path, method, origin):
+    expected = {SESSION_LOGIN: "POST", SESSION_LOGOUT: "POST", SESSION_STATE: "GET", SESSION_FLOW: "GET"}
+    if method != expected[path]:
+        return _response(405, {"error": "method not allowed"}, origin)
+    if method == "POST" and origin != config["ALLOWED_ORIGIN"]:
+        return _response(403, {"error": "forbidden"}, origin)
+    if path == SESSION_LOGIN and not _authorized(event, config):
+        return _response(403, {"error": "forbidden"}, origin)
+    store = _sessions(config)
+    token = read_cookie(event)
+    if path == SESSION_LOGIN:
+        # Rotate any prior browser session; never retain the Google credential.
+        if store.read(token):
+            store.revoke(token)
+        token, payload = store.create()
+        response = _response(200, payload, origin)
+        response["cookies"] = [cookie(token, LIFETIME)]
+        return response
+    session = store.read(token)
+    if not session:
+        response = _response(401, {"authenticated": False}, origin)
+        response["cookies"] = [cookie()]
+        return response
+    if path == SESSION_LOGOUT:
+        csrf = event.get("headers", {}).get("x-yeonma-csrf", "")
+        if not isinstance(csrf, str) or not hmac.compare_digest(csrf, session["csrfToken"]):
+            return _response(403, {"error": "forbidden"}, origin)
+        store.revoke(token)
+        response = _response(200, {"authenticated": False}, origin)
+        response["cookies"] = [cookie()]
+        return response
+    if path == SESSION_STATE:
+        return _response(200, session, origin)
+    return _response(200, _flow(config), origin)
+
+
 def lambda_handler(event, _context):
     origin = ""
     try:
@@ -121,10 +174,13 @@ def lambda_handler(event, _context):
         context = event.get("requestContext") or {}
         method = (context.get("http") or {}).get("method", "")
         path = event.get("rawPath")
-        if path not in (PATH, SESSION_PATH):
+        session_paths = (SESSION_LOGIN, SESSION_STATE, SESSION_LOGOUT, SESSION_FLOW)
+        if path not in (PATH, SESSION_PATH) + session_paths:
             return _response(404, {"error": "not found"}, origin)
         if method == "OPTIONS":
             return _response(200, {}, origin)
+        if path in session_paths:
+            return _session_response(event, config, path, method, origin)
         if method != "GET":
             return _response(405, {"error": "method not allowed"}, origin)
         if not _authorized(event, config):

@@ -34,7 +34,7 @@
     var privateFlowRequestToken = 0;
     var privateFlowController = null;
     var privateFlowTimer = null;
-    var privateAuthToken = '';
+    var privateAuthSession = null;
     var privateAuthExpiryTimer = null;
     var privateAuthAttempt = 0;
     var displayedKodexFlowSource = '';
@@ -3777,20 +3777,22 @@
         try {
             var target = new URL(config.apiUrl);
             if (target.protocol !== 'https:' || target.username || target.password || target.port || target.hash || target.search
-                || target.hostname !== 'dfx1foieoh.execute-api.us-east-1.amazonaws.com'
-                || target.pathname !== '/api/private/nh/flow') return null;
+                || target.hostname !== 'www.hpmplab.com'
+                || target.pathname !== '/api/private/nh/session/flow') return null;
             return { clientId: config.clientId, apiUrl: target.href, waitingForToken: config.waitingForToken === true,
-                sessionUrl: target.origin + '/api/private/nh/session' };
+                sessionUrl: target.origin + '/api/private/nh/session/state',
+                loginUrl: target.origin + '/api/private/nh/session/login',
+                logoutUrl: target.origin + '/api/private/nh/session/logout' };
         } catch (_error) { return null; }
     }
 
     function isPrivateFlowHost() {
-        return isLocalPrivateFlowHost() || Boolean(privateAuthToken && privateAuthConfig());
+        return isLocalPrivateFlowHost() || Boolean(privateAuthSession && privateAuthConfig());
     }
 
     function isPrivateFlowWaiting() {
         var config = privateAuthConfig();
-        return !isLocalPrivateFlowHost() && Boolean(privateAuthToken && config && config.waitingForToken);
+        return !isLocalPrivateFlowHost() && Boolean(privateAuthSession && config && config.waitingForToken);
     }
 
     function privateAuthMessage(message) {
@@ -3811,7 +3813,7 @@
 
     function resetPrivateAuth(message) {
         privateAuthAttempt += 1;
-        privateAuthToken = '';
+        privateAuthSession = null;
         if (privateAuthExpiryTimer) window.clearTimeout(privateAuthExpiryTimer);
         privateAuthExpiryTimer = null;
         privateFlowState = { status: 'idle', tradeDate: '', fetchedAt: '', market: '', amount: [], quantity: [] };
@@ -3844,6 +3846,71 @@
         };
     }
 
+    function acceptPrivateSession(payload) {
+        if (!payload || payload.authenticated !== true || !Number.isFinite(payload.expiresAt)
+            || payload.expiresAt <= Date.now() / 1000 || !/^[a-f0-9]{64}$/.test(payload.csrfToken || '')) {
+            throw new Error('unavailable');
+        }
+        privateAuthSession = { expiresAt: payload.expiresAt, csrfToken: payload.csrfToken };
+        if (privateAuthExpiryTimer) window.clearTimeout(privateAuthExpiryTimer);
+        clearPrivateFlowSelection();
+        var content = document.getElementById('kodex-private-flow-content');
+        var signIn = document.getElementById('kodex-private-signin');
+        var signOut = document.getElementById('kodex-private-signout');
+        var googleButton = document.getElementById('kodex-google-signin');
+        if (content) content.hidden = false;
+        if (signIn) { signIn.hidden = true; signIn.disabled = false; }
+        if (signOut) { signOut.hidden = false; signOut.disabled = false; }
+        if (googleButton) googleButton.hidden = true;
+        privateAuthMessage('구글 계정으로 로그인했습니다.');
+        privateAuthExpiryTimer = window.setTimeout(function () {
+            resetPrivateAuth('로그인이 만료됐습니다. 다시 로그인해 주세요.');
+        }, Math.min(2147483647, Math.max(0, payload.expiresAt * 1000 - Date.now())));
+    }
+
+    function restorePrivateSession() {
+        var config = privateAuthConfig();
+        if (!config) return;
+        var attempt = ++privateAuthAttempt;
+        var controller = typeof AbortController === 'function' ? new AbortController() : null;
+        var timeout = window.setTimeout(function () { if (controller) controller.abort(); }, 15000);
+        return window.fetch(config.sessionUrl, { method: 'GET', credentials: 'include', cache: 'no-store',
+            signal: controller && controller.signal })
+            .then(function (response) {
+                if (attempt !== privateAuthAttempt) return;
+                if (response.status === 401) { resetPrivateAuth(); return; }
+                if (!response.ok) throw new Error('unavailable');
+                return response.json();
+            }).then(function (payload) {
+                if (attempt !== privateAuthAttempt || !payload) return;
+                acceptPrivateSession(payload);
+            }).catch(function () {
+                if (attempt === privateAuthAttempt) resetPrivateAuth('로그인 상태를 확인하지 못했습니다. 다시 시도해 주세요.');
+            }).finally(function () { window.clearTimeout(timeout); });
+    }
+
+    function logoutPrivateSession() {
+        var config = privateAuthConfig();
+        if (!config || !privateAuthSession) return;
+        var attempt = ++privateAuthAttempt;
+        var signOut = document.getElementById('kodex-private-signout');
+        if (signOut) signOut.disabled = true;
+        var controller = typeof AbortController === 'function' ? new AbortController() : null;
+        var timeout = window.setTimeout(function () { if (controller) controller.abort(); }, 15000);
+        return window.fetch(config.logoutUrl, { method: 'POST', credentials: 'include', cache: 'no-store',
+            headers: { 'X-Yeonma-CSRF': privateAuthSession.csrfToken }, signal: controller && controller.signal
+        }).then(function (response) {
+            if (attempt !== privateAuthAttempt) return;
+            if (!response.ok && response.status !== 401) throw new Error('unavailable');
+            if (window.google && window.google.accounts && window.google.accounts.id) window.google.accounts.id.disableAutoSelect();
+            resetPrivateAuth('로그아웃했습니다.');
+        }).catch(function () {
+            if (attempt !== privateAuthAttempt) return;
+            privateAuthMessage('로그아웃을 완료하지 못했습니다. 다시 눌러 주세요.');
+            if (signOut) signOut.disabled = false;
+        }).finally(function () { window.clearTimeout(timeout); });
+    }
+
     function authenticatePrivateFlow(credential) {
         var config = privateAuthConfig();
         if (!config || typeof credential !== 'string' || !credential || credential.length > 16384) return;
@@ -3853,7 +3920,7 @@
         privateAuthMessage('계정을 확인하고 있습니다.');
         var controller = typeof AbortController === 'function' ? new AbortController() : null;
         var timeout = window.setTimeout(function () { if (controller) controller.abort(); }, 15000);
-        window.fetch(config.sessionUrl, { method: 'GET', credentials: 'omit', cache: 'no-store',
+        window.fetch(config.loginUrl, { method: 'POST', credentials: 'include', cache: 'no-store',
             headers: { Authorization: 'Bearer ' + credential }, signal: controller && controller.signal
         }).then(function (response) {
             if (response.status === 401) throw new Error('expired');
@@ -3863,21 +3930,8 @@
             return response.json();
         }).then(function (payload) {
             if (attempt !== privateAuthAttempt) return;
-            if (!payload || payload.authenticated !== true) throw new Error('unavailable');
-            privateAuthToken = credential;
             privateFlowState = { status: 'idle', tradeDate: '', fetchedAt: '', market: '', amount: [], quantity: [] };
-            clearPrivateFlowSelection();
-            var content = document.getElementById('kodex-private-flow-content');
-            var signOut = document.getElementById('kodex-private-signout');
-            var googleButton = document.getElementById('kodex-google-signin');
-            if (content) content.hidden = false;
-            if (signIn) { signIn.hidden = true; signIn.disabled = false; }
-            if (signOut) signOut.hidden = false;
-            if (googleButton) googleButton.hidden = true;
-            privateAuthMessage('구글 계정으로 로그인했습니다.');
-            privateAuthExpiryTimer = window.setTimeout(function () {
-                resetPrivateAuth('로그인이 만료됐습니다. 다시 로그인해 주세요.');
-            }, 55 * 60 * 1000);
+            acceptPrivateSession(payload);
         }).catch(function (error) {
             if (attempt !== privateAuthAttempt) return;
             var reason = error && error.message;
@@ -3898,9 +3952,10 @@
         signIn.dataset.authBound = 'true';
         panel.hidden = false;
         resetPrivateAuth();
-        signOut.addEventListener('click', function () {
-            if (window.google && window.google.accounts && window.google.accounts.id) window.google.accounts.id.disableAutoSelect();
-            resetPrivateAuth('로그아웃했습니다.');
+        restorePrivateSession();
+        signOut.addEventListener('click', logoutPrivateSession);
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) restorePrivateSession();
         });
         signIn.addEventListener('click', function () {
             var config = privateAuthConfig();
@@ -3988,8 +4043,7 @@
             var local = isLocalPrivateFlowHost();
             var remote = privateAuthConfig();
             window.fetch(local ? '/api/private/nh/flow' : remote.apiUrl, {
-                credentials: local ? 'same-origin' : 'omit', cache: 'no-store', signal: controller && controller.signal,
-                headers: local ? {} : { Authorization: 'Bearer ' + privateAuthToken }
+                credentials: local ? 'same-origin' : 'include', cache: 'no-store', signal: controller && controller.signal
             }).then(function (response) {
                 if (request !== privateFlowRequestToken) throw new Error('private request superseded');
                 if (!local && (response.status === 401 || response.status === 403)) {

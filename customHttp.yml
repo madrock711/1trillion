@@ -1,4 +1,8 @@
 customHeaders:
+  - pattern: '/api/private/nh/session/**'
+    headers:
+      - key: 'Cache-Control'
+        value: 'private, no-store, max-age=0'
   - pattern: '**'
     headers:
       - key: 'Strict-Transport-Security'
