@@ -1,0 +1,72 @@
+{
+  "finishedAt": "2026-11-06T08:07:17.634387+09:00",
+  "sources": {
+    "KOSPI": {
+      "status": "collected",
+      "url": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1",
+      "fetchedAt": "2026-11-06T08:07:17.072492+09:00"
+    },
+    "KOSPI-basic": {
+      "status": "collected",
+      "url": "https://m.stock.naver.com/api/index/KOSPI/basic",
+      "fetchedAt": "2026-11-06T08:07:17.073019+09:00"
+    },
+    "KOSPI-integration": {
+      "status": "collected",
+      "url": "https://m.stock.naver.com/api/index/KOSPI/integration",
+      "fetchedAt": "2026-11-06T08:07:17.125765+09:00"
+    },
+    "KOSPI-history": {
+      "status": "collected",
+      "url": "https://api.stock.naver.com/chart/domestic/index/KOSPI?periodType=dayCandle",
+      "fetchedAt": "2026-11-06T08:07:17.108495+09:00"
+    },
+    "FX": {
+      "status": "collected",
+      "url": "https://api.stock.naver.com/marketindex/exchange/FX_USDKRW",
+      "fetchedAt": "2026-11-06T08:07:17.073440+09:00"
+    },
+    "NXT": {
+      "status": "collected",
+      "url": "https://stock.naver.com/api/polling/domestic/NXT/stock?itemCodes=005930,000660",
+      "fetchedAt": "2026-11-06T08:07:17.093739+09:00"
+    },
+    "122630": {
+      "status": "collected",
+      "url": "https://m.stock.naver.com/api/stock/122630/price?pageSize=10&page=1",
+      "fetchedAt": "2026-11-06T08:07:17.073954+09:00"
+    },
+    "005930": {
+      "status": "collected",
+      "url": "https://m.stock.naver.com/api/stock/005930/price?pageSize=10&page=1",
+      "fetchedAt": "2026-11-06T08:07:17.073775+09:00"
+    },
+    "000660": {
+      "status": "collected",
+      "url": "https://m.stock.naver.com/api/stock/000660/price?pageSize=10&page=1",
+      "fetchedAt": "2026-11-06T08:07:17.070090+09:00"
+    },
+    "yahoo-NQF": {
+      "status": "collected",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQ=F?range=5d&interval=5m&includePrePost=true",
+      "fetchedAt": "2026-11-06T08:07:17.592424+09:00"
+    },
+    "yahoo-ESF": {
+      "status": "collected",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/ES=F?range=5d&interval=5m&includePrePost=true",
+      "fetchedAt": "2026-11-06T08:07:17.594611+09:00"
+    },
+    "yahoo-BZF": {
+      "status": "collected",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F?range=5d&interval=5m&includePrePost=true",
+      "fetchedAt": "2026-11-06T08:07:17.589297+09:00"
+    },
+    "yahoo-CLF": {
+      "status": "collected",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/CL=F?range=5d&interval=5m&includePrePost=true",
+      "fetchedAt": "2026-11-06T08:07:17.630751+09:00"
+    }
+  },
+  "failed": [],
+  "next": "실패 출처는 승인된 재시도/대체출처로 보완. 성공 자료는 거래일·시각·시장상태 검증 후 취재 단계 진행."
+}

@@ -15,6 +15,7 @@ def sources(final=False):
         "KOSPI": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1",
         "KOSPI-basic": "https://m.stock.naver.com/api/index/KOSPI/basic",
         "KOSPI-integration": "https://m.stock.naver.com/api/index/KOSPI/integration",
+        "KOSPI-history": "https://api.stock.naver.com/chart/domestic/index/KOSPI?periodType=dayCandle",
         "FX": "https://api.stock.naver.com/marketindex/exchange/FX_USDKRW",
         "NXT": "https://stock.naver.com/api/polling/domestic/NXT/stock?itemCodes=005930,000660",
     }

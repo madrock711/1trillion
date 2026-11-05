@@ -33,6 +33,31 @@ def digest(raw): return hashlib.sha256(raw).hexdigest()
 def num(value): return float(str(value).replace(',', ''))
 
 
+def previous_session(ev, date):
+    rows = ev['KOSPI']['data']
+    found = next((x for x in rows if x['localTradedAt'] == date), None)
+    if found is not None:
+        return found
+    history = ev['KOSPI-history']['data']
+    if history.get('code') != 'KOSPI':
+        raise ValueError('대체 일봉 지수 불일치')
+    series = history['priceInfos']
+    index = next(i for i, x in enumerate(series) if x['localDate'] == date.replace('-', ''))
+    row = series[index]
+    values = {k: num(row[k]) for k in ['openPrice','highPrice','lowPrice','closePrice']}
+    if not (0 < values['lowPrice'] <= min(values['openPrice'], values['closePrice']) <= max(values['openPrice'], values['closePrice']) <= values['highPrice']):
+        raise ValueError('대체 일봉 OHLC 오류')
+    basic = ev['KOSPI-basic']['data']
+    if basic['marketStatus'] == 'PREOPEN' and num(basic['closePrice']) != values['closePrice']:
+        raise ValueError('대체 일봉과 장전 기준값 불일치')
+    if index == 0:
+        raise ValueError('대체 일봉 직전 종가 없음')
+    prior = num(series[index-1]['closePrice'])
+    return dict(localTradedAt=date, **{k:str(v) for k,v in values.items()},
+                compareToPreviousClosePrice=str(values['closePrice']-prior),
+                fluctuationsRatio=str(round((values['closePrice']/prior-1)*100,2)))
+
+
 def evaluation():
     spec = importlib.util.spec_from_file_location('market_evaluation', ROOT/'scripts/evaluate_market_research.py')
     module = importlib.util.module_from_spec(spec)
@@ -184,7 +209,7 @@ class Publisher:
     def build(self, ev):
         p = self.p; date = self.date; issued = now(); cutoff = self.s['cutoff']
         self.s['buildAttempt']=issued[11:].replace(':','').replace('.','').replace('+','-');self.save()
-        prev = next(x for x in ev['KOSPI']['data'] if x['localTradedAt'] == p['previousSessionDate'])
+        prev = previous_session(ev, p['previousSessionDate'])
         kb = ev['KOSPI-basic']['data']; current = kb['marketStatus'] == 'OPEN'
         if current:
             if not kb['localTradedAt'].startswith(date) or (dt.datetime.fromisoformat(cutoff)-dt.datetime.fromisoformat(kb['localTradedAt'])).total_seconds() > 300:
@@ -240,7 +265,8 @@ class Publisher:
                     'scenarios':p['scenarios'],'closeEnvelopeCoverage':0.9,'pathEnvelope':p['pathEnvelope'],'drivers':p['drivers'],'scenarioTriggers':p['scenarioTriggers'],'hypothesisTrials':[],'posture':p['posture'],'supersedes':None}
         forecast['contentHash'] = digest(json.dumps(forecast,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode())
         fp=f'research/evaluation/forecasts/{fid}.json'; self.artifact(fp,json.dumps(forecast,ensure_ascii=False,indent=2)+'\n')
-        sessions=load('research/evaluation/trading-sessions.json'); sessions['sessions']=sorted(set(sessions['sessions']+[date]));sessions.update(asOf=cutoff,source=ev['KOSPI']['url']+' (전일 확정 일봉 및 오늘 시장상태)',rawHash=ev['KOSPI']['rawHash']);dump('research/evaluation/trading-sessions.json',sessions)
+        session_source = ev['KOSPI'] if any(x['localTradedAt'] == p['previousSessionDate'] for x in ev['KOSPI']['data']) else ev['KOSPI-history']
+        sessions=load('research/evaluation/trading-sessions.json'); sessions['sessions']=sorted(set(sessions['sessions']+[date]));sessions.update(asOf=cutoff,source=session_source['url']+' (전일 확정 일봉 및 오늘 시장상태)',rawHash=session_source['rawHash']);dump('research/evaluation/trading-sessions.json',sessions)
         module.validate_forecast(forecast,ROOT/fp,ROOT)
         write('STATE.md',p['stateText']+f'\n- 작성 {issued}, 데이터 최종 확인 {cutoff}, 한국 {label}.\n- reports/{date}.md · {sp} · {fp}.\n')
         self.s.update(sealed={'forecastId':fid,'forecastPath':fp,'snapshot':sp,'article':ap,'issuedAt':issued,'cutoff':cutoff},

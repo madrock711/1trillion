@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-11-05-090050-same-close",
+  "recordedAt": "2026-11-06T08:06:52.556553+09:00",
+  "actualRef": "2026-11-05",
+  "realizedScenario": "bear",
+  "errorCodes": [
+    "cause_unverifiable"
+  ],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "unavailable",
+      "reason": "장전 초기화 응답으로 전일 최종 수급·프로그램·시장 폭 묶음 및 발행 후 분봉 경로를 확보하지 못함"
+    },
+    {
+      "id": "bull-foreign",
+      "status": "unavailable",
+      "reason": "장전 초기화 응답으로 전일 최종 수급·프로그램·시장 폭 묶음 및 발행 후 분봉 경로를 확보하지 못함"
+    },
+    {
+      "id": "bull-program",
+      "status": "unavailable",
+      "reason": "장전 초기화 응답으로 전일 최종 수급·프로그램·시장 폭 묶음 및 발행 후 분봉 경로를 확보하지 못함"
+    },
+    {
+      "id": "base-floor",
+      "status": "unavailable",
+      "reason": "장전 초기화 응답으로 전일 최종 수급·프로그램·시장 폭 묶음 및 발행 후 분봉 경로를 확보하지 못함"
+    },
+    {
+      "id": "base-cap",
+      "status": "unavailable",
+      "reason": "장전 초기화 응답으로 전일 최종 수급·프로그램·시장 폭 묶음 및 발행 후 분봉 경로를 확보하지 못함"
+    },
+    {
+      "id": "bear-price",
+      "status": "unavailable",
+      "reason": "장전 초기화 응답으로 전일 최종 수급·프로그램·시장 폭 묶음 및 발행 후 분봉 경로를 확보하지 못함"
+    },
+    {
+      "id": "bear-foreign",
+      "status": "unavailable",
+      "reason": "장전 초기화 응답으로 전일 최종 수급·프로그램·시장 폭 묶음 및 발행 후 분봉 경로를 확보하지 못함"
+    },
+    {
+      "id": "bear-program",
+      "status": "unavailable",
+      "reason": "장전 초기화 응답으로 전일 최종 수급·프로그램·시장 폭 묶음 및 발행 후 분봉 경로를 확보하지 못함"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "semiconductor",
+      "status": "unverifiable"
+    },
+    {
+      "id": "memory",
+      "status": "unverifiable"
+    }
+  ],
+  "hypothesisTests": [],
+  "postForecastPathStatus": "missing",
+  "postForecastPathMissingReason": "장전 초기화 응답으로 전일 최종 수급·프로그램·시장 폭 묶음 및 발행 후 분봉 경로를 확보하지 못함",
+  "postForecastPathMissingEvidence": {
+    "sourceStatus": "incomplete",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-11-05T15:30:00+09:00",
+    "fetchedAt": "2026-11-06T08:06:52.556553+09:00",
+    "rawHash": "f428041d2594f6adbe39fdfd64ade5daf7276aa73ccfdd435df5e4a1e7a3a736"
+  }
+}
