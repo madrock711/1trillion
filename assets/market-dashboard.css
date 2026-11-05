@@ -1323,14 +1323,14 @@
 .kodex-flow-raw { margin: 0.35rem 0 0.6rem; color: #c3cbc6; font-size: 0.82rem; line-height: 1.55; overflow-wrap: anywhere; }
 .kodex-flow-legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin: 0.5rem 0; font-size: 0.82rem; }
 .kodex-flow-legend[hidden] { display: none; }
-.kodex-flow-legend span:not(:last-child)::before { content: ''; display: inline-block; width: 1.3em; margin-right: 0.35em; border-top: 2px solid currentColor; vertical-align: middle; }
+.kodex-flow-legend span:not(:last-child)::before { content: ''; display: inline-block; width: 1.3em; margin-right: 0.35em; border-top: 2px dashed currentColor; vertical-align: middle; }
 .kodex-flow-legend .is-foreign { color: #ff7883; }
 .kodex-flow-legend .is-personal { color: #de9bff; }
 .kodex-flow-legend .is-institution { color: #ffc15d; }
-.kodex-flow-line { fill: none; stroke-width: 2.2; pointer-events: none; vector-effect: non-scaling-stroke; }
+.kodex-flow-line { fill: none; stroke-width: 2.2; stroke-dasharray: 6 3; pointer-events: none; vector-effect: non-scaling-stroke; }
 .kodex-flow-line.is-foreign { stroke: #ff7883; }
-.kodex-flow-line.is-personal { stroke: #de9bff; stroke-dasharray: 6 3; }
-.kodex-flow-line.is-institution { stroke: #ffc15d; stroke-dasharray: 2 3; }
+.kodex-flow-line.is-personal { stroke: #de9bff; }
+.kodex-flow-line.is-institution { stroke: #ffc15d; }
 .kodex-flow-axis { fill: #e1e9e3; font-size: 11px; paint-order: stroke; stroke: #101714; stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
 
 .kodex-history-legend {
