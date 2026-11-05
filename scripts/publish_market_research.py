@@ -68,6 +68,16 @@ def update_ld(page, item):
     return re.sub(r'<script type="application/ld\+json">(.*?)</script>', replace, page, flags=re.S)
 
 
+def update_dashboard_copy(text, title, summary):
+    """대시보드 고정 소개도 최신 원고와 맞추되 과거 기사 카드는 보존한다."""
+    text=re.sub(r'(<h1>시황분석 대시보드</h1>\s*<p>).*?(</p>)',lambda m:m[1]+html.escape(summary)+m[2],text,flags=re.S)
+    text=re.sub(r'(<h2 id="market-checkpoint-title">).*?(</h2>)',lambda m:m[1]+html.escape(title)+m[2],text,flags=re.S)
+    text=re.sub(r'(<h2 id="strategy-title">.*?</h2>\s*<p>).*?(</p>)',lambda m:m[1]+html.escape(summary)+m[2],text,flags=re.S)
+    for tag,value in [('title',title),('description',summary)]:
+        text=re.sub(r'(<meta (?:property="og:'+tag+r'"|name="twitter:'+tag+r'") content=")[^"]+',lambda m:m[1]+html.escape(value),text)
+    return text
+
+
 def valid_nxt(row, date, fetched):
     try:
         at = dt.datetime.fromisoformat(row['localTradedAt'])
@@ -273,6 +283,7 @@ class Publisher:
                 for category,count in counts.items():
                     text=re.sub(r'(data-category-count="'+category+r'">)\d+',lambda m:m[1]+str(count),text)
             if page=='articles/market.html':
+                text=update_dashboard_copy(text,p['title'],p['summary'])
                 count=len(re.findall(r'<article class="market-article-item"',text))
                 text=re.sub(r'(일일시황 <span class="article-category-count">)\d+',lambda m:m[1]+str(count),text)
                 for ident in ['market-latest-article-link','market-summary-article-link']:

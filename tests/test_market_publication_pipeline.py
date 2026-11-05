@@ -12,6 +12,15 @@ module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
 
 
 class PublicationTests(unittest.TestCase):
+    def test_dashboard_copy_does_not_rewrite_historical_article(self):
+        historical='<article>AMD yesterday</article>'
+        page='<h1>시황분석 대시보드</h1><p>AMD yesterday</p><h2 id="market-checkpoint-title">AMD</h2><h2 id="strategy-title">전략</h2><p>old</p>'+historical
+        result=module.update_dashboard_copy(page,'오늘 제목','오늘 설명')
+        self.assertIn('<h2 id="market-checkpoint-title">오늘 제목</h2>',result)
+        self.assertIn('<h1>시황분석 대시보드</h1><p>오늘 설명</p>',result)
+        self.assertIn('<h2 id="strategy-title">전략</h2><p>오늘 설명</p>',result)
+        self.assertTrue(result.endswith(historical))
+
     def test_card_insert_preserves_old_images_and_bodies(self):
         old='<article class="article-card"><a href="market-2026-11-04.html"><img src="old.png">old</a></article>'
         card='<article class="article-card"><a href="market-2026-11-05.html"><img src="new.png">new</a></article>'
@@ -25,6 +34,7 @@ class PublicationTests(unittest.TestCase):
         result=module.update_ld(page,{'url':'new','image':{'url':'new.png'}})
         data=json.loads(result.split('>',1)[1].split('</script>')[0])
         self.assertEqual('old.png',data['mainEntity']['itemListElement'][1]['image']['url'])
+        self.assertEqual(2,data['mainEntity']['numberOfItems'])
 
     def test_nxt_uses_response_completion_and_rejects_stale(self):
         row={'itemCode':'005930','marketStatus':'OPEN','localTradedAt':'2026-11-05T08:40:01+09:00','closePrice':'211,000','lowPrice':'210,000','highPrice':'212,000'}
