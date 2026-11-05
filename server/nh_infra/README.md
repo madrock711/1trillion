@@ -1,6 +1,6 @@
 # 연마 개인 수급 API 배포 준비
 
-이 디렉터리는 Google 로그인으로 본인을 확인한 뒤 NH 투자자별 수급을 조회하기 위한 AWS 설정을 담는다. **아직 실제 서비스 배포나 Google 로그인·NH 원격 조회가 검증된 상태가 아니다.** bootstrap이 생성된 후 운영 스택의 API 단계 생성에서 태그 권한 오류가 발생해 `iam-bootstrap.json`에 전용 API 단계 권한을 보완했다. 관리자가 기존 bootstrap을 업데이트하고 결과를 확인해야 한다. 오류와 복구 방법은 [AWS IAM 설정 안내](AWS_IAM_설정_안내.md)를 따른다. `server/nh_private/handler.py`의 `TOKEN_CACHE_READY`는 현재 `False`이므로 이 코드로는 실제 NH 조회가 차단된다.
+이 디렉터리는 Google 로그인으로 본인을 확인한 뒤 NH 투자자별 수급을 조회하기 위한 AWS 설정을 담는다. 2026-11-05 현재 bootstrap과 운영 스택이 배포됐으며, 보안 쿠키 로그인 유지와 실제 NH 금액·수량 차트 표시를 확인했다. 현재 운영 구조와 토큰 발급·장애 대응은 [개인 NH API 설명](../nh_private/README.md), 세션 보안은 [세션 설명](../nh_private/SESSION_AUTH.md)을 따른다. 아래 최초 구축 절차와 [AWS IAM 설정 안내](AWS_IAM_설정_안내.md)는 재구축·복구 시 참고한다.
 
 ## 파일과 리소스
 
