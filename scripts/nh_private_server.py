@@ -21,6 +21,7 @@ from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[1]
 SECRET_FILE = Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Yeonma" / "nhplug.dpapi"
+ONLINE_FILE = SECRET_FILE.with_name("nh-online-mode.json")
 API_PATH = "/krfuture/quote/v1/tradingStatus"
 FIELDS = ("bsop_hour", "timez12", "prsn_val", "frgn_val", "orgn_val")
 SDK_FALLBACK = Path.home() / ".codex/visualizations/2026/11/02/01a19cc3-e002-7f20-bf61-3af994da44ab/nhplug-packages"
@@ -73,6 +74,8 @@ def setup_credentials() -> None:
 
 
 def load_sdk():
+    if ONLINE_FILE.exists():
+        raise RuntimeError("온라인 NH 연결로 전환됐습니다. 중복 토큰 발급을 막기 위해 PC 임시 서버는 실행하지 않습니다.")
     if not SECRET_FILE.is_file():
         raise RuntimeError("먼저 setup을 실행해 NH 인증정보를 등록하세요.")
     credentials = json.loads(dpapi_transform(SECRET_FILE.read_bytes(), decrypt=True))

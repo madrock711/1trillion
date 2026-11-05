@@ -13,10 +13,9 @@ PATH = "/api/private/nh/flow"
 SESSION_PATH = "/api/private/nh/session"
 API_PATH = "/krfuture/quote/v1/tradingStatus"
 FIELDS = ("bsop_hour", "timez12", "prsn_val", "frgn_val", "orgn_val")
-# NH advises avoiding token reissuance before expiry. The cross-process cache,
-# migration procedure and runtime initialization are not yet live-validated.
-# This guard is deliberately a source constant, not a deploy-time env flag.
-TOKEN_CACHE_READY = False
+# NH issuance is coordinated through the initialized shared state. An absent,
+# ISSUING or UNCERTAIN record remains fail-closed, even with this launch flag.
+TOKEN_CACHE_READY = True
 FLOW_SERVICE = None
 _service_lock = threading.Lock()
 SESSION_LOGIN = SESSION_PATH + "/login"

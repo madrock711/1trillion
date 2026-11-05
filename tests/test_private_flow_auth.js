@@ -42,7 +42,7 @@ const flush = () => new Promise(r => setImmediate(r));
     assert.equal(calls.at(-1).options.headers.Authorization, 'Bearer mock-google-credential');
     assert.equal(ctx.privateAuthSession.csrfToken, payload.csrfToken);
     assert(!JSON.stringify(ctx.privateAuthSession).includes('mock-google-credential'));
-    assert(ctx.isPrivateFlowWaiting());
+    assert(!ctx.isPrivateFlowWaiting());
     ctx.privateAuthSession = null;
     await ctx.restorePrivateSession();
     assert(ctx.privateAuthSession);

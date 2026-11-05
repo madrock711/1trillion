@@ -7,6 +7,8 @@ import sys
 import unittest
 from unittest import mock
 
+HOST_ENV = dict(os.environ)
+
 spec = importlib.util.spec_from_file_location("nh_handler", Path(__file__).with_name("handler.py"))
 handler = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(handler)
@@ -145,7 +147,7 @@ class HandlerTest(unittest.TestCase):
 
     def test_real_flow_is_fail_closed_until_shared_token_cache_is_implemented(self):
         service = mock.Mock()
-        with mock.patch.dict(os.environ, {"TOKEN_CACHE_READY": "true", "NH_TOKEN_CACHE_READY": "1"}), mock.patch.object(handler, "FLOW_SERVICE", service), mock.patch.object(handler, "_new_runtime_service") as initialize:
+        with mock.patch.object(handler, "TOKEN_CACHE_READY", False), mock.patch.dict(os.environ, {"TOKEN_CACHE_READY": "true", "NH_TOKEN_CACHE_READY": "1"}), mock.patch.object(handler, "FLOW_SERVICE", service), mock.patch.object(handler, "_new_runtime_service") as initialize:
             response = handler.lambda_handler(event(), None)
         self.assertEqual(response["statusCode"], 503)
         service.get.assert_not_called()
@@ -164,10 +166,10 @@ class HandlerTest(unittest.TestCase):
             initialize.assert_called_once()
             self.assertEqual(service.get.call_count, 2)
 
-    def test_deployment_preflight_is_closed(self):
+    def test_deployment_preflight_checks_shared_safety_contract(self):
         result = subprocess.run([sys.executable, str(Path(__file__).with_name("deployment_guard.py"))],
-                                capture_output=True)
-        self.assertNotEqual(result.returncode, 0)
+                                capture_output=True, env=HOST_ENV)
+        self.assertEqual(result.returncode, 0, result.stderr.decode(errors='replace'))
 
 
 if __name__ == "__main__":

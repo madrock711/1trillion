@@ -71,7 +71,8 @@ class BrowserSessionTests(unittest.TestCase):
             handler.lambda_handler(request(handler.SESSION_STATE, token=token, claims=False), None)
             flow.assert_not_called()
             nh.assert_not_called()
-        self.assertEqual(handler.lambda_handler(request(handler.SESSION_FLOW, token=token, claims=False), None)['statusCode'], 503)
+        with patch.object(handler, 'TOKEN_CACHE_READY', False):
+            self.assertEqual(handler.lambda_handler(request(handler.SESSION_FLOW, token=token, claims=False), None)['statusCode'], 503)
 
 if __name__ == '__main__':
     unittest.main()

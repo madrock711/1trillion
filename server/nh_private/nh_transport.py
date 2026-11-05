@@ -30,7 +30,7 @@ def _validate_credential(value):
 
 
 class NHTransport:
-    def __init__(self, app_key, app_secret, opener=None, timeout=10):
+    def __init__(self, app_key, app_secret, opener=None, timeout=6):
         _validate_credential(app_key)
         _validate_credential(app_secret)
         if not isinstance(timeout, (int, float)) or isinstance(timeout, bool) or not 0 < timeout <= 30:

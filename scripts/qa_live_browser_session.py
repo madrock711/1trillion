@@ -17,8 +17,8 @@ from session_store import Sessions
 
 
 def main():
-    if sys.argv[1:] != ['--run']:
-        print('Explicit --run required for live synthetic session QA.')
+    if sys.argv[1:] not in (['--run'], ['--run-nh-backend'], ['--run-nh-chart']):
+        print('Explicit live QA mode required.')
         return 1
     import boto3
     from botocore.config import Config
@@ -38,7 +38,7 @@ def main():
     token, _ = store.create()
     try:
         result = subprocess.run(['node', str(ROOT / 'tests' / 'test_live_browser_session.cjs')],
-                                input=json.dumps({'token': token}), text=True, cwd=ROOT, timeout=100)
+                                input=json.dumps({'token': token, 'mode': sys.argv[1]}), text=True, cwd=ROOT, timeout=150)
         return result.returncode
     finally:
         store.revoke(token)

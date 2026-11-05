@@ -1,10 +1,23 @@
-"""Do not deploy the NH quote endpoint while shared token safety is unresolved."""
+"""Static launch contract plus the full injected failure/race test suite.
+
+Does not contact NH, issue a token, or prove live provider availability.
+An initialized shared record is still mandatory at runtime.
+"""
+
+from pathlib import Path
+import subprocess
+import sys
 
 
 def main():
-    # This guard must be replaced, not bypassed with a runtime environment variable,
-    # once the shared token state machine and its failure tests are implemented.
-    raise SystemExit("배포 중단: NH 공유 토큰 발급 및 장애 복구가 아직 검증되지 않았습니다.")
+    root = Path(__file__).resolve().parent
+    groups = ['test_token_store.py', 'test_nh_transport.py', 'test_runtime_service.py', 'test_flow_integration.py']
+    for group in groups:
+        result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', str(root), '-p', group],
+                                capture_output=True)
+        if result.returncode:
+            raise SystemExit('NH 공유 토큰 안전성 검증 실패: ' + group)
+    print('NH shared-state failure/race and no-retry transport checks passed. Live approval and initialization are separate.')
 
 
 if __name__ == "__main__":

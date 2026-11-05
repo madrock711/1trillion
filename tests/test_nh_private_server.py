@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import threading
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("nh_private_server", ROOT / "scripts" / "nh_private_server.py")
@@ -13,6 +14,14 @@ spec.loader.exec_module(app)
 
 
 class PrivateServerTests(unittest.TestCase):
+    def test_online_migration_blocks_local_issuer_before_reading_credentials(self):
+        marker = mock.Mock()
+        marker.exists.return_value = True
+        with mock.patch.object(app, 'ONLINE_FILE', marker), mock.patch.object(app, 'SECRET_FILE') as secret:
+            with self.assertRaisesRegex(RuntimeError, '온라인 NH 연결'):
+                app.load_sdk()
+            secret.read_bytes.assert_not_called()
+
     def test_windows_dpapi_roundtrip(self):
         if os.name != "nt":
             self.skipTest("Windows DPAPI only")

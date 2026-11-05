@@ -74,7 +74,7 @@ class DeployTest(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertEqual(digest, digest2)
         self.assertRegex(digest, r"^[0-9a-f]{64}$")
-        self.assertTrue(deploy.package_guard_enabled(first))
+        self.assertFalse(deploy.package_guard_enabled(first))
         with zipfile.ZipFile(io.BytesIO(first)) as archive:
             self.assertEqual(archive.namelist(), list(deploy.CODE_FILES))
             self.assertIsNone(archive.testzip())
@@ -88,7 +88,7 @@ class DeployTest(unittest.TestCase):
             result = self.prepare()
         self.assertNotIn("123456789", output.getvalue())
         self.assertEqual(result["change_set_type"], "CREATE")
-        self.assertTrue(result["nh_guard_enabled"])
+        self.assertFalse(result["nh_guard_enabled"])
         self.assertEqual([call[0] for call in self.cf.calls], ["validate", "create"])
         put = self.s3.calls[-1][1]
         self.assertEqual(put["Key"], f"deploy/{result['package_sha256']}.zip")
