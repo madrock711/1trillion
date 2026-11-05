@@ -4274,7 +4274,7 @@
                 flowMin -= flowSpread * 0.06;
                 flowMax += flowSpread * 0.06;
                 function flowY(value) { return priceTop + (flowMax - value) / (flowMax - flowMin) * (priceBottom - priceTop); }
-                [flowMax, 0, flowMin].forEach(function (value) {
+                [flowMax, flowMin].forEach(function (value) {
                     var label = makeSvg('text', { x: right - 4, y: flowY(value) + 4, 'text-anchor': 'end', 'class': 'kodex-flow-axis' });
                     label.textContent = formatSigned(value, '', 0);
                     svg.appendChild(label);

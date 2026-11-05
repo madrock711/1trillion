@@ -50,6 +50,7 @@ let stage = 'start';
                         && document.querySelectorAll('#kodex-history-chart .kodex-flow-line').length >= 3;
                 }, null, { timeout: 35000 });
                 assert.match(await page.locator('#kodex-flow-status').innerText(), /NH PLUG/);
+                assert.equal(await page.locator('#kodex-history-chart .kodex-flow-axis').count(), 2, 'only upper/lower flow axis labels');
                 console.log('LIVE NH chart overlay rendered:', mode, 'three investor lines');
             }
             await page.locator('#kodex-history-chart').screenshot({ path: process.env.NH_CHART_SCREENSHOT || require('node:path').join(require('node:os').tmpdir(), 'yeonma-nh-online-chart.png') });
