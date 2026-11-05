@@ -384,8 +384,14 @@ class Publisher:
             text=re.sub(r'<script type="application/ld\+json">(.*?)</script>',ld,text,flags=re.S)
             text=text.replace(' · 작성 '+sealed['issuedAt'][11:16]+' KST',' · 작성 '+sealed['issuedAt'][11:16]+' · 발행 '+at[11:16]+' KST')
             write(sealed['article'],text);self.update_indexes(at)
-            state=read('STATE.md')+'- 최초 공개 '+at+' · 콘텐츠 '+sha+' · Amplify '+self.s['contentDeploy']['jobId']+'.\n';write('STATE.md',state)
-            self.commit([sealed['article'],'index.html','articles/index.html','articles/market.html','sitemap.xml','STATE.md',pushed,verified,'docs/현재작업중.md'],'final')
+            line='- 최초 공개 '+at+' · 콘텐츠 '+sha+' · Amplify '+self.s['contentDeploy']['jobId']+'.\n'
+            state=read('STATE.md')
+            if line not in state: write('STATE.md',state+line)
+            log=read('docs/현재작업중.md')
+            marker='발행 실행기 공개 증거 '+self.date
+            if marker not in log:
+                write('docs/현재작업중.md',log+'\n## '+marker+'\n\n- 콘텐츠 `'+sha+'`의 Amplify '+self.s['contentDeploy']['jobId']+' 공개 '+at+' 및 양 도메인 Git바이트 일치를 확인했다. 실제 공개시각과 pushed/deploy_verified 이벤트를 함께 보존한다. 최종 증적 커밋의 재배포 검증은 로컬 실행 상태에 기록한다.\n')
+            self.commit([sealed['article'],'index.html','articles/index.html','articles/market.html','sitemap.xml','STATE.md',pushed,verified,'docs/현재작업중.md','scripts/publish_market_research.py'],'final')
         final=self.s['finalCommit']
         self.push(final,'final');job=self.await_deploy(final);rows=self.verify_live(final)
         self.s.update(finalDeploy=job,status='live_verified');self.stage('deploy',commit=final,job=job['jobId']);self.stage('live',assets=len(rows),commit=final)
