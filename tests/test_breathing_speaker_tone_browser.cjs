@@ -39,6 +39,17 @@ async function instrumentAudio(page) {
             createGain() {
                 const node = super.createGain();
                 window.breathAudioTrace.gains.push(traceParam(node.gain));
+                const connect = node.connect.bind(node);
+                node.connect = (destination, ...args) => {
+                    const result = connect(destination, ...args);
+                    if (destination === this.destination) {
+                        const analyser = this.createAnalyser();
+                        analyser.fftSize = 32768;
+                        connect(analyser);
+                        window.breathOutputProbe = analyser;
+                    }
+                    return result;
+                };
                 return node;
             }
         };
@@ -50,6 +61,21 @@ async function setVolume(page, value) {
         el.value = String(v);
         el.dispatchEvent(new Event('input', { bubbles: true }));
     }, value);
+}
+
+async function measureOutput(page) {
+    await page.waitForTimeout(1000);
+    return page.evaluate(() => {
+        const probe = window.breathOutputProbe;
+        const samples = new Float32Array(probe.fftSize);
+        probe.getFloatTimeDomainData(samples);
+        let peak = 0, squares = 0;
+        for (const sample of samples) {
+            peak = Math.max(peak, Math.abs(sample));
+            squares += sample * sample;
+        }
+        return { peak, rms: Math.sqrt(squares / samples.length) };
+    });
 }
 
 async function checkLayout(page, width, lang) {
@@ -115,6 +141,15 @@ async function checkLayout(page, width, lang) {
         assert.deepEqual(trace.oscillators[0].frequency.map(event => [event.method, event.args[0]]), [['setValueAtTime', 165]]);
         assert.equal(trace.oscillators[0].stops, 0);
         assert(trace.gains.some(events => events.some(event => event.method === 'exponentialRampToValueAtTime')), 'fade-in remains enabled');
+        assert(trace.gains.some(events => events.some(event => event.method === 'exponentialRampToValueAtTime' && event.args[0] === 0.9)), 'speaker tone uses higher gain');
+        await setVolume(page, 1);
+        const fullOutput = await measureOutput(page);
+        assert(Math.abs(fullOutput.peak - 0.9) < 0.01, 'maximum speaker output is 0.9, not the old 0.22 ceiling');
+        assert(Math.abs(fullOutput.rms - 0.9 / Math.sqrt(2)) < 0.01, 'output remains an undistorted sine wave');
+        assert(fullOutput.peak < 1, 'maximum output leaves digital clipping headroom');
+        await setVolume(page, 0.5);
+        const halfOutput = await measureOutput(page);
+        assert(Math.abs(halfOutput.peak / fullOutput.peak - 0.5) < 0.01, 'volume slider still scales boosted output');
 
         const measuredHz = await page.evaluate(async frequency => {
             const ctx = new OfflineAudioContext(1, 96000, 48000);
@@ -133,6 +168,7 @@ async function checkLayout(page, width, lang) {
         await setVolume(page, 0);
         trace = await page.evaluate(() => window.breathAudioTrace);
         assert(trace.gains.some(events => events.some(event => event.method === 'setTargetAtTime' && event.args[0] === 0)), 'volume reaches mute through smoothing');
+        assert((await measureOutput(page)).peak < 0.001, 'boosted speaker tone still mutes completely');
         await page.locator('#br-start').click();
         assert.equal((await page.evaluate(() => window.breathAudioTrace.oscillators[0].stops)), 1, 'pause stops the tone');
         await page.locator('#br-start').click();
@@ -146,20 +182,25 @@ async function checkLayout(page, width, lang) {
         assert.equal(await page.locator('#br-volume').inputValue(), '0', 'mute is restored');
         assert.equal(await page.evaluate(() => window.breathAudioTrace.oscillators.length), 0, 'restoring settings must not autoplay');
         await page.locator('#br-start').click();
+        await setVolume(page, 1);
         await page.locator('[data-chakra="root"]').click();
         assert(await page.locator('#br-speaker-note').isHidden());
         trace = await page.evaluate(() => window.breathAudioTrace);
         assert(trace.oscillators[0].frequency.some(event => event.method === 'setTargetAtTime' && event.args[0] === 396), 'live preset switching retunes smoothly');
+        assert(trace.gains.some(events => events.some(event => event.method === 'setTargetAtTime' && event.args[0] === 0.22)), 'switching back to chakra restores the original gain smoothly');
         await page.waitForFunction(() => window.breathAudioTrace.oscillators.length >= 3);
         trace = await page.evaluate(() => window.breathAudioTrace);
         for (const startHz of [396 * 0.6875, 396 * 1.7778]) {
             assert(trace.oscillators.some(tone => tone.frequency.some(event => event.method === 'setValueAtTime' && event.args[0] === startHz)), 'chakra pitch sweeps remain enabled in both phases');
         }
+        assert(trace.gains.at(-1).some(event => event.method === 'exponentialRampToValueAtTime' && event.args[0] === 0.22), 'new chakra phases keep their original gain');
         await page.locator('.br-speaker-tone').click();
         trace = await page.evaluate(() => window.breathAudioTrace);
         assert(trace.oscillators.at(-1).frequency.some(event => event.method === 'setTargetAtTime' && event.args[0] === 165));
+        assert(trace.gains.at(-1).some(event => event.method === 'setTargetAtTime' && event.args[0] === 0.9), 'switching live to speaker tone raises gain smoothly');
+        assert(Math.abs((await measureOutput(page)).peak - 0.9) < 0.01, 'live switching also reaches full speaker output');
         await page.locator('#br-start').click();
-        console.log('Speaker tone: 165Hz sine, continuous phases, fades/mute, pause/reset, persistence, no autoplay, chakra sweeps and layouts passed (320/390/768/1280px, ko/en).');
+        console.log('Speaker tone: 165Hz sine, measured peak 0.9 without clipping, proportional volume/mute, smooth preset gains, continuous phases, pause/reset, persistence, no autoplay, chakra sweeps and layouts passed (320/390/768/1280px, ko/en).');
     } finally {
         await browser.close();
     }

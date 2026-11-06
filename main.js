@@ -143,6 +143,7 @@
 
         // Synth audio
         var TONE_GAIN = 0.22;
+        var SPEAKER_TONE_GAIN = 0.9;
         var TONE_ATTACK_SEC = 0.16;
         var TONE_RELEASE_SEC = 0.09;
         var TONE_DISCONNECT_PAD_SEC = 0.08;
@@ -203,6 +204,10 @@
 
         function isSpeakerToneSelected(){
           return selectedChakra === 'speaker-cleaning';
+        }
+
+        function getToneGain(){
+          return isSpeakerToneSelected() ? SPEAKER_TONE_GAIN : TONE_GAIN;
         }
 
         function getChakraFrequency(){
@@ -276,9 +281,10 @@
           }
         }
 
-        function updateActiveToneFrequency(){
+        function updateActiveTone(){
           if(running && fallbackOscillator){
             setOscillatorFrequency(getBreathFrequency(phase === 'INHALE'));
+            setGainValue(fallbackOscillatorGain && fallbackOscillatorGain.gain, getToneGain());
           }
         }
 
@@ -286,7 +292,7 @@
           if(!btn) return;
           selectedChakra = btn.getAttribute('data-chakra') || selectedChakra;
           updateChakraUI();
-          updateActiveToneFrequency();
+          updateActiveTone();
           saveBreathSettings();
         }
 
@@ -360,6 +366,7 @@
           stopFallbackTone();
           var oscillator = audioCtx.createOscillator();
           var gainNode = audioCtx.createGain();
+          var toneGain = getToneGain();
           var now = audioCtx.currentTime;
           fallbackOscillator = oscillator;
           fallbackOscillatorGain = gainNode;
@@ -378,13 +385,13 @@
           }
           try{
             gainNode.gain.setValueAtTime(0.0001, now);
-            gainNode.gain.exponentialRampToValueAtTime(TONE_GAIN, now + TONE_ATTACK_SEC);
+            gainNode.gain.exponentialRampToValueAtTime(toneGain, now + TONE_ATTACK_SEC);
           }catch(e){
             try{
               gainNode.gain.setValueAtTime(0, now);
-              gainNode.gain.linearRampToValueAtTime(TONE_GAIN, now + TONE_ATTACK_SEC);
+              gainNode.gain.linearRampToValueAtTime(toneGain, now + TONE_ATTACK_SEC);
             }catch(ignore){
-              try{ gainNode.gain.value = TONE_GAIN; }catch(ignore2){ /* ignore */ }
+              try{ gainNode.gain.value = toneGain; }catch(ignore2){ /* ignore */ }
             }
           }
           oscillator.connect(gainNode);
