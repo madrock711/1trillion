@@ -151,7 +151,8 @@
         var EXHALE_PITCH_START_RATIO = 1.7778;
         var volumeSlider = root.querySelector('#br-volume');
         var chakraFrequencyLabel = q('#br-chakra-frequency');
-        var chakraButtons = root.querySelectorAll('.br-chakra-node');
+        var chakraButtons = root.querySelectorAll('[data-chakra]');
+        var speakerNote = q('#br-speaker-note');
         var selectedChakra = 'root';
         var BREATH_SETTINGS_KEY = 'breathing:settings:v1';
         var audioUnlocked = false;
@@ -195,9 +196,13 @@
         }
 
         function getSelectedChakraButton(){
-          return root.querySelector('.br-chakra-node[data-chakra="' + selectedChakra + '"]') ||
-            root.querySelector('.br-chakra-node[aria-pressed="true"]') ||
+          return root.querySelector('[data-chakra="' + selectedChakra + '"]') ||
+            root.querySelector('[data-chakra][aria-pressed="true"]') ||
             root.querySelector('.br-chakra-node');
+        }
+
+        function isSpeakerToneSelected(){
+          return selectedChakra === 'speaker-cleaning';
         }
 
         function getChakraFrequency(){
@@ -248,6 +253,7 @@
             btn.title = label + ' ' + hz + 'Hz';
           }
           if(chakraFrequencyLabel) chakraFrequencyLabel.textContent = formatChakraSelection();
+          if(speakerNote) speakerNote.hidden = !isSpeakerToneSelected();
         }
 
         function setOscillatorFrequency(frequency){
@@ -360,9 +366,13 @@
           oscillator.type = 'sine';
           try{
             var targetFrequency = getBreathFrequency(isInhale);
-            var startFrequency = getPitchStartFrequency(isInhale, targetFrequency);
-            oscillator.frequency.setValueAtTime(startFrequency, now);
-            oscillator.frequency.linearRampToValueAtTime(targetFrequency, now + getPitchSweepDuration());
+            if(isSpeakerToneSelected()){
+              oscillator.frequency.setValueAtTime(targetFrequency, now);
+            }else{
+              var startFrequency = getPitchStartFrequency(isInhale, targetFrequency);
+              oscillator.frequency.setValueAtTime(startFrequency, now);
+              oscillator.frequency.linearRampToValueAtTime(targetFrequency, now + getPitchSweepDuration());
+            }
           }catch(e){
             try{ oscillator.frequency.value = getBreathFrequency(isInhale); }catch(ignore){ /* ignore */ }
           }
@@ -383,6 +393,8 @@
         }
 
         function playPhaseAudio(){
+          // Keep the fixed speaker tone continuous across breathing phases.
+          if(isSpeakerToneSelected() && fallbackOscillator) return;
           startFallbackTone(phase === 'INHALE');
         }
 
@@ -664,7 +676,7 @@
         document.addEventListener('click', function(e){
           var t = e.target; if(!t) return; if(!root.contains(t)) return;
           try{
-            var chakraBtn = t.closest ? t.closest('.br-chakra-node') : null;
+            var chakraBtn = t.closest ? t.closest('[data-chakra]') : null;
             if(chakraBtn && root.contains(chakraBtn)){ selectChakra(chakraBtn); }
             else if(t.id==='br-start'){ running? pause(): start(); }
             else if(t.id==='br-reset'){ reset(); }

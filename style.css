@@ -564,6 +564,11 @@ button.tab-link {
 .br-embed .br-volume-column label{font-size:12px;font-weight:800;color:#d7e3ee;text-align:center}
 .br-embed .br-volume-vertical{width:34px;height:210px;min-height:160px;padding:0;border:0;background:transparent;accent-color:#3b82f6;writing-mode:vertical-lr;direction:rtl}
 .br-embed .br-chakra-selector{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+.br-embed .br-speaker-tone{appearance:none;display:grid;place-items:center;gap:2px;box-sizing:border-box;width:100%;max-width:108px;min-height:48px;padding:6px 3px;border:1px solid #707070;border-radius:6px;background:#222;color:#d7e3ee;font-family:inherit;font-size:11px;font-weight:700;line-height:1.3;text-align:center;overflow-wrap:anywhere;cursor:pointer}
+.br-embed .br-speaker-tone:hover{background:#303030}
+.br-embed .br-speaker-tone[aria-pressed="true"]{border-color:#93c5fd;background:#173759;color:#fff}
+.br-embed .br-speaker-tone:focus-visible{outline:2px solid #93c5fd;outline-offset:3px}
+.br-embed .br-speaker-note{align-self:stretch;margin:0;color:#d7e3ee;font-size:12px;line-height:1.6;overflow-wrap:anywhere}
 .br-embed .br-chakra-frequency{min-height:34px;width:100%;font-size:12px;font-weight:800;line-height:1.25;color:#d7e3ee;text-align:center;overflow-wrap:anywhere}
 .br-embed .br-chakra-map{--chakra-node-x:28px;position:relative;isolation:isolate;display:block;box-sizing:border-box;width:108px;min-height:286px;overflow:hidden;border:1px solid #3a3a3a;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.012)), #171717}
 .br-embed .br-chakra-map::before{content:"";position:absolute;left:46px;right:0;top:33px;bottom:-17px;background:url("assets/images/chakra-body-outline-right.png?v=20260703-1") left center / auto 98% no-repeat;opacity:.92;filter:drop-shadow(0 0 5px rgba(198,209,223,.34));pointer-events:none;z-index:0}
