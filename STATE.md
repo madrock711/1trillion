@@ -6,3 +6,4 @@
 - 다음11/10 22:30CPI. 전일평가 research/evaluation/outcomes/2026-11-06-080717-same-close.json.
 - 작성 2026-11-09T08:08:52.882988+09:00, 데이터 최종 확인 2026-11-09T08:08:52.726261+09:00, 한국 장전.
 - reports/2026-11-09.md · assets/data/market-dashboard-20261109-0808.json · research/evaluation/forecasts/2026-11-09-080852-same-close.json.
+- 최초 공개 2026-11-09T08:10:28.557000+09:00 · 콘텐츠 a8e37fab8e1609ee3f913fb8f37b9a34dd1cad3a · Amplify 748.
