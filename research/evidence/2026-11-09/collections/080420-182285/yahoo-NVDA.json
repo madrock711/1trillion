@@ -1,0 +1,138 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?range=5d&interval=1d&includePrePost=true",
+  "requestedAt": "2026-11-09T08:04:20.344867+09:00",
+  "httpStatus": 200,
+  "rawHash": "82127e805861980540dcaf3ed1f4fbe4122f9d3abf2c8a83cac385276664debd",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "NVDA",
+            "exchangeName": "NMS",
+            "fullExchangeName": "NasdaqGS",
+            "instrumentType": "EQUITY",
+            "firstTradeDate": 917015400,
+            "regularMarketTime": 1793998800,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -18000,
+            "timezone": "EST",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 186.64,
+            "regularMarketChangePercent": 2.775,
+            "fulldayPrice": 186.64,
+            "fulldayChange": 7.1,
+            "fulldayChangePercent": 3.91,
+            "fiftyTwoWeekHigh": 243.37,
+            "fiftyTwoWeekLow": 164.27,
+            "regularMarketDayHigh": 194.895,
+            "regularMarketDayLow": 185.22,
+            "regularMarketVolume": 180212285,
+            "longName": "NVIDIA Corporation",
+            "shortName": "NVIDIA Corporation",
+            "chartPreviousClose": 204.64,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EST",
+                "end": 1793975400,
+                "start": 1793955600,
+                "gmtoffset": -18000
+              },
+              "regular": {
+                "timezone": "EST",
+                "end": 1793998800,
+                "start": 1793975400,
+                "gmtoffset": -18000
+              },
+              "post": {
+                "timezone": "EST",
+                "end": 1794013200,
+                "start": 1793998800,
+                "gmtoffset": -18000
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1793629800,
+            1793716200,
+            1793802600,
+            1793889000,
+            1793975400
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "close": [
+                  202.05999755859375,
+                  206.69000244140625,
+                  200.1300048828125,
+                  181.60000610351562,
+                  186.63999938964844
+                ],
+                "open": [
+                  207.52999877929688,
+                  207.9600067138672,
+                  203.5,
+                  196.07000732421875,
+                  191.10000610351562
+                ],
+                "high": [
+                  209.97999572753906,
+                  209.13999938964844,
+                  206.7899932861328,
+                  196.25,
+                  194.89999389648438
+                ],
+                "low": [
+                  201.66000366210938,
+                  205.92999267578125,
+                  199.67999267578125,
+                  181.4600067138672,
+                  185.22000122070312
+                ],
+                "volume": [
+                  119272200,
+                  91943400,
+                  149033300,
+                  306127800,
+                  179722400
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  202.05999755859375,
+                  206.69000244140625,
+                  200.1300048828125,
+                  181.60000610351562,
+                  186.63999938964844
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  },
+  "status": "collected",
+  "fetchedAt": "2026-11-09T08:04:20.687268+09:00"
+}

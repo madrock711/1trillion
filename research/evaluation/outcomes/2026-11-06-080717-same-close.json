@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-11-06-080717-same-close",
+  "recordedAt": "2026-11-09T08:08:29.057951+09:00",
+  "actualRef": "2026-11-06",
+  "realizedScenario": "base",
+  "errorCodes": [
+    "cause_unverifiable"
+  ],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "unavailable",
+      "reason": "전일 최종 수급 묶음과 발행 후 시각별 경로 원천 미확보"
+    },
+    {
+      "id": "bull-foreign",
+      "status": "unavailable",
+      "reason": "전일 최종 수급 묶음과 발행 후 시각별 경로 원천 미확보"
+    },
+    {
+      "id": "bull-program",
+      "status": "unavailable",
+      "reason": "전일 최종 수급 묶음과 발행 후 시각별 경로 원천 미확보"
+    },
+    {
+      "id": "base-floor",
+      "status": "unavailable",
+      "reason": "전일 최종 수급 묶음과 발행 후 시각별 경로 원천 미확보"
+    },
+    {
+      "id": "base-cap",
+      "status": "unavailable",
+      "reason": "전일 최종 수급 묶음과 발행 후 시각별 경로 원천 미확보"
+    },
+    {
+      "id": "bear-price",
+      "status": "unavailable",
+      "reason": "전일 최종 수급 묶음과 발행 후 시각별 경로 원천 미확보"
+    },
+    {
+      "id": "bear-foreign",
+      "status": "unavailable",
+      "reason": "전일 최종 수급 묶음과 발행 후 시각별 경로 원천 미확보"
+    },
+    {
+      "id": "bear-program",
+      "status": "unavailable",
+      "reason": "전일 최종 수급 묶음과 발행 후 시각별 경로 원천 미확보"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "semiconductor",
+      "status": "unverifiable"
+    },
+    {
+      "id": "fx",
+      "status": "unverifiable"
+    }
+  ],
+  "hypothesisTests": []
+}
