@@ -1,0 +1,2 @@
+# 외부 원천 증거는 줄바꿈과 공백을 포함한 원본 바이트를 보존한다.
+research/evidence/**/*.raw binary

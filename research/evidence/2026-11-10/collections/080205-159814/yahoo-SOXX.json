@@ -1,0 +1,138 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/SOXX?range=5d&interval=1d&includePrePost=true",
+  "requestedAt": "2026-11-10T08:02:05.362291+09:00",
+  "httpStatus": 200,
+  "rawHash": "3fe538aa818bb4a518abae41554d4c91d85ce286c03d819d68c4762cba1a3764",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "SOXX",
+            "exchangeName": "NGM",
+            "fullExchangeName": "NasdaqGM",
+            "instrumentType": "ETF",
+            "firstTradeDate": 995031000,
+            "regularMarketTime": 1794258000,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -18000,
+            "timezone": "EST",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 146.76,
+            "regularMarketChangePercent": 7.493,
+            "fulldayPrice": 147.09,
+            "fulldayChange": 10.56,
+            "fulldayChangePercent": 7.735,
+            "fiftyTwoWeekHigh": 218.65,
+            "fiftyTwoWeekLow": 86.813,
+            "regularMarketDayHigh": 148.005,
+            "regularMarketDayLow": 137.97,
+            "regularMarketVolume": 39477498,
+            "longName": "iShares Semiconductor ETF",
+            "shortName": "iShares PHLX SOX Semiconductor ",
+            "chartPreviousClose": 151.217,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EST",
+                "start": 1794214800,
+                "end": 1794234600,
+                "gmtoffset": -18000
+              },
+              "regular": {
+                "timezone": "EST",
+                "start": 1794234600,
+                "end": 1794258000,
+                "gmtoffset": -18000
+              },
+              "post": {
+                "timezone": "EST",
+                "start": 1794258000,
+                "end": 1794272400,
+                "gmtoffset": -18000
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1793716200,
+            1793802600,
+            1793889000,
+            1793975400,
+            1794234600
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "volume": [
+                  39884400,
+                  52693200,
+                  67658500,
+                  59135600,
+                  39477498
+                ],
+                "high": [
+                  157.5433349609375,
+                  156.4066619873047,
+                  143.72999572753906,
+                  140.2100067138672,
+                  148.0050048828125
+                ],
+                "low": [
+                  153.94332885742188,
+                  147.22666931152344,
+                  130.75,
+                  133.8000030517578,
+                  137.97000122070312
+                ],
+                "close": [
+                  155.0,
+                  150.1366729736328,
+                  131.89999389648438,
+                  136.52999877929688,
+                  146.75999450683594
+                ],
+                "open": [
+                  155.336669921875,
+                  152.75999450683594,
+                  143.0800018310547,
+                  139.55999755859375,
+                  138.5800018310547
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  155.0,
+                  150.1366729736328,
+                  131.89999389648438,
+                  136.52999877929688,
+                  146.75999450683594
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  },
+  "status": "collected",
+  "fetchedAt": "2026-11-10T08:02:05.734892+09:00"
+}

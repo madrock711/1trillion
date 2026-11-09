@@ -1,0 +1,138 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?range=5d&interval=1d&includePrePost=true",
+  "requestedAt": "2026-11-10T08:02:05.362722+09:00",
+  "httpStatus": 200,
+  "rawHash": "408479bc8955b357f749c64627e282c274084825a41f5f8b0db5442889b701f2",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "SMH",
+            "exchangeName": "NGM",
+            "fullExchangeName": "NasdaqGM",
+            "instrumentType": "ETF",
+            "firstTradeDate": 960211800,
+            "regularMarketTime": 1794258000,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -18000,
+            "timezone": "EST",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 487.41,
+            "regularMarketChangePercent": 5.054,
+            "fulldayPrice": 488.0,
+            "fulldayChange": 24.04,
+            "fulldayChangePercent": 5.181,
+            "fiftyTwoWeekHigh": 671.83,
+            "fiftyTwoWeekLow": 315.05,
+            "regularMarketDayHigh": 490.47,
+            "regularMarketDayLow": 462.88,
+            "regularMarketVolume": 14596565,
+            "longName": "VanEck Semiconductor ETF",
+            "shortName": "VanEck Semiconductor ETF",
+            "chartPreviousClose": 508.31,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EST",
+                "end": 1794234600,
+                "start": 1794214800,
+                "gmtoffset": -18000
+              },
+              "regular": {
+                "timezone": "EST",
+                "end": 1794258000,
+                "start": 1794234600,
+                "gmtoffset": -18000
+              },
+              "post": {
+                "timezone": "EST",
+                "end": 1794272400,
+                "start": 1794258000,
+                "gmtoffset": -18000
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1793716200,
+            1793802600,
+            1793889000,
+            1793975400,
+            1794234600
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "high": [
+                  524.7000122070312,
+                  522.2000122070312,
+                  483.92999267578125,
+                  476.25,
+                  490.4700012207031
+                ],
+                "close": [
+                  518.52001953125,
+                  504.2699890136719,
+                  447.7300109863281,
+                  463.9599914550781,
+                  487.4100036621094
+                ],
+                "low": [
+                  515.489990234375,
+                  497.3299865722656,
+                  445.5899963378906,
+                  456.44000244140625,
+                  462.8800048828125
+                ],
+                "volume": [
+                  9095800,
+                  13413900,
+                  28960600,
+                  16840300,
+                  14596565
+                ],
+                "open": [
+                  520.6799926757812,
+                  511.1700134277344,
+                  482.1400146484375,
+                  473.4100036621094,
+                  464.9649963378906
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  518.52001953125,
+                  504.2699890136719,
+                  447.7300109863281,
+                  463.9599914550781,
+                  487.4100036621094
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  },
+  "status": "collected",
+  "fetchedAt": "2026-11-10T08:02:05.697218+09:00"
+}
