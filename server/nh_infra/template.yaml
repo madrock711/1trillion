@@ -178,6 +178,29 @@ Resources:
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub 'arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiId}/*/*/api/private/nh/session/*'
 
+  ClosingArchiveRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: yeonma-nh-close-archive
+      Description: Save private NH closing flow at 16:10, 17:10 and 18:10 Asia/Seoul on weekdays.
+      ScheduleExpression: 'cron(10 7-9 ? * MON-FRI *)'
+      State: ENABLED
+      Targets:
+        - Id: PrivateNhClosingArchive
+          Arn: !GetAtt Reader.Arn
+          RetryPolicy:
+            MaximumEventAgeInSeconds: 600
+            MaximumRetryAttempts: 2
+
+  ClosingArchivePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref Reader
+      Principal: events.amazonaws.com
+      SourceAccount: !Ref AWS::AccountId
+      SourceArn: !GetAtt ClosingArchiveRule.Arn
+
 Outputs:
   FlowEndpoint:
     Value: !Sub 'https://${ApiId}.execute-api.${AWS::Region}.${AWS::URLSuffix}/api/private/nh/flow'

@@ -29,10 +29,11 @@ CLIENT_ID = "343043233969-95mv3utlrbafcj1673dpl33ont9mh2j9.apps.googleuserconten
 ROOT = Path(__file__).resolve().parents[1]
 CODE_DIR = ROOT / "server" / "nh_private"
 TEMPLATE = ROOT / "server" / "nh_infra" / "template.yaml"
-CODE_FILES = ("handler.py", "runtime_service.py", "flow_service.py", "token_store.py", "nh_transport.py", "session_store.py", "flow_archive.py")
+CODE_FILES = ("handler.py", "runtime_service.py", "flow_service.py", "token_store.py", "nh_transport.py", "session_store.py", "flow_archive.py", "closing_collector.py")
 EXPECTED_LOGICAL_IDS = {"TokenTable", "ReaderLogGroup", "Reader", "GoogleAuthorizer", "ReaderIntegration",
                         "ReadFlow", "GatewayPermission", "ReadSession", "SessionGatewayPermission", "LiveStage"}
 SESSION_LOGICAL_IDS = {"LoginSession", "RestoreSession", "LogoutSession", "SessionFlow", "BrowserSessionPermission"}
+CLOSING_LOGICAL_IDS = {"ClosingArchiveRule", "ClosingArchivePermission"}
 
 
 class DeploymentError(RuntimeError):
@@ -155,7 +156,8 @@ def change_set_type(cloudformation, role_arn):
         raise DeploymentError("기존 스택의 자원 목록이 예상보다 많아 변경하지 않습니다.")
     resources = resource_response.get("StackResourceSummaries", [])
     actual_ids = {item.get("LogicalResourceId") for item in resources}
-    if actual_ids not in (EXPECTED_LOGICAL_IDS, EXPECTED_LOGICAL_IDS | SESSION_LOGICAL_IDS):
+    if actual_ids not in (EXPECTED_LOGICAL_IDS, EXPECTED_LOGICAL_IDS | SESSION_LOGICAL_IDS,
+                          EXPECTED_LOGICAL_IDS | SESSION_LOGICAL_IDS | CLOSING_LOGICAL_IDS):
         raise DeploymentError("기존 스택 자원이 예상과 달라 변경하지 않습니다.")
     return "UPDATE"
 

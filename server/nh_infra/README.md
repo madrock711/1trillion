@@ -7,6 +7,21 @@
 - `iam-bootstrap.json`: 관리자가 직접 적용하는 1회 설정. 전용 HTTP API와 공개 차단·버전 관리 S3 버킷, Lambda 실행 역할 `yeonma-nh-runtime`, CloudFormation 서비스 역할 `yeonma-nh-cfn`, CLI 사용자 `codex-amplify-manager`에 연결할 IAM 정책을 만든다. API ID는 이 스택에서 결정된다. 구체적인 방법과 비용·권한 위험은 [AWS IAM 설정 안내](AWS_IAM_설정_안내.md)를 따른다.
 - `template.yaml`: 별도 운영 스택 `yeonma-nh-private`용 준비안. bootstrap이 만든 API와 실행 역할을 참조하며, DynamoDB 테이블 `yeonma-nh-token`, Lambda `yeonma-nh-private`, 로그 그룹, Google JWT 인증기, API 경로·스테이지를 만든다. IAM 역할을 직접 만들거나 기존 다른 API·버킷을 변경하지 않는다.
 - `../nh_private/`: 인증 후에만 수급을 제공하는 서버 코드와 토큰 동시 발급 방지 코드. 자세한 조건과 테스트 상태는 [개인 NH 수급 API 안내](../nh_private/README.md)를 따른다.
+- `closing-archive-iam.json`: 관리자가 한 번 적용하는 별도 `yeonma-nh-closing-permissions` 스택. 기존 `yeonma-nh-cfn` 역할에 이름이 고정된 예약 규칙 하나와 해당 규칙의 Lambda 호출 권한을 관리할 권한만 추가한다. 기존 bootstrap·API·버킷·역할·키는 교체하지 않는다.
+
+## 장 마감 자동 보관
+
+운영 템플릿의 `ClosingArchiveRule`은 평일 16:10·17:10·18:10 KST에 기존 비공개 Lambda를 호출한다. AWS EventBridge 예약 규칙은 UTC를 사용하므로 표현식은 `cron(10 7-9 ? * MON-FRI *)`이다. 별도 실행 역할이 필요한 Scheduler 대신, 기존 함수에 단일 규칙 ARN으로 제한한 리소스 기반 호출 권한을 연결한다. [AWS 예약 규칙 문서](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-create-rule-schedule.html), [Lambda 대상 권한](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-use-resource-based.html)
+
+관리자에게 필요한 첫 설정:
+
+1. 계정 `514670561185`, 리전 `us-east-1`의 CloudFormation에서 새 스택 `yeonma-nh-closing-permissions`를 만든다.
+2. `closing-archive-iam.json`을 업로드하고 IAM 변경을 확인한다. 생성 항목은 기존 역할에 붙는 정책 하나뿐이어야 한다.
+3. `CREATE_COMPLETE` 뒤 운영 스택의 변경 세트를 검토·실행한다. 운영 스택에는 기존 코드 수정, 예약 규칙 하나, 해당 규칙 전용 Lambda 호출 권한 하나만 추가된다.
+
+CLI 계정에는 예약 규칙 직접 관리·IAM 수정 권한을 추가하지 않았다. 2026-11-09 사용자 승인 뒤 별도 정책 스택 `CREATE_COMPLETE`, 운영 스택 `UPDATE_COMPLETE`, 규칙 `Enabled`와 위 시간표를 확인했다. 관리 권한은 기존 CloudFormation 역할에만 추가됐다. 수집 로그에는 거래일·상태·행 수만 남기고 NH 키·시크릿·토큰·수급 원문은 남기지 않는다.
+
+`python scripts/verify_nh_closing_schedule.py --run`은 배포 자원·전용 호출 정책을 확인하고, Google 로그인이나 쿠키 없이 수집 핸들러를 명시적으로 한 번 호출한 뒤 익명 시세 접근의 401을 확인한다. 실제 수집 경로 검증과 앞으로 도래할 예약 시각의 자동 실행은 구분한다.
 
 bootstrap과 운영 스택은 서로 다른 작업이다. bootstrap만으로는 NH 시세 경로나 로그인 화면이 작동하지 않는다. 변경 세트와 배포 결과를 검토하고 실환경 인증·접근 통제·토큰 전환을 검증해야 한다. AWS `ValidateTemplate`도 마지막 확인 당시 CLI 사용자의 권한 부족으로 실행하지 못했으므로 실제 배포 전에 다시 확인한다.
 

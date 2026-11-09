@@ -1,4 +1,5 @@
 import io
+import json
 from pathlib import Path
 import sys
 import unittest
@@ -68,7 +69,7 @@ class DeployTest(unittest.TestCase):
         with patch.object(deploy, "load_subject", return_value="123456789"):
             return deploy.prepare_change_set(self.sts, self.cf, self.s3, Path("unused"))
 
-    def test_package_is_deterministic_and_contains_only_five_files(self):
+    def test_package_is_deterministic_and_contains_only_declared_files(self):
         first, digest = deploy.package_code()
         second, digest2 = deploy.package_code()
         self.assertEqual(first, second)
@@ -81,6 +82,29 @@ class DeployTest(unittest.TestCase):
 
     def test_noecho_is_present_in_actual_template(self):
         self.assertIn("NoEcho: true", deploy.read_template())
+
+    def test_closing_schedule_uses_fixed_private_target_and_scoped_iam(self):
+        template = deploy.read_template()
+        self.assertIn("ScheduleExpression: 'cron(10 7-9 ? * MON-FRI *)'", template)
+        self.assertIn('SourceArn: !GetAtt ClosingArchiveRule.Arn', template)
+        self.assertIn('Principal: events.amazonaws.com', template)
+        policy = json.loads((deploy.ROOT / 'server/nh_infra/closing-archive-iam.json').read_text(encoding='utf-8'))
+        self.assertEqual(set(policy['Resources']), {'ClosingArchiveDeploymentPolicy'})
+        props = policy['Resources']['ClosingArchiveDeploymentPolicy']['Properties']
+        self.assertEqual(props['Roles'], ['yeonma-nh-cfn'])
+        for statement in props['PolicyDocument']['Statement']:
+            self.assertNotIn('*', statement['Resource'])
+        self.assertEqual(props['PolicyDocument']['Statement'][1]['Condition']['StringEquals']['lambda:Principal'], 'events.amazonaws.com')
+
+    def test_existing_closing_resources_can_be_updated_but_other_resources_cannot(self):
+        self.cf.existing = {'StackName': deploy.STACK_NAME, 'StackStatus': 'UPDATE_COMPLETE',
+                            'RoleARN': f'arn:aws:iam::{deploy.ACCOUNT}:role/yeonma-nh-cfn',
+                            'Tags': [{'Key': 'Project', 'Value': 'yeonma-nh-private'}]}
+        allowed = deploy.EXPECTED_LOGICAL_IDS | deploy.SESSION_LOGICAL_IDS | deploy.CLOSING_LOGICAL_IDS
+        with patch.object(self.cf, 'list_stack_resources', return_value={'StackResourceSummaries': [{'LogicalResourceId': n} for n in allowed]}):
+            self.assertEqual(self.prepare()['change_set_type'], 'UPDATE')
+        with patch.object(self.cf, 'list_stack_resources', return_value={'StackResourceSummaries': [{'LogicalResourceId': n} for n in allowed | {'Unexpected'}]}):
+            with self.assertRaises(deploy.DeploymentError): self.prepare()
 
     def test_create_only_uploads_versioned_package_and_does_not_print_subject(self):
         output = io.StringIO()

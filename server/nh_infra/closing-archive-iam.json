@@ -1,0 +1,27 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Only allow the existing Yeonma CloudFormation role to manage one private NH closing archive rule.",
+  "Conditions": {
+    "ExpectedAccountAndRegion": {"Fn::And": [
+      {"Fn::Equals": [{"Ref": "AWS::AccountId"}, "514670561185"]},
+      {"Fn::Equals": [{"Ref": "AWS::Region"}, "us-east-1"]}
+    ]}
+  },
+  "Resources": {
+    "ClosingArchiveDeploymentPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Condition": "ExpectedAccountAndRegion",
+      "Properties": {
+        "PolicyName": "yeonma-nh-closing-archive-only",
+        "Roles": ["yeonma-nh-cfn"],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {"Effect": "Allow", "Action": ["events:PutRule", "events:DescribeRule", "events:DeleteRule", "events:PutTargets", "events:RemoveTargets", "events:ListTargetsByRule", "events:EnableRule", "events:DisableRule", "events:TagResource", "events:UntagResource", "events:ListTagsForResource"], "Resource": "arn:aws:events:us-east-1:514670561185:rule/yeonma-nh-close-archive"},
+            {"Effect": "Allow", "Action": "lambda:AddPermission", "Resource": "arn:aws:lambda:us-east-1:514670561185:function:yeonma-nh-private", "Condition": {"StringEquals": {"lambda:Principal": "events.amazonaws.com"}}}
+          ]
+        }
+      }
+    }
+  }
+}

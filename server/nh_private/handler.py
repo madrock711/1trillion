@@ -162,6 +162,19 @@ def _session_response(event, config, path, method, origin):
 
 
 def lambda_handler(event, _context):
+    if isinstance(event, dict) and event.get('source') == 'aws.events':
+        from closing_collector import collect
+        def service():
+            config = _configuration()
+            global FLOW_SERVICE
+            if not TOKEN_CACHE_READY:
+                raise RuntimeError('shared token cache is not enabled')
+            if FLOW_SERVICE is None:
+                with _service_lock:
+                    if FLOW_SERVICE is None:
+                        FLOW_SERVICE = _new_runtime_service(config)
+            return FLOW_SERVICE
+        return collect(event, _context, service)
     origin = ""
     try:
         if not isinstance(event, dict) or event.get("version") != "2.0":

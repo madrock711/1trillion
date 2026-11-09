@@ -11,7 +11,7 @@ import sys
 
 def main():
     root = Path(__file__).resolve().parent
-    groups = ['test_token_store.py', 'test_nh_transport.py', 'test_runtime_service.py', 'test_flow_integration.py', 'test_flow_archive.py']
+    groups = ['test_token_store.py', 'test_nh_transport.py', 'test_runtime_service.py', 'test_flow_integration.py', 'test_flow_archive.py', 'test_closing_collector.py']
     for group in groups:
         result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', str(root), '-p', group],
                                 capture_output=True)
