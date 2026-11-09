@@ -3840,6 +3840,9 @@
             status: 'ready',
             tradeDate: /^\d{4}-\d{2}-\d{2}$/.test(payload.tradeDate || '') ? payload.tradeDate : '',
             fetchedAt: payload.fetchedAt,
+            dateVerified: payload.dateVerified === true,
+            persisted: payload.persisted === true,
+            sessionStatus: payload.sessionStatus === 'closed' ? 'closed' : 'partial',
             market: payload.market === 'UNT' ? '통합' : payload.market === 'KRX' ? 'KRX' : '미확인',
             amount: payload.amount,
             quantity: payload.quantity
@@ -4042,7 +4045,10 @@
             var timeout = window.setTimeout(function () { if (controller) controller.abort(); }, 15000);
             var local = isLocalPrivateFlowHost();
             var remote = privateAuthConfig();
-            window.fetch(local ? '/api/private/nh/flow' : remote.apiUrl, {
+            var requestedDate = selectedKodexIntradayDate;
+            var flowUrl = local ? '/api/private/nh/flow' : remote.apiUrl
+                + (/^\d{4}-\d{2}-\d{2}$/.test(requestedDate || '') ? '?date=' + encodeURIComponent(requestedDate) : '');
+            window.fetch(flowUrl, {
                 credentials: local ? 'same-origin' : 'include', cache: 'no-store', signal: controller && controller.signal
             }).then(function (response) {
                 if (request !== privateFlowRequestToken) throw new Error('private request superseded');
@@ -4055,7 +4061,8 @@
             }).then(function (payload) {
                 if (request !== privateFlowRequestToken) return;
                 if (!validPrivateFlowPayload(payload)) throw new Error('invalid private flow response');
-                if (privateFlowState.fetchedAt && Date.parse(payload.fetchedAt) < Date.parse(privateFlowState.fetchedAt)) return;
+                if (privateFlowState.tradeDate === payload.tradeDate && privateFlowState.fetchedAt
+                    && Date.parse(payload.fetchedAt) < Date.parse(privateFlowState.fetchedAt)) return;
                 acceptPrivateFlowPayload(payload);
             }).catch(function () {
                 if (request !== privateFlowRequestToken) return;
@@ -4079,10 +4086,10 @@
         return Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3] || 0);
     }
 
-    function privateFlowSession(fetchedAt, nowValue) {
+    function privateFlowSession(fetchedAt, nowValue, saved) {
         var fetched = Date.parse(String(fetchedAt || ''));
         var now = Number(nowValue);
-        if (!Number.isFinite(fetched) || !Number.isFinite(now) || fetched > now + 60000 || now - fetched > 600000) return null;
+        if (!Number.isFinite(fetched) || !Number.isFinite(now) || fetched > now + 60000) return null;
         function kst(value) {
             var date = new Date(value + 9 * 60 * 60 * 1000);
             var pad = function (n) { return String(n).padStart(2, '0'); };
@@ -4094,6 +4101,13 @@
         }
         var collected = kst(fetched);
         var current = kst(now);
+        if (saved && saved.persisted === true && saved.dateVerified === true
+            && saved.tradeDate === collected.date && saved.tradeDate <= current.date
+            && collected.day !== 0 && collected.day !== 6) {
+            return { date: saved.tradeDate, day: collected.day,
+                seconds: saved.sessionStatus === 'closed' ? 15 * 3600 + 30 * 60 : Math.min(collected.seconds, 15 * 3600 + 30 * 60) };
+        }
+        if (now - fetched > 600000) return null;
         if (collected.date !== current.date || collected.day === 0 || collected.day === 6
             || collected.seconds < 9 * 3600 || collected.seconds > 15 * 3600 + 30 * 60
             || current.seconds < 9 * 3600 || current.seconds > 15 * 3600 + 30 * 60) return null;
@@ -4102,8 +4116,8 @@
 
     function privateFlowForRow(row, fallbackDate, mode, nowValue) {
         var date = row.sessionDate || row.date || fallbackDate;
-        // NH does not return a verified trading date. Only the current KST session may be inferred.
-        var session = privateFlowSession(privateFlowState.fetchedAt, nowValue === undefined ? Date.now() : nowValue);
+        // Persisted server snapshots carry a checked date; legacy live payloads keep strict freshness limits.
+        var session = privateFlowSession(privateFlowState.fetchedAt, nowValue === undefined ? Date.now() : nowValue, privateFlowState);
         if (!session || session.date !== date) return null;
         var cutoff = flowSeconds(row.endTime || row.time);
         if (!Number.isFinite(cutoff)) return null;
@@ -4195,7 +4209,9 @@
                     : ' NH 수급을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
                 else if (privateFlowState.status === 'ready') prefix += ' NH ' + privateFlowState.market
                     + ' · 가격은 KRX 정규장 분봉 · 조회 ' + new Date(privateFlowState.fetchedAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
-                    + ' · NH 원본 단위 미확인, 거래일은 장중 조회일로 추정합니다.';
+                    + (privateFlowState.persisted && privateFlowState.dateVerified
+                        ? ' · ' + (privateFlowState.sessionStatus === 'closed' ? '마감 자료' : '마지막 저장 자료') + ' · ' + privateFlowState.tradeDate
+                        : ' · NH 원본 단위 미확인, 거래일은 장중 조회일로 추정합니다.');
             } else if (mode === 'quantity') prefix += ' 개인용 수량 연결이 필요합니다.';
             status.textContent = prefix;
         }

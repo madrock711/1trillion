@@ -29,7 +29,7 @@ CLIENT_ID = "343043233969-95mv3utlrbafcj1673dpl33ont9mh2j9.apps.googleuserconten
 ROOT = Path(__file__).resolve().parents[1]
 CODE_DIR = ROOT / "server" / "nh_private"
 TEMPLATE = ROOT / "server" / "nh_infra" / "template.yaml"
-CODE_FILES = ("handler.py", "runtime_service.py", "flow_service.py", "token_store.py", "nh_transport.py", "session_store.py")
+CODE_FILES = ("handler.py", "runtime_service.py", "flow_service.py", "token_store.py", "nh_transport.py", "session_store.py", "flow_archive.py")
 EXPECTED_LOGICAL_IDS = {"TokenTable", "ReaderLogGroup", "Reader", "GoogleAuthorizer", "ReaderIntegration",
                         "ReadFlow", "GatewayPermission", "ReadSession", "SessionGatewayPermission", "LiveStage"}
 SESSION_LOGICAL_IDS = {"LoginSession", "RestoreSession", "LogoutSession", "SessionFlow", "BrowserSessionPermission"}

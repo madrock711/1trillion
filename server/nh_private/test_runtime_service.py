@@ -1,5 +1,6 @@
 import json
 import unittest
+from datetime import datetime, timezone, timedelta
 from unittest import mock
 
 from runtime_service import RuntimeConfigurationError, build_service
@@ -13,6 +14,10 @@ CONFIG = {
 
 class RuntimeServiceTest(unittest.TestCase):
     def setUp(self):
+        date = datetime.now(timezone(timedelta(hours=9))).date().isoformat()
+        anchor = mock.patch('runtime_service.market_session', return_value={'date': date, 'closed': False})
+        anchor.start()
+        self.addCleanup(anchor.stop)
         self.ssm = mock.Mock()
         self.ssm.get_parameter.return_value = {"Parameter": {"Value": json.dumps({"key": "test-app-key", "secret": "test-secret"})}}
         self.ddb = mock.Mock()

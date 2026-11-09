@@ -14,6 +14,7 @@ import re
 from flow_service import FlowService
 from nh_transport import NHTransport
 from token_store import DynamoTokenStore, SharedTokenManager
+from flow_archive import FlowArchive, market_session
 
 
 class RuntimeConfigurationError(RuntimeError):
@@ -55,7 +56,8 @@ def build_service(config, clients, sanitize_rows, transport_factory=NHTransport)
         transport = transport_factory(key, secret)
         store = DynamoTokenStore(clients["dynamodb"], table, "nh-" + identity)
         manager = SharedTokenManager(store, transport.issue_once)
-        return FlowService(manager, transport, sanitize_rows)
+        return FlowService(manager, transport, sanitize_rows,
+                           archive=FlowArchive(clients['dynamodb'], table, identity), session_provider=market_session)
     except Exception:
         # No provider error, raw parameter, key or secret should escape.
         raise RuntimeConfigurationError("private service initialization failed") from None

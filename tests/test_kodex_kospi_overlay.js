@@ -63,4 +63,16 @@ context.privateFlowState.quantity[0].timez12 = '000000111530';
 assert.equal(context.privateFlowForRow({ date: '2026-11-04', time: '11:15' }, '', 'quantity', now), null, 'mismatching time fields must be rejected');
 context.privateFlowState.fetchedAt = '2026-11-07T11:16:00+09:00';
 assert.equal(context.privateFlowSession(context.privateFlowState.fetchedAt, Date.parse('2026-11-07T11:17:00+09:00')), null, 'weekends must not infer the date');
+context.privateFlowState = { status: 'ready', fetchedAt: '2026-11-04T16:00:00+09:00', tradeDate: '2026-11-04',
+    persisted: true, dateVerified: true, sessionStatus: 'closed', quantity: [
+        { bsop_hour: '15:30:00', timez12: '000000153000', frgn_val: '-3210', prsn_val: '1200', orgn_val: '2010' }
+    ] };
+const later = Date.parse('2026-11-09T18:00:00+09:00');
+assert.equal(context.privateFlowForRow({ date: '2026-11-04', time: '15:30' }, '', 'quantity', later).foreign, -3210,
+    'verified persisted close survives after hours, weekends and later days');
+assert.equal(context.privateFlowForRow({ date: '2026-11-09', time: '15:30' }, '', 'quantity', later), null,
+    'saved close must never attach to another session');
+context.privateFlowState.dateVerified = false;
+assert.equal(context.privateFlowForRow({ date: '2026-11-04', time: '15:30' }, '', 'quantity', later), null,
+    'unverified stale payload remains rejected');
 console.log('KODEX KOSPI overlay: timing, inferred sessions, stale data and raw source handling ok');

@@ -102,7 +102,7 @@ def _new_runtime_service(config):
     return build_service(runtime_config, clients, _safe_rows)
 
 
-def _flow(config):
+def _flow(config, trade_date=None):
     global FLOW_SERVICE
     if not TOKEN_CACHE_READY:
         raise RuntimeError("shared token cache is not live-validated")
@@ -110,7 +110,7 @@ def _flow(config):
         with _service_lock:
             if FLOW_SERVICE is None:
                 FLOW_SERVICE = _new_runtime_service(config)
-    return FLOW_SERVICE.get()
+    return FLOW_SERVICE.get(trade_date) if trade_date else FLOW_SERVICE.get()
 
 
 def _sessions(config):
@@ -155,7 +155,10 @@ def _session_response(event, config, path, method, origin):
         return response
     if path == SESSION_STATE:
         return _response(200, session, origin)
-    return _response(200, _flow(config), origin)
+    date = (event.get('queryStringParameters') or {}).get('date')
+    if date is not None and (not isinstance(date, str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}', date)):
+        return _response(400, {'error': 'invalid date'}, origin)
+    return _response(200, _flow(config, date) if date else _flow(config), origin)
 
 
 def lambda_handler(event, _context):
