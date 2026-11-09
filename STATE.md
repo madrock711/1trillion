@@ -7,3 +7,4 @@
 - 낮은순위제외:TSMC부인주말재료·신규청산/계약원문없음. 연구노트 research/notes/2026-11-10.md.
 - 작성 2026-11-10T08:07:02.573835+09:00, 데이터 최종 확인 2026-11-10T08:07:02.401875+09:00, 한국 장전.
 - reports/2026-11-10.md · assets/data/market-dashboard-20261110-0807.json · research/evaluation/forecasts/2026-11-10-080702-same-close.json.
+- 최초 공개 2026-11-10T08:09:06.715000+09:00 · 콘텐츠 bfb0a76a6c443b964a92fee1297181b47fe669ef · Amplify 753.
