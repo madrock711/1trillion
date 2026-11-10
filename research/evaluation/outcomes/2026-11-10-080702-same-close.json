@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-11-10-080702-same-close",
+  "recordedAt": "2026-11-11T08:05:50.096975+09:00",
+  "actualRef": "2026-11-10",
+  "realizedScenario": "base",
+  "errorCodes": [
+    "cause_unverifiable"
+  ],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "unavailable",
+      "reason": "장전 응답은 당일 초기화되어 전일 최종 수급 묶음 및 발행 이후 경로 원천 미확보"
+    },
+    {
+      "id": "bull-foreign",
+      "status": "unavailable",
+      "reason": "장전 응답은 당일 초기화되어 전일 최종 수급 묶음 및 발행 이후 경로 원천 미확보"
+    },
+    {
+      "id": "bull-program",
+      "status": "unavailable",
+      "reason": "장전 응답은 당일 초기화되어 전일 최종 수급 묶음 및 발행 이후 경로 원천 미확보"
+    },
+    {
+      "id": "base-floor",
+      "status": "unavailable",
+      "reason": "장전 응답은 당일 초기화되어 전일 최종 수급 묶음 및 발행 이후 경로 원천 미확보"
+    },
+    {
+      "id": "base-cap",
+      "status": "unavailable",
+      "reason": "장전 응답은 당일 초기화되어 전일 최종 수급 묶음 및 발행 이후 경로 원천 미확보"
+    },
+    {
+      "id": "base-foreign",
+      "status": "unavailable",
+      "reason": "장전 응답은 당일 초기화되어 전일 최종 수급 묶음 및 발행 이후 경로 원천 미확보"
+    },
+    {
+      "id": "bear-price",
+      "status": "unavailable",
+      "reason": "장전 응답은 당일 초기화되어 전일 최종 수급 묶음 및 발행 이후 경로 원천 미확보"
+    },
+    {
+      "id": "bear-foreign",
+      "status": "unavailable",
+      "reason": "장전 응답은 당일 초기화되어 전일 최종 수급 묶음 및 발행 이후 경로 원천 미확보"
+    },
+    {
+      "id": "bear-program",
+      "status": "unavailable",
+      "reason": "장전 응답은 당일 초기화되어 전일 최종 수급 묶음 및 발행 이후 경로 원천 미확보"
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "semiconductor",
+      "status": "unverifiable"
+    },
+    {
+      "id": "fx-oil",
+      "status": "unverifiable"
+    }
+  ],
+  "hypothesisTests": []
+}

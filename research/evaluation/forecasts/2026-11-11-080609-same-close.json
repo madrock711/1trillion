@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-11-11-080609-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-11-11.md",
+  "reportSha256": "941a773b0709353589e85cb2c58a3adb894c5cc3cc2917d38ff3eccf28b1a297",
+  "issuedAt": "2026-11-11T08:06:09.995204+09:00",
+  "dataCutoffAt": "2026-11-11T08:06:09.813156+09:00",
+  "marketState": "preopen",
+  "marketRegime": "risk_off",
+  "evaluationBucket": "preopen",
+  "target": {
+    "sessionDate": "2026-11-11",
+    "horizon": "session_close",
+    "instrument": "KOSPI",
+    "leadSessions": 0,
+    "previousSessionDate": "2026-11-10"
+  },
+  "reference": {
+    "price": 5239.13,
+    "asOf": "2026-11-10T15:30:00+09:00",
+    "kind": "previous_close"
+  },
+  "scenarios": {
+    "bull": {
+      "low": 5300,
+      "high": 5500,
+      "probability": 0.2
+    },
+    "base": {
+      "low": 5100,
+      "high": 5300,
+      "probability": 0.5
+    },
+    "bear": {
+      "low": 4900,
+      "high": 5100,
+      "probability": 0.3
+    }
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {
+    "low": 4800,
+    "high": 5600,
+    "coverage": 0.9
+  },
+  "drivers": [
+    {
+      "id": "inflation",
+      "rank": 1,
+      "claim": "CPI와 금리 부담",
+      "validationMetric": "CPI·USD/KRW·KOSPI"
+    },
+    {
+      "id": "semiconductor",
+      "rank": 2,
+      "claim": "반도체 업종 내 분화",
+      "validationMetric": "국내 반도체·외국인·프로그램"
+    }
+  ],
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-11-11T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 5300,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-price"
+        },
+        {
+          "id": "bull-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-foreign"
+        },
+        {
+          "id": "bull-program",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-program"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-11-11T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-floor",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 5100,
+          "source": "Naver Finance KOSPI",
+          "description": "base-floor"
+        },
+        {
+          "id": "base-cap",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 5300,
+          "source": "Naver Finance KOSPI",
+          "description": "base-cap"
+        },
+        {
+          "id": "base-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gte",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "base-foreign"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-11-11T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 5100,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-price"
+        },
+        {
+          "id": "bear-foreign",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-foreign"
+        },
+        {
+          "id": "bear-program",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-program"
+        }
+      ]
+    }
+  },
+  "hypothesisTrials": [],
+  "posture": {
+    "attack": 15,
+    "wait": 50,
+    "defense": 35
+  },
+  "supersedes": null,
+  "contentHash": "f0bc58d8e57266f2bceba3560a53a8f1fff3949f9d3811c94cbe74f71beaac0f"
+}

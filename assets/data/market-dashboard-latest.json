@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "headline": "유가 하락과 미국 반도체 급반등…코스피는 5,250 회복을 시험한다",
-  "summary": "미국 반도체주가 폭넓게 올랐고 원화도 강해졌습니다. Nvidia의 개별 위험과 CPI 발표를 앞둔 경계 속에서 국내 외국인·프로그램 매수가 반등 지속을 가릅니다.",
+  "headline": "미국 물가 부담에 반도체주 혼조…코스피는 5,200 지지가 관건",
+  "summary": "미국 CPI 상승과 Nvidia 약세가 전날 급반등한 국내 증시를 시험합니다. AI 수요의 성장과 자금 조달 부담을 나눠 보고 외국인·프로그램 매수 지속을 점검합니다.",
   "markets": [
     {
       "id": "KOSPI",
       "label": "KOSPI",
       "symbol": "K",
-      "value": 5018.85,
-      "changePercent": -0.81,
-      "open": 5034.2,
-      "high": 5172.94,
-      "low": 4990.66,
-      "previousClose": 5059.6900000000005,
-      "asOf": "2026-11-09T15:30:00+09:00",
-      "asOfLabel": "2026-11-09T15:30:00+09:00",
+      "value": 5239.13,
+      "changePercent": 4.39,
+      "open": 5247.22,
+      "high": 5300.92,
+      "low": 5174.55,
+      "previousClose": 5018.85,
+      "asOf": "2026-11-10T15:30:00+09:00",
+      "asOfLabel": "2026-11-10T15:30:00+09:00",
       "stateLabel": "전일 종가",
       "flows": []
     },
@@ -28,18 +28,18 @@
       "high": null,
       "low": null,
       "previousClose": null,
-      "asOf": "2026-11-09T15:30:00+09:00",
+      "asOf": "2026-11-10T15:30:00+09:00",
       "asOfLabel": "전일 종가 미확인",
       "stateLabel": "미확인",
       "flows": []
     }
   ],
   "stance": {
-    "label": "반등 뒤 국내 매수 지속 확인",
-    "note": "유가·환율 부담 완화와 국내 매수 지속을 함께 봅니다.",
-    "attack": 25,
+    "label": "급반등 뒤 지지력 확인",
+    "note": "CPI 부담 속 국내 매수 지속을 봅니다.",
+    "attack": 15,
     "wait": 50,
-    "defense": 25
+    "defense": 35
   },
   "checkpoints": [
     {
@@ -50,54 +50,54 @@
     },
     {
       "label": "USD/KRW 하나은행 고시",
-      "value": "1,342.00원",
-      "detail": "2026-11-10T07:25:56+09:00",
+      "value": "1,344.50원",
+      "detail": "2026-11-11T06:34:32+09:00",
       "tone": "neutral"
     },
     {
       "label": "NQF 최근 거래",
-      "value": "28,073.25",
-      "detail": "2026-11-10T07:00:00+09:00",
+      "value": "27,900.75",
+      "detail": "2026-11-11T06:59:58+09:00",
       "tone": "neutral"
     },
     {
       "label": "ESF 최근 거래",
-      "value": "7,580.25",
-      "detail": "2026-11-10T07:00:00+09:00",
+      "value": "7,555.00",
+      "detail": "2026-11-11T06:59:58+09:00",
       "tone": "neutral"
     },
     {
       "label": "BZF 최근 거래",
-      "value": "92.17",
-      "detail": "2026-11-10T06:59:30+09:00",
+      "value": "92.06",
+      "detail": "2026-11-11T06:59:58+09:00",
       "tone": "neutral"
     },
     {
       "label": "CLF 최근 거래",
-      "value": "86.38",
-      "detail": "2026-11-10T06:59:59+09:00",
+      "value": "86.44",
+      "detail": "2026-11-11T06:59:59+09:00",
       "tone": "neutral"
     }
   ],
   "changes": [
     {
       "label": "KOSPI 전일",
-      "before": "5,059.69",
-      "after": "5,018.85",
-      "meaning": "0.81% 하락 뒤 미국 반도체 급반등"
+      "before": "5,018.85",
+      "after": "5,239.13",
+      "meaning": "4.39% 상승 뒤 미국 물가 부담"
     }
   ],
   "factors": [
     {
-      "label": "미국 반도체",
-      "metric": "SOXX +7.49%",
-      "detail": "11월 9일 정규장",
-      "tone": "positive"
+      "label": "미국 물가",
+      "metric": "CPI +0.4% · 근원 +0.3%",
+      "detail": "10월 전월 대비",
+      "tone": "negative"
     },
     {
-      "label": "Nvidia",
-      "metric": "-4.27%",
-      "detail": "이사회 조사 착수·경영진 신뢰 유지",
+      "label": "미국 반도체",
+      "metric": "Nvidia -5.47% · Broadcom +3.91%",
+      "detail": "11월 10일 정규장 업종 내 분화",
       "tone": "negative"
     }
   ],
@@ -117,38 +117,38 @@
     {
       "label": "DDR5 16Gb",
       "value": "$60.167",
-      "change": "11/9 보합"
+      "change": "11/10 보합"
     },
     {
       "label": "DDR4 16Gb",
-      "value": "$80.236",
-      "change": "11/9 -0.72%"
+      "value": "$79.99",
+      "change": "11/10 -0.31%"
     }
   ],
   "events": [
     {
-      "time": "11월 10일 22:30 KST",
-      "name": "미국 10월 CPI",
-      "path": "물가·금리·성장주"
+      "time": "11월 11일 미국",
+      "name": "Veterans Day",
+      "path": "BLS 공식 달력 휴일"
     },
     {
       "time": "11월 13일 22:30 KST",
       "name": "미국 10월 PPI",
-      "path": "생산비용·물가"
+      "path": "물가·금리"
     }
   ],
   "strategyLevels": [
     {
       "asset": "KOSPI",
-      "support": "5,050",
-      "pivot": "5,250",
-      "resistance": "5,450"
+      "support": "5,100",
+      "pivot": "5,200",
+      "resistance": "5,300"
     },
     {
       "asset": "KODEX 레버리지",
-      "support": "52,850원",
-      "pivot": "53,665원",
-      "resistance": "57,245원"
+      "support": "57,135원",
+      "pivot": "58,435원",
+      "resistance": "60,150원"
     }
   ],
   "checklist": [
@@ -167,12 +167,16 @@
   ],
   "sources": [
     {
-      "label": "Nvidia 이사회 성명",
-      "href": "https://investor.nvidia.com/news/press-release-details/2026/Statement-from-NVIDIA-Board-of-Directors/default.aspx"
+      "label": "BLS 10월 CPI",
+      "href": "https://www.bls.gov/news.release/cpi.nr0.htm"
     },
     {
-      "label": "Reuters 미국장",
-      "href": "https://www.marketscreener.com/news/wall-st-jumps-back-as-oil-slide-eases-inflation-worries-nvidia-slumps-ce785fd3de81f123"
+      "label": "CoreWeave 실적 발표",
+      "href": "https://ca.finance.yahoo.com/news/coreweave-reports-strong-third-quarter-210500404.html"
+    },
+    {
+      "label": "TSMC 월별 매출",
+      "href": "https://investor.tsmc.com/english/monthly-revenue/2026"
     },
     {
       "label": "미국 정규장·시간외",
@@ -195,7 +199,7 @@
       "href": "https://api.stock.naver.com/chart/domestic/index/KOSPI?periodType=dayCandle"
     },
     {
-      "label": "하나은행 고시",
+      "label": "달러/원 고시",
       "href": "https://m.stock.naver.com/marketindex/exchange/FX_USDKRW"
     },
     {
@@ -206,39 +210,39 @@
   "scenarios": [
     {
       "id": "bull",
-      "label": "강세 · 30%",
-      "range": "KOSPI 5,250 초과~5,450",
-      "summary": "국내 매수 지속과 가격 회복을 함께 판단",
+      "label": "강세 · 20%",
+      "range": "KOSPI 5,300 초과~5,500",
+      "summary": "09:30·10:30·14:00 확인, 15:20 조건 관측 마감",
       "conditions": [
-        "5,250 초과",
+        "5,300 초과",
         "외국인 순매수",
         "프로그램 순매수"
       ],
-      "invalidation": "5,250 재이탈 또는 수급 반전"
+      "invalidation": "5,300 재이탈 또는 수급 반전"
     },
     {
       "id": "base",
       "label": "기본 · 50%",
-      "range": "KOSPI 5,050~5,250",
-      "summary": "국내 매수 지속과 가격 회복을 함께 판단",
+      "range": "KOSPI 5,100~5,300",
+      "summary": "09:30·10:30·14:00 확인, 15:20 조건 관측 마감",
       "conditions": [
-        "5,050 이상",
-        "5,250 이하",
+        "5,100 이상",
+        "5,300 이하",
         "외국인 현물 0 이상"
       ],
       "invalidation": "범위 이탈 또는 외국인 순매도"
     },
     {
       "id": "bear",
-      "label": "약세 · 20%",
-      "range": "KOSPI 4,800~5,050 미만",
-      "summary": "국내 매수 지속과 가격 회복을 함께 판단",
+      "label": "약세 · 30%",
+      "range": "KOSPI 4,900~5,100 미만",
+      "summary": "09:30·10:30·14:00 확인, 15:20 조건 관측 마감",
       "conditions": [
-        "5,050 미만",
+        "5,100 미만",
         "외국인 순매도",
         "프로그램 순매도"
       ],
-      "invalidation": "5,050 회복 또는 수급 반전"
+      "invalidation": "5,100 회복 또는 수급 반전"
     }
   ],
   "technical": {
@@ -248,92 +252,92 @@
         "id": "KOSPI",
         "label": "KOSPI",
         "unit": "pt",
-        "asOf": "2026-11-09T15:30:00+09:00",
+        "asOf": "2026-11-10T15:30:00+09:00",
         "asOfLabel": "장전 기준",
         "points": [
           {
             "label": "시가",
-            "value": 5034.2
+            "value": 5247.22
           },
           {
             "label": "고가",
-            "value": 5172.94
+            "value": 5300.92
           },
           {
             "label": "저가",
-            "value": 4990.66
+            "value": 5174.55
           },
           {
             "label": "종가",
-            "value": 5018.85
+            "value": 5239.13
           }
         ],
         "levels": [
           {
             "label": "1차 지지",
-            "value": 5050
+            "value": 5100
           },
           {
             "label": "반등 기준",
-            "value": 5250
+            "value": 5200
           },
           {
             "label": "저항",
-            "value": 5450
+            "value": 5300
           }
         ],
-        "interpretation": "갭 상승 뒤 가격 지지와 외국인·프로그램 매수 지속을 확인합니다."
+        "interpretation": "전날 상승분 지지와 외국인·프로그램 매수 지속을 확인합니다."
       },
       {
         "id": "KODEX",
         "label": "KODEX 레버리지",
         "unit": "원",
-        "asOf": "2026-11-09T15:30:00+09:00",
+        "asOf": "2026-11-10T15:30:00+09:00",
         "asOfLabel": "장전 기준",
         "points": [
           {
             "label": "시가",
-            "value": 53500.0
+            "value": 59040.0
           },
           {
             "label": "고가",
-            "value": 57245.0
+            "value": 60150.0
           },
           {
             "label": "저가",
-            "value": 52850.0
+            "value": 57135.0
           },
           {
             "label": "종가",
-            "value": 53665.0
+            "value": 58435.0
           }
         ],
         "levels": [
           {
             "label": "1차 지지",
-            "value": 52850
+            "value": 57135
           },
           {
             "label": "반등 기준",
-            "value": 53665
+            "value": 58435
           },
           {
             "label": "저항",
-            "value": 57245
+            "value": 60150
           }
         ],
-        "interpretation": "갭 상승 뒤 가격 지지와 외국인·프로그램 매수 지속을 확인합니다."
+        "interpretation": "전날 상승분 지지와 외국인·프로그램 매수 지속을 확인합니다."
       }
     ]
   },
-  "snapshotId": "20261110-0807",
-  "generatedAt": "2026-11-10T08:07:02.573835+09:00",
-  "asOf": "2026-11-10T08:07:02.401875+09:00",
-  "asOfDisplay": "2026-11-10T08:07:02.401875+09:00",
+  "snapshotId": "20261111-0806",
+  "generatedAt": "2026-11-11T08:06:09.995204+09:00",
+  "asOf": "2026-11-11T08:06:09.813156+09:00",
+  "asOfDisplay": "2026-11-11T08:06:09.813156+09:00",
   "marketState": "한국 장전",
-  "sourceLabel": "미국 2026-11-09 정규장 · 한국 2026-11-10 장전",
+  "sourceLabel": "미국 2026-11-10 정규장 · 한국 2026-11-11 장전",
   "latestArticle": {
-    "title": "유가 하락과 미국 반도체 급반등…코스피는 5,250 회복을 시험한다",
-    "href": "market-2026-11-10.html"
+    "title": "미국 물가 부담에 반도체주 혼조…코스피는 5,200 지지가 관건",
+    "href": "market-2026-11-11.html"
   }
 }
