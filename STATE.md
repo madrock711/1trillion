@@ -6,3 +6,4 @@
 - 다음11/13 22:30PPI. TSMC전일재료 중복제외. 취재 research/notes/2026-11-11.md.
 - 작성 2026-11-11T08:06:09.995204+09:00, 데이터 최종 확인 2026-11-11T08:06:09.813156+09:00, 한국 장전.
 - reports/2026-11-11.md · assets/data/market-dashboard-20261111-0806.json · research/evaluation/forecasts/2026-11-11-080609-same-close.json.
+- 최초 공개 2026-11-11T08:07:41.644000+09:00 · 콘텐츠 9869ff180632e8e6d722ee4c3c1fda402f7e62bb · Amplify 756.
