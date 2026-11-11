@@ -6,3 +6,4 @@
 - 다음11/13 22:30PPI. TSMC·CoreWeave발표자체 중복제외. 취재 research/notes/2026-11-12.md.
 - 작성 2026-11-12T08:05:07.078849+09:00, 데이터 최종 확인 2026-11-12T08:05:06.856225+09:00, 한국 장전.
 - reports/2026-11-12.md · assets/data/market-dashboard-20261112-0805.json · research/evaluation/forecasts/2026-11-12-080507-same-close.json.
+- 최초 공개 2026-11-12T08:06:13.279000+09:00 · 콘텐츠 2850a6a645bb57ba5e163e873e53648fc609843b · Amplify 759.
