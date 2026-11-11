@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-11-12T08:04:48.887815+09:00",
+  "source": "FRED official series pages via web tool",
+  "latest": {
+    "T10Y2Y": [
+      "2026-11-10",
+      0.25
+    ],
+    "T10Y3M": [
+      "2026-11-10",
+      0.68
+    ],
+    "DGS10": [
+      "2026-11-09",
+      4.88
+    ],
+    "DGS2": [
+      "2026-11-09",
+      4.56
+    ],
+    "DGS3MO": [
+      "2026-11-09",
+      4.24
+    ]
+  },
+  "chartStatus": "prior chart retained with original filename and observation date after latest values reverified"
+}

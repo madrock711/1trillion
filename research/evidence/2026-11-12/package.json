@@ -1,0 +1,203 @@
+{
+  "date": "2026-11-12",
+  "previousSessionDate": "2026-11-11",
+  "title": "미국 반도체주 동반 반등…코스피는 5,400 안착을 시험한다",
+  "summary": "Micron과 AMD가 크게 오르고 달러/원 고시환율은 낮아졌습니다. 이틀 연속 오른 코스피가 5,400 위에 안착하려면 외국인·프로그램 매수가 이어져야 합니다.",
+  "image": "assets/images/articles/market-2026-11-12-chip-bridge-1200x630.png",
+  "imageAlt": "밝은 라벤더색 다리 위 은빛 웨이퍼와 두 개의 호박색 반도체 블록",
+  "bodyPath": "research/evidence/2026-11-12/article-body.html",
+  "reportTemplate": "research/evidence/2026-11-12/report-template.md",
+  "dashboardPath": "research/evidence/2026-11-12/dashboard-input.json",
+  "notesPath": "research/notes/2026-11-12.md",
+  "scenarios": {
+    "bull": {
+      "low": 5500,
+      "high": 5700,
+      "probability": 0.3
+    },
+    "base": {
+      "low": 5300,
+      "high": 5500,
+      "probability": 0.5
+    },
+    "bear": {
+      "low": 5050,
+      "high": 5300,
+      "probability": 0.2
+    }
+  },
+  "posture": {
+    "attack": 25,
+    "wait": 50,
+    "defense": 25
+  },
+  "pathEnvelope": {
+    "low": 4950,
+    "high": 5800,
+    "coverage": 0.9
+  },
+  "marketRegime": "risk_on",
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-11-12T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 5500,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-price"
+        },
+        {
+          "id": "bull-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-foreign"
+        },
+        {
+          "id": "bull-program",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-program"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-11-12T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-floor",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 5300,
+          "source": "Naver Finance KOSPI",
+          "description": "base-floor"
+        },
+        {
+          "id": "base-cap",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 5500,
+          "source": "Naver Finance KOSPI",
+          "description": "base-cap"
+        },
+        {
+          "id": "base-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gte",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "base-foreign"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-11-12T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 5300,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-price"
+        },
+        {
+          "id": "bear-foreign",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-foreign"
+        },
+        {
+          "id": "bear-program",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-program"
+        }
+      ]
+    }
+  },
+  "drivers": [
+    {
+      "id": "semiconductor",
+      "rank": 1,
+      "claim": "미국 반도체 동반반등",
+      "validationMetric": "국내반도체·KOSPI·외국인"
+    },
+    {
+      "id": "fx",
+      "rank": 2,
+      "claim": "원화강세 완충",
+      "validationMetric": "USD/KRW·프로그램"
+    }
+  ],
+  "stateText": "# KOSPI·KODEX 리서치 상태\n- 최신 2026-11-12. 전일KOSPI5375.36(+2.60%),KODEX61995(+6.09%).\n- 미국반도체동반반등·고시환율하락. 전일최종수급미확보.\n- 기본5300~5500(50),강세5500초과~5700(30),약세5050~5300미만(20),대응25/50/25.\n- 직전기본상단초과·강세범위, 수급조건미검증. 평가 research/evaluation/outcomes/2026-11-11-080609-same-close.json.\n- 다음11/13 22:30PPI. TSMC·CoreWeave발표자체 중복제외. 취재 research/notes/2026-11-12.md.",
+  "charts": [
+    "charts/us_yield_spreads_long_term_2026-11-11.png",
+    "charts/us_yield_spreads_90d_2026-11-11.png"
+  ],
+  "files": [
+    "assets/images/articles/market-2026-11-12-chip-bridge-1200x630.png",
+    "research/evaluation/actuals/2026-11-11.json",
+    "research/evaluation/outcomes/2026-11-11-080609-same-close.json",
+    "research/notes/2026-11-12.md",
+    "docs/현재작업중.md",
+    "research/evidence/2026-11-12/after-AMD.raw",
+    "research/evidence/2026-11-12/after-AMD.source.json",
+    "research/evidence/2026-11-12/after-AVGO.raw",
+    "research/evidence/2026-11-12/after-AVGO.source.json",
+    "research/evidence/2026-11-12/after-MU.raw",
+    "research/evidence/2026-11-12/after-MU.source.json",
+    "research/evidence/2026-11-12/after-NVDA.raw",
+    "research/evidence/2026-11-12/after-NVDA.source.json",
+    "research/evidence/2026-11-12/article-body.html",
+    "research/evidence/2026-11-12/chart_retry.py",
+    "research/evidence/2026-11-12/dashboard-input.json",
+    "research/evidence/2026-11-12/DRAM.raw",
+    "research/evidence/2026-11-12/DRAM.source.json",
+    "research/evidence/2026-11-12/fetch_extra.py",
+    "research/evidence/2026-11-12/inspect_evidence.py",
+    "research/evidence/2026-11-12/memory_price.py",
+    "research/evidence/2026-11-12/NAND.raw",
+    "research/evidence/2026-11-12/NAND.source.json",
+    "research/evidence/2026-11-12/prepare_inputs.py",
+    "research/evidence/2026-11-12/report-template.md",
+    "research/evidence/2026-11-12/collections/075858-945125/000660.json",
+    "research/evidence/2026-11-12/collections/075858-945125/005930.json",
+    "research/evidence/2026-11-12/collections/075858-945125/122630.json",
+    "research/evidence/2026-11-12/collections/075858-945125/collection-status.json",
+    "research/evidence/2026-11-12/collections/075858-945125/FX.json",
+    "research/evidence/2026-11-12/collections/075858-945125/KOSPI-basic.json",
+    "research/evidence/2026-11-12/collections/075858-945125/KOSPI-history.json",
+    "research/evidence/2026-11-12/collections/075858-945125/KOSPI-integration.json",
+    "research/evidence/2026-11-12/collections/075858-945125/KOSPI.json",
+    "research/evidence/2026-11-12/collections/075858-945125/NXT.json",
+    "research/evidence/2026-11-12/collections/075858-945125/yahoo-AMD.json",
+    "research/evidence/2026-11-12/collections/075858-945125/yahoo-AVGO.json",
+    "research/evidence/2026-11-12/collections/075858-945125/yahoo-BZF.json",
+    "research/evidence/2026-11-12/collections/075858-945125/yahoo-CLF.json",
+    "research/evidence/2026-11-12/collections/075858-945125/yahoo-ESF.json",
+    "research/evidence/2026-11-12/collections/075858-945125/yahoo-MU.json",
+    "research/evidence/2026-11-12/collections/075858-945125/yahoo-NQF.json",
+    "research/evidence/2026-11-12/collections/075858-945125/yahoo-NVDA.json",
+    "research/evidence/2026-11-12/collections/075858-945125/yahoo-QQQ.json",
+    "research/evidence/2026-11-12/collections/075858-945125/yahoo-SMH.json",
+    "research/evidence/2026-11-12/collections/075858-945125/yahoo-SOXX.json",
+    "research/evidence/2026-11-12/collections/075858-945125/yahoo-TQQQ.json",
+    "research/evidence/2026-11-12/package.json",
+    "D:/Projects/1trillion/research/evidence/2026-11-12/finalize_inputs.py",
+    "D:/Projects/1trillion/research/evidence/2026-11-12/fred-web-check.json"
+  ]
+}
