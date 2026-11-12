@@ -1,0 +1,202 @@
+{
+  "date": "2026-11-13",
+  "previousSessionDate": "2026-11-12",
+  "title": "젠슨 황 사임에 반도체주 혼조…코스피는 5,300 지지를 시험한다",
+  "summary": "Nvidia는 하락했지만 AMD와 Broadcom은 올랐습니다. 코스피의 5,300 지지와 국내 외국인·프로그램 수급, 오늘 밤 미국 PPI가 다음 방향을 가릅니다.",
+  "image": "assets/images/articles/market-2026-11-13-wafer-test-1200x630.png",
+  "imageAlt": "밝은 민트색 배경의 은빛 웨이퍼와 호박색 측정기, 서로 다른 높이의 반도체 칩",
+  "bodyPath": "research/evidence/2026-11-13/article-body.html",
+  "reportTemplate": "research/evidence/2026-11-13/report-template.md",
+  "dashboardPath": "research/evidence/2026-11-13/dashboard-input.json",
+  "notesPath": "research/notes/2026-11-13.md",
+  "scenarios": {
+    "bull": {
+      "low": 5400,
+      "high": 5550,
+      "probability": 0.2
+    },
+    "base": {
+      "low": 5200,
+      "high": 5400,
+      "probability": 0.5
+    },
+    "bear": {
+      "low": 4950,
+      "high": 5200,
+      "probability": 0.3
+    }
+  },
+  "posture": {
+    "attack": 15,
+    "wait": 50,
+    "defense": 35
+  },
+  "pathEnvelope": {
+    "low": 4850,
+    "high": 5650,
+    "coverage": 0.9
+  },
+  "marketRegime": "risk_off",
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-11-13T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 5400,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-price"
+        },
+        {
+          "id": "bull-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-foreign"
+        },
+        {
+          "id": "bull-program",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-program"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-11-13T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-floor",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 5200,
+          "source": "Naver Finance KOSPI",
+          "description": "base-floor"
+        },
+        {
+          "id": "base-cap",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 5400,
+          "source": "Naver Finance KOSPI",
+          "description": "base-cap"
+        },
+        {
+          "id": "base-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gte",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "base-foreign"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-11-13T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 5200,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-price"
+        },
+        {
+          "id": "bear-foreign",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-foreign"
+        },
+        {
+          "id": "bear-program",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-program"
+        }
+      ]
+    }
+  },
+  "drivers": [
+    {
+      "id": "semiconductor",
+      "rank": 1,
+      "claim": "Nvidia 경영진교체와 업종내분화",
+      "validationMetric": "국내반도체·KOSPI·외국인"
+    },
+    {
+      "id": "domestic-flow",
+      "rank": 2,
+      "claim": "국내매수지속이반등관건",
+      "validationMetric": "외국인·프로그램"
+    }
+  ],
+  "stateText": "# KOSPI·KODEX 리서치 상태\n- 최신 2026-11-13. 전일KOSPI5342.73(-0.61%),KODEX61550(-0.72%).\n- Nvidia CEO사임과 미국반도체혼조. DDR5보합·DDR4약세. 전일최종수급미확보.\n- 기본5200~5400(50),강세5400초과~5550(20),약세4950~5200미만(30),대응15/50/35.\n- 전일 기본범위충족·수급조건미검증. 평가 research/evaluation/outcomes/2026-11-12-080507-same-close.json.\n- 오늘22:30PPI·11/18 07:00Nvidia콜. 기존CoreWeave/TSMC중복제외. 노트 research/notes/2026-11-13.md.",
+  "charts": [
+    "charts/us_yield_spreads_long_term_2026-11-13.png",
+    "charts/us_yield_spreads_90d_2026-11-13.png"
+  ],
+  "files": [
+    "assets/images/articles/market-2026-11-13-wafer-test-1200x630.png",
+    "research/evaluation/actuals/2026-11-12.json",
+    "research/evaluation/outcomes/2026-11-12-080507-same-close.json",
+    "research/notes/2026-11-13.md",
+    "docs/현재작업중.md",
+    "charts/us_yield_spreads_long_term_2026-11-13.png",
+    "charts/us_yield_spreads_90d_2026-11-13.png",
+    "research/evidence/2026-11-13/after-AMD.raw",
+    "research/evidence/2026-11-13/after-AMD.source.json",
+    "research/evidence/2026-11-13/after-AVGO.raw",
+    "research/evidence/2026-11-13/after-AVGO.source.json",
+    "research/evidence/2026-11-13/after-MU.raw",
+    "research/evidence/2026-11-13/after-MU.source.json",
+    "research/evidence/2026-11-13/after-NVDA.raw",
+    "research/evidence/2026-11-13/after-NVDA.source.json",
+    "research/evidence/2026-11-13/article-body.html",
+    "research/evidence/2026-11-13/chart_web.py",
+    "research/evidence/2026-11-13/dashboard-input.json",
+    "research/evidence/2026-11-13/DRAM.raw",
+    "research/evidence/2026-11-13/DRAM.source.json",
+    "research/evidence/2026-11-13/fetch_extra.py",
+    "research/evidence/2026-11-13/fred-web-check.json",
+    "research/evidence/2026-11-13/NAND.raw",
+    "research/evidence/2026-11-13/NAND.source.json",
+    "research/evidence/2026-11-13/prepare_inputs.py",
+    "research/evidence/2026-11-13/report-template.md",
+    "research/evidence/2026-11-13/collections/080316-080781/000660.json",
+    "research/evidence/2026-11-13/collections/080316-080781/005930.json",
+    "research/evidence/2026-11-13/collections/080316-080781/122630.json",
+    "research/evidence/2026-11-13/collections/080316-080781/collection-status.json",
+    "research/evidence/2026-11-13/collections/080316-080781/FX.json",
+    "research/evidence/2026-11-13/collections/080316-080781/KOSPI-basic.json",
+    "research/evidence/2026-11-13/collections/080316-080781/KOSPI-history.json",
+    "research/evidence/2026-11-13/collections/080316-080781/KOSPI-integration.json",
+    "research/evidence/2026-11-13/collections/080316-080781/KOSPI.json",
+    "research/evidence/2026-11-13/collections/080316-080781/NXT.json",
+    "research/evidence/2026-11-13/collections/080316-080781/yahoo-AMD.json",
+    "research/evidence/2026-11-13/collections/080316-080781/yahoo-AVGO.json",
+    "research/evidence/2026-11-13/collections/080316-080781/yahoo-BZF.json",
+    "research/evidence/2026-11-13/collections/080316-080781/yahoo-CLF.json",
+    "research/evidence/2026-11-13/collections/080316-080781/yahoo-ESF.json",
+    "research/evidence/2026-11-13/collections/080316-080781/yahoo-MU.json",
+    "research/evidence/2026-11-13/collections/080316-080781/yahoo-NQF.json",
+    "research/evidence/2026-11-13/collections/080316-080781/yahoo-NVDA.json",
+    "research/evidence/2026-11-13/collections/080316-080781/yahoo-QQQ.json",
+    "research/evidence/2026-11-13/collections/080316-080781/yahoo-SMH.json",
+    "research/evidence/2026-11-13/collections/080316-080781/yahoo-SOXX.json",
+    "research/evidence/2026-11-13/collections/080316-080781/yahoo-TQQQ.json",
+    "research/evidence/2026-11-13/package.json"
+  ]
+}

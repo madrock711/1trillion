@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-11-12",
+  "bizdate": "20261112",
+  "fetchedAt": "2026-11-13T08:07:56.439381+09:00",
+  "marketStatus": "CLOSE",
+  "closeSnapshotMissingReason": "장전 응답은 당일 초기화되어 전일 최종 수급 묶음 및 발행 이후 경로 원천 미확보",
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-11-12T15:30:00+09:00",
+    "fetchedAt": "2026-11-13T08:07:56.439381+09:00",
+    "missingReason": "장전 응답은 당일 초기화되어 전일 최종 수급 묶음 및 발행 이후 경로 원천 미확보",
+    "rawHash": "611faf3c3ff7a9d2449f05f60c43da0d30d34e2c462bedadc8f460fec4e23d2e"
+  },
+  "kospi": {
+    "open": 5385.94,
+    "high": 5458.84,
+    "low": 5293.05,
+    "close": 5342.73,
+    "asOf": "2026-11-12T15:30:00+09:00",
+    "source": "https://api.stock.naver.com/chart/domestic/index/KOSPI?periodType=dayCandle",
+    "rawHash": "aa914d2ac08fdf826751ffc5a20d28edff0abd125c5fefcec97e429caa1ed3f6"
+  },
+  "kodex": {
+    "open": 62105.0,
+    "high": 64295.0,
+    "low": 60230.0,
+    "close": 61550.0,
+    "asOf": "2026-11-12T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/stock/122630/price?pageSize=10&page=1",
+    "rawHash": "3d7b9b22e4fd6429e71410ada11eb4a720f856871ff948817e02e46e1242988d"
+  }
+}

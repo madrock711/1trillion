@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-11-13-080826-same-close",
+  "visibility": "public",
+  "reportPath": "reports/2026-11-13.md",
+  "reportSha256": "3b3d84ce391ca9b1ec540c33ca7515b676322171810ed7df62a0bd43e08685ce",
+  "issuedAt": "2026-11-13T08:08:26.907013+09:00",
+  "dataCutoffAt": "2026-11-13T08:08:26.801530+09:00",
+  "marketState": "preopen",
+  "marketRegime": "risk_off",
+  "evaluationBucket": "preopen",
+  "target": {
+    "sessionDate": "2026-11-13",
+    "horizon": "session_close",
+    "instrument": "KOSPI",
+    "leadSessions": 0,
+    "previousSessionDate": "2026-11-12"
+  },
+  "reference": {
+    "price": 5342.73,
+    "asOf": "2026-11-12T15:30:00+09:00",
+    "kind": "previous_close"
+  },
+  "scenarios": {
+    "bull": {
+      "low": 5400,
+      "high": 5550,
+      "probability": 0.2
+    },
+    "base": {
+      "low": 5200,
+      "high": 5400,
+      "probability": 0.5
+    },
+    "bear": {
+      "low": 4950,
+      "high": 5200,
+      "probability": 0.3
+    }
+  },
+  "closeEnvelopeCoverage": 0.9,
+  "pathEnvelope": {
+    "low": 4850,
+    "high": 5650,
+    "coverage": 0.9
+  },
+  "drivers": [
+    {
+      "id": "semiconductor",
+      "rank": 1,
+      "claim": "Nvidia 경영진교체와 업종내분화",
+      "validationMetric": "국내반도체·KOSPI·외국인"
+    },
+    {
+      "id": "domestic-flow",
+      "rank": 2,
+      "claim": "국내매수지속이반등관건",
+      "validationMetric": "외국인·프로그램"
+    }
+  ],
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-11-13T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 5400,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-price"
+        },
+        {
+          "id": "bull-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-foreign"
+        },
+        {
+          "id": "bull-program",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bull-program"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-11-13T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-floor",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 5200,
+          "source": "Naver Finance KOSPI",
+          "description": "base-floor"
+        },
+        {
+          "id": "base-cap",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 5400,
+          "source": "Naver Finance KOSPI",
+          "description": "base-cap"
+        },
+        {
+          "id": "base-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gte",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "base-foreign"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-11-13T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 5200,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-price"
+        },
+        {
+          "id": "bear-foreign",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-foreign"
+        },
+        {
+          "id": "bear-program",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "bear-program"
+        }
+      ]
+    }
+  },
+  "hypothesisTrials": [],
+  "posture": {
+    "attack": 15,
+    "wait": 50,
+    "defense": 35
+  },
+  "supersedes": null,
+  "contentHash": "6b316411801ec2e0758b90c612d9f7803ac0b61f5ae89281468b979b8f0cae9b"
+}
