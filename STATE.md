@@ -6,3 +6,4 @@
 - 오늘22:30PPI·11/18 07:00Nvidia콜. 기존CoreWeave/TSMC중복제외. 노트 research/notes/2026-11-13.md.
 - 작성 2026-11-13T08:08:26.907013+09:00, 데이터 최종 확인 2026-11-13T08:08:26.801530+09:00, 한국 장전.
 - reports/2026-11-13.md · assets/data/market-dashboard-20261113-0808.json · research/evaluation/forecasts/2026-11-13-080826-same-close.json.
+- 최초 공개 2026-11-13T08:09:40.888000+09:00 · 콘텐츠 1744db1bb87aba7a96f71a7cac15c2879465a19a · Amplify 762.
