@@ -1,0 +1,131 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F?range=5d&interval=1d&includePrePost=true",
+  "requestedAt": "2026-11-16T08:00:16.726703+09:00",
+  "httpStatus": 200,
+  "rawHash": "b30593f9e449324a46d4eccb92af440771b079f74bbf3a0b0c59cdf2b360b8da",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "BZ=F",
+            "exchangeName": "NYM",
+            "fullExchangeName": "NY Mercantile",
+            "instrumentType": "FUTURE",
+            "firstTradeDate": 1185768000,
+            "regularMarketTime": 1794607170,
+            "hasPrePostMarketData": false,
+            "gmtoffset": -18000,
+            "timezone": "EST",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 95.84,
+            "regularMarketChangePercent": 0.021,
+            "fulldayPrice": 95.84,
+            "fulldayChange": 0.02,
+            "fulldayChangePercent": 0.021,
+            "fiftyTwoWeekHigh": 126.1,
+            "fiftyTwoWeekLow": 58.72,
+            "regularMarketDayHigh": 97.12,
+            "regularMarketDayLow": 95.07,
+            "regularMarketVolume": 22079,
+            "longName": "Brent Crude Oil Last Day Financial Futures",
+            "shortName": "Brent Crude Oil Last Day Financ",
+            "chartPreviousClose": 91.49,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EST",
+                "start": 1794718800,
+                "end": 1794718800,
+                "gmtoffset": -18000
+              },
+              "regular": {
+                "timezone": "EST",
+                "start": 1794718800,
+                "end": 1794805140,
+                "gmtoffset": -18000
+              },
+              "post": {
+                "timezone": "EST",
+                "start": 1794805140,
+                "end": 1794805140,
+                "gmtoffset": -18000
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1794286800,
+            1794373200,
+            1794459600,
+            1794546000
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "close": [
+                  91.48999786376953,
+                  92.76000213623047,
+                  95.81999969482422,
+                  95.83999633789062
+                ],
+                "volume": [
+                  40232,
+                  26842,
+                  35151,
+                  22079
+                ],
+                "open": [
+                  92.38999938964844,
+                  91.7699966430664,
+                  92.51000213623047,
+                  95.88999938964844
+                ],
+                "low": [
+                  89.1500015258789,
+                  91.4800033569336,
+                  91.19000244140625,
+                  95.06999969482422
+                ],
+                "high": [
+                  92.81999969482422,
+                  94.7300033569336,
+                  96.25,
+                  97.12000274658203
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  91.48999786376953,
+                  92.76000213623047,
+                  95.81999969482422,
+                  95.83999633789062
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  },
+  "status": "collected",
+  "fetchedAt": "2026-11-16T08:00:17.106341+09:00"
+}
