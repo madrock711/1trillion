@@ -6,3 +6,4 @@
 - 11/18 06:20실적·07:00Nvidia콜·11/19 04:00FOMC의사록. 11/12CEO사임/기존CAPEX 중복제외. 노트 research/notes/2026-11-16.md.
 - 작성 2026-11-16T08:05:31.836405+09:00, 데이터 최종 확인 2026-11-16T08:05:31.643875+09:00, 한국 장전.
 - reports/2026-11-16.md · assets/data/market-dashboard-20261116-0805.json · research/evaluation/forecasts/2026-11-16-080531-same-close.json.
+- 최초 공개 2026-11-16T08:06:48.037000+09:00 · 콘텐츠 95e91efc9bb09f02ebab7947191501abe649e3c7 · Amplify 765.
