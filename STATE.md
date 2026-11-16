@@ -6,3 +6,4 @@
 - 11/18 06:20실적·07:00콜,11/19 04:00의사록. 기존CEO사임중복제외. 노트 research/notes/2026-11-17.md.
 - 작성 2026-11-17T08:10:33.197962+09:00, 데이터 최종 확인 2026-11-17T08:10:32.984103+09:00, 한국 장전.
 - reports/2026-11-17.md · assets/data/market-dashboard-20261117-0810.json · research/evaluation/forecasts/2026-11-17-081033-same-close.json.
+- 최초 공개 2026-11-17T08:11:52.919000+09:00 · 콘텐츠 8b38d5c233c27addec0f702e6173dbb9a4b36711 · Amplify 768.
