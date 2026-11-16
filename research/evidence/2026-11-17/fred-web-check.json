@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-11-17T08:09:53.403803+09:00",
+  "method": "FRED official pages after CSV timeout; four displayed observations only",
+  "series": {
+    "T10Y2Y": {
+      "url": "https://fred.stlouisfed.org/series/T10Y2Y",
+      "observations": {
+        "2026-11-10": 0.25,
+        "2026-11-12": 0.24,
+        "2026-11-13": 0.27,
+        "2026-11-16": 0.29
+      }
+    },
+    "T10Y3M": {
+      "url": "https://fred.stlouisfed.org/series/T10Y3M",
+      "observations": {
+        "2026-11-10": 0.68,
+        "2026-11-12": 0.78,
+        "2026-11-13": 0.83,
+        "2026-11-16": 0.78
+      }
+    }
+  },
+  "absolute": {
+    "asOf": "2026-11-13",
+    "DGS10": 5.15,
+    "DGS2": 4.88,
+    "DGS3MO": 4.32
+  }
+}
