@@ -1,0 +1,138 @@
+{
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=5d&interval=1d&includePrePost=true",
+  "requestedAt": "2026-11-18T08:05:46.876661+09:00",
+  "httpStatus": 200,
+  "rawHash": "b9a9050bdc9261ae8028a319081fc3408ee626e2edcec4339846c621f762599e",
+  "data": {
+    "chart": {
+      "result": [
+        {
+          "meta": {
+            "currency": "USD",
+            "symbol": "AMD",
+            "exchangeName": "NMS",
+            "fullExchangeName": "NasdaqGS",
+            "instrumentType": "EQUITY",
+            "firstTradeDate": 322151400,
+            "regularMarketTime": 1794949200,
+            "hasPrePostMarketData": true,
+            "gmtoffset": -18000,
+            "timezone": "EST",
+            "exchangeTimezoneName": "America/New_York",
+            "regularMarketPrice": 503.41,
+            "regularMarketChangePercent": -0.173,
+            "fulldayPrice": 521.703,
+            "fulldayChange": 17.423,
+            "fulldayChangePercent": 3.455,
+            "fiftyTwoWeekHigh": 658.52,
+            "fiftyTwoWeekLow": 188.22,
+            "regularMarketDayHigh": 511.85,
+            "regularMarketDayLow": 480.5,
+            "regularMarketVolume": 34975206,
+            "longName": "Advanced Micro Devices, Inc.",
+            "shortName": "Advanced Micro Devices, Inc.",
+            "chartPreviousClose": 515.21,
+            "priceHint": 2,
+            "currentTradingPeriod": {
+              "pre": {
+                "timezone": "EST",
+                "end": 1794925800,
+                "start": 1794906000,
+                "gmtoffset": -18000
+              },
+              "regular": {
+                "timezone": "EST",
+                "end": 1794949200,
+                "start": 1794925800,
+                "gmtoffset": -18000
+              },
+              "post": {
+                "timezone": "EST",
+                "end": 1794963600,
+                "start": 1794949200,
+                "gmtoffset": -18000
+              }
+            },
+            "dataGranularity": "1d",
+            "range": "5d",
+            "validRanges": [
+              "1d",
+              "5d",
+              "1mo",
+              "3mo",
+              "6mo",
+              "1y",
+              "2y",
+              "5y",
+              "10y",
+              "ytd",
+              "max"
+            ]
+          },
+          "timestamp": [
+            1794407400,
+            1794493800,
+            1794580200,
+            1794839400,
+            1794925800
+          ],
+          "indicators": {
+            "quote": [
+              {
+                "low": [
+                  522.6500244140625,
+                  554.9000244140625,
+                  520.010009765625,
+                  501.29998779296875,
+                  480.5000915527344
+                ],
+                "open": [
+                  543.0800170898438,
+                  569.280029296875,
+                  566.7899780273438,
+                  503.45001220703125,
+                  511.6000061035156
+                ],
+                "close": [
+                  552.9000244140625,
+                  585.2999877929688,
+                  534.0599975585938,
+                  504.2799987792969,
+                  503.4100036621094
+                ],
+                "volume": [
+                  45872800,
+                  55411500,
+                  49387600,
+                  37115600,
+                  34975206
+                ],
+                "high": [
+                  567.6500244140625,
+                  594.0,
+                  571.1400146484375,
+                  526.2000122070312,
+                  511.8500061035156
+                ]
+              }
+            ],
+            "adjclose": [
+              {
+                "adjclose": [
+                  552.9000244140625,
+                  585.2999877929688,
+                  534.0599975585938,
+                  504.2799987792969,
+                  503.4100036621094
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "error": null
+    }
+  },
+  "status": "collected",
+  "fetchedAt": "2026-11-18T08:05:47.203163+09:00"
+}

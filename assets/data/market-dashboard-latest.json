@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "headline": "AI칩 원격접근 규제에 반도체 급락…코스피 5,000 방어가 첫 관문",
-  "summary": "미국이 해외 데이터센터를 통한 AI칩 우회 접근을 제한했고 SOXX는 5.41% 하락했습니다. Nvidia 실적을 하루 앞두고 코스피 5,000 지지와 국내 매수 회복을 살핍니다.",
+  "headline": "Nvidia 실적이 반등 불씨 살렸다…코스피 5,000 회복과 매수 지속이 관건",
+  "summary": "Nvidia 매출과 다음 분기 전망이 늘며 시간외 반도체주가 반등했습니다. 낮아지는 매출총이익률과 중국 규제 부담 속에서 코스피 5,000 회복과 외국인·프로그램 매수 지속을 살핍니다.",
   "markets": [
     {
       "id": "KOSPI",
       "label": "KOSPI",
       "symbol": "K",
-      "value": 5100.5,
-      "changePercent": -3.59,
-      "open": 5305.4,
-      "high": 5327.99,
-      "low": 5069.83,
-      "previousClose": 5290.53,
-      "asOf": "2026-11-16T15:30:00+09:00",
-      "asOfLabel": "2026-11-16T15:30:00+09:00",
+      "value": 4968.48,
+      "changePercent": -2.59,
+      "open": 5008.09,
+      "high": 5084.06,
+      "low": 4957.0,
+      "previousClose": 5100.5,
+      "asOf": "2026-11-17T15:30:00+09:00",
+      "asOfLabel": "2026-11-17T15:30:00+09:00",
       "stateLabel": "전일 종가",
       "flows": []
     },
@@ -28,18 +28,18 @@
       "high": null,
       "low": null,
       "previousClose": null,
-      "asOf": "2026-11-16T15:30:00+09:00",
+      "asOf": "2026-11-17T15:30:00+09:00",
       "asOfLabel": "전일 종가 미확인",
       "stateLabel": "미확인",
       "flows": []
     }
   ],
   "stance": {
-    "label": "규제·실적 앞두고 하방 경계",
-    "note": "5,000 지지와 국내 매수 회복을 봅니다.",
-    "attack": 5,
-    "wait": 40,
-    "defense": 55
+    "label": "실적 반등과 매수 지속 확인",
+    "note": "5,000 회복과 국내 매수 지속을 봅니다.",
+    "attack": 20,
+    "wait": 55,
+    "defense": 25
   },
   "checkpoints": [
     {
@@ -50,54 +50,54 @@
     },
     {
       "label": "USD/KRW 하나은행 고시",
-      "value": "1,336.50원",
-      "detail": "2026-11-17T07:26:18+09:00",
+      "value": "1,335.50원",
+      "detail": "2026-11-18T07:36:12+09:00",
       "tone": "neutral"
     },
     {
       "label": "NQF 최근 거래",
-      "value": "27,336.50",
-      "detail": "2026-11-17T08:00:29+09:00",
+      "value": "27,126.00",
+      "detail": "2026-11-18T06:59:59+09:00",
       "tone": "neutral"
     },
     {
       "label": "ESF 최근 거래",
-      "value": "7,446.75",
-      "detail": "2026-11-17T08:00:30+09:00",
+      "value": "7,366.50",
+      "detail": "2026-11-18T06:59:59+09:00",
       "tone": "neutral"
     },
     {
       "label": "BZF 최근 거래",
-      "value": "91.84",
-      "detail": "2026-11-17T06:59:30+09:00",
+      "value": "93.07",
+      "detail": "2026-11-18T06:59:30+09:00",
       "tone": "neutral"
     },
     {
       "label": "CLF 최근 거래",
-      "value": "85.30",
-      "detail": "2026-11-17T08:00:31+09:00",
+      "value": "85.61",
+      "detail": "2026-11-18T06:59:59+09:00",
       "tone": "neutral"
     }
   ],
   "changes": [
     {
       "label": "KOSPI 전일",
-      "before": "5,290.53",
-      "after": "5,100.50",
-      "meaning": "3.59% 하락·장중 5,100 이탈"
+      "before": "5,100.50",
+      "after": "4,968.48",
+      "meaning": "2.59% 하락·5,000 하회"
     }
   ],
   "factors": [
     {
-      "label": "미국 반도체",
-      "metric": "SOXX -5.41% · MU -7.62%",
-      "detail": "11월 16일 미국 정규장",
-      "tone": "negative"
+      "label": "Nvidia 실적",
+      "metric": "매출 1,158억 달러",
+      "detail": "전년 +103%·다음 분기 1,300억 달러 전망",
+      "tone": "positive"
     },
     {
-      "label": "AI칩 원격접근 규제",
-      "metric": "BIS 잠정 최종규칙",
-      "detail": "제3국 우회 접근 제한",
+      "label": "수익성 전망",
+      "metric": "매출총이익률 71~72%",
+      "detail": "이번 분기 GAAP 74.8%에서 하락 전망",
       "tone": "negative"
     }
   ],
@@ -117,19 +117,19 @@
     {
       "label": "DDR5 16Gb",
       "value": "$60.333",
-      "change": "11/16 +0.11%"
+      "change": "11/17 보합"
     },
     {
       "label": "DDR4 16Gb",
-      "value": "$79.375",
-      "change": "11/16 -0.16%"
+      "value": "$79.125",
+      "change": "11/17 -0.32%"
     }
   ],
   "events": [
     {
-      "time": "11월 18일 06:20·07:00 KST",
-      "name": "Nvidia 실적·콜",
-      "path": "주문·규제·현금흐름"
+      "time": "11월 18일 09:30·10:30 KST",
+      "name": "실적 이후 국내 수급",
+      "path": "반도체 저점·외국인 매수"
     },
     {
       "time": "11월 19일 04:00 KST",
@@ -146,9 +146,9 @@
     },
     {
       "asset": "KODEX 레버리지",
-      "support": "54,440원",
-      "pivot": "55,035원",
-      "resistance": "60,795원"
+      "support": "52,000원",
+      "pivot": "52,175원",
+      "resistance": "55,005원"
     }
   ],
   "checklist": [
@@ -167,27 +167,19 @@
   ],
   "sources": [
     {
+      "label": "Nvidia 실적 원문",
+      "href": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-third-quarter-fiscal-2027"
+    },
+    {
       "label": "미국 시세",
-      "href": "https://finance.yahoo.com/quote/SMH/"
+      "href": "https://finance.yahoo.com/quote/NVDA/"
     },
     {
-      "label": "BIS 원격접근 규칙",
-      "href": "https://www.bis.gov/press-release/bis-issues-rule-addressing-remote-access-american-super-intelligence-technology"
-    },
-    {
-      "label": "Warsh 연설",
-      "href": "https://www.federalreserve.gov/newsevents/speech/warsh20261116a.htm"
-    },
-    {
-      "label": "Nvidia 실적 일정",
-      "href": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Sets-Conference-Call-for-Third-Quarter-Financial-Results/default.aspx"
-    },
-    {
-      "label": "DRAM",
+      "label": "DRAM 현물",
       "href": "https://www.trendforce.com/price/dram/dram_spot"
     },
     {
-      "label": "NAND",
+      "label": "NAND 현물",
       "href": "https://www.trendforce.com/price/flash/flash_spot"
     },
     {
@@ -214,8 +206,8 @@
   "scenarios": [
     {
       "id": "bull",
-      "label": "강세 · 15%",
-      "range": "KOSPI 5,150 초과~5,300",
+      "label": "강세 · 30%",
+      "range": "KOSPI 5,150 초과~5,350",
       "summary": "09:30·10:30·14:00 확인, 15:20 마감",
       "conditions": [
         "5,150 초과",
@@ -226,7 +218,7 @@
     },
     {
       "id": "base",
-      "label": "기본 · 45%",
+      "label": "기본 · 50%",
       "range": "KOSPI 4,950~5,150",
       "summary": "09:30·10:30·14:00 확인, 15:20 마감",
       "conditions": [
@@ -238,7 +230,7 @@
     },
     {
       "id": "bear",
-      "label": "약세 · 40%",
+      "label": "약세 · 20%",
       "range": "KOSPI 4,700~4,950 미만",
       "summary": "09:30·10:30·14:00 확인, 15:20 마감",
       "conditions": [
@@ -256,24 +248,24 @@
         "id": "KOSPI",
         "label": "KOSPI",
         "unit": "pt",
-        "asOf": "2026-11-16T15:30:00+09:00",
+        "asOf": "2026-11-17T15:30:00+09:00",
         "asOfLabel": "장전 기준",
         "points": [
           {
             "label": "시가",
-            "value": 5305.4
+            "value": 5008.09
           },
           {
             "label": "고가",
-            "value": 5327.99
+            "value": 5084.06
           },
           {
             "label": "저가",
-            "value": 5069.83
+            "value": 4957.0
           },
           {
             "label": "종가",
-            "value": 5100.5
+            "value": 4968.48
           }
         ],
         "levels": [
@@ -290,58 +282,58 @@
             "value": 5150
           }
         ],
-        "interpretation": "전일 저가 지지와 국내 매수 회복을 봅니다."
+        "interpretation": "반등 뒤 국내 매수 지속과 전일 저가 지지를 봅니다."
       },
       {
         "id": "KODEX",
         "label": "KODEX 레버리지",
         "unit": "원",
-        "asOf": "2026-11-16T15:30:00+09:00",
+        "asOf": "2026-11-17T15:30:00+09:00",
         "asOfLabel": "장전 기준",
         "points": [
           {
             "label": "시가",
-            "value": 60205.0
+            "value": 53315.0
           },
           {
             "label": "고가",
-            "value": 60795.0
+            "value": 55005.0
           },
           {
             "label": "저가",
-            "value": 54440.0
+            "value": 52000.0
           },
           {
             "label": "종가",
-            "value": 55035.0
+            "value": 52175.0
           }
         ],
         "levels": [
           {
             "label": "1차 지지",
-            "value": 54440
+            "value": 52000
           },
           {
             "label": "반등 기준",
-            "value": 55035
+            "value": 52175
           },
           {
             "label": "저항",
-            "value": 60795
+            "value": 55005
           }
         ],
-        "interpretation": "전일 저가 지지와 국내 매수 회복을 봅니다."
+        "interpretation": "반등 뒤 국내 매수 지속과 전일 저가 지지를 봅니다."
       }
     ]
   },
-  "snapshotId": "20261117-0810",
-  "generatedAt": "2026-11-17T08:10:33.197962+09:00",
-  "asOf": "2026-11-17T08:10:32.984103+09:00",
-  "asOfDisplay": "2026-11-17T08:10:32.984103+09:00",
+  "snapshotId": "20261118-0809",
+  "generatedAt": "2026-11-18T08:09:57.230406+09:00",
+  "asOf": "2026-11-18T08:09:57.040325+09:00",
+  "asOfDisplay": "2026-11-18T08:09:57.040325+09:00",
   "marketState": "한국 장전",
-  "sourceLabel": "미국 2026-11-16 정규장 · 한국 2026-11-17 장전",
+  "sourceLabel": "미국 2026-11-17 정규장 · 한국 2026-11-18 장전",
   "latestArticle": {
-    "title": "AI칩 원격접근 규제에 반도체 급락…코스피 5,000 방어가 첫 관문",
-    "href": "market-2026-11-17.html"
+    "title": "Nvidia 실적이 반등 불씨 살렸다…코스피 5,000 회복과 매수 지속이 관건",
+    "href": "market-2026-11-18.html"
   }
 }
