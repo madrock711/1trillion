@@ -6,3 +6,4 @@
 - 11/19 04:00의사록. 노트 research/notes/2026-11-18.md.
 - 작성 2026-11-18T08:09:57.230406+09:00, 데이터 최종 확인 2026-11-18T08:09:57.040325+09:00, 한국 장전.
 - reports/2026-11-18.md · assets/data/market-dashboard-20261118-0809.json · research/evaluation/forecasts/2026-11-18-080957-same-close.json.
+- 최초 공개 2026-11-18T08:11:18.489000+09:00 · 콘텐츠 3a4b456dc37c0202e9bcb6cbf805ad8aca679f23 · Amplify 771.
