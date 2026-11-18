@@ -6,3 +6,4 @@
 - 11/19 23:25 Jefferson, 다음 FOMC12/8~9. 취재 research/notes/2026-11-19.md.
 - 작성 2026-11-19T08:07:38.393682+09:00, 데이터 최종 확인 2026-11-19T08:07:38.212087+09:00, 한국 장전.
 - reports/2026-11-19.md · assets/data/market-dashboard-20261119-0807.json · research/evaluation/forecasts/2026-11-19-080738-same-close.json.
+- 최초 공개 2026-11-19T08:08:57.523000+09:00 · 콘텐츠 778578201f229cd1bec3a0634f5a25bc3d987e57 · Amplify 774.
