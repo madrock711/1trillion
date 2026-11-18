@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "headline": "Nvidia 실적이 반등 불씨 살렸다…코스피 5,000 회복과 매수 지속이 관건",
-  "summary": "Nvidia 매출과 다음 분기 전망이 늘며 시간외 반도체주가 반등했습니다. 낮아지는 매출총이익률과 중국 규제 부담 속에서 코스피 5,000 회복과 외국인·프로그램 매수 지속을 살핍니다.",
+  "headline": "Nvidia 실적 뒤 주가는 하락…금리 부담 속 코스피 5,000선 지지가 관건",
+  "summary": "Nvidia가 실적 발표 뒤 2.89% 하락한 반면 AMD와 Broadcom은 올랐습니다. 추가 금리 인상 가능성을 담은 연준 의사록 속에서 코스피 5,000선과 국내 매수 지속을 살핍니다.",
   "markets": [
     {
       "id": "KOSPI",
       "label": "KOSPI",
       "symbol": "K",
-      "value": 4968.48,
-      "changePercent": -2.59,
-      "open": 5008.09,
-      "high": 5084.06,
-      "low": 4957.0,
-      "previousClose": 5100.5,
-      "asOf": "2026-11-17T15:30:00+09:00",
-      "asOfLabel": "2026-11-17T15:30:00+09:00",
+      "value": 5067.44,
+      "changePercent": 1.99,
+      "open": 5098.82,
+      "high": 5133.14,
+      "low": 4943.17,
+      "previousClose": 4968.48,
+      "asOf": "2026-11-18T15:30:00+09:00",
+      "asOfLabel": "2026-11-18T15:30:00+09:00",
       "stateLabel": "전일 종가",
       "flows": []
     },
@@ -28,18 +28,18 @@
       "high": null,
       "low": null,
       "previousClose": null,
-      "asOf": "2026-11-17T15:30:00+09:00",
+      "asOf": "2026-11-18T15:30:00+09:00",
       "asOfLabel": "전일 종가 미확인",
       "stateLabel": "미확인",
       "flows": []
     }
   ],
   "stance": {
-    "label": "실적 반등과 매수 지속 확인",
-    "note": "5,000 회복과 국내 매수 지속을 봅니다.",
-    "attack": 20,
-    "wait": 55,
-    "defense": 25
+    "label": "금리 부담 속 반등 유지 확인",
+    "note": "5,000선 지지와 국내 매수 지속을 봅니다.",
+    "attack": 15,
+    "wait": 50,
+    "defense": 35
   },
   "checkpoints": [
     {
@@ -50,54 +50,54 @@
     },
     {
       "label": "USD/KRW 하나은행 고시",
-      "value": "1,335.50원",
-      "detail": "2026-11-18T07:36:12+09:00",
+      "value": "1,334.00원",
+      "detail": "2026-11-19T05:41:29+09:00",
       "tone": "neutral"
     },
     {
       "label": "NQF 최근 거래",
-      "value": "27,126.00",
-      "detail": "2026-11-18T06:59:59+09:00",
+      "value": "27,028.00",
+      "detail": "2026-11-19T00:42:54+09:00",
       "tone": "neutral"
     },
     {
       "label": "ESF 최근 거래",
-      "value": "7,366.50",
-      "detail": "2026-11-18T06:59:59+09:00",
+      "value": "7,325.75",
+      "detail": "2026-11-19T00:42:54+09:00",
       "tone": "neutral"
     },
     {
       "label": "BZF 최근 거래",
-      "value": "93.07",
-      "detail": "2026-11-18T06:59:30+09:00",
+      "value": "89.21",
+      "detail": "2026-11-19T00:41:10+09:00",
       "tone": "neutral"
     },
     {
       "label": "CLF 최근 거래",
-      "value": "85.61",
-      "detail": "2026-11-18T06:59:59+09:00",
+      "value": "82.94",
+      "detail": "2026-11-19T00:42:50+09:00",
       "tone": "neutral"
     }
   ],
   "changes": [
     {
       "label": "KOSPI 전일",
-      "before": "5,100.50",
-      "after": "4,968.48",
-      "meaning": "2.59% 하락·5,000 하회"
+      "before": "4,968.48",
+      "after": "5,067.44",
+      "meaning": "1.99% 반등·5,000 회복"
     }
   ],
   "factors": [
     {
-      "label": "Nvidia 실적",
-      "metric": "매출 1,158억 달러",
-      "detail": "전년 +103%·다음 분기 1,300억 달러 전망",
-      "tone": "positive"
+      "label": "Nvidia",
+      "metric": "-2.89%",
+      "detail": "실적 발표 이후 미국 정규장 매도",
+      "tone": "negative"
     },
     {
-      "label": "수익성 전망",
-      "metric": "매출총이익률 71~72%",
-      "detail": "이번 분기 GAAP 74.8%에서 하락 전망",
+      "label": "연준 의사록",
+      "metric": "추가 금리 인상 가능성",
+      "detail": "10월 동결·향후 결정은 경제지표에 달림",
       "tone": "negative"
     }
   ],
@@ -116,25 +116,25 @@
   "memory": [
     {
       "label": "DDR5 16Gb",
-      "value": "$60.333",
-      "change": "11/17 보합"
+      "value": "$60.50",
+      "change": "11/18 +0.28%"
     },
     {
       "label": "DDR4 16Gb",
-      "value": "$79.125",
-      "change": "11/17 -0.32%"
+      "value": "$78.95",
+      "change": "11/18 -0.22%"
     }
   ],
   "events": [
     {
-      "time": "11월 18일 09:30·10:30 KST",
-      "name": "실적 이후 국내 수급",
+      "time": "11월 19일 09:30·10:30 KST",
+      "name": "반등 유지와 국내 수급",
       "path": "반도체 저점·외국인 매수"
     },
     {
-      "time": "11월 19일 04:00 KST",
-      "name": "FOMC 의사록",
-      "path": "정책금리 전망"
+      "time": "11월 19일 23:25 KST",
+      "name": "Jefferson 부의장 토론",
+      "path": "금리 전망"
     }
   ],
   "strategyLevels": [
@@ -146,9 +146,9 @@
     },
     {
       "asset": "KODEX 레버리지",
-      "support": "52,000원",
-      "pivot": "52,175원",
-      "resistance": "55,005원"
+      "support": "51,750원",
+      "pivot": "54,400원",
+      "resistance": "56,090원"
     }
   ],
   "checklist": [
@@ -167,12 +167,12 @@
   ],
   "sources": [
     {
-      "label": "Nvidia 실적 원문",
-      "href": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-third-quarter-fiscal-2027"
+      "label": "연준 의사록",
+      "href": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20261028.htm"
     },
     {
-      "label": "미국 시세",
-      "href": "https://finance.yahoo.com/quote/NVDA/"
+      "label": "미국 종가",
+      "href": "https://m.stock.naver.com/worldstock/stock/NVDA.O/total"
     },
     {
       "label": "DRAM 현물",
@@ -185,10 +185,6 @@
     {
       "label": "국내 일봉",
       "href": "https://api.stock.naver.com/chart/domestic/index/KOSPI?periodType=dayCandle"
-    },
-    {
-      "label": "환율",
-      "href": "https://m.stock.naver.com/marketindex/exchange/FX_USDKRW"
     },
     {
       "label": "FRED 10년-2년",
@@ -206,7 +202,7 @@
   "scenarios": [
     {
       "id": "bull",
-      "label": "강세 · 30%",
+      "label": "강세 · 20%",
       "range": "KOSPI 5,150 초과~5,350",
       "summary": "09:30·10:30·14:00 확인, 15:20 마감",
       "conditions": [
@@ -230,7 +226,7 @@
     },
     {
       "id": "bear",
-      "label": "약세 · 20%",
+      "label": "약세 · 30%",
       "range": "KOSPI 4,700~4,950 미만",
       "summary": "09:30·10:30·14:00 확인, 15:20 마감",
       "conditions": [
@@ -248,24 +244,24 @@
         "id": "KOSPI",
         "label": "KOSPI",
         "unit": "pt",
-        "asOf": "2026-11-17T15:30:00+09:00",
+        "asOf": "2026-11-18T15:30:00+09:00",
         "asOfLabel": "장전 기준",
         "points": [
           {
             "label": "시가",
-            "value": 5008.09
+            "value": 5098.82
           },
           {
             "label": "고가",
-            "value": 5084.06
+            "value": 5133.14
           },
           {
             "label": "저가",
-            "value": 4957.0
+            "value": 4943.17
           },
           {
             "label": "종가",
-            "value": 4968.48
+            "value": 5067.44
           }
         ],
         "levels": [
@@ -288,52 +284,52 @@
         "id": "KODEX",
         "label": "KODEX 레버리지",
         "unit": "원",
-        "asOf": "2026-11-17T15:30:00+09:00",
+        "asOf": "2026-11-18T15:30:00+09:00",
         "asOfLabel": "장전 기준",
         "points": [
           {
             "label": "시가",
-            "value": 53315.0
+            "value": 54875.0
           },
           {
             "label": "고가",
-            "value": 55005.0
+            "value": 56090.0
           },
           {
             "label": "저가",
-            "value": 52000.0
+            "value": 51750.0
           },
           {
             "label": "종가",
-            "value": 52175.0
+            "value": 54400.0
           }
         ],
         "levels": [
           {
             "label": "1차 지지",
-            "value": 52000
+            "value": 51750
           },
           {
             "label": "반등 기준",
-            "value": 52175
+            "value": 54400
           },
           {
             "label": "저항",
-            "value": 55005
+            "value": 56090
           }
         ],
         "interpretation": "반등 뒤 국내 매수 지속과 전일 저가 지지를 봅니다."
       }
     ]
   },
-  "snapshotId": "20261118-0809",
-  "generatedAt": "2026-11-18T08:09:57.230406+09:00",
-  "asOf": "2026-11-18T08:09:57.040325+09:00",
-  "asOfDisplay": "2026-11-18T08:09:57.040325+09:00",
+  "snapshotId": "20261119-0807",
+  "generatedAt": "2026-11-19T08:07:38.393682+09:00",
+  "asOf": "2026-11-19T08:07:38.212087+09:00",
+  "asOfDisplay": "2026-11-19T08:07:38.212087+09:00",
   "marketState": "한국 장전",
-  "sourceLabel": "미국 2026-11-17 정규장 · 한국 2026-11-18 장전",
+  "sourceLabel": "미국 2026-11-18 정규장 · 한국 2026-11-19 장전",
   "latestArticle": {
-    "title": "Nvidia 실적이 반등 불씨 살렸다…코스피 5,000 회복과 매수 지속이 관건",
-    "href": "market-2026-11-18.html"
+    "title": "Nvidia 실적 뒤 주가는 하락…금리 부담 속 코스피 5,000선 지지가 관건",
+    "href": "market-2026-11-19.html"
   }
 }

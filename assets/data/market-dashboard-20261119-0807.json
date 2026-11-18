@@ -1,0 +1,335 @@
+{
+  "schemaVersion": 1,
+  "headline": "Nvidia 실적 뒤 주가는 하락…금리 부담 속 코스피 5,000선 지지가 관건",
+  "summary": "Nvidia가 실적 발표 뒤 2.89% 하락한 반면 AMD와 Broadcom은 올랐습니다. 추가 금리 인상 가능성을 담은 연준 의사록 속에서 코스피 5,000선과 국내 매수 지속을 살핍니다.",
+  "markets": [
+    {
+      "id": "KOSPI",
+      "label": "KOSPI",
+      "symbol": "K",
+      "value": 5067.44,
+      "changePercent": 1.99,
+      "open": 5098.82,
+      "high": 5133.14,
+      "low": 4943.17,
+      "previousClose": 4968.48,
+      "asOf": "2026-11-18T15:30:00+09:00",
+      "asOfLabel": "2026-11-18T15:30:00+09:00",
+      "stateLabel": "전일 종가",
+      "flows": []
+    },
+    {
+      "id": "KOSDAQ",
+      "label": "KOSDAQ",
+      "symbol": "Q",
+      "value": null,
+      "changePercent": null,
+      "open": null,
+      "high": null,
+      "low": null,
+      "previousClose": null,
+      "asOf": "2026-11-18T15:30:00+09:00",
+      "asOfLabel": "전일 종가 미확인",
+      "stateLabel": "미확인",
+      "flows": []
+    }
+  ],
+  "stance": {
+    "label": "금리 부담 속 반등 유지 확인",
+    "note": "5,000선 지지와 국내 매수 지속을 봅니다.",
+    "attack": 15,
+    "wait": 50,
+    "defense": 35
+  },
+  "checkpoints": [
+    {
+      "label": "NXT",
+      "value": "유효 가격 없음",
+      "detail": "원천 시각·상태 검증 실패",
+      "tone": "neutral"
+    },
+    {
+      "label": "USD/KRW 하나은행 고시",
+      "value": "1,334.00원",
+      "detail": "2026-11-19T05:41:29+09:00",
+      "tone": "neutral"
+    },
+    {
+      "label": "NQF 최근 거래",
+      "value": "27,028.00",
+      "detail": "2026-11-19T00:42:54+09:00",
+      "tone": "neutral"
+    },
+    {
+      "label": "ESF 최근 거래",
+      "value": "7,325.75",
+      "detail": "2026-11-19T00:42:54+09:00",
+      "tone": "neutral"
+    },
+    {
+      "label": "BZF 최근 거래",
+      "value": "89.21",
+      "detail": "2026-11-19T00:41:10+09:00",
+      "tone": "neutral"
+    },
+    {
+      "label": "CLF 최근 거래",
+      "value": "82.94",
+      "detail": "2026-11-19T00:42:50+09:00",
+      "tone": "neutral"
+    }
+  ],
+  "changes": [
+    {
+      "label": "KOSPI 전일",
+      "before": "4,968.48",
+      "after": "5,067.44",
+      "meaning": "1.99% 반등·5,000 회복"
+    }
+  ],
+  "factors": [
+    {
+      "label": "Nvidia",
+      "metric": "-2.89%",
+      "detail": "실적 발표 이후 미국 정규장 매도",
+      "tone": "negative"
+    },
+    {
+      "label": "연준 의사록",
+      "metric": "추가 금리 인상 가능성",
+      "detail": "10월 동결·향후 결정은 경제지표에 달림",
+      "tone": "negative"
+    }
+  ],
+  "flows": {
+    "program": {
+      "arbitrage": null,
+      "nonArbitrage": null,
+      "total": null,
+      "unit": "억원",
+      "asOfLabel": "개장 전·전일 최종 묶음 미확인"
+    },
+    "kospi200FuturesForeign": null,
+    "futuresUnit": "억원",
+    "futuresAsOfLabel": "미확인"
+  },
+  "memory": [
+    {
+      "label": "DDR5 16Gb",
+      "value": "$60.50",
+      "change": "11/18 +0.28%"
+    },
+    {
+      "label": "DDR4 16Gb",
+      "value": "$78.95",
+      "change": "11/18 -0.22%"
+    }
+  ],
+  "events": [
+    {
+      "time": "11월 19일 09:30·10:30 KST",
+      "name": "반등 유지와 국내 수급",
+      "path": "반도체 저점·외국인 매수"
+    },
+    {
+      "time": "11월 19일 23:25 KST",
+      "name": "Jefferson 부의장 토론",
+      "path": "금리 전망"
+    }
+  ],
+  "strategyLevels": [
+    {
+      "asset": "KOSPI",
+      "support": "4,950",
+      "pivot": "5,000",
+      "resistance": "5,150"
+    },
+    {
+      "asset": "KODEX 레버리지",
+      "support": "51,750원",
+      "pivot": "54,400원",
+      "resistance": "56,090원"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "open",
+      "label": "09:30 외국인·프로그램 첫 수급"
+    },
+    {
+      "id": "memory",
+      "label": "10:30 메모리주 저점 유지"
+    },
+    {
+      "id": "late",
+      "label": "14:00 이후 매도 가속 여부"
+    }
+  ],
+  "sources": [
+    {
+      "label": "연준 의사록",
+      "href": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20261028.htm"
+    },
+    {
+      "label": "미국 종가",
+      "href": "https://m.stock.naver.com/worldstock/stock/NVDA.O/total"
+    },
+    {
+      "label": "DRAM 현물",
+      "href": "https://www.trendforce.com/price/dram/dram_spot"
+    },
+    {
+      "label": "NAND 현물",
+      "href": "https://www.trendforce.com/price/flash/flash_spot"
+    },
+    {
+      "label": "국내 일봉",
+      "href": "https://api.stock.naver.com/chart/domestic/index/KOSPI?periodType=dayCandle"
+    },
+    {
+      "label": "FRED 10년-2년",
+      "href": "https://fred.stlouisfed.org/series/T10Y2Y"
+    },
+    {
+      "label": "FRED 10년-3개월",
+      "href": "https://fred.stlouisfed.org/series/T10Y3M"
+    },
+    {
+      "label": "연준 일정",
+      "href": "https://www.federalreserve.gov/newsevents/calendar.htm"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "bull",
+      "label": "강세 · 20%",
+      "range": "KOSPI 5,150 초과~5,350",
+      "summary": "09:30·10:30·14:00 확인, 15:20 마감",
+      "conditions": [
+        "5,150 초과",
+        "외국인 순매수",
+        "프로그램 순매수"
+      ],
+      "invalidation": "5,150 재이탈 또는 수급 반전"
+    },
+    {
+      "id": "base",
+      "label": "기본 · 50%",
+      "range": "KOSPI 4,950~5,150",
+      "summary": "09:30·10:30·14:00 확인, 15:20 마감",
+      "conditions": [
+        "4,950 이상",
+        "5,150 이하",
+        "외국인 현물 0 이상"
+      ],
+      "invalidation": "범위 이탈 또는 외국인 순매도"
+    },
+    {
+      "id": "bear",
+      "label": "약세 · 30%",
+      "range": "KOSPI 4,700~4,950 미만",
+      "summary": "09:30·10:30·14:00 확인, 15:20 마감",
+      "conditions": [
+        "4,950 미만",
+        "외국인 순매도",
+        "프로그램 순매도"
+      ],
+      "invalidation": "4,950 회복 또는 수급 반전"
+    }
+  ],
+  "technical": {
+    "note": "전일 저가·종가·고가와 오늘 조건부 기준선입니다.",
+    "instruments": [
+      {
+        "id": "KOSPI",
+        "label": "KOSPI",
+        "unit": "pt",
+        "asOf": "2026-11-18T15:30:00+09:00",
+        "asOfLabel": "장전 기준",
+        "points": [
+          {
+            "label": "시가",
+            "value": 5098.82
+          },
+          {
+            "label": "고가",
+            "value": 5133.14
+          },
+          {
+            "label": "저가",
+            "value": 4943.17
+          },
+          {
+            "label": "종가",
+            "value": 5067.44
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 4950
+          },
+          {
+            "label": "반등 기준",
+            "value": 5000
+          },
+          {
+            "label": "저항",
+            "value": 5150
+          }
+        ],
+        "interpretation": "반등 뒤 국내 매수 지속과 전일 저가 지지를 봅니다."
+      },
+      {
+        "id": "KODEX",
+        "label": "KODEX 레버리지",
+        "unit": "원",
+        "asOf": "2026-11-18T15:30:00+09:00",
+        "asOfLabel": "장전 기준",
+        "points": [
+          {
+            "label": "시가",
+            "value": 54875.0
+          },
+          {
+            "label": "고가",
+            "value": 56090.0
+          },
+          {
+            "label": "저가",
+            "value": 51750.0
+          },
+          {
+            "label": "종가",
+            "value": 54400.0
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 51750
+          },
+          {
+            "label": "반등 기준",
+            "value": 54400
+          },
+          {
+            "label": "저항",
+            "value": 56090
+          }
+        ],
+        "interpretation": "반등 뒤 국내 매수 지속과 전일 저가 지지를 봅니다."
+      }
+    ]
+  },
+  "snapshotId": "20261119-0807",
+  "generatedAt": "2026-11-19T08:07:38.393682+09:00",
+  "asOf": "2026-11-19T08:07:38.212087+09:00",
+  "asOfDisplay": "2026-11-19T08:07:38.212087+09:00",
+  "marketState": "한국 장전",
+  "sourceLabel": "미국 2026-11-18 정규장 · 한국 2026-11-19 장전",
+  "latestArticle": {
+    "title": "Nvidia 실적 뒤 주가는 하락…금리 부담 속 코스피 5,000선 지지가 관건",
+    "href": "market-2026-11-19.html"
+  }
+}
