@@ -23,6 +23,7 @@ const cache = {
 const context = {
     kospiIntradayViewCache: cache, selectedKodexChartMode: 'intraday', Number,
     selectedKodexFlow: 'amount', displayedKodexFlowSource: 'naver',
+    selectedKodexIntradayDate: '', privateFlowByDate: new Map(),
     privateFlowState: { status: 'ready', tradeDate: '', fetchedAt: '2026-11-04T02:00:00Z', market: '통합', amount: [], quantity: [] },
     window: { location: { hostname: '127.0.0.1' }, MarketDashboardLive: require('../assets/market-live-data.js') },
     document: { getElementById(id) { return ({ 'kodex-flow-status': status, 'kodex-flow-legend': legend, 'kodex-flow-legend-unit': unit, 'kodex-flow-raw': raw })[id]; } },
@@ -86,4 +87,15 @@ context.privateFlowState.sessionStatus = 'closed';
 context.privateFlowState.quantity.push({ bsop_hour: '16:30:00', timez12: '000000163000', frgn_val: '-70', prsn_val: '35', orgn_val: '35' });
 assert.equal(context.privateFlowForRow({ date: '2026-11-19', time: '16:30' }, '', 'quantity',
     Date.parse('2026-11-20T10:00:00+09:00')).flowObservedAt, '16:30:00', 'CSAT final snapshot must remain visible the following day');
+context.cachePrivateFlow(context.privateFlowState);
+context.cachePrivateFlow({ tradeDate: '2026-11-19', fetchedAt: '2026-11-19T17:15:00+09:00', sessionStatus: 'partial', quantity: [] });
+context.privateFlowState = { fetchedAt: '2026-11-18T16:10:00+09:00', tradeDate: '2026-11-18',
+    persisted: true, dateVerified: true, sessionStatus: 'closed', quantity: [
+        { bsop_hour: '15:30:00', timez12: '000000153000', frgn_val: '-40', prsn_val: '20', orgn_val: '20' }
+    ] };
+context.cachePrivateFlow(context.privateFlowState);
+const afterClose = Date.parse('2026-11-20T10:00:00+09:00');
+assert.equal(context.privateFlowForRow({ date: '2026-11-18', time: '15:30' }, '', 'quantity', afterClose).foreign, -40);
+assert.equal(context.privateFlowForRow({ date: '2026-11-19', time: '16:30' }, '', 'quantity', afterClose).foreign, -70,
+    'the prior trade date can coexist with today without losing the verified close');
 console.log('KODEX KOSPI overlay: timing, inferred sessions, stale data and raw source handling ok');

@@ -30,7 +30,11 @@
     var selectedKodexIntradayDateExplicit = false;
     var selectedKodexIntradayInterval = 5;
     var selectedKodexFlow = 'off';
+    var savedKodexFlow = 'off';
     var privateFlowState = { status: 'idle', tradeDate: '', fetchedAt: '', market: '', amount: [], quantity: [] };
+    var privateFlowByDate = new Map();
+    var privateFlowRetryAt = new Map();
+    var privateFlowVisibleDates = [];
     var privateFlowRequestToken = 0;
     var privateFlowController = null;
     var privateFlowTimer = null;
@@ -148,6 +152,7 @@
             mode: mode,
             period: period,
             interval: interval,
+            flowMode: ['amount', 'quantity'].indexOf(source.flowMode) !== -1 ? source.flowMode : 'off',
             intradayDate: date,
             intradayDateExplicit: Boolean(date && source.intradayDateExplicit),
             rangeStart: start,
@@ -164,7 +169,8 @@
             selectedKodexPeriod = state.period;
             selectedKodexIntradayInterval = state.interval;
             selectedKodexIntradayDate = state.intradayDate;
-            selectedKodexIntradayDateExplicit = false;
+            selectedKodexIntradayDateExplicit = state.intradayDateExplicit;
+            savedKodexFlow = state.flowMode;
             technicalRangeStart = state.rangeStart;
             technicalRangeEnd = state.rangeEnd;
             technicalChartStateSerialized = JSON.stringify(state);
@@ -178,6 +184,7 @@
             mode: selectedKodexChartMode,
             period: selectedKodexPeriod,
             interval: selectedKodexIntradayInterval,
+            flowMode: savedKodexFlow,
             intradayDate: selectedKodexIntradayDate,
             intradayDateExplicit: selectedKodexIntradayDateExplicit,
             rangeStart: technicalRangeStart,
@@ -1511,10 +1518,9 @@
             if (button.getAttribute('data-chart-bound') === 'true') return;
             button.setAttribute('data-chart-bound', 'true');
             button.addEventListener('click', function () {
-                selectedKodexFlow = button.getAttribute('data-kodex-flow');
-                Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-flow]'), function (item) {
-                    item.setAttribute('aria-pressed', item.getAttribute('data-kodex-flow') === selectedKodexFlow ? 'true' : 'false');
-                });
+                setKodexFlowSelection(button.getAttribute('data-kodex-flow'));
+                savedKodexFlow = selectedKodexFlow;
+                persistTechnicalChartState();
                 clearPrivateFlowVisuals();
                 var instrument = dashboardData && findById(dashboardData.technical.instruments, 'KODEX');
                 if (instrument) renderKodexHistoryChart(instrument);
@@ -1568,7 +1574,6 @@
                 selectedKodexIntradayDate = dateSelect.value;
                 selectedKodexIntradayDateExplicit = true;
                 clearPrivateFlowVisuals();
-                schedulePrivateFlow(true);
                 persistTechnicalChartState();
                 resetTechnicalChartHorizontalScroll();
                 renderSynchronizedTechnicalCharts();
@@ -3800,13 +3805,15 @@
         if (status) status.textContent = message;
     }
 
-    function clearPrivateFlowSelection() {
-        // A fresh login confirms identity only. Do not fetch NH data until the
-        // user explicitly selects a flow mode again.
-        selectedKodexFlow = 'off';
+    function setKodexFlowSelection(mode) {
+        selectedKodexFlow = mode;
         Array.prototype.forEach.call(document.querySelectorAll('[data-kodex-flow]'), function (button) {
-            button.setAttribute('aria-pressed', button.getAttribute('data-kodex-flow') === 'off' ? 'true' : 'false');
+            button.setAttribute('aria-pressed', button.getAttribute('data-kodex-flow') === mode ? 'true' : 'false');
         });
+    }
+
+    function clearPrivateFlowSelection() {
+        setKodexFlowSelection('off');
         schedulePrivateFlow(false);
         clearPrivateFlowVisuals();
     }
@@ -3817,6 +3824,8 @@
         if (privateAuthExpiryTimer) window.clearTimeout(privateAuthExpiryTimer);
         privateAuthExpiryTimer = null;
         privateFlowState = { status: 'idle', tradeDate: '', fetchedAt: '', market: '', amount: [], quantity: [] };
+        privateFlowByDate.clear();
+        privateFlowRetryAt.clear();
         clearPrivateFlowSelection();
         var content = document.getElementById('kodex-private-flow-content');
         var signIn = document.getElementById('kodex-private-signin');
@@ -3835,8 +3844,8 @@
             && Number.isFinite(Date.parse(payload.fetchedAt || ''));
     }
 
-    function acceptPrivateFlowPayload(payload) {
-        privateFlowState = {
+    function normalizePrivateFlowPayload(payload) {
+        return {
             status: 'ready',
             tradeDate: /^\d{4}-\d{2}-\d{2}$/.test(payload.tradeDate || '') ? payload.tradeDate : '',
             fetchedAt: payload.fetchedAt,
@@ -3849,14 +3858,21 @@
         };
     }
 
-    function acceptPrivateSession(payload) {
+    function acceptPrivateSession(payload, restored) {
         if (!payload || payload.authenticated !== true || !Number.isFinite(payload.expiresAt)
             || payload.expiresAt <= Date.now() / 1000 || !/^[a-f0-9]{64}$/.test(payload.csrfToken || '')) {
             throw new Error('unavailable');
         }
         privateAuthSession = { expiresAt: payload.expiresAt, csrfToken: payload.csrfToken };
         if (privateAuthExpiryTimer) window.clearTimeout(privateAuthExpiryTimer);
-        clearPrivateFlowSelection();
+        if (restored) {
+            setKodexFlowSelection(savedKodexFlow);
+            schedulePrivateFlow(true);
+        } else {
+            clearPrivateFlowSelection();
+            savedKodexFlow = 'off';
+            persistTechnicalChartState();
+        }
         var content = document.getElementById('kodex-private-flow-content');
         var signIn = document.getElementById('kodex-private-signin');
         var signOut = document.getElementById('kodex-private-signout');
@@ -3886,7 +3902,7 @@
                 return response.json();
             }).then(function (payload) {
                 if (attempt !== privateAuthAttempt || !payload) return;
-                acceptPrivateSession(payload);
+                acceptPrivateSession(payload, true);
             }).catch(function () {
                 if (attempt === privateAuthAttempt) resetPrivateAuth('로그인 상태를 확인하지 못했습니다. 다시 시도해 주세요.');
             }).finally(function () { window.clearTimeout(timeout); });
@@ -4009,7 +4025,8 @@
     }
 
     function privateFlowRawText(mode) {
-        var entries = privateFlowState[mode] || [];
+        var state = privateFlowByDate.get(selectedKodexIntradayDate) || privateFlowState;
+        var entries = state[mode] || [];
         var first = entries[0];
         if (!first) return '';
         function safe(value) {
@@ -4017,6 +4034,26 @@
         }
         return 'NH 응답 첫 항목(최신순 여부 미확인) · 시간 ' + safe(first.bsop_hour) + ' / 시계열 ' + safe(first.timez12)
             + ' · 외국인 ' + safe(first.frgn_val) + ' · 개인 ' + safe(first.prsn_val) + ' · 기관 ' + safe(first.orgn_val);
+    }
+
+    function syncPrivateFlowDates(rows, fallbackDate) {
+        var dates = Array.from(new Set(rows.map(function (row) {
+            return row.sessionDate || row.date || fallbackDate;
+        }).filter(Boolean))).sort().reverse();
+        if (dates.join('|') === privateFlowVisibleDates.join('|')) return;
+        privateFlowVisibleDates = dates;
+        schedulePrivateFlow(true);
+    }
+
+    function cachePrivateFlow(state) {
+        var previous = privateFlowByDate.get(state.tradeDate);
+        if (previous && (previous.sessionStatus === 'closed'
+            || Date.parse(previous.fetchedAt) > Date.parse(state.fetchedAt))) return;
+        privateFlowByDate.delete(state.tradeDate);
+        privateFlowByDate.set(state.tradeDate, state);
+        if (privateFlowByDate.size > 12) {
+            privateFlowByDate.delete(privateFlowByDate.keys().next().value);
+        }
     }
 
     function schedulePrivateFlow(immediate) {
@@ -4033,22 +4070,15 @@
             return;
         }
         var request = privateFlowRequestToken;
-        function run() {
-            if (request !== privateFlowRequestToken || selectedKodexChartMode !== 'intraday' || selectedKodexFlow === 'off') return;
-            if (document.hidden) {
-                privateFlowTimer = window.setTimeout(run, 30000);
-                return;
-            }
+        var local = isLocalPrivateFlowHost();
+        function fetchDate(date) {
+            if (request !== privateFlowRequestToken) return Promise.resolve();
             privateFlowController = typeof AbortController === 'function' ? new AbortController() : null;
-            privateFlowState.status = 'loading';
             var controller = privateFlowController;
             var timeout = window.setTimeout(function () { if (controller) controller.abort(); }, 15000);
-            var local = isLocalPrivateFlowHost();
-            var remote = privateAuthConfig();
-            var requestedDate = selectedKodexIntradayDate;
-            var flowUrl = local ? '/api/private/nh/flow' : remote.apiUrl
-                + (/^\d{4}-\d{2}-\d{2}$/.test(requestedDate || '') ? '?date=' + encodeURIComponent(requestedDate) : '');
-            window.fetch(flowUrl, {
+            var flowUrl = local ? '/api/private/nh/flow' : privateAuthConfig().apiUrl + '?date=' + encodeURIComponent(date);
+            if (local || date === selectedKodexIntradayDate) privateFlowState.status = 'loading';
+            return window.fetch(flowUrl, {
                 credentials: local ? 'same-origin' : 'include', cache: 'no-store', signal: controller && controller.signal
             }).then(function (response) {
                 if (request !== privateFlowRequestToken) throw new Error('private request superseded');
@@ -4061,19 +4091,55 @@
             }).then(function (payload) {
                 if (request !== privateFlowRequestToken) return;
                 if (!validPrivateFlowPayload(payload)) throw new Error('invalid private flow response');
-                if (privateFlowState.tradeDate === payload.tradeDate && privateFlowState.fetchedAt
-                    && Date.parse(payload.fetchedAt) < Date.parse(privateFlowState.fetchedAt)) return;
-                acceptPrivateFlowPayload(payload);
+                var state = normalizePrivateFlowPayload(payload);
+                if (local) {
+                    if (Date.parse(state.fetchedAt) < Date.parse(privateFlowState.fetchedAt)) return;
+                    privateFlowState = state;
+                } else {
+                    if (state.tradeDate !== date || !state.dateVerified || !state.persisted) {
+                        throw new Error('mismatched private flow session');
+                    }
+                    cachePrivateFlow(state);
+                    privateFlowRetryAt.delete(date);
+                    if (date === selectedKodexIntradayDate) {
+                        privateFlowState = Object.assign({}, privateFlowByDate.get(date));
+                    }
+                }
             }).catch(function () {
                 if (request !== privateFlowRequestToken) return;
-                privateFlowState.status = 'error';
+                if (!local) privateFlowRetryAt.set(date, Date.now() + 60000);
+                if (local || date === selectedKodexIntradayDate) {
+                    privateFlowState.status = 'error';
+                }
             }).finally(function () {
                 window.clearTimeout(timeout);
                 if (request !== privateFlowRequestToken) return;
                 privateFlowController = null;
                 if (kodexIntradayRangePreview && kodexIntradayRangePreview.day) refreshKodexFlowOverlay();
                 else updateKodexFlowState(selectedKodexFlow, [], {});
+            });
+        }
+
+        function run() {
+            if (request !== privateFlowRequestToken || selectedKodexChartMode !== 'intraday' || selectedKodexFlow === 'off') return;
+            if (document.hidden) {
                 privateFlowTimer = window.setTimeout(run, 30000);
+                return;
+            }
+            var now = Date.now();
+            var today = new Date(now + 9 * 3600000).toISOString().slice(0, 10);
+            var dates = local ? [''] : privateFlowVisibleDates.filter(function (date) {
+                var saved = privateFlowByDate.get(date);
+                return (!saved || (date === today && saved.sessionStatus !== 'closed'))
+                    && now >= (privateFlowRetryAt.get(date) || 0);
+            });
+            if (!dates.length && !privateFlowVisibleDates.some(function (date) {
+                return privateFlowRetryAt.has(date);
+            })) return;
+            dates.reduce(function (pending, date) {
+                return pending.then(function () { return fetchDate(date); });
+            }, Promise.resolve()).finally(function () {
+                if (request === privateFlowRequestToken) privateFlowTimer = window.setTimeout(run, 30000);
             });
         }
         if (immediate) run();
@@ -4122,12 +4188,13 @@
     function privateFlowForRow(row, fallbackDate, mode, nowValue) {
         var date = row.sessionDate || row.date || fallbackDate;
         // Persisted server snapshots carry a checked date; legacy live payloads keep strict freshness limits.
-        var session = privateFlowSession(privateFlowState.fetchedAt, nowValue === undefined ? Date.now() : nowValue, privateFlowState);
+        var state = privateFlowByDate.get(date) || privateFlowState;
+        var session = privateFlowSession(state.fetchedAt, nowValue === undefined ? Date.now() : nowValue, state);
         if (!session || session.date !== date) return null;
         var cutoff = flowSeconds(row.endTime || row.time);
         if (!Number.isFinite(cutoff)) return null;
         var match = null;
-        (privateFlowState[mode] || []).forEach(function (raw) {
+        (state[mode] || []).forEach(function (raw) {
             var time = String(raw && raw.bsop_hour || '');
             var code = String(raw && raw.timez12 || '');
             if (!/^\d{2}:\d{2}:\d{2}$/.test(time) || !/^\d{12}$/.test(code)
@@ -4200,23 +4267,25 @@
         else {
             var last = rows.filter(function (row) { return row.kospiFlow; }).slice(-1)[0];
             var flow = last && last.kospiFlow;
+            var flowDate = last && (last.sessionDate || last.date || day.date);
+            var visibleState = (flowDate && privateFlowByDate.get(flowDate)) || privateFlowState;
             var prefix = flow ? (displayedKodexFlowSource === 'nh' ? 'NH PLUG 원본' : '네이버 보존 순매수') + ' '
-                + formatHistoryDate(last.sessionDate || last.date || day.date) + ' ' + (flow.flowObservedAt || flow.time)
+                + formatHistoryDate(flowDate) + ' ' + (flow.flowObservedAt || flow.time)
                 + ' 기준 · 외국인 ' + formatSigned(flow.foreign, displayedKodexFlowSource === 'naver' ? '억원' : '', 0)
                 + ' · 개인 ' + formatSigned(flow.personal, displayedKodexFlowSource === 'naver' ? '억원' : '', 0)
                 + ' · 기관 ' + formatSigned(flow.institution, displayedKodexFlowSource === 'naver' ? '억원' : '', 0)
                 + ' · 최대 10분간 직전 값을 표시합니다.' : '선택 구간에 표시할 투자자별 자료가 없습니다.';
             if (isPrivateFlowHost()) {
-                if (privateFlowState.status === 'loading') prefix += ' 개인용 자료 확인 중.';
+                if (displayedKodexFlowSource === 'nh' && flow && visibleState.fetchedAt) prefix += ' NH ' + visibleState.market
+                    + ' · 가격은 KRX 정규장 분봉 · 조회 ' + new Date(visibleState.fetchedAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
+                    + (visibleState.persisted && visibleState.dateVerified
+                        ? ' · ' + (visibleState.sessionStatus === 'closed' ? '마감 자료' : '마지막 저장 자료') + ' · ' + visibleState.tradeDate
+                        : ' · NH 원본 단위 미확인, 거래일은 장중 조회일로 추정합니다.');
+                else if (privateFlowState.status === 'loading') prefix += ' 개인용 자료 확인 중.';
                 else if (privateFlowState.status === 'error') prefix += privateFlowState.fetchedAt
                     ? ' NH 수급 연결 실패 · 마지막 응답을 유지합니다.'
                     : isLocalPrivateFlowHost() ? ' 개인용 연결 실패 · 개인용 실행기를 확인해 주세요.'
                     : ' NH 수급을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
-                else if (privateFlowState.status === 'ready') prefix += ' NH ' + privateFlowState.market
-                    + ' · 가격은 KRX 정규장 분봉 · 조회 ' + new Date(privateFlowState.fetchedAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
-                    + (privateFlowState.persisted && privateFlowState.dateVerified
-                        ? ' · ' + (privateFlowState.sessionStatus === 'closed' ? '마감 자료' : '마지막 저장 자료') + ' · ' + privateFlowState.tradeDate
-                        : ' · NH 원본 단위 미확인, 거래일은 장중 조회일로 추정합니다.');
             } else if (mode === 'quantity') prefix += ' 개인용 수량 연결이 필요합니다.';
             status.textContent = prefix;
         }
@@ -4241,6 +4310,7 @@
         var rows = technicalRangeSlice(displayRows);
         var isKodex = svg.id === 'kodex-history-chart';
         if (isKodex) {
+            syncPrivateFlowDates(rows, day.date);
             var hasPrivateFlow = isPrivateFlowHost() && selectedKodexFlow !== 'off' && rows.some(function (row) {
                 return Boolean(privateFlowForRow(row, day.date, selectedKodexFlow));
             });
