@@ -170,7 +170,7 @@ assert.ok(dashboard.includes('kospiWarmupSignature !== kospiIntradayRequestWarmu
 assert.ok(dashboard.includes('renderKospiIntradayChart();'), '보강된 선행 분봉으로 KOSPI 차트를 다시 그려야 한다.');
 assert.ok(dashboard.includes('item.indicatorWarmupDays = previous.indicatorWarmupDays'), '일시적인 갱신 실패가 이미 받은 선행 분봉을 지우면 안 된다.');
 assert.ok(css.includes('.intraday-session-divider'), '두 거래일의 경계를 차트에서 구분해야 한다.');
-assert.ok(html.includes('market-live-data.js?v=20261014-01'), '현재 세션 선행 로드는 이전 live-data 캐시를 우회해야 한다.');
+assert.ok(html.includes('market-live-data.js?v=20261119-krx-session'), '임시 거래시간 수정은 이전 live-data 캐시를 우회해야 한다.');
 assert.ok(html.includes('market-dashboard.js?v=20261109-flow-archive-01'), '장전 거래일 복구 코드는 이전 dashboard 캐시를 우회해야 한다.');
 assert.ok(html.includes('data-kospi-intraday-source="../assets/data/kospi-intraday-index.json"'), 'KOSPI 완료 세션은 정적 보존 색인을 사용해야 한다.');
 assert.ok(dashboard.includes('fetchKospiIntradayArchiveDay('), '완료된 KOSPI 세션은 반복 원격 조회 대신 저장본을 사용해야 한다.');
@@ -180,4 +180,34 @@ assert.ok(!dashboard.includes("if (selectedIsCurrent && date === selectedDate &&
 assert.ok(dashboard.includes('var flowChanged = enrichedDay && enrichedDay.flowSnapshotCount > 0'), '당일 가격은 먼저 그리고 외국인 수급이 완료되면 같은 차트를 보강해야 한다.');
 assert.ok(dashboard.includes("sourceBaseUrl, [date],\n                        {\n                            concurrencyLimit: 1"), '당일 가격 분봉은 수급 페이지 완료를 기다리지 않아야 한다.');
 
-console.log('Intraday current-session continuity tests passed.');
+async function testCsatIntradaySession() {
+    const date = '2026-11-19';
+    const rows = ['1000', '1530', '1619', '1620', '1630'].map((time, index) => ({
+        localDateTime: '20261119' + time + '00',
+        openPrice: 100 + index ** 2,
+        highPrice: 100 + index ** 2,
+        lowPrice: 100 + index ** 2,
+        currentPrice: 100 + index ** 2,
+        accumulatedTradingVolume: 100
+    }));
+    const fetchMinutes = async (href) => {
+        const url = new URL(href);
+        assert.strictEqual(url.searchParams.get('startDateTime'), '202611191000');
+        assert.strictEqual(url.searchParams.get('endDateTime'), '202611191630');
+        return { ok: true, json: async () => rows };
+    };
+    const [kospi] = await live.fetchKospiMinutePressureDays(fetchMinutes, 'https://example.test/', [date]);
+    assert.strictEqual(kospi.sourceLastAt, date + 'T16:30:00+09:00');
+    assert.strictEqual(kospi.bars.find((row) => row.time === '15:30').neutral, false);
+    const kodex = live.normalizeKodexLiveIntradayDay(rows, date, 1, 300);
+    assert.strictEqual(kodex.bars.find((row) => row.time === '16:19').neutral, false);
+    assert.strictEqual(kodex.bars.find((row) => row.time === '16:20').neutral, true);
+    assert.strictEqual(kodex.sourceLastAt, date + 'T16:30:00+09:00');
+}
+
+testCsatIntradaySession().then(() => {
+    console.log('Intraday current-session continuity tests passed.');
+}).catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+});

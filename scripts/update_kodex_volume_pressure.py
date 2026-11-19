@@ -22,6 +22,10 @@ from pathlib import Path
 from typing import Iterable, Sequence
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
+if __name__ == "__main__" and not __package__:
+    from krx_session import krx_session_hours
+else:
+    from scripts.krx_session import krx_session_hours
 
 SYMBOL = "122630"
 DISPLAY_NAME = "KODEX 레버리지"
@@ -109,10 +113,11 @@ def normalize_daily_volumes(payload: object) -> dict[str, int]:
 
 def minute_request_url(date: str) -> str:
     compact = date.replace("-", "")
+    hours = krx_session_hours(date)
     query = urllib.parse.urlencode(
         {
-            "startDateTime": compact + "0900",
-            "endDateTime": compact + "1530",
+            "startDateTime": compact + hours.open.strftime("%H%M"),
+            "endDateTime": compact + hours.close.strftime("%H%M"),
         }
     )
     return f"{MINUTE_URL}?{query}"
@@ -163,11 +168,14 @@ def normalize_minute_bars(payload: object, expected_date: str) -> list[MinuteBar
 
 
 def is_complete_session(bars: Sequence[MinuteBar]) -> bool:
-    first_time = bars[0].timestamp.strftime("%H%M") if bars else ""
+    if len(bars) < MINIMUM_BARS:
+        return False
+    first = bars[0].timestamp
+    hours = krx_session_hours(first.date().isoformat())
+    opening = datetime.combine(first.date(), hours.open, tzinfo=first.tzinfo)
     return (
-        len(bars) >= MINIMUM_BARS
-        and "0900" <= first_time <= "0905"
-        and bars[-1].timestamp.strftime("%H%M") == "1530"
+        opening <= first <= opening + timedelta(minutes=5)
+        and bars[-1].timestamp.time() == hours.close
     )
 
 
@@ -190,8 +198,9 @@ def normal_cdf(value: float) -> float:
 def estimate_minute_rows(bars: Sequence[MinuteBar], sigma: float) -> list[dict[str, object]]:
     rows: list[dict[str, object]] = []
     cumulative_delta = 0
+    auction = krx_session_hours(bars[0].timestamp.date().isoformat()).auction if bars else None
     for index, bar in enumerate(bars):
-        neutral = index == 0 or bar.timestamp.strftime("%H%M") >= "1520"
+        neutral = index == 0 or bar.timestamp.time() >= auction
         if neutral:
             buy_share = 0.5
         else:
@@ -239,8 +248,9 @@ def estimate_day(
     estimated_buy = 0.0
     estimated_sell = 0.0
     neutral_volume = 0
+    auction = krx_session_hours(date).auction
     for index, bar in enumerate(bars):
-        is_auction = index == 0 or bar.timestamp.strftime("%H%M") >= "1520"
+        is_auction = index == 0 or bar.timestamp.time() >= auction
         if is_auction:
             buy_share = 0.5
             neutral_volume += bar.volume

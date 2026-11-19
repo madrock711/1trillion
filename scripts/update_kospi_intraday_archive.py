@@ -17,11 +17,15 @@ import tempfile
 import urllib.parse
 import urllib.error
 import urllib.request
-from datetime import datetime, timedelta, timezone
+from datetime import date as calendar_date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Sequence
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
+if __name__ == "__main__" and not __package__:
+    from krx_session import krx_session_hours
+else:
+    from scripts.krx_session import krx_session_hours
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_DIR = ROOT / "assets" / "data" / "kospi-intraday"
@@ -72,8 +76,9 @@ def parse_number(value: object) -> float:
 
 def minute_url(date: str) -> str:
     compact = date.replace("-", "")
+    hours = krx_session_hours(date)
     return MINUTE_URL + "?" + urllib.parse.urlencode(
-        {"startDateTime": compact + "0900", "endDateTime": compact + "1530"}
+        {"startDateTime": compact + hours.open.strftime("%H%M"), "endDateTime": compact + hours.close.strftime("%H%M")}
     )
 
 
@@ -87,6 +92,8 @@ def normalize_minute_rows(payload: object, date: str) -> list[dict[str, object]]
     if not isinstance(payload, list):
         raise ValueError(f"{date}: invalid minute payload")
     rows: dict[str, dict[str, object]] = {}
+    hours = krx_session_hours(date)
+    opening, closing = hours.open.strftime("%H:%M"), hours.close.strftime("%H:%M")
     for raw in payload:
         if not isinstance(raw, dict):
             continue
@@ -95,7 +102,7 @@ def normalize_minute_rows(payload: object, date: str) -> list[dict[str, object]]
             continue
         row_date = f"{timestamp[:4]}-{timestamp[4:6]}-{timestamp[6:8]}"
         time = f"{timestamp[8:10]}:{timestamp[10:12]}"
-        if row_date != date or not "09:00" <= time <= "15:30":
+        if row_date != date or not opening <= time <= closing:
             continue
         try:
             row = {
@@ -112,7 +119,7 @@ def normalize_minute_rows(payload: object, date: str) -> list[dict[str, object]]
             continue
         rows[time] = row
     result = [rows[key] for key in sorted(rows)]
-    if len(result) < MINIMUM_BARS or result[-1]["time"] != "15:30":
+    if len(result) < MINIMUM_BARS or result[-1]["time"] != closing:
         raise ValueError(f"{date}: completed minute session unavailable ({len(result)} bars)")
     return result
 
@@ -128,10 +135,12 @@ def strip_cell(value: str) -> str:
 
 def parse_flow_rows(payload: str, date: str) -> list[dict[str, object]]:
     rows: list[dict[str, object]] = []
+    hours = krx_session_hours(date)
+    opening, closing = hours.open.strftime("%H:%M"), hours.close.strftime("%H:%M")
     for match in re.finditer(r"<tr[^>]*>([\s\S]*?)</tr>", payload, flags=re.I):
         cells = [strip_cell(cell) for cell in re.findall(r"<td[^>]*>([\s\S]*?)</td>", match.group(1), flags=re.I)]
         time = cells[0] if cells else ""
-        if len(cells) < 4 or not re.fullmatch(r"\d{2}:\d{2}", time) or not "09:00" <= time <= "15:30":
+        if len(cells) < 4 or not re.fullmatch(r"\d{2}:\d{2}", time) or not opening <= time <= closing:
             continue
         try:
             rows.append(
@@ -161,10 +170,14 @@ def collect_flow_rows(date: str) -> tuple[list[dict[str, object]], int]:
     rows = [by_time[key] for key in sorted(by_time)]
     if not rows:
         raise ValueError(f"{date}: intraday investor flow unavailable")
+    day = calendar_date.fromisoformat(date)
+    hours = krx_session_hours(date)
+    first_limit = datetime.combine(day, hours.open) + timedelta(minutes=10)
+    last_limit = datetime.combine(day, hours.close) - timedelta(minutes=5)
     if (
         len(rows) < MINIMUM_FLOW_SNAPSHOTS
-        or str(rows[0]["time"]) > "09:10"
-        or str(rows[-1]["time"]) < "15:25"
+        or str(rows[0]["time"]) > first_limit.strftime("%H:%M")
+        or str(rows[-1]["time"]) < last_limit.strftime("%H:%M")
     ):
         raise ValueError(
             f"{date}: incomplete investor flow "

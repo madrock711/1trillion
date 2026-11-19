@@ -317,8 +317,23 @@
         return /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : '';
     }
 
-    function isKospiRegularSessionTime(value) {
-        return /^\d{2}:\d{2}$/.test(value) && value >= '09:00' && value <= '15:30';
+    function krxSessionHours(date) {
+        // KRX temporary CSAT schedule: KIND notice 20261105000216.
+        return normalizeIsoDate(date) === '2026-11-19'
+            ? { open: '10:00', auction: '16:20', close: '16:30' }
+            : { open: '09:00', auction: '15:20', close: '15:30' };
+    }
+
+    function isKospiRegularSessionTime(value, date) {
+        var hours = krxSessionHours(date);
+        return /^\d{2}:\d{2}$/.test(value) && value >= hours.open && value <= hours.close;
+    }
+
+    function setKrxMinuteRange(url, date) {
+        var compact = date.replace(/-/g, '');
+        var hours = krxSessionHours(date);
+        url.searchParams.set('startDateTime', compact + hours.open.replace(':', ''));
+        url.searchParams.set('endDateTime', compact + hours.close.replace(':', ''));
     }
 
     function normalizeKospiIntradayMinute(payload, expectedDate) {
@@ -349,7 +364,7 @@
                 volume: parseNumber(row && row.accumulatedTradingVolume)
             };
             if ((expected && date !== expected)
-                || !isKospiRegularSessionTime(time)
+                || !isKospiRegularSessionTime(time, date)
                 || ![normalized.open, normalized.high, normalized.low, normalized.close, normalized.volume].every(Number.isFinite)
                 || normalized.volume < 0
                 || normalized.high < Math.max(normalized.open, normalized.close)
@@ -381,8 +396,9 @@
         if (!Number.isFinite(sigma) || sigma <= 0) throw new Error('분봉 변동성을 계산할 수 없습니다.');
         return normalizedDays.map(function (day) {
             var cumulativeDelta = 0;
+            var auctionTime = krxSessionHours(day.date).auction;
             var bars = day.bars.map(function (row, index) {
-                var neutral = index === 0 || row.time >= '15:20';
+                var neutral = index === 0 || row.time >= auctionTime;
                 var buyShare = neutral ? 0.5 : normalCdf((row.close - day.bars[index - 1].close) / sigma);
                 var estimatedBuyVolume = Math.max(0, Math.min(row.volume, Math.round(row.volume * buyShare)));
                 var estimatedSellVolume = row.volume - estimatedBuyVolume;
@@ -535,7 +551,7 @@
                     .trim());
             }
             var time = String(cells[0] || '').trim();
-            if (cells.length < 4 || !isKospiRegularSessionTime(time)) continue;
+            if (cells.length < 4 || !isKospiRegularSessionTime(time, date)) continue;
             var normalized = {
                 date: date || null,
                 time: time,
@@ -565,7 +581,7 @@
     function mergeKospiIntradayForeignFlow(priceRows, flowRows) {
         var snapshotsByKey = {};
         (flowRows || []).forEach(function (row) {
-            if (!row || !isKospiRegularSessionTime(String(row.time || '')) || !Number.isFinite(row.foreign)) return;
+            if (!row || !isKospiRegularSessionTime(String(row.time || ''), row.date) || !Number.isFinite(row.foreign)) return;
             var date = normalizeIsoDate(row.date);
             snapshotsByKey[(date || '') + '|' + row.time] = row;
         });
@@ -847,8 +863,9 @@
             slow = nextEma(slow, direction, slowPeriod);
             var momentum = fast - slow;
             signal = nextEma(signal, momentum, signalPeriod);
+            var closeTime = krxSessionHours(date).close;
             var point = {
-                time: '15:30',
+                time: closeTime,
                 kospiPressure: kospiPressure,
                 kodexPressure: kodexPressure,
                 kospiScore: kospiScore * 100,
@@ -860,7 +877,7 @@
             };
             return {
                 date: date,
-                sourceLastAt: [kospiByDate[date].sourceLastAt, kodexByDate[date].sourceLastAt].filter(Boolean).sort().pop() || date + 'T15:30:00+09:00',
+                sourceLastAt: [kospiByDate[date].sourceLastAt, kodexByDate[date].sourceLastAt].filter(Boolean).sort().pop() || date + 'T' + closeTime + ':00+09:00',
                 bars: [point],
                 summary: point
             };
@@ -1018,6 +1035,7 @@
             throw new Error('오늘 KODEX 분봉 데이터가 올바르지 않습니다.');
         }
         var compactDate = expectedDate.replace(/-/g, '');
+        var auctionTime = krxSessionHours(expectedDate).auction;
         var rowsByTimestamp = {};
         payload.forEach(function (row) {
             var timestamp = row && String(row.localDateTime || '');
@@ -1032,7 +1050,7 @@
             };
             if (!/^\d{14}$/.test(timestamp)
                 || timestamp.slice(0, 8) !== compactDate
-                || !/^\d{2}:\d{2}$/.test(normalized.time)
+                || !isKospiRegularSessionTime(normalized.time, expectedDate)
                 || ![normalized.open, normalized.high, normalized.low, normalized.close, normalized.volume].every(Number.isFinite)
                 || normalized.volume < 0
                 || normalized.high < Math.max(normalized.open, normalized.close)
@@ -1048,7 +1066,7 @@
         if (!Number.isFinite(sigma) || sigma <= 0) throw new Error('오늘 KODEX 분봉 변동성을 계산할 수 없습니다.');
         var cumulativeDelta = 0;
         var bars = rawRows.map(function (row, index) {
-            var neutral = index === 0 || row.time >= '15:20';
+            var neutral = index === 0 || row.time >= auctionTime;
             var buyShare = neutral ? 0.5 : normalCdf((row.close - rawRows[index - 1].close) / sigma);
             var estimatedBuyVolume = Math.max(0, Math.min(row.volume, Math.round(row.volume * buyShare)));
             var estimatedSellVolume = row.volume - estimatedBuyVolume;
@@ -1578,8 +1596,7 @@
 
         var compactDate = day.replace(/-/g, '');
         var minuteUrl = new URL('index/KOSPI/minute', baseUrl);
-        minuteUrl.searchParams.set('startDateTime', compactDate + '0900');
-        minuteUrl.searchParams.set('endDateTime', compactDate + '1530');
+        setKrxMinuteRange(minuteUrl, day);
         var firstFlowUrl = new URL('index/KOSPI/foreign-flow-time', baseUrl);
         firstFlowUrl.searchParams.set('bizdate', compactDate);
         firstFlowUrl.searchParams.set('sosok', '01');
@@ -1658,10 +1675,8 @@
         if (settings.forceRefresh) state.expiresAt = 0;
         if (state.value && state.expiresAt > now) return Promise.resolve(state.value);
         if (state.pending) return state.pending;
-        var compactDate = day.replace(/-/g, '');
         var minuteUrl = new URL('index/KOSPI/minute', baseUrl);
-        minuteUrl.searchParams.set('startDateTime', compactDate + '0900');
-        minuteUrl.searchParams.set('endDateTime', compactDate + '1530');
+        setKrxMinuteRange(minuteUrl, day);
         state.pending = fetchJson(
             fetchImpl,
             minuteUrl.href,
@@ -1918,7 +1933,8 @@
             }
             return normalized;
         });
-        if (bars[0].time < '09:00' || bars[bars.length - 1].time !== '15:30') {
+        var hours = krxSessionHours(date);
+        if (bars[0].time < hours.open || bars[bars.length - 1].time !== hours.close) {
             throw new Error('KOSPI 분봉 보존 데이터가 정규장 전체를 포함하지 않습니다.');
         }
         return {
@@ -2086,8 +2102,7 @@
         var compactDate = String(date || '').replace(/-/g, '');
         if (!/^\d{8}$/.test(compactDate)) return Promise.reject(new Error('오늘 분봉 날짜가 올바르지 않습니다.'));
         var url = new URL('stock/122630/minute', baseUrl);
-        url.searchParams.set('startDateTime', compactDate + '0900');
-        url.searchParams.set('endDateTime', compactDate + '1530');
+        setKrxMinuteRange(url, compactDate);
         return fetchJson(fetchImpl, url.href, signal, nonce).then(function (payload) {
             if (!Array.isArray(payload) || payload.length < 1) throw new Error('오늘 KODEX 분봉이 아직 없습니다.');
             return payload;

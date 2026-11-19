@@ -2,7 +2,7 @@ import importlib.util
 import sys
 import unittest
 import urllib.error
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch
 
@@ -16,6 +16,20 @@ SPEC.loader.exec_module(MODULE)
 
 
 class KospiIntradayArchiveTests(unittest.TestCase):
+    def test_csat_session_rejects_normal_close_and_keeps_extended_bars(self):
+        date = "2026-11-19"
+        opening = datetime.fromisoformat(date + "T10:00:00")
+        rows = [
+            {"localDateTime": (opening + timedelta(minutes=index)).strftime("%Y%m%d%H%M%S"),
+             "openPrice": 5000, "highPrice": 5001, "lowPrice": 5000,
+             "currentPrice": 5001, "accumulatedTradingVolume": 100}
+            for index in range(391)
+        ]
+        self.assertIn("endDateTime=202611191630", MODULE.minute_url(date))
+        with self.assertRaisesRegex(ValueError, "completed minute session unavailable"):
+            MODULE.normalize_minute_rows(rows[:331], date)
+        self.assertEqual(MODULE.normalize_minute_rows(rows, date)[-1]["time"], "16:30")
+
     def test_retired_flow_endpoint_keeps_verified_prices_with_missing_flow(self):
         price = {"time": "15:30", "open": 6715, "high": 6717, "low": 6714, "close": 6716, "volume": 6809}
         gone = urllib.error.HTTPError("https://finance.naver.com/", 410, "Gone", {}, None)

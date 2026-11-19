@@ -3,7 +3,7 @@ import json
 import sys
 import tempfile
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 
@@ -27,6 +27,20 @@ def bar(date, time, close, volume):
 
 
 class KodexVolumePressureTests(unittest.TestCase):
+    def test_csat_session_requires_1630_and_shifts_auction(self):
+        date = "2026-11-19"
+        opening = datetime.fromisoformat(date + "T10:00:00")
+        bars = [
+            bar(date, (opening + timedelta(minutes=index)).strftime("%H%M"), 100 + index, 100)
+            for index in range(391)
+        ]
+        self.assertFalse(MODULE.is_complete_session(bars[:331]))
+        self.assertTrue(MODULE.is_complete_session(bars))
+        self.assertIn("endDateTime=202611191630", MODULE.minute_request_url(date))
+        rows = MODULE.estimate_minute_rows(bars, 1)
+        self.assertFalse(rows[379]["neutral"])
+        self.assertTrue(rows[380]["neutral"])
+
     def test_current_daily_api_list_skips_preopen_zero_volume(self):
         rows = MODULE.normalize_daily_volumes([
             {"localTradedAt": "2026-09-18", "accumulatedTradingVolume": 0},
