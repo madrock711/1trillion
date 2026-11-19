@@ -2511,6 +2511,7 @@
         normalizeKodexPriceHistory: normalizeKodexPriceHistory,
         normalizeKospiPriceHistory: normalizeKospiPriceHistory,
         normalizeKospiForeignFlowHtml: normalizeKospiForeignFlowHtml,
+        krxSessionHours: krxSessionHours,
         mergeKospiTechnicalHistory: mergeKospiTechnicalHistory,
         normalizeKospiIntradayMinute: normalizeKospiIntradayMinute,
         normalizeKospiIntradayForeignFlowHtml: normalizeKospiIntradayForeignFlowHtml,

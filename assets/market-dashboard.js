@@ -4101,16 +4101,21 @@
         }
         var collected = kst(fetched);
         var current = kst(now);
+        var hours = window.MarketDashboardLive.krxSessionHours(collected.date);
+        var opening = flowSeconds(hours.open);
+        var closing = flowSeconds(hours.close);
         if (saved && saved.persisted === true && saved.dateVerified === true
             && saved.tradeDate === collected.date && saved.tradeDate <= current.date
             && collected.day !== 0 && collected.day !== 6) {
             return { date: saved.tradeDate, day: collected.day,
-                seconds: saved.sessionStatus === 'closed' ? 15 * 3600 + 30 * 60 : Math.min(collected.seconds, 15 * 3600 + 30 * 60) };
+                opening: opening,
+                seconds: saved.sessionStatus === 'closed' ? closing : Math.min(collected.seconds, closing) };
         }
         if (now - fetched > 600000) return null;
         if (collected.date !== current.date || collected.day === 0 || collected.day === 6
-            || collected.seconds < 9 * 3600 || collected.seconds > 15 * 3600 + 30 * 60
-            || current.seconds < 9 * 3600 || current.seconds > 15 * 3600 + 30 * 60) return null;
+            || collected.seconds < opening || collected.seconds > closing
+            || current.seconds < opening || current.seconds > closing) return null;
+        collected.opening = opening;
         return collected;
     }
 
@@ -4129,7 +4134,7 @@
                 || code.slice(-6) !== time.replace(/:/g, '')) return;
             var observed = flowSeconds(time);
             var values = [raw && raw.frgn_val, raw && raw.prsn_val, raw && raw.orgn_val];
-            if (!Number.isFinite(observed) || observed < 9 * 3600 || observed > session.seconds
+            if (!Number.isFinite(observed) || observed < session.opening || observed > session.seconds
                 || observed > cutoff || cutoff - observed > 600
                 || values.some(function (value) { return value === null || value === undefined || String(value).trim() === '' || !Number.isFinite(Number(value)); })) return;
             if (!match || observed > match.seconds) match = {
