@@ -46,6 +46,28 @@ class ArchiveTests(unittest.TestCase):
         self.transport.read_flow.return_value = {'Output_0': self.rows[1:]}
         self.assertEqual(self.service.get()['sessionStatus'], 'partial')
 
+    def test_csat_session_repairs_premature_close_and_preserves_late_flows(self):
+        date = '2026-11-19'
+        self.now = datetime.fromisoformat(date + 'T08:00:00+00:00')
+        self.provider.return_value = {'date': date, 'closed': True}
+        self.archive.save({
+            'tradeDate': date, 'dateVerified': True, 'persisted': True, 'sessionStatus': 'closed',
+            'fetchedAt': date + 'T06:30:00+00:00', 'amount': self.rows, 'quantity': self.rows,
+        })
+        self.transport.read_flow.return_value = {'Output_0': [
+            {'bsop_hour': stamp, 'timez12': '000000' + stamp.replace(':', '')}
+            for stamp in ('09:59:00', '10:00:00', '15:30:00', '16:10:00', '16:30:00', '16:31:00')
+        ]}
+        data = self.service.get(date)
+        self.assertEqual(data['sessionStatus'], 'closed')
+        for mode in ('amount', 'quantity'):
+            self.assertEqual([row['bsop_hour'] for row in data[mode]], [
+                '10:00:00', '15:30:00', '16:10:00', '16:30:00',
+            ])
+        self.service.cached = None
+        self.assertEqual(self.service.get(date), data)
+        self.assertEqual(self.transport.read_flow.call_count, 2)
+
     def test_wrong_day_and_missing_history_never_fetch_nh(self):
         self.provider.return_value = {'date': '2026-11-06', 'closed': True}
         with self.assertRaises(ValueError): self.service.get()

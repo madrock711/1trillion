@@ -1,9 +1,21 @@
 """Private dated flow service with shared token coordination and read-only transport."""
 from __future__ import annotations
 
+import re
 import threading
 import time
 from datetime import datetime, timezone, timedelta
+
+# KRX temporary CSAT schedule: KIND notice 20261105000216.
+REGULAR_HOURS = ('09:00:00', '15:30:00')
+SESSION_OVERRIDES = {'2026-11-19': ('10:00:00', '16:30:00')}
+
+
+def covers_regular_close(data, close):
+    return all(
+        any(row.get('bsop_hour') == close for row in data.get(mode, ()))
+        for mode in ('amount', 'quantity')
+    )
 
 
 class FlowService:
@@ -28,6 +40,7 @@ class FlowService:
         with self.lock:
             now = self.utcnow()
             today = now.astimezone(timezone(timedelta(hours=9))).date().isoformat()
+            opening, closing = SESSION_OVERRIDES.get(today, REGULAR_HOURS)
             if trade_date and (datetime.strptime(trade_date, '%Y-%m-%d').date().isoformat() != trade_date or trade_date > today):
                 raise ValueError('invalid requested date')
             if self.archive and trade_date and trade_date < today:
@@ -49,7 +62,8 @@ class FlowService:
                     if saved: return saved
                     raise ValueError('no verified current trading day')
                 saved = self._checked(lambda: self.archive.read(today), 'archive-read')
-                if saved and saved.get('sessionStatus') == 'closed': return saved
+                if saved and saved.get('sessionStatus') == 'closed' and covers_regular_close(saved, closing):
+                    return saved
             token = self._checked(self.token_manager.get_token, 'shared-token')
             series = {}
             for name in ("amount", "quantity"):
@@ -64,17 +78,16 @@ class FlowService:
                     self.cached = None
                     raise ValueError('trading day changed during collection')
                 # Keep regular-session values only; never attach night/next-day rows.
-                import re
                 for mode in ('amount', 'quantity'):
                     self.cached[mode] = [r for r in series[mode] if re.fullmatch(r'\d{2}:\d{2}:\d{2}', str(r.get('bsop_hour', '')))
-                        and '09:00:00' <= r['bsop_hour'] <= '15:30:00'
+                        and opening <= r['bsop_hour'] <= closing
                         and re.fullmatch(r'\d{12}', str(r.get('timez12', '')))
                         and r['timez12'][-6:] == r['bsop_hour'].replace(':', '')]
                 if not all(self.cached[m] for m in ('amount', 'quantity')):
                     self.cached = None
                     print('NH flow unavailable: regular-session-rows')
                     raise ValueError('no regular session flow')
-                closed = after['closed'] and all(max(r['bsop_hour'] for r in self.cached[m]) >= '15:30:00' for m in ('amount', 'quantity'))
+                closed = after['closed'] and covers_regular_close(self.cached, closing)
                 self.cached.update(tradeDate=today, dateVerified=True, persisted=True,
                     sessionStatus='closed' if closed else 'partial')
                 self._checked(lambda: self.archive.save(self.cached), 'archive-save')
