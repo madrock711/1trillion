@@ -16,13 +16,19 @@ var indexRows = live.normalizeKospiIntradayArchiveIndex(JSON.parse(fs.readFileSy
 assert.ok(indexRows.length >= 6, '최근 완료 KOSPI 분봉 저장본이 누적되어야 한다.');
 assert.deepStrictEqual(indexRows.map(function (row) { return row.date; }), indexRows.map(function (row) { return row.date; }).slice().sort());
 
+function minuteOfDay(time) {
+    var parts = time.split(':').map(Number);
+    return parts[0] * 60 + parts[1];
+}
+
 indexRows.forEach(function (entry) {
     var dayPath = path.join(root, 'assets', 'data', entry.path);
     var day = live.normalizeKospiIntradayArchiveDay(JSON.parse(fs.readFileSync(dayPath, 'utf8')));
     assert.strictEqual(day.date, entry.date);
     assert.strictEqual(day.bars.length, entry.minuteBars);
-    assert.strictEqual(day.bars[0].time, '09:00');
-    assert.strictEqual(day.bars[day.bars.length - 1].time, '15:30');
+    var hours = live.krxSessionHours(entry.date);
+    assert.strictEqual(day.bars[0].time, hours.open, entry.date + ': 첫 분봉은 개장 시각이어야 한다.');
+    assert.strictEqual(day.bars[day.bars.length - 1].time, hours.close, entry.date + ': 마지막 분봉은 마감 시각이어야 한다.');
     assert.ok(day.bars.every(function (bar) { return bar.date === day.date; }));
     if (entry.flowSnapshotCount > 0) {
         var observed = Array.from(new Set(day.bars.map(function (bar) {
@@ -30,8 +36,8 @@ indexRows.forEach(function (entry) {
         }).filter(Boolean))).sort();
         assert.ok(day.bars.some(function (bar) { return Number.isFinite(bar.foreign); }));
         assert.ok(observed.length >= 150, '불완전한 과거 수급 저장본을 사용하면 안 된다.');
-        assert.ok(observed[0] <= '09:10');
-        assert.ok(observed[observed.length - 1] >= '15:25');
+        assert.ok(minuteOfDay(observed[0]) <= minuteOfDay(hours.open) + 10, entry.date + ': 개장 10분 안의 수급 기록이 필요하다.');
+        assert.ok(minuteOfDay(observed[observed.length - 1]) >= minuteOfDay(hours.close) - 5, entry.date + ': 마감 5분 전 이후의 수급 기록이 필요하다.');
     }
 });
 
