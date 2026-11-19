@@ -1,0 +1,266 @@
+{
+  "schemaVersion": 1,
+  "headline": "Anthropic 상장에도 반도체주 하락…코스피 5,000선과 매도 압력 주목",
+  "summary": "AMD가 7.72%, Nvidia가 3.30% 하락했습니다. AI 상장 열기와 기존 반도체주 매도가 갈린 가운데 코스피 5,000선 지지와 외국인·프로그램 수급을 살핍니다.",
+  "markets": [
+    {
+      "id": "KOSPI",
+      "label": "KOSPI",
+      "symbol": "K",
+      "value": null,
+      "changePercent": null,
+      "open": null,
+      "high": null,
+      "low": null,
+      "previousClose": null,
+      "asOf": "2026-11-19T15:30:00+09:00",
+      "asOfLabel": "전일 종가 미확인",
+      "stateLabel": "미확인",
+      "flows": []
+    },
+    {
+      "id": "KOSDAQ",
+      "label": "KOSDAQ",
+      "symbol": "Q",
+      "value": null,
+      "changePercent": null,
+      "open": null,
+      "high": null,
+      "low": null,
+      "previousClose": null,
+      "asOf": "2026-11-19T15:30:00+09:00",
+      "asOfLabel": "전일 종가 미확인",
+      "stateLabel": "미확인",
+      "flows": []
+    }
+  ],
+  "stance": {
+    "label": "미국 반도체 매도 속 지지 확인",
+    "note": "5,000선 지지와 외국인·프로그램 매도 압력을 봅니다.",
+    "attack": 10,
+    "wait": 40,
+    "defense": 50
+  },
+  "checkpoints": [],
+  "changes": [
+    {
+      "label": "KOSPI 전일",
+      "before": "5,067.44",
+      "after": "5,137.89",
+      "meaning": "1.39% 반등 뒤 미국 반도체 동반하락"
+    }
+  ],
+  "factors": [
+    {
+      "label": "미국 반도체",
+      "metric": "SOXX -2.75%",
+      "detail": "11/19 정규장·AMD -7.72%",
+      "tone": "negative"
+    },
+    {
+      "label": "Anthropic",
+      "metric": "공모가 $83",
+      "detail": "신규 AI 상장 열기와 기존 반도체주 매도 괴리",
+      "tone": "neutral"
+    }
+  ],
+  "flows": {
+    "program": {
+      "arbitrage": null,
+      "nonArbitrage": null,
+      "total": null,
+      "unit": "억원",
+      "asOfLabel": "개장 전·전일 최종 묶음 미확인"
+    },
+    "kospi200FuturesForeign": null,
+    "futuresUnit": "억원",
+    "futuresAsOfLabel": "미확인"
+  },
+  "memory": [
+    {
+      "label": "DDR5 16Gb",
+      "value": "$60.667",
+      "change": "11/19 +0.28%"
+    },
+    {
+      "label": "DDR4 16Gb",
+      "value": "$78.75",
+      "change": "11/19 -0.25%"
+    }
+  ],
+  "events": [
+    {
+      "time": "11월 20일 09:30·10:30 KST",
+      "name": "국내 반도체 지지와 수급",
+      "path": "외국인·프로그램 매도 압력"
+    },
+    {
+      "time": "11월 21일 00:00 KST",
+      "name": "미국 주별 고용·실업",
+      "path": "노동시장·금리"
+    }
+  ],
+  "strategyLevels": [
+    {
+      "asset": "KOSPI",
+      "support": "4,950",
+      "pivot": "5,000",
+      "resistance": "5,150"
+    },
+    {
+      "asset": "KODEX 레버리지",
+      "support": "52,170원",
+      "pivot": "55,265원",
+      "resistance": "56,035원"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "open",
+      "label": "09:30 외국인·프로그램 첫 수급"
+    },
+    {
+      "id": "memory",
+      "label": "10:30 메모리주 저점 유지"
+    },
+    {
+      "id": "late",
+      "label": "14:00 이후 매도 가속 여부"
+    }
+  ],
+  "sources": [
+    {
+      "label": "Anthropic 공모가 발표",
+      "href": "https://www.anthropic.com/news/anthropic-prices-initial-public-offering"
+    },
+    {
+      "label": "AMD 공매도 보고서 관련 Reuters",
+      "href": "https://finance.yahoo.com/technology/articles/amd-shares-slide-short-seller-174947184.html"
+    },
+    {
+      "label": "AMD 반론 보도",
+      "href": "https://finance.yahoo.com/markets/stocks/articles/amd-shares-tumble-7-short-211846447.html"
+    },
+    {
+      "label": "Jefferson 연설",
+      "href": "https://www.federalreserve.gov/newsevents/speech/jefferson20261119a.htm"
+    },
+    {
+      "label": "미국 종가",
+      "href": "https://m.stock.naver.com/worldstock/stock/NVDA.O/total"
+    },
+    {
+      "label": "국내 일봉",
+      "href": "https://api.stock.naver.com/chart/domestic/index/KOSPI?periodType=dayCandle"
+    },
+    {
+      "label": "DRAM 현물",
+      "href": "https://www.trendforce.com/price/dram/dram_spot"
+    },
+    {
+      "label": "NAND 현물",
+      "href": "https://www.trendforce.com/price/flash/flash_spot"
+    },
+    {
+      "label": "FRED 10년-2년",
+      "href": "https://fred.stlouisfed.org/series/T10Y2Y"
+    },
+    {
+      "label": "FRED 10년-3개월",
+      "href": "https://fred.stlouisfed.org/series/T10Y3M"
+    },
+    {
+      "label": "미국 경제 일정",
+      "href": "https://www.bls.gov/schedule/2026/home.htm"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "bull",
+      "label": "강세 · 15%",
+      "range": "KOSPI 5,150 초과~5,350",
+      "summary": "09:30·10:30·14:00 확인, 15:20 마감",
+      "conditions": [
+        "5,150 초과",
+        "외국인 순매수",
+        "프로그램 순매수"
+      ],
+      "invalidation": "5,150 재이탈 또는 수급 반전"
+    },
+    {
+      "id": "base",
+      "label": "기본 · 45%",
+      "range": "KOSPI 4,950~5,150",
+      "summary": "09:30·10:30·14:00 확인, 15:20 마감",
+      "conditions": [
+        "4,950 이상",
+        "5,150 이하",
+        "외국인 현물 0 이상"
+      ],
+      "invalidation": "범위 이탈 또는 외국인 순매도"
+    },
+    {
+      "id": "bear",
+      "label": "약세 · 40%",
+      "range": "KOSPI 4,700~4,950 미만",
+      "summary": "09:30·10:30·14:00 확인, 15:20 마감",
+      "conditions": [
+        "4,950 미만",
+        "외국인 순매도",
+        "프로그램 순매도"
+      ],
+      "invalidation": "4,950 회복 또는 수급 반전"
+    }
+  ],
+  "technical": {
+    "note": "전일 저가·종가·고가와 오늘 조건부 기준선입니다.",
+    "instruments": [
+      {
+        "id": "KOSPI",
+        "label": "KOSPI",
+        "unit": "pt",
+        "asOf": "2026-11-19T15:30:00+09:00",
+        "asOfLabel": "전일 종가",
+        "points": [],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 4950
+          },
+          {
+            "label": "반등 기준",
+            "value": 5000
+          },
+          {
+            "label": "저항",
+            "value": 5150
+          }
+        ],
+        "interpretation": "갭 하락 이후 기준선 회복과 매도 완화를 봅니다."
+      },
+      {
+        "id": "KODEX",
+        "label": "KODEX 레버리지",
+        "unit": "원",
+        "asOf": "2026-11-19T15:30:00+09:00",
+        "asOfLabel": "전일 종가",
+        "points": [],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 52170
+          },
+          {
+            "label": "반등 기준",
+            "value": 55265
+          },
+          {
+            "label": "저항",
+            "value": 56035
+          }
+        ],
+        "interpretation": "갭 하락 이후 기준선 회복과 매도 완화를 봅니다."
+      }
+    ]
+  }
+}

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-11-19T08:07:38.212087+09:00",
-  "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1 (전일 확정 일봉 및 오늘 시장상태)",
-  "rawHash": "76770d6e10a3978a9260e50192dd9b989b47058d314ceeeed7b9df3f66331a52",
+  "asOf": "2026-11-20T08:03:14.237621+09:00",
+  "source": "https://api.stock.naver.com/chart/domestic/index/KOSPI?periodType=dayCandle (전일 확정 일봉 및 오늘 시장상태)",
+  "rawHash": "221e3e2088399ef4564ec76f04b13d1dfee9380c9178f7c741e2c105c7f0e1a4",
   "sessions": [
     "2026-07-27",
     "2026-07-28",
@@ -82,6 +82,7 @@
     "2026-11-16",
     "2026-11-17",
     "2026-11-18",
-    "2026-11-19"
+    "2026-11-19",
+    "2026-11-20"
   ]
 }

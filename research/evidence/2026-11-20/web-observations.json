@@ -1,0 +1,23 @@
+{
+  "checkedAt": "2026-11-20T08:03:08.323104+09:00",
+  "DRAM": {
+    "url": "https://www.trendforce.com/price/dram/dram_spot",
+    "sourceTime": "2026-11-19 18:10 GMT+8",
+    "DDR5_16Gb": 60.667,
+    "DDR5_change": 0.28,
+    "DDR4_16Gb": 78.75,
+    "DDR4_change": -0.25
+  },
+  "NAND": {
+    "url": "https://www.trendforce.com/price/flash/flash_spot",
+    "sourceTime": "2026-11-09",
+    "TLC512": 14.267,
+    "change": -11.67
+  },
+  "BLS": {
+    "url": "https://www.bls.gov/schedule/2026/home.htm",
+    "event": "State Employment and Unemployment (Monthly)",
+    "time": "2026-11-20T10:00:00-05:00"
+  },
+  "fallback": "Python TLS/403 failures supplemented by official pages via web tool"
+}
