@@ -6,3 +6,4 @@
 - 취재 research/notes/2026-11-23.md. 한국은행 뉴스심리와 KOSIS 선행지수는 해당 관측일·월 기준.
 - 작성 2026-11-23T08:12:38.862242+09:00, 데이터 최종 확인 2026-11-23T08:12:38.699004+09:00, 한국 장전.
 - reports/2026-11-23.md · assets/data/market-dashboard-20261123-0812.json · research/evaluation/forecasts/2026-11-23-081238-same-close.json.
+- 최초 공개 2026-11-23T08:13:54.950000+09:00 · 콘텐츠 be5230699de3fe81bf823f8a1e81abb19e54adf0 · Amplify 786.

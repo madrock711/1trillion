@@ -251,7 +251,8 @@ class Publisher:
         indicators, indicator_files = self.research_indicators(cutoff)
         indicator_html, indicator_markdown = render_indicator_block(indicators)
         report = read(p['reportTemplate']).replace('{{issuedAt}}',issued).replace('{{cutoff}}',cutoff).replace('{{marketLabel}}',label).replace('{{fastTable}}',markdown)
-        report = report.rstrip() + indicator_markdown + '\n' if indicators else report
+        if indicators:
+            report = (report.rstrip() + indicator_markdown).rstrip() + '\n'
         rp = f'reports/{date}.md'; ap = f'articles/market-{date}.html'
         if (ROOT/rp).exists() and not self.s.get('sealed'): raise ValueError('기존 일별 보고서 덮어쓰기 금지')
         self.artifact(rp,report)
