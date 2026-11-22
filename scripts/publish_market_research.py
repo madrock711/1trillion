@@ -16,6 +16,12 @@ import time
 import urllib.request
 
 from collect_market_evidence import collect, sources, TZ
+from market_news_sentiment_chart import (
+    news_sentiment_figure,
+    news_sentiment_points,
+    render_news_sentiment_chart,
+    update_news_sentiment_panel,
+)
 from market_research_indicators import FILENAME, indicator_rows, render_indicator_block
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,7 +34,10 @@ def load(path): return json.loads(read(path))
 def write(path, value):
     p = ROOT / path
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(value, encoding='utf-8', newline='\n')
+    if isinstance(value, bytes):
+        p.write_bytes(value)
+    else:
+        p.write_text(value, encoding='utf-8', newline='\n')
 def dump(path, value): write(path, json.dumps(value, ensure_ascii=False, indent=2) + '\n')
 def digest(raw): return hashlib.sha256(raw).hexdigest()
 def num(value): return float(str(value).replace(',', ''))
@@ -191,7 +200,7 @@ class Publisher:
     def research_indicators(self, cutoff):
         path = self.p.get('researchIndicatorsPath')
         if not path:
-            return [], []
+            return [], [], []
         collection = (ROOT / self.dir / 'collections').resolve()
         evidence = (ROOT / path).resolve()
         if evidence.name != FILENAME or evidence.parent.parent != collection:
@@ -199,13 +208,15 @@ class Publisher:
         try:
             data = load(evidence)
         except (FileNotFoundError, ValueError):
-            return [], []
-        return indicator_rows(data, dt.datetime.fromisoformat(cutoff)), [evidence.relative_to(ROOT).as_posix()]
+            return [], [], []
+        rows = indicator_rows(data, dt.datetime.fromisoformat(cutoff))
+        return rows, [evidence.relative_to(ROOT).as_posix()], news_sentiment_points(data, rows)
 
     def artifact(self, path, value):
         if (ROOT/path).exists(): raise ValueError('기존 불변 산출물 덮어쓰기 금지: '+str(path))
         # 의도부터 기록해 쓰기 직후 프로세스가 끊겨도 이번 실행의 미공개 파일만 복구한다.
-        self.s.setdefault('draftArtifacts',{})[str(path)] = digest(value.encode('utf-8'))
+        raw = value if isinstance(value, bytes) else value.encode('utf-8')
+        self.s.setdefault('draftArtifacts',{})[str(path)] = digest(raw)
         self.save();write(path,value)
 
     def recover_draft(self):
@@ -248,19 +259,27 @@ class Publisher:
             rows.append([symbol+' 최근 거래', f"{meta['regularMarketPrice']:,.2f}", source_at])
         table = '<div class="article-table-wrap"><table class="article-data-table"><thead><tr><th>항목</th><th>값</th><th>원천 기준 시각</th></tr></thead><tbody>'+''.join('<tr>'+''.join('<td>'+html.escape(v)+'</td>' for v in row)+'</tr>' for row in rows)+'</tbody></table></div>'
         markdown = '|항목|값|원천 기준 시각|\n|---|---:|---|\n'+'\n'.join('|'+ '|'.join(row)+'|' for row in rows)
-        indicators, indicator_files = self.research_indicators(cutoff)
+        rp = f'reports/{date}.md'; ap = f'articles/market-{date}.html'
+        if (ROOT/rp).exists() and not self.s.get('sealed'): raise ValueError('기존 일별 보고서 덮어쓰기 금지')
+        indicators, indicator_files, sentiment_points = self.research_indicators(cutoff)
         indicator_html, indicator_markdown = render_indicator_block(indicators)
+        sentiment_chart, sentiment_figure = None, ''
+        if sentiment_points:
+            sentiment_chart = f'charts/korea_news_sentiment_{date}.png'
+            self.artifact(sentiment_chart, render_news_sentiment_chart(sentiment_points))
+            sentiment_figure = news_sentiment_figure(sentiment_chart, sentiment_points)
+            indicator_html += sentiment_figure + '\n'
+            indicator_markdown += f'\n![한국은행 뉴스심리지수 일별 추이](../{sentiment_chart})\n'
+            indicator_files.append(sentiment_chart)
         report = read(p['reportTemplate']).replace('{{issuedAt}}',issued).replace('{{cutoff}}',cutoff).replace('{{marketLabel}}',label).replace('{{fastTable}}',markdown)
         if indicators:
             report = (report.rstrip() + indicator_markdown).rstrip() + '\n'
-        rp = f'reports/{date}.md'; ap = f'articles/market-{date}.html'
-        if (ROOT/rp).exists() and not self.s.get('sealed'): raise ValueError('기존 일별 보고서 덮어쓰기 금지')
         self.artifact(rp,report)
         template = read(p['bodyPath'])
         body = template.replace('{{fastTable}}', table + indicator_html) if '{{fastTable}}' in template else template + indicator_html
         article = self.render_article(body,issued,cutoff,label)
         self.artifact(ap,article)
-        self.update_indexes(issued)
+        self.update_indexes(issued, news_sentiment=sentiment_figure)
         dash = load(p['dashboardPath'])
         sid = date.replace('-','')+'-'+issued[11:16].replace(':','')
         dash.update(snapshotId=sid,generatedAt=issued,asOf=cutoff,asOfDisplay=cutoff,marketState='한국 '+label,sourceLabel=f'미국 {p["previousSessionDate"]} 정규장 · 한국 {date} '+label,
@@ -296,7 +315,7 @@ class Publisher:
         sessions=load('research/evaluation/trading-sessions.json'); sessions['sessions']=sorted(set(sessions['sessions']+[date]));sessions.update(asOf=cutoff,source=session_source['url']+' (전일 확정 일봉 및 오늘 시장상태)',rawHash=session_source['rawHash']);dump('research/evaluation/trading-sessions.json',sessions)
         module.validate_forecast(forecast,ROOT/fp,ROOT)
         write('STATE.md',p['stateText']+f'\n- 작성 {issued}, 데이터 최종 확인 {cutoff}, 한국 {label}.\n- reports/{date}.md · {sp} · {fp}.\n')
-        self.s.update(sealed={'forecastId':fid,'forecastPath':fp,'snapshot':sp,'article':ap,'issuedAt':issued,'cutoff':cutoff},
+        self.s.update(sealed={'forecastId':fid,'forecastPath':fp,'snapshot':sp,'article':ap,'issuedAt':issued,'cutoff':cutoff,'newsSentimentChart':sentiment_chart},
                       files=list(dict.fromkeys(p['files']+indicator_files+[str(path.relative_to(ROOT)).replace('\\','/') for path in (ROOT/self.s['quoteDir']).glob('*.json')]+[rp,ap,sp,fp,'assets/data/market-dashboard-latest.json','research/evaluation/trading-sessions.json','STATE.md','index.html','articles/index.html','articles/market.html','sitemap.xml'])))
         self.stage('sealed', forecastId=fid)
 
@@ -312,7 +331,7 @@ class Publisher:
 <body><a class="skip-link" href="#article-body">본문으로 건너뛰기</a><header><div class="container"><div class="header-left"><a class="home-link" href="../" aria-label="연마 홈으로 이동"><img class="home-link-icon" src="../assets/icons/favicon-32x32.png" alt=""></a><p class="header-title"><a href="../">연마</a></p><nav aria-label="주요 이동"><a href="../">아티클</a><a href="../app.html">도구</a><a href="market.html" aria-current="page">시황</a></nav></div></div></header>
 <main class="content-page article-page reading-shell"><nav class="content-page-nav market-article-view-tabs" aria-label="시장 대시보드 기능"><a href="market.html?view=analysis" aria-current="page">시황분석</a><a href="market.html?view=strategy">투자전략</a><a href="market.html?view=technical">기술적 분석</a></nav><article class="editorial-article reading-article"><header class="article-hero"><h1>{e(p['title'])}</h1><p class="article-dek">{e(p['summary'])}</p><div class="article-meta"><strong>HPMPLab</strong><time datetime="{issued}">{self.date.replace('-','.')} · 작성 {issued[11:16]}{(' · 발행 '+published[11:16]) if published else ''} KST</time><span>{label} 브리핑</span></div><p class="article-disclosure">작성 {issued} · 데이터 최종 확인 {cutoff}{pub}. 특정 상품의 매매 권유가 아닌 조건부 시장 분석입니다.</p><figure class="article-hero-media"><img src="../{p['image']}" width="1200" height="630" alt="{e(p['imageAlt'])}" fetchpriority="high"></figure></header><div class="article-body" id="article-body">{body}</div></article></main><footer><div class="container"><p>&copy; 2026 HPMPLab.</p><p><a href="../about.html">소개</a> · <a href="../privacy.html">개인정보처리방침</a> · <a href="../terms.html">이용약관</a> · <a href="../contact.html">문의</a></p></div></footer></body></html>'''
 
-    def update_indexes(self, timestamp):
+    def update_indexes(self, timestamp, *, news_sentiment=None):
         p=self.p; date=self.date; e=html.escape; url=BASES[0]+f'/articles/market-{date}.html';image=BASES[0]+'/'+p['image']
         for page,kind in [('index.html','article-card home-article-card'),('articles/index.html','article-card'),('articles/market.html','market-article-item')]:
             prefix='' if page=='index.html' else '../';href=('articles/' if page=='index.html' else '')+f'market-{date}.html'
@@ -337,6 +356,8 @@ class Publisher:
                     text=re.sub(r'(data-category-count="'+category+r'">)\d+',lambda m:m[1]+str(count),text)
             if page=='articles/market.html':
                 text=update_dashboard_copy(text,p['title'],p['summary'])
+                if news_sentiment is not None:
+                    text=update_news_sentiment_panel(text, news_sentiment)
                 count=len(re.findall(r'<article class="market-article-item"',text))
                 text=re.sub(r'(일일시황 <span class="article-category-count">)\d+',lambda m:m[1]+str(count),text)
                 for ident in ['market-latest-article-link','market-summary-article-link']:
@@ -387,6 +408,8 @@ class Publisher:
 
     def verify_live(self, sha):
         paths=[self.s['sealed']['article'],self.p['image'],self.s['sealed']['snapshot'],'assets/data/market-dashboard-latest.json','index.html','articles/index.html','articles/market.html']+self.p['charts']
+        if sentiment_chart := self.s['sealed'].get('newsSentimentChart'):
+            paths.append(sentiment_chart)
         expected={p:subprocess.check_output(['git','show',sha+':'+p],cwd=ROOT) for p in paths}
         def check(pair):
             base,path=pair;url=base+'/'+path+'?verify='+sha+'-'+str(time.time_ns())

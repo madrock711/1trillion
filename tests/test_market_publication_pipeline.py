@@ -1,9 +1,13 @@
+import datetime as dt
 import importlib.util
+import io
 import json
 from pathlib import Path
 import sys
 import unittest
 from unittest.mock import Mock, patch
+
+from PIL import Image
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'scripts'))
@@ -24,12 +28,30 @@ class PublicationTests(unittest.TestCase):
                 'status': 'verified', 'sourceUrl': 'https://snapshot.bok.or.kr/dashboard/C8',
                 'fetchedAt': '2026-11-22T08:00:00+09:00', 'period': '2026-11-15',
                 'value': 99.09, 'change7d': 10.04, 'rawHash': 'f' * 64,
+                'seriesId': 'NECOS-523U001-D-A001',
+                'observations': [
+                    {'period': '2026-07-01', 'value': 101.1},
+                    {'period': '2026-11-14', 'value': 97.75},
+                    {'period': '2026-11-15', 'value': 99.09},
+                ],
             },
         }
         with patch.object(module, 'load', return_value=evidence):
-            rows, files = publisher.research_indicators(cutoff)
+            rows, files, points = publisher.research_indicators(cutoff)
         self.assertEqual(['99.09'], [row['value'] for row in rows])
         self.assertEqual([path.as_posix()], files)
+        self.assertEqual([(dt.date(2026, 11, 14), 97.75), (dt.date(2026, 11, 15), 99.09)], points)
+        with Image.open(io.BytesIO(module.render_news_sentiment_chart(points))) as chart:
+            self.assertEqual('PNG', chart.format)
+            chart.verify()
+        chart_path = 'charts/korea_news_sentiment_2026-11-22.png'
+        figure = module.news_sentiment_figure(chart_path, points)
+        panel = '<!-- market-news-sentiment:start -->\n<!-- market-news-sentiment:end -->'
+        rendered = module.update_news_sentiment_panel(panel, figure)
+        self.assertIn(f'src="../{chart_path}"', rendered)
+        self.assertIn('2026.11.14~2026.11.15', rendered)
+        self.assertNotIn(chart_path, module.update_news_sentiment_panel(rendered, ''))
+        self.assertEqual([], module.news_sentiment_points(evidence, []))
         publisher.p['researchIndicatorsPath'] = str(path).replace('2026-11-22', '2026-11-21')
         with self.assertRaisesRegex(ValueError, '당일 수집 경로'):
             publisher.research_indicators(cutoff)
