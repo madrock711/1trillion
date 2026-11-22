@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-11-20-080314-same-close",
+  "actualRef": "2026-11-20",
+  "recordedAt": "2026-11-23T08:10:03.205619+09:00",
+  "realizedScenario": "bear",
+  "errorCodes": [
+    "cause_unverifiable"
+  ],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "unavailable",
+      "reason": "장전 응답의 수급은 오늘 세션으로 초기화됐다. 전일 최종 시장 폭·프로그램·현물 수급 묶음과 15:20 조건 관측값을 확보하지 못했다."
+    },
+    {
+      "id": "bull-foreign",
+      "status": "unavailable",
+      "reason": "장전 응답의 수급은 오늘 세션으로 초기화됐다. 전일 최종 시장 폭·프로그램·현물 수급 묶음과 15:20 조건 관측값을 확보하지 못했다."
+    },
+    {
+      "id": "bull-program",
+      "status": "unavailable",
+      "reason": "장전 응답의 수급은 오늘 세션으로 초기화됐다. 전일 최종 시장 폭·프로그램·현물 수급 묶음과 15:20 조건 관측값을 확보하지 못했다."
+    },
+    {
+      "id": "base-floor",
+      "status": "unavailable",
+      "reason": "장전 응답의 수급은 오늘 세션으로 초기화됐다. 전일 최종 시장 폭·프로그램·현물 수급 묶음과 15:20 조건 관측값을 확보하지 못했다."
+    },
+    {
+      "id": "base-cap",
+      "status": "unavailable",
+      "reason": "장전 응답의 수급은 오늘 세션으로 초기화됐다. 전일 최종 시장 폭·프로그램·현물 수급 묶음과 15:20 조건 관측값을 확보하지 못했다."
+    },
+    {
+      "id": "base-foreign",
+      "status": "unavailable",
+      "reason": "장전 응답의 수급은 오늘 세션으로 초기화됐다. 전일 최종 시장 폭·프로그램·현물 수급 묶음과 15:20 조건 관측값을 확보하지 못했다."
+    },
+    {
+      "id": "bear-price",
+      "status": "unavailable",
+      "reason": "장전 응답의 수급은 오늘 세션으로 초기화됐다. 전일 최종 시장 폭·프로그램·현물 수급 묶음과 15:20 조건 관측값을 확보하지 못했다."
+    },
+    {
+      "id": "bear-foreign",
+      "status": "unavailable",
+      "reason": "장전 응답의 수급은 오늘 세션으로 초기화됐다. 전일 최종 시장 폭·프로그램·현물 수급 묶음과 15:20 조건 관측값을 확보하지 못했다."
+    },
+    {
+      "id": "bear-program",
+      "status": "unavailable",
+      "reason": "장전 응답의 수급은 오늘 세션으로 초기화됐다. 전일 최종 시장 폭·프로그램·현물 수급 묶음과 15:20 조건 관측값을 확보하지 못했다."
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "semiconductor",
+      "status": "unverifiable"
+    },
+    {
+      "id": "regulation",
+      "status": "unverifiable"
+    }
+  ],
+  "hypothesisTests": []
+}

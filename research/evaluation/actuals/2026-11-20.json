@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-11-20",
+  "bizdate": "20261120",
+  "fetchedAt": "2026-11-23T08:03:21.140947+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 4928.51,
+    "high": 4971.31,
+    "low": 4831.69,
+    "close": 4869.96,
+    "asOf": "2026-11-20T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1",
+    "rawHash": "c9d1a329c7f5531126fd380160b89ca9f2aa341ab96f0ac2546828b1e17f4b8a"
+  },
+  "kodex": {
+    "open": 51290.0,
+    "high": 52245.0,
+    "low": 49020.0,
+    "close": 49925.0,
+    "asOf": "2026-11-20T15:30:00+09:00",
+    "source": "https://m.stock.naver.com/api/stock/122630/price?pageSize=10&page=1",
+    "rawHash": "7dfacb78adf0d987c23621f7e2d812395f336bfbceac2a10ad5cfd24f73e5752"
+  },
+  "closeSnapshotMissingReason": "장전 응답의 수급은 오늘 세션으로 초기화됐다. 전일 최종 시장 폭·프로그램·현물 수급 묶음과 15:20 조건 관측값을 확보하지 못했다.",
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-11-20T15:30:00+09:00",
+    "fetchedAt": "2026-11-23T08:03:21.140947+09:00",
+    "missingReason": "장전 응답의 수급은 오늘 세션으로 초기화됐다. 전일 최종 시장 폭·프로그램·현물 수급 묶음과 15:20 조건 관측값을 확보하지 못했다.",
+    "rawHash": "affd2261bc5e38ecc95477e1b46f10403e497d99b566022c5429fcafc127c58e"
+  }
+}

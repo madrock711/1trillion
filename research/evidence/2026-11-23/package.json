@@ -1,0 +1,206 @@
+{
+  "date": "2026-11-23",
+  "previousSessionDate": "2026-11-20",
+  "title": "미국 반도체주 추가 급락에 코스피 4,670선 주목",
+  "summary": "코스피가 5.21% 내린 뒤 뉴욕에서 SOXX가 10.55% 더 밀렸습니다. 월요일에는 삼성전자·SK하이닉스의 개장 저점과 외국인·프로그램 매도세를 살핍니다.",
+  "image": "assets/images/articles/market-2026-11-23-semiconductor-twin-selloff-1200x630.png",
+  "imageAlt": "햇살이 비치는 표면에서 서로 다른 높이에 놓인 주황빛과 청록빛 반도체 다이",
+  "bodyPath": "research/evidence/2026-11-23/article-body.html",
+  "reportTemplate": "research/evidence/2026-11-23/report-template.md",
+  "dashboardPath": "research/evidence/2026-11-23/dashboard-input.json",
+  "notesPath": "research/notes/2026-11-23.md",
+  "researchIndicatorsPath": "research/evidence/2026-11-23/collections/080320-856734/research-indicators.json",
+  "scenarios": {
+    "bull": {
+      "low": 4820,
+      "high": 4950,
+      "probability": 0.2
+    },
+    "base": {
+      "low": 4670,
+      "high": 4820,
+      "probability": 0.55
+    },
+    "bear": {
+      "low": 4480,
+      "high": 4670,
+      "probability": 0.25
+    }
+  },
+  "posture": {
+    "attack": 10,
+    "wait": 45,
+    "defense": 45
+  },
+  "pathEnvelope": {
+    "low": 4400,
+    "high": 5000,
+    "coverage": 0.9
+  },
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-11-23T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 4820,
+          "source": "Naver Finance KOSPI",
+          "description": "코스피 4,820 상회"
+        },
+        {
+          "id": "bull-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "외국인 현물 순매수"
+        },
+        {
+          "id": "bull-program",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "프로그램 순매수"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-11-23T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-floor",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 4670,
+          "source": "Naver Finance KOSPI",
+          "description": "코스피 4,670 이상"
+        },
+        {
+          "id": "base-cap",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 4820,
+          "source": "Naver Finance KOSPI",
+          "description": "코스피 4,820 이하"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-11-23T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 4670,
+          "source": "Naver Finance KOSPI",
+          "description": "코스피 4,670 하회"
+        },
+        {
+          "id": "bear-foreign",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "외국인 현물 순매도"
+        },
+        {
+          "id": "bear-program",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "프로그램 순매도"
+        }
+      ]
+    }
+  },
+  "marketRegime": "risk_off",
+  "drivers": [
+    {
+      "id": "chip-selloff",
+      "rank": 1,
+      "claim": "서울 마감 뒤 미국 반도체 추가 매도",
+      "validationMetric": "SOXX·KOSPI·삼성전자·SK하이닉스"
+    },
+    {
+      "id": "domestic-flow",
+      "rank": 2,
+      "claim": "외국인과 프로그램 수급이 개장 저점 회복을 좌우",
+      "validationMetric": "외국인 현물·프로그램·KOSPI"
+    }
+  ],
+  "stateText": "# KOSPI·KODEX 리서치 상태\n- 최신 2026-11-23. 전일 KOSPI 4,869.96(-5.21%), KOSDAQ 645.68(-5.71%), KODEX 49,925원(-10.90%).\n- 서울 마감 뒤 미국 SOXX -10.55%, NVDA -14.01%, MU -13.89%. 국내 사이드카 및 외국인·기관 동반 매도.\n- 기본 4,670~4,820(55%), 강세 4,820 초과~4,950(20%), 약세 4,480~4,670 미만(25%). 대응 10/45/45.\n- 직전 약세 범위 마감. 15:20 수급 조건 미확인. 11/23 23:45 미국 잠정 PMI, 11/25 PCE, 11/26 금통위.\n- 취재 research/notes/2026-11-23.md. 한국은행 뉴스심리와 KOSIS 선행지수는 해당 관측일·월 기준.",
+  "charts": [
+    "charts/us_yield_spreads_long_term_2026-11-23.png",
+    "charts/us_yield_spreads_90d_2026-11-23.png"
+  ],
+  "files": [
+    "assets/images/articles/market-2026-11-23-semiconductor-twin-selloff-1200x630.png",
+    "research/evaluation/actuals/2026-11-20.json",
+    "research/evaluation/outcomes/2026-11-20-080314-same-close.json",
+    "research/notes/2026-11-23.md",
+    "docs/현재작업중.md",
+    "charts/us_yield_spreads_long_term_2026-11-23.png",
+    "charts/us_yield_spreads_90d_2026-11-23.png",
+    "research/evidence/2026-11-23/article-body.html",
+    "research/evidence/2026-11-23/report-template.md",
+    "research/evidence/2026-11-23/dashboard-input.json",
+    "research/evidence/2026-11-23/package.json",
+    "research/evidence/2026-11-23/collections/080320-856734/000660.json",
+    "research/evidence/2026-11-23/collections/080320-856734/005930.json",
+    "research/evidence/2026-11-23/collections/080320-856734/122630.json",
+    "research/evidence/2026-11-23/collections/080320-856734/collection-status.json",
+    "research/evidence/2026-11-23/collections/080320-856734/FX.json",
+    "research/evidence/2026-11-23/collections/080320-856734/KOSPI-basic.json",
+    "research/evidence/2026-11-23/collections/080320-856734/KOSPI-history.json",
+    "research/evidence/2026-11-23/collections/080320-856734/KOSPI-integration.json",
+    "research/evidence/2026-11-23/collections/080320-856734/KOSPI.json",
+    "research/evidence/2026-11-23/collections/080320-856734/NXT.json",
+    "research/evidence/2026-11-23/collections/080320-856734/research-indicators.json",
+    "research/evidence/2026-11-23/collections/080320-856734/yahoo-AMD.json",
+    "research/evidence/2026-11-23/collections/080320-856734/yahoo-AVGO.json",
+    "research/evidence/2026-11-23/collections/080320-856734/yahoo-BZF.json",
+    "research/evidence/2026-11-23/collections/080320-856734/yahoo-CLF.json",
+    "research/evidence/2026-11-23/collections/080320-856734/yahoo-ESF.json",
+    "research/evidence/2026-11-23/collections/080320-856734/yahoo-MU.json",
+    "research/evidence/2026-11-23/collections/080320-856734/yahoo-NQF.json",
+    "research/evidence/2026-11-23/collections/080320-856734/yahoo-NVDA.json",
+    "research/evidence/2026-11-23/collections/080320-856734/yahoo-QQQ.json",
+    "research/evidence/2026-11-23/collections/080320-856734/yahoo-SMH.json",
+    "research/evidence/2026-11-23/collections/080320-856734/yahoo-SOXX.json",
+    "research/evidence/2026-11-23/collections/080320-856734/yahoo-TQQQ.json",
+    "research/evidence/2026-11-23/extras/after-AMD.raw",
+    "research/evidence/2026-11-23/extras/after-AMD.source.json",
+    "research/evidence/2026-11-23/extras/after-AVGO.raw",
+    "research/evidence/2026-11-23/extras/after-AVGO.source.json",
+    "research/evidence/2026-11-23/extras/after-MU.raw",
+    "research/evidence/2026-11-23/extras/after-MU.source.json",
+    "research/evidence/2026-11-23/extras/after-NVDA.raw",
+    "research/evidence/2026-11-23/extras/after-NVDA.source.json",
+    "research/evidence/2026-11-23/extras/AMD.raw",
+    "research/evidence/2026-11-23/extras/AMD.source.json",
+    "research/evidence/2026-11-23/extras/AVGO.raw",
+    "research/evidence/2026-11-23/extras/AVGO.source.json",
+    "research/evidence/2026-11-23/extras/kosdaq.raw",
+    "research/evidence/2026-11-23/extras/kosdaq.source.json",
+    "research/evidence/2026-11-23/extras/MU.raw",
+    "research/evidence/2026-11-23/extras/MU.source.json",
+    "research/evidence/2026-11-23/extras/NVDA.raw",
+    "research/evidence/2026-11-23/extras/NVDA.source.json",
+    "research/evidence/2026-11-23/extras/QQQ.raw",
+    "research/evidence/2026-11-23/extras/QQQ.source.json",
+    "research/evidence/2026-11-23/extras/SMH.raw",
+    "research/evidence/2026-11-23/extras/SMH.source.json",
+    "research/evidence/2026-11-23/extras/SOXX.raw",
+    "research/evidence/2026-11-23/extras/SOXX.source.json",
+    "research/evidence/2026-11-23/extras/TQQQ.raw",
+    "research/evidence/2026-11-23/extras/TQQQ.source.json"
+  ]
+}
