@@ -40,6 +40,8 @@
 | TQQQ | [ProShares](https://www.proshares.com/), Nasdaq | Yahoo Finance 차트 응답 | 미국 정규장 일봉, 거래량, 이동평균 계산 입력 |
 | USD/KRW | [한국은행 ECOS](https://ecos.bok.or.kr/), 서울외환시장 | [Investing.com USD/KRW](https://www.investing.com/currencies/usd-krw) | 현재가·종가·범위·확인 시각 |
 | 한국 경제 | [한국은행](https://www.bok.or.kr/), [산업통상자원부](https://www.motie.go.kr/), [통계청](https://kostat.go.kr/) | Investing.com | 금통위, 경상수지, 수출입, 물가 |
+| 국내 뉴스심리 | [한국은행 금융·경제 스냅샷](https://snapshot.bok.or.kr/dashboard/C8), ECOS | [신지수 공표 안내](https://www.bok.or.kr/portal/bbs/B0000502/view.do?menuNo=201265&nttId=11064326) | 일별 신NSI `523U001/D/A001`, 주간 공표. 관측일, 7일 전 대비, 완결 3개월 평균 |
+| 국내 경기선행 | [국가데이터처 KOSIS](https://kosis.kr/visual/economyBoard/economyJipyo.do?lang=ko&listId=130&unitySrvcId=641) | 산업활동동향 보도자료 | 월별 순환변동치 `DT_1C8015`, 관측월·전월 대비. 과거월 수정 가능 |
 | 미국 통화정책 | [Federal Reserve](https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm) | Investing.com | 회의·성명·의사록·기자회견 |
 | 미국 물가·고용 | [BLS](https://www.bls.gov/schedule/), [DOL](https://www.dol.gov/) | Investing.com | CPI, PPI, 고용, 실업수당 |
 | 미국 GDP·PCE | [BEA](https://www.bea.gov/news/schedule) | Investing.com | GDP, 소득·소비, PCE |

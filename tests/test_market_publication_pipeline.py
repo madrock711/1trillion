@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 import sys
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'scripts'))
@@ -12,6 +12,28 @@ module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
 
 
 class PublicationTests(unittest.TestCase):
+    def test_indicator_evidence_explicitly_comes_from_the_day_collection(self):
+        publisher = module.Publisher.__new__(module.Publisher)
+        publisher.dir = Path('research/evidence/2026-11-22')
+        cutoff = '2026-11-22T08:05:00+09:00'
+        path = publisher.dir / 'collections/080000-000000/research-indicators.json'
+        publisher.p = {'researchIndicatorsPath': path.as_posix()}
+        evidence = {
+            'schemaVersion': 1,
+            'nsi': {
+                'status': 'verified', 'sourceUrl': 'https://snapshot.bok.or.kr/dashboard/C8',
+                'fetchedAt': '2026-11-22T08:00:00+09:00', 'period': '2026-11-15',
+                'value': 99.09, 'change7d': 10.04, 'rawHash': 'f' * 64,
+            },
+        }
+        with patch.object(module, 'load', return_value=evidence):
+            rows, files = publisher.research_indicators(cutoff)
+        self.assertEqual(['99.09'], [row['value'] for row in rows])
+        self.assertEqual([path.as_posix()], files)
+        publisher.p['researchIndicatorsPath'] = str(path).replace('2026-11-22', '2026-11-21')
+        with self.assertRaisesRegex(ValueError, '당일 수집 경로'):
+            publisher.research_indicators(cutoff)
+
     def test_dashboard_copy_does_not_rewrite_historical_article(self):
         historical='<article>AMD yesterday</article>'
         page='<h1>시황분석 대시보드</h1><p>AMD yesterday</p><h2 id="market-checkpoint-title">AMD</h2><h2 id="strategy-title">전략</h2><p>old</p>'+historical

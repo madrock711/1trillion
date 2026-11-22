@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import urllib.parse
 import urllib.request
@@ -16,7 +17,7 @@ DETAIL_URL = "https://kosis.kr/visual/economyBoard/selectDetailDataList.do?lang=
 SOURCE_URL = "https://kosis.kr/visual/economyBoard/economyJipyo.do?lang=ko&listId=130&unitySrvcId=641"
 
 
-def fetch_series() -> dict:
+def fetch_series(timeout: float = 30) -> dict:
     body = urllib.parse.urlencode(
         {
             "unitySrvcIdArr": "641",
@@ -37,8 +38,9 @@ def fetch_series() -> dict:
             "User-Agent": "HPMPLab market dashboard data updater",
         },
     )
-    with urllib.request.urlopen(request, timeout=30) as response:
-        payload = json.load(response)
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        raw = response.read()
+    payload = json.loads(raw)
 
     observations = []
     for row in payload.get("data", []):
@@ -70,6 +72,7 @@ def fetch_series() -> dict:
         "table": "경기종합지수(2020=100)(10차)",
         "tableId": "DT_1C8015",
         "sourceUrl": SOURCE_URL,
+        "rawHash": hashlib.sha256(raw).hexdigest(),
         "revisionNote": "순환변동치는 계절·불규칙 변동치 갱신에 따라 전체 시계열이 매월 수정될 수 있습니다.",
         "observations": observations,
     }

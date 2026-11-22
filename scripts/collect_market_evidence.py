@@ -59,13 +59,41 @@ def collect(urls, output):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--final", action="store_true", help="발행 직전 국내값과 선물 수집")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--final", action="store_true", help="발행 직전 국내값과 선물 수집")
+    mode.add_argument("--indicators-only", action="store_true", help="국내 뉴스심리·경기선행지수만 조회")
     args = parser.parse_args()
     now = dt.datetime.now(TZ)
     output = Path(__file__).resolve().parents[1] / "research/evidence" / now.date().isoformat() / "collections" / now.strftime("%H%M%S-%f")
     output.mkdir(parents=True, exist_ok=False)
-    manifest = collect(sources(args.final), output)
-    print(json.dumps({"output": str(output), "collected": len(manifest["sources"]) - len(manifest["failed"]), "failed": manifest["failed"]}, ensure_ascii=False))
+    summary = {}
+    if args.final:
+        manifest = collect(sources(final=True), output)
+    else:
+        from market_research_indicators import FILENAME, collect_indicators
+
+        if args.indicators_only:
+            manifest = {"sources": {}, "failed": []}
+            indicators = collect_indicators(output)
+        else:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+                indicator_task = pool.submit(collect_indicators, output)
+                manifest = collect(sources(), output)
+                indicators = indicator_task.result()
+        manifest["finishedAt"] = dt.datetime.now(TZ).isoformat()
+        summary["researchIndicators"] = {
+            "path": FILENAME,
+            **{key: indicators[key]["status"] for key in ("nsi", "leading")},
+        }
+        (output / "collection-status.json").write_text(
+            json.dumps({**manifest, **summary}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+    print(json.dumps({
+        "output": str(output),
+        "collected": len(manifest["sources"]) - len(manifest["failed"]),
+        "failed": manifest["failed"],
+        **summary,
+    }, ensure_ascii=False))
     return 1 if manifest["failed"] else 0
 
 

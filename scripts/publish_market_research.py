@@ -16,6 +16,7 @@ import time
 import urllib.request
 
 from collect_market_evidence import collect, sources, TZ
+from market_research_indicators import FILENAME, indicator_rows, render_indicator_block
 
 ROOT = Path(__file__).resolve().parents[1]
 BASES = ['https://www.hpmplab.com', 'https://main.d2pg7r2qjjb9u9.amplifyapp.com']
@@ -187,6 +188,20 @@ class Publisher:
         self.stage('finalQuery', path=self.s['quoteDir'], cutoff=self.s['cutoff'])
         return ev
 
+    def research_indicators(self, cutoff):
+        path = self.p.get('researchIndicatorsPath')
+        if not path:
+            return [], []
+        collection = (ROOT / self.dir / 'collections').resolve()
+        evidence = (ROOT / path).resolve()
+        if evidence.name != FILENAME or evidence.parent.parent != collection:
+            raise ValueError('뉴스심리·경기선행지수는 당일 수집 경로를 지정해야 합니다.')
+        try:
+            data = load(evidence)
+        except (FileNotFoundError, ValueError):
+            return [], []
+        return indicator_rows(data, dt.datetime.fromisoformat(cutoff)), [evidence.relative_to(ROOT).as_posix()]
+
     def artifact(self, path, value):
         if (ROOT/path).exists(): raise ValueError('기존 불변 산출물 덮어쓰기 금지: '+str(path))
         # 의도부터 기록해 쓰기 직후 프로세스가 끊겨도 이번 실행의 미공개 파일만 복구한다.
@@ -233,11 +248,15 @@ class Publisher:
             rows.append([symbol+' 최근 거래', f"{meta['regularMarketPrice']:,.2f}", source_at])
         table = '<div class="article-table-wrap"><table class="article-data-table"><thead><tr><th>항목</th><th>값</th><th>원천 기준 시각</th></tr></thead><tbody>'+''.join('<tr>'+''.join('<td>'+html.escape(v)+'</td>' for v in row)+'</tr>' for row in rows)+'</tbody></table></div>'
         markdown = '|항목|값|원천 기준 시각|\n|---|---:|---|\n'+'\n'.join('|'+ '|'.join(row)+'|' for row in rows)
+        indicators, indicator_files = self.research_indicators(cutoff)
+        indicator_html, indicator_markdown = render_indicator_block(indicators)
         report = read(p['reportTemplate']).replace('{{issuedAt}}',issued).replace('{{cutoff}}',cutoff).replace('{{marketLabel}}',label).replace('{{fastTable}}',markdown)
+        report = report.rstrip() + indicator_markdown + '\n' if indicators else report
         rp = f'reports/{date}.md'; ap = f'articles/market-{date}.html'
         if (ROOT/rp).exists() and not self.s.get('sealed'): raise ValueError('기존 일별 보고서 덮어쓰기 금지')
         self.artifact(rp,report)
-        body = read(p['bodyPath']).replace('{{fastTable}}',table)
+        template = read(p['bodyPath'])
+        body = template.replace('{{fastTable}}', table + indicator_html) if '{{fastTable}}' in template else template + indicator_html
         article = self.render_article(body,issued,cutoff,label)
         self.artifact(ap,article)
         self.update_indexes(issued)
@@ -249,6 +268,13 @@ class Publisher:
         kospi.update(value=num(kp['closePrice']),changePercent=num(kp['fluctuationsRatio']),previousClose=num(prev['closePrice']) if current else num(prev['closePrice'])-num(prev['compareToPreviousClosePrice']),
                      open=num(kp['openPrice']),high=num(kp['highPrice']),low=num(kp['lowPrice']),asOf=rows[0][2],asOfLabel=rows[0][2],stateLabel='장중' if current else '전일 종가')
         dash['checkpoints']=[{'label':r[0],'value':r[1],'detail':r[2],'tone':'neutral'} for r in rows[2:]]
+        dash['checkpoints'].extend(
+            {field: row[field] for field in ('label', 'value', 'detail')} | {'tone': 'neutral'}
+            for row in indicators
+        )
+        for row in indicators:
+            if not any(source.get('href') == row['source'] for source in dash.get('sources', [])):
+                dash.setdefault('sources', []).append({'label': row['label'], 'href': row['source']})
         if not nxt: dash['checkpoints'].insert(0,{'label':'NXT','value':'유효 가격 없음','detail':'원천 시각·상태 검증 실패','tone':'neutral'})
         for instrument in dash['technical']['instruments']:
             if instrument['id'] in ['KOSPI','KODEX']:
@@ -270,7 +296,7 @@ class Publisher:
         module.validate_forecast(forecast,ROOT/fp,ROOT)
         write('STATE.md',p['stateText']+f'\n- 작성 {issued}, 데이터 최종 확인 {cutoff}, 한국 {label}.\n- reports/{date}.md · {sp} · {fp}.\n')
         self.s.update(sealed={'forecastId':fid,'forecastPath':fp,'snapshot':sp,'article':ap,'issuedAt':issued,'cutoff':cutoff},
-                      files=list(dict.fromkeys(p['files']+[str(path.relative_to(ROOT)).replace('\\','/') for path in (ROOT/self.s['quoteDir']).glob('*.json')]+[rp,ap,sp,fp,'assets/data/market-dashboard-latest.json','research/evaluation/trading-sessions.json','STATE.md','index.html','articles/index.html','articles/market.html','sitemap.xml'])))
+                      files=list(dict.fromkeys(p['files']+indicator_files+[str(path.relative_to(ROOT)).replace('\\','/') for path in (ROOT/self.s['quoteDir']).glob('*.json')]+[rp,ap,sp,fp,'assets/data/market-dashboard-latest.json','research/evaluation/trading-sessions.json','STATE.md','index.html','articles/index.html','articles/market.html','sitemap.xml'])))
         self.stage('sealed', forecastId=fid)
 
     def render_article(self, body, issued, cutoff, label, published=None):

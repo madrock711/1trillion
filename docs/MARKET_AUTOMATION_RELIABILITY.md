@@ -70,6 +70,8 @@
 
 ## 발행 실행 구조 구현과 실제 시험 절차
 
+초기 수집기의 `researchIndicators` 상태는 일반 시세의 `failed`와 별도다. 당일 연구 패키지의 `researchIndicatorsPath`를 이번 수집 폴더의 `research-indicators.json`에 연결한다. 보조 원천 실패는 취재 노트에 남기고 발행을 진행한다. 최종조회에는 뉴스심리·경기선행지수 조회를 추가하지 않는다.
+
 위 내용은 08:39 감사 시점의 상태다. 이후 `scripts/publish_market_research.py`를 구현했다. 취재·집필·이미지를 검토한 뒤 일별 `package.json`에 원고/보고서템플릿/대시보드/이미지/전략/선별파일 경로를 넣고 다음 명령으로 발행한다.
 
 ```powershell

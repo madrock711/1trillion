@@ -1,6 +1,8 @@
 import importlib.util
+import datetime as dt
 import json
 from pathlib import Path
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -10,6 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('collector', ROOT/'scripts/collect_market_evidence.py')
 collector = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(collector)
+sys.path.insert(0, str(ROOT/'scripts'))
+import market_research_indicators as indicators
 
 
 class Response:
@@ -41,6 +45,41 @@ class CollectionTest(unittest.TestCase):
         self.assertTrue({'FX','NXT','yahoo-NQF','yahoo-ESF','005930','000660'} <= urls.keys())
         self.assertNotIn('yahoo-QQQ', urls)
         self.assertIn('interval=5m', urls['yahoo-NQF'])
+
+    def test_weekly_comparison_and_trailing_complete_months(self):
+        start = dt.date(2026, 6, 1)
+        as_of = dt.date(2026, 10, 12)
+        latest = dt.date(2026, 10, 8)
+        points = {day: day.month * 10 for day in indicators.date_range(start, latest + dt.timedelta(days=1))}
+        points[latest] = 108
+        data = indicators.summarize_nsi(points, as_of)
+        self.assertEqual(('2026-10-08', 8, '2026-09', 80, 10), (
+            data['period'], data['change7d'], data['average3mPeriod'], data['average3m'], data['average3mChange']
+        ))
+        del points[dt.date(2026, 9, 15)]
+        self.assertIsNone(indicators.summarize_nsi(points, as_of)['average3m'])
+        with self.assertRaises(ValueError):
+            indicators.summarize_nsi(points, dt.date(2026, 11, 1))
+
+    def test_optional_failure_keeps_other_series_and_old_evidence_is_hidden(self):
+        base = ROOT/'.tmp-market-tests'
+        base.mkdir(exist_ok=True)
+        today = dt.datetime.now(indicators.TZ).date()
+        with tempfile.TemporaryDirectory(dir=base) as temp, \
+                patch.object(indicators, 'fetch_nsi', side_effect=urllib.error.URLError('timeout')), \
+                patch.object(indicators, 'fetch_leading', return_value={
+                    'period': indicators.month_before(today, 1).strftime('%Y-%m'),
+                    'value': 104.1, 'change': -0.1, 'rawHash': 'a' * 64,
+                }):
+            output = Path(temp)
+            indicators.collect_indicators(output)
+            evidence = json.loads((output/indicators.FILENAME).read_text(encoding='utf-8'))
+        cutoff = dt.datetime.now(indicators.TZ)
+        self.assertEqual('unavailable', evidence['nsi']['status'])
+        rows = indicators.indicator_rows(evidence, cutoff)
+        self.assertEqual(['104.1'], [row['value'] for row in rows])
+        self.assertIn('0.1포인트 하락', indicators.render_indicator_block(rows)[0])
+        self.assertEqual([], indicators.indicator_rows(evidence, cutoff + dt.timedelta(days=1)))
 
 
 if __name__ == '__main__': unittest.main()
