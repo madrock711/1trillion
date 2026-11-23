@@ -1,0 +1,292 @@
+{
+  "url": "https://api.stock.naver.com/stock/AVGO.O/basic",
+  "requestedAt": "2026-11-24T08:01:28.102832+09:00",
+  "httpStatus": 200,
+  "rawHash": "b1e28dbda542e75c7dd660aa59e7023435574de170f65576215556fd8c00983e",
+  "data": {
+    "stockEndType": "stock",
+    "reutersCode": "AVGO.O",
+    "stockName": "브로드컴",
+    "stockNameEng": "Broadcom Inc",
+    "itemLogoUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/stock/StockAVGO.O.svg",
+    "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/stock/StockAVGO.O.png",
+    "symbolCode": "AVGO",
+    "tradeStopType": {
+      "code": "1",
+      "text": "운영.Trading",
+      "name": "TRADING"
+    },
+    "stockExchangeType": {
+      "code": "NSQ",
+      "zoneId": "EST5EDT",
+      "nationType": "USA",
+      "delayTime": 0,
+      "startTime": "0930",
+      "endTime": "1600",
+      "closePriceSendTime": "2031",
+      "nameKor": "나스닥 증권거래소",
+      "nameEng": "NASDAQ Stock Exchange",
+      "nationCode": "USA",
+      "name": "NASDAQ",
+      "stockType": "worldstock",
+      "nationName": "미국"
+    },
+    "stockExchangeName": "NASDAQ",
+    "industryCodeType": {
+      "code": "57101010",
+      "industryGroupKor": "반도체",
+      "name": "INDUSTRY57101010"
+    },
+    "delayTime": 0,
+    "delayTimeName": "실시간",
+    "compareToPreviousPrice": {
+      "code": "2",
+      "text": "상승",
+      "name": "RISING"
+    },
+    "closePrice": "313.55",
+    "compareToPreviousClosePrice": "9.14",
+    "fluctuationsRatio": "3.00",
+    "localTradedAt": "2026-11-23T16:00:00-05:00",
+    "marketStatus": "CLOSE",
+    "overMarketPriceInfo": {
+      "tradingSessionType": "AFTER_MARKET",
+      "overMarketStatus": "OPEN",
+      "overPrice": "313.25",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "compareToPreviousClosePrice": "-0.30",
+      "fluctuationsRatio": "-0.10",
+      "localTradedAt": "2026-11-23T18:00:57-05:00",
+      "tradeStopType": null,
+      "tradableStatus": null,
+      "tradableStatusCode": null,
+      "tradableStatusUpdatedAt": null,
+      "overPriceRaw": "313.25",
+      "fluctuationsRatioRaw": "-0.10",
+      "compareToPreviousClosePriceRaw": "-0.30"
+    },
+    "imageCharts": {
+      "candleDay": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/day/AVGO.O_end.png",
+      "candleMonth": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/month/AVGO.O_end.png",
+      "areaMonthThree": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/month3/AVGO.O_end.png",
+      "transparent": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AVGO.O_transparent.png",
+      "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AVGO.O_end.png",
+      "day_up": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AVGO.O_end_up.png",
+      "candleWeek": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/week/AVGO.O_end.png",
+      "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year3/AVGO.O_end.png",
+      "areaYear": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year/AVGO.O_end.png",
+      "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year10/AVGO.O_end.png",
+      "day_up_tablet": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AVGO.O_end_up_tablet.png"
+    },
+    "imageChartUrlInfo": {
+      "line": {
+        "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AVGO.O_end.png",
+        "month3": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/month3/AVGO.O_end.png",
+        "year": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year/AVGO.O_end.png",
+        "year3": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year3/AVGO.O_end.png",
+        "year5": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year5/AVGO.O_end.png",
+        "year10": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year10/AVGO.O_end.png"
+      },
+      "candle": {
+        "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/day/AVGO.O_end.png",
+        "week": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/week/AVGO.O_end.png",
+        "month": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/month/AVGO.O_end.png"
+      },
+      "mini": {
+        "transparent": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AVGO.O_transparent.png",
+        "dayUp": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AVGO.O_end_up.png",
+        "dayUpTablet": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AVGO.O_end_up_tablet.png"
+      }
+    },
+    "scriptChartTypes": [
+      "candleMinuteFive",
+      "candleDay",
+      "candleWeek",
+      "candleMonth",
+      "day",
+      "areaMonthThree",
+      "areaYear",
+      "areaYearThree",
+      "areaYearTen"
+    ],
+    "currencyType": {
+      "code": "USD",
+      "text": "US dollar",
+      "name": "USD"
+    },
+    "countOfListedStock": 4773629865,
+    "marketValueKrwRaw": "2009415932299568",
+    "accumulatedTradingValueKrwRaw": "17108872357500",
+    "indexOrEtfToolTip": null,
+    "endUrl": "https://m.stock.naver.com/worldstock/stock/AVGO.O",
+    "newPcUrl": "https://stock.naver.com/worldstock/stock/AVGO.O",
+    "chartIqEndUrl": "https://m.stock.naver.com/fchart/foreign/stock/AVGO.O",
+    "stockItemTotalInfos": [
+      {
+        "code": "basePrice",
+        "key": "전일",
+        "value": "304.41"
+      },
+      {
+        "code": "openPrice",
+        "key": "시가",
+        "value": "320.86",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "highPrice",
+        "key": "고가",
+        "value": "324.46",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "lowPrice",
+        "key": "저가",
+        "value": "304.56",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "accumulatedTradingVolume",
+        "key": "거래량",
+        "value": "40,836,670"
+      },
+      {
+        "code": "accumulatedTradingValue",
+        "key": "대금",
+        "value": "127억 USD",
+        "valueDesc": "17조 1,089억원"
+      },
+      {
+        "code": "marketValue",
+        "key": "시총",
+        "value": "1조 4,968억 USD",
+        "valueDesc": "2,009조 4,159억원"
+      },
+      {
+        "code": "industryGroupKor",
+        "key": "업종",
+        "value": "반도체"
+      },
+      {
+        "code": "highPriceOf52Weeks",
+        "key": "52주 최고",
+        "keyDesc": "2026.06.03.",
+        "value": "495.00"
+      },
+      {
+        "code": "lowPriceOf52Weeks",
+        "key": "52주 최저",
+        "keyDesc": "2026.11.06.",
+        "value": "289.77"
+      },
+      {
+        "code": "per",
+        "key": "PER",
+        "keyDesc": "2026.08.",
+        "value": "39.64배"
+      },
+      {
+        "code": "eps",
+        "key": "EPS",
+        "keyDesc": "2026.08.",
+        "value": "7.91"
+      },
+      {
+        "code": "pbr",
+        "key": "PBR",
+        "keyDesc": "2026.08.",
+        "value": "15.02배"
+      },
+      {
+        "code": "bps",
+        "key": "BPS",
+        "keyDesc": "2026.08.",
+        "value": "20.88"
+      },
+      {
+        "code": "dividend",
+        "key": "주당배당금",
+        "keyDesc": "2026.09.",
+        "value": "2.60"
+      },
+      {
+        "code": "dividendYieldRatio",
+        "key": "배당수익률",
+        "keyDesc": "2026.09.",
+        "value": "0.85%"
+      },
+      {
+        "code": "dividendAt",
+        "key": "배당일",
+        "value": "2026.09.30."
+      },
+      {
+        "code": "exDividendAt",
+        "key": "배당락일",
+        "value": "2026.09.21."
+      },
+      {
+        "code": "faceValueDivisionRate",
+        "key": "액면변경",
+        "keyDesc": "2024.07.15.",
+        "value": "1:10 분할"
+      },
+      {
+        "code": "faceValue",
+        "key": "액면가",
+        "value": "N/A"
+      }
+    ],
+    "etfThemaInfos": null,
+    "isEtf": false,
+    "isEtfAmerica": false,
+    "isFinanceSummary": true,
+    "hasNews": true,
+    "researchs": [],
+    "nationType": "USA",
+    "nationName": "미국",
+    "newlyListed": false,
+    "stockCodeClassificationType": "ORD",
+    "stockEndUrl": "https://m.stock.naver.com/worldstock/stock/AVGO.O",
+    "compareToPreviousClosePriceRaw": "9.14",
+    "closePriceRaw": "313.55",
+    "fluctuationsRatioRaw": "3.00",
+    "openPriceRaw": "320.86",
+    "highPriceRaw": "324.46",
+    "lowPriceRaw": "304.56",
+    "accumulatedTradingVolumeRaw": "40836670",
+    "accumulatedTradingValueRaw": "12744039000",
+    "isWtsOrderable": true,
+    "marketOperatingTimeInfo": {
+      "zoneId": "EST5EDT",
+      "zoneName": "미국(동부)",
+      "isDst": false,
+      "preMarketOpeningTime": "2026-11-23T04:00:00-05:00",
+      "preMarketClosingTime": "2026-11-23T09:30:00-05:00",
+      "regularMarketOpeningTime": "2026-11-23T09:30:00-05:00",
+      "regularMarketClosingTime": "2026-11-23T16:00:00-05:00",
+      "afterMarketOpeningTime": "2026-11-23T16:00:00-05:00",
+      "afterMarketClosingTime": "2026-11-23T20:00:00-05:00"
+    },
+    "marketValueFullRaw": "1496771644171",
+    "exchangeOperatingTime": false
+  },
+  "status": "collected",
+  "fetchedAt": "2026-11-24T08:01:28.338591+09:00"
+}

@@ -1,0 +1,291 @@
+{
+  "url": "https://api.stock.naver.com/stock/MU.O/basic",
+  "requestedAt": "2026-11-24T08:01:28.102502+09:00",
+  "httpStatus": 200,
+  "rawHash": "0f75ee8713395e467103f81e6e8ae31670ff0e40f1cce708787735f124e5c196",
+  "data": {
+    "stockEndType": "stock",
+    "reutersCode": "MU.O",
+    "stockName": "마이크론 테크놀로지",
+    "stockNameEng": "Micron Technology  Inc.",
+    "itemLogoUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/stock/StockMU.O.svg",
+    "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/stock/StockMU.O.png",
+    "symbolCode": "MU",
+    "tradeStopType": {
+      "code": "1",
+      "text": "운영.Trading",
+      "name": "TRADING"
+    },
+    "stockExchangeType": {
+      "code": "NSQ",
+      "zoneId": "EST5EDT",
+      "nationType": "USA",
+      "delayTime": 0,
+      "startTime": "0930",
+      "endTime": "1600",
+      "closePriceSendTime": "2031",
+      "nameKor": "나스닥 증권거래소",
+      "nameEng": "NASDAQ Stock Exchange",
+      "nationName": "미국",
+      "name": "NASDAQ",
+      "stockType": "worldstock",
+      "nationCode": "USA"
+    },
+    "stockExchangeName": "NASDAQ",
+    "industryCodeType": {
+      "code": "57101010",
+      "industryGroupKor": "반도체",
+      "name": "INDUSTRY57101010"
+    },
+    "delayTime": 0,
+    "delayTimeName": "실시간",
+    "compareToPreviousPrice": {
+      "code": "2",
+      "text": "상승",
+      "name": "RISING"
+    },
+    "closePrice": "707.70",
+    "compareToPreviousClosePrice": "113.19",
+    "fluctuationsRatio": "19.04",
+    "localTradedAt": "2026-11-23T16:00:00-05:00",
+    "marketStatus": "CLOSE",
+    "overMarketPriceInfo": {
+      "tradingSessionType": "AFTER_MARKET",
+      "overMarketStatus": "OPEN",
+      "overPrice": "713.10",
+      "compareToPreviousPrice": {
+        "code": "2",
+        "text": "상승",
+        "name": "RISING"
+      },
+      "compareToPreviousClosePrice": "5.40",
+      "fluctuationsRatio": "0.76",
+      "localTradedAt": "2026-11-23T18:01:24-05:00",
+      "tradeStopType": null,
+      "tradableStatus": null,
+      "tradableStatusCode": null,
+      "tradableStatusUpdatedAt": null,
+      "overPriceRaw": "713.10",
+      "fluctuationsRatioRaw": "0.76",
+      "compareToPreviousClosePriceRaw": "5.40"
+    },
+    "imageCharts": {
+      "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year10/MU.O_end.png",
+      "candleWeek": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/week/MU.O_end.png",
+      "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/MU.O_end.png",
+      "candleDay": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/day/MU.O_end.png",
+      "day_up": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/MU.O_end_up.png",
+      "day_up_tablet": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/MU.O_end_up_tablet.png",
+      "areaMonthThree": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/month3/MU.O_end.png",
+      "areaYear": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year/MU.O_end.png",
+      "candleMonth": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/month/MU.O_end.png",
+      "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year3/MU.O_end.png",
+      "transparent": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/MU.O_transparent.png"
+    },
+    "imageChartUrlInfo": {
+      "line": {
+        "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/MU.O_end.png",
+        "month3": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/month3/MU.O_end.png",
+        "year": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year/MU.O_end.png",
+        "year3": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year3/MU.O_end.png",
+        "year5": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year5/MU.O_end.png",
+        "year10": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year10/MU.O_end.png"
+      },
+      "candle": {
+        "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/day/MU.O_end.png",
+        "week": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/week/MU.O_end.png",
+        "month": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/month/MU.O_end.png"
+      },
+      "mini": {
+        "transparent": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/MU.O_transparent.png",
+        "dayUp": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/MU.O_end_up.png",
+        "dayUpTablet": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/MU.O_end_up_tablet.png"
+      }
+    },
+    "scriptChartTypes": [
+      "candleMinuteFive",
+      "candleDay",
+      "candleWeek",
+      "candleMonth",
+      "day",
+      "areaMonthThree",
+      "areaYear",
+      "areaYearThree",
+      "areaYearTen"
+    ],
+    "currencyType": {
+      "code": "USD",
+      "text": "US dollar",
+      "name": "USD"
+    },
+    "countOfListedStock": 1131423212,
+    "marketValueKrwRaw": "1074950768074710",
+    "accumulatedTradingValueKrwRaw": "46156002487500",
+    "indexOrEtfToolTip": null,
+    "endUrl": "https://m.stock.naver.com/worldstock/stock/MU.O",
+    "newPcUrl": "https://stock.naver.com/worldstock/stock/MU.O",
+    "chartIqEndUrl": "https://m.stock.naver.com/fchart/foreign/stock/MU.O",
+    "stockItemTotalInfos": [
+      {
+        "code": "basePrice",
+        "key": "전일",
+        "value": "594.51"
+      },
+      {
+        "code": "openPrice",
+        "key": "시가",
+        "value": "690.72",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "highPrice",
+        "key": "고가",
+        "value": "720.69",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "lowPrice",
+        "key": "저가",
+        "value": "666.66",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "accumulatedTradingVolume",
+        "key": "거래량",
+        "value": "49,232,436"
+      },
+      {
+        "code": "accumulatedTradingValue",
+        "key": "대금",
+        "value": "344억 USD",
+        "valueDesc": "46조 1,560억원"
+      },
+      {
+        "code": "marketValue",
+        "key": "시총",
+        "value": "8,007억 USD",
+        "valueDesc": "1,074조 9,508억원"
+      },
+      {
+        "code": "industryGroupKor",
+        "key": "업종",
+        "value": "반도체"
+      },
+      {
+        "code": "highPriceOf52Weeks",
+        "key": "52주 최고",
+        "keyDesc": "2026.06.25.",
+        "value": "1,255.00"
+      },
+      {
+        "code": "lowPriceOf52Weeks",
+        "key": "52주 최저",
+        "keyDesc": "2025.11.21.",
+        "value": "192.59"
+      },
+      {
+        "code": "per",
+        "key": "PER",
+        "keyDesc": "2026.09.",
+        "value": "9.49배"
+      },
+      {
+        "code": "eps",
+        "key": "EPS",
+        "keyDesc": "2026.09.",
+        "value": "74.61"
+      },
+      {
+        "code": "pbr",
+        "key": "PBR",
+        "keyDesc": "2026.09.",
+        "value": "5.78배"
+      },
+      {
+        "code": "bps",
+        "key": "BPS",
+        "keyDesc": "2026.09.",
+        "value": "122.35"
+      },
+      {
+        "code": "dividend",
+        "key": "주당배당금",
+        "keyDesc": "2026.10.",
+        "value": "0.60"
+      },
+      {
+        "code": "dividendYieldRatio",
+        "key": "배당수익률",
+        "keyDesc": "2026.10.",
+        "value": "0.10%"
+      },
+      {
+        "code": "dividendAt",
+        "key": "배당일",
+        "value": "2026.10.29."
+      },
+      {
+        "code": "exDividendAt",
+        "key": "배당락일",
+        "value": "2026.10.14."
+      },
+      {
+        "code": "faceValueDivisionRate",
+        "key": "액면변경",
+        "value": "N/A"
+      },
+      {
+        "code": "faceValue",
+        "key": "액면가",
+        "value": "N/A"
+      }
+    ],
+    "etfThemaInfos": null,
+    "isEtf": false,
+    "isEtfAmerica": false,
+    "isFinanceSummary": true,
+    "hasNews": true,
+    "researchs": [],
+    "nationType": "USA",
+    "nationName": "미국",
+    "newlyListed": false,
+    "stockCodeClassificationType": "ORD",
+    "stockEndUrl": "https://m.stock.naver.com/worldstock/stock/MU.O",
+    "closePriceRaw": "707.70",
+    "fluctuationsRatioRaw": "19.04",
+    "openPriceRaw": "690.72",
+    "highPriceRaw": "720.69",
+    "lowPriceRaw": "666.66",
+    "compareToPreviousClosePriceRaw": "113.19",
+    "accumulatedTradingVolumeRaw": "49232436",
+    "accumulatedTradingValueRaw": "34380635000",
+    "isWtsOrderable": true,
+    "marketOperatingTimeInfo": {
+      "zoneId": "EST5EDT",
+      "zoneName": "미국(동부)",
+      "isDst": false,
+      "preMarketOpeningTime": "2026-11-23T04:00:00-05:00",
+      "preMarketClosingTime": "2026-11-23T09:30:00-05:00",
+      "regularMarketOpeningTime": "2026-11-23T09:30:00-05:00",
+      "regularMarketClosingTime": "2026-11-23T16:00:00-05:00",
+      "afterMarketOpeningTime": "2026-11-23T16:00:00-05:00",
+      "afterMarketClosingTime": "2026-11-23T20:00:00-05:00"
+    },
+    "marketValueFullRaw": "800708207132",
+    "exchangeOperatingTime": false
+  },
+  "status": "collected",
+  "fetchedAt": "2026-11-24T08:01:28.338916+09:00"
+}

@@ -1,0 +1,212 @@
+{
+  "date": "2026-11-24",
+  "previousSessionDate": "2026-11-23",
+  "title": "젠슨 황 복귀에 미국 반도체 급등, 코스피 4,760선 주목",
+  "summary": "엔비디아가 31.48%, 마이크론이 19.04% 올랐습니다. 코스피가 전날 고점을 회복한 뒤에도 외국인과 프로그램 매수가 이어지는지 살핍니다.",
+  "image": "assets/images/articles/market-2026-11-24-chip-rebound-1200x630.png",
+  "imageAlt": "서울의 아침 햇살을 받아 푸르게 빛나는 반도체 웨이퍼",
+  "bodyPath": "research/evidence/2026-11-24/article-body.html",
+  "reportTemplate": "research/evidence/2026-11-24/report-template.md",
+  "dashboardPath": "research/evidence/2026-11-24/dashboard-input.json",
+  "notesPath": "research/notes/2026-11-24.md",
+  "researchIndicatorsPath": "research/evidence/2026-11-24/collections/075919-058541/research-indicators.json",
+  "scenarios": {
+    "bull": {
+      "low": 4910,
+      "high": 5060,
+      "probability": 0.25
+    },
+    "base": {
+      "low": 4760,
+      "high": 4910,
+      "probability": 0.55
+    },
+    "bear": {
+      "low": 4580,
+      "high": 4760,
+      "probability": 0.2
+    }
+  },
+  "posture": {
+    "attack": 25,
+    "wait": 55,
+    "defense": 20
+  },
+  "pathEnvelope": {
+    "low": 4550,
+    "high": 5100,
+    "coverage": 0.9
+  },
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-11-24T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 4910,
+          "source": "Naver Finance KOSPI",
+          "description": "코스피 4,910 상회"
+        },
+        {
+          "id": "bull-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "외국인 현물 순매수"
+        },
+        {
+          "id": "bull-program",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "프로그램 순매수"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-11-24T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-floor",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 4760,
+          "source": "Naver Finance KOSPI",
+          "description": "코스피 4,760 이상"
+        },
+        {
+          "id": "base-cap",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 4910,
+          "source": "Naver Finance KOSPI",
+          "description": "코스피 4,910 이하"
+        },
+        {
+          "id": "base-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gte",
+          "threshold": -4000,
+          "source": "Naver Finance KOSPI",
+          "description": "외국인 현물 순매도 4,000억원 이내"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-11-24T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 4760,
+          "source": "Naver Finance KOSPI",
+          "description": "코스피 4,760 하회"
+        },
+        {
+          "id": "bear-foreign",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "외국인 현물 순매도"
+        },
+        {
+          "id": "bear-program",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "프로그램 순매도"
+        }
+      ]
+    }
+  },
+  "marketRegime": "event_shock",
+  "drivers": [
+    {
+      "id": "chip-rebound",
+      "rank": 1,
+      "claim": "젠슨 황 복귀 뒤 미국 반도체주 급반등",
+      "validationMetric": "SOXX·삼성전자·SK하이닉스"
+    },
+    {
+      "id": "domestic-flows",
+      "rank": 2,
+      "claim": "서울에서 외국인과 프로그램 수급이 4,760선 회복의 지속성을 좌우",
+      "validationMetric": "외국인 현물·프로그램·KOSPI"
+    }
+  ],
+  "stateText": "# KOSPI·KODEX 리서치 상태\n- 최신 2026-11-24. 전일 KOSPI 4,708.54(−3.31%), KOSDAQ 635.45(−1.58%), KODEX 46,585원(−6.69%).\n- 11/23 장후 외국인 −2,560억원·기관 +1,758억원·프로그램 +1,805억원. 서울 마감 뒤 미국 SOXX +13.63%, NVDA +31.48%, MU +19.04%.\n- 코스피 기본 4,760~4,910(55%), 강세 4,910 초과~5,060(25%), 약세 4,580~4,760 미만(20%). 대응 25/55/20.\n- 직전 종가 기본 범위. 15:20 지수 확인, 당시 수급 미확인. 11/25 00:00 소비자신뢰·06:30 델·22:30 PCE/GDP, 11/26 한국은행 금통위.\n- 취재 research/notes/2026-11-24.md, 전일 판정 research/evaluation/outcomes/2026-11-23-081238-same-close.json.\n- 금리차 charts/us_yield_spreads_90d_2026-11-24.png · charts/us_yield_spreads_long_term_2026-11-24.png.",
+  "charts": [
+    "charts/us_yield_spreads_long_term_2026-11-24.png",
+    "charts/us_yield_spreads_90d_2026-11-24.png"
+  ],
+  "files": [
+    "research/evidence/2026-11-24/article-body.html",
+    "research/evidence/2026-11-24/report-template.md",
+    "research/evidence/2026-11-24/dashboard-input.json",
+    "research/evidence/2026-11-24/package.json",
+    "research/notes/2026-11-24.md",
+    "research/evaluation/actuals/2026-11-23.json",
+    "research/evaluation/outcomes/2026-11-23-081238-same-close.json",
+    "assets/images/articles/market-2026-11-24-chip-rebound-1200x630.png",
+    "docs/현재작업중.md",
+    "charts/us_yield_spreads_long_term_2026-11-24.png",
+    "charts/us_yield_spreads_90d_2026-11-24.png",
+    "research/evidence/2026-11-24/collections/075919-058541/000660.json",
+    "research/evidence/2026-11-24/collections/075919-058541/005930.json",
+    "research/evidence/2026-11-24/collections/075919-058541/122630.json",
+    "research/evidence/2026-11-24/collections/075919-058541/collection-status.json",
+    "research/evidence/2026-11-24/collections/075919-058541/FX.json",
+    "research/evidence/2026-11-24/collections/075919-058541/KOSPI-basic.json",
+    "research/evidence/2026-11-24/collections/075919-058541/KOSPI-history.json",
+    "research/evidence/2026-11-24/collections/075919-058541/KOSPI-integration.json",
+    "research/evidence/2026-11-24/collections/075919-058541/KOSPI.json",
+    "research/evidence/2026-11-24/collections/075919-058541/NXT.json",
+    "research/evidence/2026-11-24/collections/075919-058541/research-indicators.json",
+    "research/evidence/2026-11-24/collections/075919-058541/yahoo-AMD.json",
+    "research/evidence/2026-11-24/collections/075919-058541/yahoo-AVGO.json",
+    "research/evidence/2026-11-24/collections/075919-058541/yahoo-BZF.json",
+    "research/evidence/2026-11-24/collections/075919-058541/yahoo-CLF.json",
+    "research/evidence/2026-11-24/collections/075919-058541/yahoo-ESF.json",
+    "research/evidence/2026-11-24/collections/075919-058541/yahoo-MU.json",
+    "research/evidence/2026-11-24/collections/075919-058541/yahoo-NQF.json",
+    "research/evidence/2026-11-24/collections/075919-058541/yahoo-NVDA.json",
+    "research/evidence/2026-11-24/collections/075919-058541/yahoo-QQQ.json",
+    "research/evidence/2026-11-24/collections/075919-058541/yahoo-SMH.json",
+    "research/evidence/2026-11-24/collections/075919-058541/yahoo-SOXX.json",
+    "research/evidence/2026-11-24/collections/075919-058541/yahoo-TQQQ.json",
+    "research/evidence/2026-11-24/extras/after-AMD.json",
+    "research/evidence/2026-11-24/extras/after-AVGO.json",
+    "research/evidence/2026-11-24/extras/after-MU.json",
+    "research/evidence/2026-11-24/extras/after-NVDA.json",
+    "research/evidence/2026-11-24/extras/after-QQQ.json",
+    "research/evidence/2026-11-24/extras/after-SMH.json",
+    "research/evidence/2026-11-24/extras/after-SOXX.json",
+    "research/evidence/2026-11-24/extras/after-TQQQ.json",
+    "research/evidence/2026-11-24/extras/BEA.source.json",
+    "research/evidence/2026-11-24/extras/CB.source.json",
+    "research/evidence/2026-11-24/extras/Dell.source.json",
+    "research/evidence/2026-11-24/extras/kosdaq-basic.json",
+    "research/evidence/2026-11-24/extras/kosdaq-history.json",
+    "research/evidence/2026-11-24/extras/naver-AMD.json",
+    "research/evidence/2026-11-24/extras/naver-AVGO.json",
+    "research/evidence/2026-11-24/extras/naver-MU.json",
+    "research/evidence/2026-11-24/extras/naver-NVDA.json",
+    "research/evidence/2026-11-24/extras/naver-QQQ.json",
+    "research/evidence/2026-11-24/extras/naver-SMH.json",
+    "research/evidence/2026-11-24/extras/naver-SOXX.json",
+    "research/evidence/2026-11-24/extras/naver-TQQQ.json",
+    "research/evidence/2026-11-24/extras/NVIDIA.source.json",
+    "research/evidence/2026-11-24/extras/Treasury.source.json",
+    "research/evidence/2026-11-24/extras/Williams.source.json"
+  ]
+}

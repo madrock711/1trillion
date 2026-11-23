@@ -1,0 +1,289 @@
+{
+  "url": "https://api.stock.naver.com/stock/AMD.O/basic",
+  "requestedAt": "2026-11-24T08:01:28.102101+09:00",
+  "httpStatus": 200,
+  "rawHash": "d1a89dc8b89feae9e1ce7b050fc2021d2b3d07529ca39678bf059e65a8ef462b",
+  "data": {
+    "stockEndType": "stock",
+    "reutersCode": "AMD.O",
+    "stockName": "AMD(어드밴스드 마이크로 디바이시스)",
+    "stockNameEng": "Advanced Micro Devices  Inc.",
+    "itemLogoUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/stock/StockAMD.O.svg",
+    "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/stock/StockAMD.O.png",
+    "symbolCode": "AMD",
+    "tradeStopType": {
+      "code": "1",
+      "text": "운영.Trading",
+      "name": "TRADING"
+    },
+    "stockExchangeType": {
+      "code": "NSQ",
+      "zoneId": "EST5EDT",
+      "nationType": "USA",
+      "delayTime": 0,
+      "startTime": "0930",
+      "endTime": "1600",
+      "closePriceSendTime": "2031",
+      "nameKor": "나스닥 증권거래소",
+      "nameEng": "NASDAQ Stock Exchange",
+      "nationCode": "USA",
+      "name": "NASDAQ",
+      "nationName": "미국",
+      "stockType": "worldstock"
+    },
+    "stockExchangeName": "NASDAQ",
+    "industryCodeType": {
+      "code": "57101010",
+      "industryGroupKor": "반도체",
+      "name": "INDUSTRY57101010"
+    },
+    "delayTime": 0,
+    "delayTimeName": "실시간",
+    "compareToPreviousPrice": {
+      "code": "2",
+      "text": "상승",
+      "name": "RISING"
+    },
+    "closePrice": "453.46",
+    "compareToPreviousClosePrice": "29.07",
+    "fluctuationsRatio": "6.85",
+    "localTradedAt": "2026-11-23T16:00:00-05:00",
+    "marketStatus": "CLOSE",
+    "overMarketPriceInfo": {
+      "tradingSessionType": "AFTER_MARKET",
+      "overMarketStatus": "OPEN",
+      "overPrice": "450.00",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "compareToPreviousClosePrice": "-3.46",
+      "fluctuationsRatio": "-0.76",
+      "localTradedAt": "2026-11-23T18:01:20-05:00",
+      "tradeStopType": null,
+      "tradableStatus": null,
+      "tradableStatusCode": null,
+      "tradableStatusUpdatedAt": null,
+      "overPriceRaw": "450.00",
+      "fluctuationsRatioRaw": "-0.76",
+      "compareToPreviousClosePriceRaw": "-3.46"
+    },
+    "imageCharts": {
+      "candleWeek": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/week/AMD.O_end.png",
+      "day_up": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AMD.O_end_up.png",
+      "candleDay": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/day/AMD.O_end.png",
+      "candleMonth": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/month/AMD.O_end.png",
+      "transparent": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AMD.O_transparent.png",
+      "day_up_tablet": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AMD.O_end_up_tablet.png",
+      "areaYear": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year/AMD.O_end.png",
+      "areaMonthThree": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/month3/AMD.O_end.png",
+      "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year3/AMD.O_end.png",
+      "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AMD.O_end.png",
+      "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year10/AMD.O_end.png"
+    },
+    "imageChartUrlInfo": {
+      "line": {
+        "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AMD.O_end.png",
+        "month3": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/month3/AMD.O_end.png",
+        "year": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year/AMD.O_end.png",
+        "year3": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year3/AMD.O_end.png",
+        "year5": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year5/AMD.O_end.png",
+        "year10": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year10/AMD.O_end.png"
+      },
+      "candle": {
+        "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/day/AMD.O_end.png",
+        "week": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/week/AMD.O_end.png",
+        "month": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/month/AMD.O_end.png"
+      },
+      "mini": {
+        "transparent": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AMD.O_transparent.png",
+        "dayUp": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AMD.O_end_up.png",
+        "dayUpTablet": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/AMD.O_end_up_tablet.png"
+      }
+    },
+    "scriptChartTypes": [
+      "candleMinuteFive",
+      "candleDay",
+      "candleWeek",
+      "candleMonth",
+      "day",
+      "areaMonthThree",
+      "areaYear",
+      "areaYearThree",
+      "areaYearTen"
+    ],
+    "currencyType": {
+      "code": "USD",
+      "text": "US dollar",
+      "name": "USD"
+    },
+    "countOfListedStock": 1640087251,
+    "marketValueKrwRaw": "998435997795015",
+    "accumulatedTradingValueKrwRaw": "32720377942500",
+    "indexOrEtfToolTip": null,
+    "endUrl": "https://m.stock.naver.com/worldstock/stock/AMD.O",
+    "newPcUrl": "https://stock.naver.com/worldstock/stock/AMD.O",
+    "chartIqEndUrl": "https://m.stock.naver.com/fchart/foreign/stock/AMD.O",
+    "stockItemTotalInfos": [
+      {
+        "code": "basePrice",
+        "key": "전일",
+        "value": "424.39"
+      },
+      {
+        "code": "openPrice",
+        "key": "시가",
+        "value": "476.92",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "highPrice",
+        "key": "고가",
+        "value": "477.75",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "lowPrice",
+        "key": "저가",
+        "value": "432.01",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "accumulatedTradingVolume",
+        "key": "거래량",
+        "value": "53,572,745"
+      },
+      {
+        "code": "accumulatedTradingValue",
+        "key": "대금",
+        "value": "244억 USD",
+        "valueDesc": "32조 7,204억원"
+      },
+      {
+        "code": "marketValue",
+        "key": "시총",
+        "value": "7,437억 USD",
+        "valueDesc": "998조 4,360억원"
+      },
+      {
+        "code": "industryGroupKor",
+        "key": "업종",
+        "value": "반도체"
+      },
+      {
+        "code": "highPriceOf52Weeks",
+        "key": "52주 최고",
+        "keyDesc": "2026.10.06.",
+        "value": "658.52"
+      },
+      {
+        "code": "lowPriceOf52Weeks",
+        "key": "52주 최저",
+        "keyDesc": "2026.03.03.",
+        "value": "188.22"
+      },
+      {
+        "code": "per",
+        "key": "PER",
+        "keyDesc": "2026.09.",
+        "value": "96.27배"
+      },
+      {
+        "code": "eps",
+        "key": "EPS",
+        "keyDesc": "2026.09.",
+        "value": "4.71"
+      },
+      {
+        "code": "pbr",
+        "key": "PBR",
+        "keyDesc": "2026.09.",
+        "value": "10.87배"
+      },
+      {
+        "code": "bps",
+        "key": "BPS",
+        "keyDesc": "2026.09.",
+        "value": "41.70"
+      },
+      {
+        "code": "dividend",
+        "key": "주당배당금",
+        "value": "N/A"
+      },
+      {
+        "code": "dividendYieldRatio",
+        "key": "배당수익률",
+        "value": "N/A"
+      },
+      {
+        "code": "dividendAt",
+        "key": "배당일",
+        "value": "N/A"
+      },
+      {
+        "code": "exDividendAt",
+        "key": "배당락일",
+        "value": "N/A"
+      },
+      {
+        "code": "faceValueDivisionRate",
+        "key": "액면변경",
+        "value": "N/A"
+      },
+      {
+        "code": "faceValue",
+        "key": "액면가",
+        "value": "N/A"
+      }
+    ],
+    "etfThemaInfos": null,
+    "isEtf": false,
+    "isEtfAmerica": false,
+    "isFinanceSummary": true,
+    "hasNews": true,
+    "researchs": [],
+    "nationType": "USA",
+    "nationName": "미국",
+    "newlyListed": false,
+    "stockCodeClassificationType": "ORD",
+    "stockEndUrl": "https://m.stock.naver.com/worldstock/stock/AMD.O",
+    "closePriceRaw": "453.46",
+    "fluctuationsRatioRaw": "6.85",
+    "openPriceRaw": "476.92",
+    "compareToPreviousClosePriceRaw": "29.07",
+    "highPriceRaw": "477.75",
+    "lowPriceRaw": "432.01",
+    "accumulatedTradingVolumeRaw": "53572745",
+    "accumulatedTradingValueRaw": "24372721000",
+    "isWtsOrderable": true,
+    "marketOperatingTimeInfo": {
+      "zoneId": "EST5EDT",
+      "zoneName": "미국(동부)",
+      "isDst": false,
+      "preMarketOpeningTime": "2026-11-23T04:00:00-05:00",
+      "preMarketClosingTime": "2026-11-23T09:30:00-05:00",
+      "regularMarketOpeningTime": "2026-11-23T09:30:00-05:00",
+      "regularMarketClosingTime": "2026-11-23T16:00:00-05:00",
+      "afterMarketOpeningTime": "2026-11-23T16:00:00-05:00",
+      "afterMarketClosingTime": "2026-11-23T20:00:00-05:00"
+    },
+    "marketValueFullRaw": "743713964838",
+    "exchangeOperatingTime": false
+  },
+  "status": "collected",
+  "fetchedAt": "2026-11-24T08:01:28.336480+09:00"
+}

@@ -1,0 +1,398 @@
+{
+  "schemaVersion": 1,
+  "headline": "젠슨 황 복귀에 미국 반도체 급등, 코스피 4,760선 주목",
+  "summary": "엔비디아가 31.48%, 마이크론이 19.04% 올랐습니다. 코스피가 전날 고점을 회복한 뒤에도 외국인과 프로그램 매수가 이어지는지 살핍니다.",
+  "markets": [
+    {
+      "id": "KOSPI",
+      "label": "KOSPI",
+      "symbol": "K",
+      "flows": [],
+      "value": 4708.54,
+      "changePercent": -3.31,
+      "previousClose": 4869.96,
+      "open": 4734.9,
+      "high": 4759.88,
+      "low": 4586.8,
+      "asOf": "2026-11-23T15:30:00+09:00",
+      "asOfLabel": "2026-11-23T15:30:00+09:00",
+      "stateLabel": "전일 종가"
+    },
+    {
+      "id": "KOSDAQ",
+      "label": "KOSDAQ",
+      "symbol": "Q",
+      "open": 634.93,
+      "high": 645.93,
+      "low": 618.74,
+      "value": 635.45,
+      "changePercent": -1.58,
+      "previousClose": 645.68,
+      "asOf": "2026-11-23T15:30:00+09:00",
+      "asOfLabel": "2026-11-23T15:30:00+09:00",
+      "stateLabel": "전일 종가",
+      "flows": []
+    }
+  ],
+  "stance": {
+    "label": "전날 고점에서 매수세 확인",
+    "note": "4,760선 회복 뒤 외국인 현물과 프로그램 수급, 상승 종목 수를 봅니다.",
+    "attack": 25,
+    "wait": 55,
+    "defense": 20
+  },
+  "checkpoints": [
+    {
+      "label": "NXT",
+      "value": "유효 가격 없음",
+      "detail": "원천 시각·상태 검증 실패",
+      "tone": "neutral"
+    },
+    {
+      "label": "USD/KRW 하나은행 고시",
+      "value": "1,342.50원",
+      "detail": "2026-11-24T06:59:46+09:00",
+      "tone": "neutral"
+    },
+    {
+      "label": "NQF 최근 거래",
+      "value": "26,845.00",
+      "detail": "2026-11-24T06:59:59+09:00",
+      "tone": "neutral"
+    },
+    {
+      "label": "ESF 최근 거래",
+      "value": "7,270.50",
+      "detail": "2026-11-24T06:59:59+09:00",
+      "tone": "neutral"
+    },
+    {
+      "label": "BZF 최근 거래",
+      "value": "86.72",
+      "detail": "2026-11-24T06:58:31+09:00",
+      "tone": "neutral"
+    },
+    {
+      "label": "CLF 최근 거래",
+      "value": "80.25",
+      "detail": "2026-11-24T06:59:59+09:00",
+      "tone": "neutral"
+    },
+    {
+      "label": "한국은행 뉴스심리지수",
+      "value": "91.07",
+      "detail": "2026-11-22 관측 · 주간 공표 · 7일 전보다 8.02포인트 하락",
+      "tone": "neutral"
+    },
+    {
+      "label": "뉴스심리지수 3개월 평균",
+      "value": "100.76",
+      "detail": "2026-10까지 3개월 · 일별 지수의 월평균 사용 · 한 달 전 3개월 평균보다 1.51포인트 하락",
+      "tone": "neutral"
+    },
+    {
+      "label": "경기선행종합지수 순환변동치",
+      "value": "104.1",
+      "detail": "2026-09 기준 · 전월보다 0.1포인트 하락",
+      "tone": "neutral"
+    }
+  ],
+  "changes": [
+    {
+      "label": "직전 코스피 종가",
+      "before": "4,869.96",
+      "after": "4,708.54",
+      "meaning": "장중 4,586.80까지 하락한 뒤 낙폭 축소"
+    }
+  ],
+  "factors": [
+    {
+      "label": "미국 반도체",
+      "metric": "SOXX +13.63%",
+      "detail": "11/23 미국 정규장. 엔비디아 +31.48%, 마이크론 +19.04%.",
+      "tone": "positive"
+    },
+    {
+      "label": "서울 11/23 마감 수급",
+      "metric": "외국인 −2,560억원",
+      "detail": "코스피 장후 집계. 기관 +1,758억원, 프로그램 +1,805억원.",
+      "tone": "negative"
+    },
+    {
+      "label": "미국 10년물",
+      "metric": "4.92%",
+      "detail": "11/23 미 재무부 기준. 전 거래일과 같은 수준.",
+      "tone": "neutral"
+    }
+  ],
+  "flows": {
+    "program": {
+      "arbitrage": null,
+      "nonArbitrage": null,
+      "total": null,
+      "unit": "억원",
+      "asOfLabel": "개장 전"
+    },
+    "kospi200FuturesForeign": null,
+    "futuresUnit": "억원",
+    "futuresAsOfLabel": "개장 전"
+  },
+  "memory": [
+    {
+      "label": "DDR5 16Gb",
+      "value": "$60.70",
+      "change": "11/23 현물 +0.05%"
+    },
+    {
+      "label": "DDR4 16Gb",
+      "value": "$78.50",
+      "change": "11/23 현물 −0.16%"
+    },
+    {
+      "label": "낸드 계약가격",
+      "value": "+8~13%",
+      "change": "4분기 전분기 대비 전망"
+    }
+  ],
+  "events": [
+    {
+      "time": "11월 25일 00:00 KST",
+      "name": "미국 소비자신뢰",
+      "path": "가계의 고용·물가 인식"
+    },
+    {
+      "time": "11월 25일 06:30 KST",
+      "name": "델 실적 콘퍼런스콜",
+      "path": "AI 서버 주문과 출하 전망"
+    },
+    {
+      "time": "11월 25일 22:30 KST",
+      "name": "미국 PCE 물가·GDP",
+      "path": "미 국채 금리와 달러"
+    },
+    {
+      "time": "11월 26일",
+      "name": "한국은행 금통위",
+      "path": "국내 금리와 원화"
+    }
+  ],
+  "strategyLevels": [
+    {
+      "asset": "KOSPI",
+      "support": "4,708.54",
+      "pivot": "4,759.88",
+      "resistance": "4,869.96"
+    },
+    {
+      "asset": "KODEX 레버리지",
+      "support": "46,585원",
+      "pivot": "47,785원",
+      "resistance": "49,925원"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "open",
+      "label": "09:30 외국인 현물과 비차익 프로그램"
+    },
+    {
+      "id": "memory",
+      "label": "10:30 반도체주 개장 저점과 상승 종목 수"
+    },
+    {
+      "id": "late",
+      "label": "14:00 이후 외국인 매도 재확대 여부"
+    }
+  ],
+  "sources": [
+    {
+      "label": "엔비디아 발표",
+      "href": "https://nvidianews.nvidia.com/news/nvidia-board-reinstates-jensen-huang-as-president-ceo-and-board-director"
+    },
+    {
+      "label": "뉴욕 증시 마감",
+      "href": "https://apnews.com/article/49ba1beba78fa4ed2bd5898029f79c91"
+    },
+    {
+      "label": "오라클 발표",
+      "href": "https://www.oracle.com/news/announcement/oracle-statement-2026-11-20/"
+    },
+    {
+      "label": "코스피 일봉",
+      "href": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1"
+    },
+    {
+      "label": "코스피 수급",
+      "href": "https://m.stock.naver.com/api/index/KOSPI/integration"
+    },
+    {
+      "label": "DRAM 현물",
+      "href": "https://www.trendforce.com/price/dram/dram_spot"
+    },
+    {
+      "label": "낸드 전망",
+      "href": "https://www.trendforce.com/presscenter/news/20261119-13314.html"
+    },
+    {
+      "label": "미 재무부 금리",
+      "href": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value_month=202611"
+    },
+    {
+      "label": "미국 소비자신뢰",
+      "href": "https://www.conference-board.org/topics/consumer-confidence"
+    },
+    {
+      "label": "델 실적 일정",
+      "href": "https://investors.delltechnologies.com/news-events/press-releases/detail/1661/dell-technologies-to-hold-conference-call-nov-24-to-discuss-third-quarter-fiscal-2027-financial-results"
+    },
+    {
+      "label": "BEA 발표 일정",
+      "href": "https://www.bea.gov/news/schedule"
+    },
+    {
+      "label": "한국은행 금통위",
+      "href": "https://www.bok.or.kr/portal/singl/crncyPolicyDrcMtg/listYear.do?menuNo=200755&mtgSe=A"
+    },
+    {
+      "label": "한국은행 뉴스심리지수",
+      "href": "https://snapshot.bok.or.kr/dashboard/C8"
+    },
+    {
+      "label": "경기선행종합지수 순환변동치",
+      "href": "https://kosis.kr/visual/economyBoard/economyJipyo.do?lang=ko&listId=130&unitySrvcId=641"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "bull",
+      "label": "강세 · 25%",
+      "range": "KOSPI 4,910 초과~5,060",
+      "summary": "외국인과 프로그램이 함께 사며 전날 낙폭을 되돌립니다.",
+      "conditions": [
+        "코스피 4,910 상회",
+        "외국인 현물 순매수",
+        "프로그램 순매수"
+      ],
+      "invalidation": "4,910 이하로 밀리거나 두 수급 중 하나가 순매수를 멈춥니다."
+    },
+    {
+      "id": "base",
+      "label": "기본 · 55%",
+      "range": "KOSPI 4,760~4,910",
+      "summary": "전날 고점을 회복하고 외국인 매도 규모가 일정 범위에 머뭅니다.",
+      "conditions": [
+        "코스피 4,760 이상",
+        "코스피 4,910 이하",
+        "외국인 현물 순매도 4,000억원 이내"
+      ],
+      "invalidation": "범위를 이탈하거나 외국인 순매도가 4,000억원을 넘습니다."
+    },
+    {
+      "id": "bear",
+      "label": "약세 · 20%",
+      "range": "KOSPI 4,580~4,760 미만",
+      "summary": "개장 상승분이 줄고 외국인과 프로그램 매도가 겹칩니다.",
+      "conditions": [
+        "코스피 4,760 하회",
+        "외국인 현물 순매도",
+        "프로그램 순매도"
+      ],
+      "invalidation": "4,760을 회복하거나 두 수급 중 하나가 순매도를 멈춥니다."
+    }
+  ],
+  "technical": {
+    "note": "11월 23일 정규장 가격을 바탕으로 잡은 오늘의 지지와 저항입니다.",
+    "instruments": [
+      {
+        "id": "KOSPI",
+        "label": "KOSPI",
+        "unit": "pt",
+        "asOf": "2026-11-23T15:30:00+09:00",
+        "asOfLabel": "장전 기준",
+        "points": [
+          {
+            "label": "시가",
+            "value": 4734.9
+          },
+          {
+            "label": "고가",
+            "value": 4759.88
+          },
+          {
+            "label": "저가",
+            "value": 4586.8
+          },
+          {
+            "label": "종가",
+            "value": 4708.54
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 4708.54
+          },
+          {
+            "label": "반등 기준",
+            "value": 4759.88
+          },
+          {
+            "label": "저항",
+            "value": 4869.96
+          }
+        ],
+        "interpretation": "전날 종가를 지키고 전날 고점을 회복하는지 봅니다."
+      },
+      {
+        "id": "KODEX",
+        "label": "KODEX 레버리지",
+        "unit": "원",
+        "asOf": "2026-11-23T15:30:00+09:00",
+        "asOfLabel": "장전 기준",
+        "points": [
+          {
+            "label": "시가",
+            "value": 47410.0
+          },
+          {
+            "label": "고가",
+            "value": 47785.0
+          },
+          {
+            "label": "저가",
+            "value": 43985.0
+          },
+          {
+            "label": "종가",
+            "value": 46585.0
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 46585
+          },
+          {
+            "label": "반등 기준",
+            "value": 47785
+          },
+          {
+            "label": "저항",
+            "value": 49925
+          }
+        ],
+        "interpretation": "47,785원을 회복한 뒤 지지하면 49,925원이 다음 저항입니다."
+      }
+    ]
+  },
+  "snapshotId": "20261124-0806",
+  "generatedAt": "2026-11-24T08:06:44.399313+09:00",
+  "asOf": "2026-11-24T08:06:44.174541+09:00",
+  "asOfDisplay": "2026-11-24T08:06:44.174541+09:00",
+  "marketState": "한국 장전",
+  "sourceLabel": "미국 2026-11-23 정규장 · 한국 2026-11-24 장전",
+  "latestArticle": {
+    "title": "젠슨 황 복귀에 미국 반도체 급등, 코스피 4,760선 주목",
+    "href": "market-2026-11-24.html"
+  }
+}

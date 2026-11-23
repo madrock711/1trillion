@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-11-23-081238-same-close",
+  "actualRef": "2026-11-23",
+  "recordedAt": "2026-11-24T08:06:20.774292+09:00",
+  "realizedScenario": "base",
+  "errorCodes": [],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "not_observed",
+      "observedAt": "2026-11-23T15:20:00+09:00",
+      "observedValue": 4715.98,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "bull-foreign",
+      "status": "unavailable",
+      "reason": "전일 네이버 장후 응답은 마감 집계다. 공개 1분봉에는 해당 관측 시각의 외국인·프로그램 수급이 없다."
+    },
+    {
+      "id": "bull-program",
+      "status": "unavailable",
+      "reason": "전일 네이버 장후 응답은 마감 집계다. 공개 1분봉에는 해당 관측 시각의 외국인·프로그램 수급이 없다."
+    },
+    {
+      "id": "base-floor",
+      "status": "observed",
+      "observedAt": "2026-11-23T15:20:00+09:00",
+      "observedValue": 4715.98,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "base-cap",
+      "status": "observed",
+      "observedAt": "2026-11-23T15:20:00+09:00",
+      "observedValue": 4715.98,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "bear-price",
+      "status": "not_observed",
+      "observedAt": "2026-11-23T15:20:00+09:00",
+      "observedValue": 4715.98,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "bear-foreign",
+      "status": "unavailable",
+      "reason": "전일 네이버 장후 응답은 마감 집계다. 공개 1분봉에는 해당 관측 시각의 외국인·프로그램 수급이 없다."
+    },
+    {
+      "id": "bear-program",
+      "status": "unavailable",
+      "reason": "전일 네이버 장후 응답은 마감 집계다. 공개 1분봉에는 해당 관측 시각의 외국인·프로그램 수급이 없다."
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "chip-selloff",
+      "status": "confirmed"
+    },
+    {
+      "id": "domestic-flow",
+      "status": "partial"
+    }
+  ],
+  "hypothesisTests": []
+}
