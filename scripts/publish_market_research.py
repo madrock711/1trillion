@@ -18,7 +18,7 @@ import urllib.request
 from collect_market_evidence import collect, sources, TZ
 from market_news_sentiment_chart import (
     news_sentiment_figure,
-    news_sentiment_points,
+    news_market_comparison,
     render_news_sentiment_chart,
     update_news_sentiment_panel,
 )
@@ -200,7 +200,7 @@ class Publisher:
     def research_indicators(self, cutoff):
         path = self.p.get('researchIndicatorsPath')
         if not path:
-            return [], [], []
+            return [], [], None
         collection = (ROOT / self.dir / 'collections').resolve()
         evidence = (ROOT / path).resolve()
         if evidence.name != FILENAME or evidence.parent.parent != collection:
@@ -208,9 +208,10 @@ class Publisher:
         try:
             data = load(evidence)
         except (FileNotFoundError, ValueError):
-            return [], [], []
-        rows = indicator_rows(data, dt.datetime.fromisoformat(cutoff))
-        return rows, [evidence.relative_to(ROOT).as_posix()], news_sentiment_points(data, rows)
+            return [], [], None
+        cutoff = dt.datetime.fromisoformat(cutoff)
+        rows = indicator_rows(data, cutoff)
+        return rows, [evidence.relative_to(ROOT).as_posix()], news_market_comparison(data, rows, cutoff)
 
     def artifact(self, path, value):
         if (ROOT/path).exists(): raise ValueError('기존 불변 산출물 덮어쓰기 금지: '+str(path))
@@ -261,15 +262,17 @@ class Publisher:
         markdown = '|항목|값|원천 기준 시각|\n|---|---:|---|\n'+'\n'.join('|'+ '|'.join(row)+'|' for row in rows)
         rp = f'reports/{date}.md'; ap = f'articles/market-{date}.html'
         if (ROOT/rp).exists() and not self.s.get('sealed'): raise ValueError('기존 일별 보고서 덮어쓰기 금지')
-        indicators, indicator_files, sentiment_points = self.research_indicators(cutoff)
+        indicators, indicator_files, comparison = self.research_indicators(cutoff)
         indicator_html, indicator_markdown = render_indicator_block(indicators)
         sentiment_chart, sentiment_figure = None, ''
-        if sentiment_points:
-            sentiment_chart = f'charts/korea_news_sentiment_{date}.png'
-            self.artifact(sentiment_chart, render_news_sentiment_chart(sentiment_points))
-            sentiment_figure = news_sentiment_figure(sentiment_chart, sentiment_points)
+        if comparison and comparison['latest']['kospi'] == (
+            dt.date.fromisoformat(p['previousSessionDate']), num(prev['closePrice'])
+        ):
+            sentiment_chart = f'charts/korea_news_sentiment_markets_{date}.png'
+            self.artifact(sentiment_chart, render_news_sentiment_chart(comparison))
+            sentiment_figure = news_sentiment_figure(sentiment_chart, comparison)
             indicator_html += sentiment_figure + '\n'
-            indicator_markdown += f'\n![한국은행 뉴스심리지수 일별 추이](../{sentiment_chart})\n'
+            indicator_markdown += f'\n![뉴스심리·나스닥 종합·코스피 비교와 시차별 상관](../{sentiment_chart})\n'
             indicator_files.append(sentiment_chart)
         report = read(p['reportTemplate']).replace('{{issuedAt}}',issued).replace('{{cutoff}}',cutoff).replace('{{marketLabel}}',label).replace('{{fastTable}}',markdown)
         if indicators:

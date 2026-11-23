@@ -3,6 +3,7 @@ import importlib.util
 import io
 import json
 from pathlib import Path
+import random
 import sys
 import unittest
 from unittest.mock import Mock, patch
@@ -13,6 +14,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'scripts'))
 spec=importlib.util.spec_from_file_location('publication',ROOT/'scripts/publish_market_research.py')
 module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+from market_research_indicators import MARKET_INDEXES, market_history_url
 
 
 class PublicationTests(unittest.TestCase):
@@ -37,24 +39,62 @@ class PublicationTests(unittest.TestCase):
             },
         }
         with patch.object(module, 'load', return_value=evidence):
-            rows, files, points = publisher.research_indicators(cutoff)
+            rows, files, comparison = publisher.research_indicators(cutoff)
         self.assertEqual(['99.09'], [row['value'] for row in rows])
         self.assertEqual([path.as_posix()], files)
-        self.assertEqual([(dt.date(2026, 11, 14), 97.75), (dt.date(2026, 11, 15), 99.09)], points)
-        with Image.open(io.BytesIO(module.render_news_sentiment_chart(points))) as chart:
-            self.assertEqual('PNG', chart.format)
-            chart.verify()
-        chart_path = 'charts/korea_news_sentiment_2026-11-22.png'
-        figure = module.news_sentiment_figure(chart_path, points)
-        panel = '<!-- market-news-sentiment:start -->\n<!-- market-news-sentiment:end -->'
-        rendered = module.update_news_sentiment_panel(panel, figure)
-        self.assertIn(f'src="../{chart_path}"', rendered)
-        self.assertIn('2026.11.14~2026.11.15', rendered)
-        self.assertNotIn(chart_path, module.update_news_sentiment_panel(rendered, ''))
-        self.assertEqual([], module.news_sentiment_points(evidence, []))
+        self.assertIsNone(comparison)
         publisher.p['researchIndicatorsPath'] = str(path).replace('2026-11-22', '2026-11-21')
         with self.assertRaisesRegex(ValueError, '당일 수집 경로'):
             publisher.research_indicators(cutoff)
+
+    def test_news_market_plot_compares_same_weeks_and_labels_positive_lag(self):
+        initial = dt.date(2025, 10, 5)
+        week = dt.timedelta(days=7)
+        end = initial + 58 * week
+        rng = random.Random(44)
+        changes = [rng.uniform(-2, 2) for _ in range(58)]
+        sentiment = [100]
+        nasdaq = [10000]
+        kospi = [3000]
+        for i, change in enumerate(changes):
+            sentiment.append(sentiment[-1] + change)
+            nasdaq.append(nasdaq[-1] * (1 + (changes[i - 1] if i else 0) / 100))
+            kospi.append(kospi[-1] * (1 + change / 100))
+
+        def daily(levels):
+            return [{'period': (initial + i * week - dt.timedelta(days=6 - day)).isoformat(), 'value': value}
+                    for i, value in enumerate(levels) for day in range(7)]
+
+        captured = (end + dt.timedelta(days=1)).isoformat() + 'T08:03:00+09:00'
+        evidence = {
+            'nsi': {'seriesId': 'NECOS-523U001-D-A001', 'period': end.isoformat(),
+                    'value': sentiment[-1], 'observations': daily(sentiment)},
+            'marketHistory': {
+                key: {'status': 'verified', 'sourceUrl': market_history_url(key), 'symbol': MARKET_INDEXES[key][0],
+                      'rawHash': 'b' * 64, 'fetchedAt': captured,
+                      'observations': [row for row in daily(levels)
+                                       if dt.date.fromisoformat(row['period']).weekday() < 5]}
+                for key, levels in [('nasdaq', nasdaq), ('kospi', kospi)]
+            }
+        }
+        rows = [{'source': 'https://snapshot.bok.or.kr/dashboard/C8'}]
+        cutoff = dt.datetime.fromisoformat(captured)
+        comparison = module.news_market_comparison(evidence, rows, cutoff)
+        self.assertAlmostEqual(1, comparison['correlations']['nasdaq'][+1])
+        self.assertAlmostEqual(1, comparison['correlations']['kospi'][0])
+        self.assertEqual(50, len(comparison['weeks']))
+        self.assertEqual([100, 100, 100], [round(points[0][1], 2) for points in comparison['lines'].values()])
+        self.assertIsNone(module.news_market_comparison(evidence, [], cutoff))
+        with Image.open(io.BytesIO(module.render_news_sentiment_chart(comparison))) as chart:
+            self.assertEqual('PNG', chart.format)
+            chart.verify()
+        chart_path = 'charts/korea_news_sentiment_markets_2026-11-22.png'
+        figure = module.news_sentiment_figure(chart_path, comparison)
+        panel = '<!-- market-news-sentiment:start -->\n<!-- market-news-sentiment:end -->'
+        rendered = module.update_news_sentiment_panel(panel, figure)
+        self.assertIn(f'src="../{chart_path}"', rendered)
+        self.assertIn('공통 50주', rendered)
+        self.assertNotIn(chart_path, module.update_news_sentiment_panel(rendered, ''))
 
     def test_dashboard_copy_does_not_rewrite_historical_article(self):
         historical='<article>AMD yesterday</article>'

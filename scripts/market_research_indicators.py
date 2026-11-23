@@ -21,6 +21,8 @@ BOK_META = "https://snapshot.bok.or.kr/api/chart/getChartInfo?chart_ids=956"
 BOK_EXPORT = "https://snapshot.bok.or.kr/api/chart/exportChart?chart_id=956"
 BOK_SERIES = "NECOS-523U001-D-A001"
 FILENAME = "research-indicators.json"
+MARKET_INDEXES = {"nasdaq": ("^IXIC", "America/New_York"), "kospi": ("^KS11", "Asia/Seoul")}
+MARKET_HISTORY_DAYS = 730
 NS = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
 MAX_RESPONSE = 2_000_000
 
@@ -99,6 +101,7 @@ def summarize_nsi(points, as_of):
         months.append(statistics.mean(rows) if all(value is not None for value in rows) else None)
     moving = statistics.mean(months[1:]) if None not in months[1:] else None
     prior = statistics.mean(months[:3]) if None not in months[:3] else None
+    history_start = min(month_before(end, 4), latest - dt.timedelta(days=MARKET_HISTORY_DAYS))
     return {
         "period": latest.isoformat(),
         "value": points[latest],
@@ -109,7 +112,7 @@ def summarize_nsi(points, as_of):
         "observations": [
             {"period": day.isoformat(), "value": value}
             for day, value in sorted(points.items())
-            if day >= month_before(end, 4)
+            if day >= history_start
         ],
     }
 
@@ -147,20 +150,58 @@ def fetch_leading(as_of):
     )
 
 
+def market_history_url(index):
+    symbol, _ = MARKET_INDEXES[index]
+    return (f"https://query1.finance.yahoo.com/v8/finance/chart/%5E{symbol[1:]}"
+            "?range=2y&interval=1d&includePrePost=false")
+
+
+def fetch_market_history(index):
+    symbol, zone = MARKET_INDEXES[index]
+    url = market_history_url(index)
+    request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    with urllib.request.urlopen(request, timeout=8) as response:
+        raw = response.read(MAX_RESPONSE + 1)
+    if len(raw) > MAX_RESPONSE:
+        raise ValueError("Unexpected market history response size")
+    result, = json.loads(raw)["chart"]["result"]
+    metadata = result["meta"]
+    if (metadata.get("symbol"), metadata.get("exchangeTimezoneName"), metadata.get("instrumentType")) != (symbol, zone, "INDEX"):
+        raise ValueError("Unexpected index symbol or exchange")
+    quotes = result["indicators"]["quote"][0]
+    observations = []
+    for stamp, close in zip(result["timestamp"], quotes["close"], strict=True):
+        if close is None:
+            continue
+        if isinstance(close, bool) or not math.isfinite(close) or close <= 0:
+            raise ValueError("Invalid closing level")
+        # These equity sessions open and close within the same UTC calendar day.
+        day = dt.datetime.fromtimestamp(stamp, dt.timezone.utc).date()
+        observations.append({"period": day.isoformat(), "value": round(close, 2)})
+    if not observations:
+        raise ValueError("No closing levels")
+    return dict(symbol=symbol, rawHash=hashlib.sha256(raw).hexdigest(), observations=observations)
+
+
 def collect_indicators(output):
     as_of = dt.datetime.now(TZ).date()
 
-    def capture(fetch, source):
+    def capture(fetch, source, *args):
         try:
-            record = dict(fetch(as_of), status="verified")
+            record = dict(fetch(*args), status="verified")
         except Exception as error:
             record = {"status": "unavailable", "error": f"{type(error).__name__}: {error}"}
         return dict(record, sourceUrl=source, fetchedAt=dt.datetime.now(TZ).isoformat())
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
-        nsi = pool.submit(capture, fetch_nsi, BOK_PAGE)
-        leading = pool.submit(capture, fetch_leading, SOURCE_URL)
-        data = {"schemaVersion": 1, "nsi": nsi.result(), "leading": leading.result()}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+        nsi = pool.submit(capture, fetch_nsi, BOK_PAGE, as_of)
+        leading = pool.submit(capture, fetch_leading, SOURCE_URL, as_of)
+        histories = {
+            index: pool.submit(capture, fetch_market_history, market_history_url(index), index)
+            for index in MARKET_INDEXES
+        }
+        data = {"schemaVersion": 1, "nsi": nsi.result(), "leading": leading.result(),
+                "marketHistory": {index: pending.result() for index, pending in histories.items()}}
     path = output / FILENAME
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return data

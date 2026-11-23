@@ -67,6 +67,7 @@ class CollectionTest(unittest.TestCase):
         today = dt.datetime.now(indicators.TZ).date()
         with tempfile.TemporaryDirectory(dir=base) as temp, \
                 patch.object(indicators, 'fetch_nsi', side_effect=urllib.error.URLError('timeout')), \
+                patch.object(indicators, 'fetch_market_history', side_effect=urllib.error.URLError('timeout')), \
                 patch.object(indicators, 'fetch_leading', return_value={
                     'period': indicators.month_before(today, 1).strftime('%Y-%m'),
                     'value': 104.1, 'change': -0.1, 'rawHash': 'a' * 64,
@@ -76,6 +77,7 @@ class CollectionTest(unittest.TestCase):
             evidence = json.loads((output/indicators.FILENAME).read_text(encoding='utf-8'))
         cutoff = dt.datetime.now(indicators.TZ)
         self.assertEqual('unavailable', evidence['nsi']['status'])
+        self.assertEqual('unavailable', evidence['marketHistory']['nasdaq']['status'])
         rows = indicators.indicator_rows(evidence, cutoff)
         self.assertEqual(['104.1'], [row['value'] for row in rows])
         self.assertIn('0.1포인트 하락', indicators.render_indicator_block(rows)[0])
