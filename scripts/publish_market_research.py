@@ -264,7 +264,7 @@ class Publisher:
         if (ROOT/rp).exists() and not self.s.get('sealed'): raise ValueError('기존 일별 보고서 덮어쓰기 금지')
         indicators, indicator_files, comparison = self.research_indicators(cutoff)
         indicator_html, indicator_markdown = render_indicator_block(indicators)
-        sentiment_chart, sentiment_figure = None, ''
+        sentiment_chart, sentiment_figure = None, None
         if comparison and comparison['latest']['kospi'] == (
             dt.date.fromisoformat(p['previousSessionDate']), num(prev['closePrice'])
         ):
