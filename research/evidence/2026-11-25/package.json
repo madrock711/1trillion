@@ -1,0 +1,205 @@
+{
+  "date": "2026-11-25",
+  "previousSessionDate": "2026-11-24",
+  "title": "미국 반도체주 반락, 코스피 5,000선 지킬까",
+  "summary": "전날 6.32% 오른 코스피가 미국 반도체 매도세를 마주했습니다. 코스피 4,880선과 외국인·프로그램 수급에서 전날 반등의 지속성을 확인합니다.",
+  "image": "assets/images/articles/market-2026-11-25-chip-pullback-1200x630.png",
+  "imageAlt": "밝은 실험실에서 금속 받침대 한쪽을 아래로 기울인 메모리 칩",
+  "bodyPath": "research/evidence/2026-11-25/article-body.html",
+  "reportTemplate": "research/evidence/2026-11-25/report-template.md",
+  "dashboardPath": "research/evidence/2026-11-25/dashboard-input.json",
+  "notesPath": "research/notes/2026-11-25.md",
+  "researchIndicatorsPath": "research/evidence/2026-11-25/collections/075932-464667/research-indicators.json",
+  "scenarios": {
+    "bull": {
+      "low": 5020,
+      "high": 5150,
+      "probability": 0.15
+    },
+    "base": {
+      "low": 4850,
+      "high": 5020,
+      "probability": 0.55
+    },
+    "bear": {
+      "low": 4690,
+      "high": 4850,
+      "probability": 0.3
+    }
+  },
+  "posture": {
+    "attack": 10,
+    "wait": 50,
+    "defense": 40
+  },
+  "pathEnvelope": {
+    "low": 4650,
+    "high": 5200,
+    "coverage": 0.9
+  },
+  "scenarioTriggers": {
+    "bull": {
+      "logic": "AND",
+      "observeBy": "2026-11-25T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bull-price",
+          "metricId": "kospi_price",
+          "operator": "gt",
+          "threshold": 5020,
+          "source": "Naver Finance KOSPI",
+          "description": "코스피 5,020 상회"
+        },
+        {
+          "id": "bull-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "외국인 현물 순매수"
+        },
+        {
+          "id": "bull-program",
+          "metricId": "program_total",
+          "operator": "gt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "프로그램 순매수"
+        }
+      ]
+    },
+    "base": {
+      "logic": "AND",
+      "observeBy": "2026-11-25T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "base-floor",
+          "metricId": "kospi_price",
+          "operator": "gte",
+          "threshold": 4850,
+          "source": "Naver Finance KOSPI",
+          "description": "코스피 4,850 이상"
+        },
+        {
+          "id": "base-cap",
+          "metricId": "kospi_price",
+          "operator": "lte",
+          "threshold": 5020,
+          "source": "Naver Finance KOSPI",
+          "description": "코스피 5,020 이하"
+        },
+        {
+          "id": "base-foreign",
+          "metricId": "foreign_cash",
+          "operator": "gte",
+          "threshold": -6000,
+          "source": "Naver Finance KOSPI",
+          "description": "외국인 현물 순매도 6,000억원 이내"
+        }
+      ]
+    },
+    "bear": {
+      "logic": "AND",
+      "observeBy": "2026-11-25T15:20:00+09:00",
+      "conditions": [
+        {
+          "id": "bear-price",
+          "metricId": "kospi_price",
+          "operator": "lt",
+          "threshold": 4850,
+          "source": "Naver Finance KOSPI",
+          "description": "코스피 4,850 하회"
+        },
+        {
+          "id": "bear-foreign",
+          "metricId": "foreign_cash",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "외국인 현물 순매도"
+        },
+        {
+          "id": "bear-program",
+          "metricId": "program_total",
+          "operator": "lt",
+          "threshold": 0,
+          "source": "Naver Finance KOSPI",
+          "description": "프로그램 순매도"
+        }
+      ]
+    }
+  },
+  "marketRegime": "risk_off",
+  "drivers": [
+    {
+      "id": "chip-pullback",
+      "rank": 1,
+      "claim": "서울 마감 뒤 미국 반도체주 급반락",
+      "validationMetric": "SOXX·삼성전자·SK하이닉스"
+    },
+    {
+      "id": "domestic-flow",
+      "rank": 2,
+      "claim": "외국인과 프로그램 수급에 전날 반등 유지 여부가 달림",
+      "validationMetric": "외국인 현물·프로그램·KOSPI"
+    },
+    {
+      "id": "dell-server",
+      "rank": 3,
+      "claim": "델 AI 서버 매출 전망 상향이 서버용 메모리 수요를 뒷받침",
+      "validationMetric": "델 서버 매출 전망·국내 반도체주"
+    }
+  ],
+  "stateText": "# KOSPI·KODEX 리서치 상태\n- 최신 2026-11-25. 전일 KOSPI 5,006.03(+6.32%), KOSDAQ 665.88(+4.79%), KODEX 52,935원(+13.63%).\n- 11/24 장후 외국인 +8,130억원·기관 +8,734억원·프로그램 +3,879억원. 서울 마감 뒤 SOXX −8.27%, NVDA −5.86%, MU −11.01%. 델 AI 서버 연간 전망 780억 달러로 상향.\n- 기본 4,850~5,020(55%), 강세 5,020 초과~5,150(15%), 약세 4,690~4,850 미만(30%). 대응 10/50/40.\n- 전일 종가 강세 범위. 15:20 가격 조건 확인, 당시 수급 미확인. 11/25 22:30 PCE·GDP, 11/26 한국은행 금통위와 미국 증시 휴장.\n- 취재 research/notes/2026-11-25.md, 전일 판정 research/evaluation/outcomes/2026-11-24-080644-same-close.json.\n- 금리차 charts/us_yield_spreads_long_term_2026-11-25.png · charts/us_yield_spreads_90d_2026-11-25.png.",
+  "charts": [
+    "charts/us_yield_spreads_long_term_2026-11-25.png",
+    "charts/us_yield_spreads_90d_2026-11-25.png"
+  ],
+  "files": [
+    "research/evidence/2026-11-25/article-body.html",
+    "research/evidence/2026-11-25/report-template.md",
+    "research/evidence/2026-11-25/dashboard-input.json",
+    "research/evidence/2026-11-25/package.json",
+    "research/notes/2026-11-25.md",
+    "research/evaluation/actuals/2026-11-24.json",
+    "research/evaluation/outcomes/2026-11-24-080644-same-close.json",
+    "assets/images/articles/market-2026-11-25-chip-pullback-1200x630.png",
+    "docs/현재작업중.md",
+    "charts/us_yield_spreads_long_term_2026-11-25.png",
+    "charts/us_yield_spreads_90d_2026-11-25.png",
+    "research/evidence/2026-11-25/collections/075932-464667/000660.json",
+    "research/evidence/2026-11-25/collections/075932-464667/005930.json",
+    "research/evidence/2026-11-25/collections/075932-464667/122630.json",
+    "research/evidence/2026-11-25/collections/075932-464667/collection-status.json",
+    "research/evidence/2026-11-25/collections/075932-464667/FX.json",
+    "research/evidence/2026-11-25/collections/075932-464667/KOSPI-basic.json",
+    "research/evidence/2026-11-25/collections/075932-464667/KOSPI-history.json",
+    "research/evidence/2026-11-25/collections/075932-464667/KOSPI-integration.json",
+    "research/evidence/2026-11-25/collections/075932-464667/KOSPI.json",
+    "research/evidence/2026-11-25/collections/075932-464667/NXT.json",
+    "research/evidence/2026-11-25/collections/075932-464667/research-indicators.json",
+    "research/evidence/2026-11-25/collections/075932-464667/yahoo-AMD.json",
+    "research/evidence/2026-11-25/collections/075932-464667/yahoo-AVGO.json",
+    "research/evidence/2026-11-25/collections/075932-464667/yahoo-BZF.json",
+    "research/evidence/2026-11-25/collections/075932-464667/yahoo-CLF.json",
+    "research/evidence/2026-11-25/collections/075932-464667/yahoo-ESF.json",
+    "research/evidence/2026-11-25/collections/075932-464667/yahoo-MU.json",
+    "research/evidence/2026-11-25/collections/075932-464667/yahoo-NQF.json",
+    "research/evidence/2026-11-25/collections/075932-464667/yahoo-NVDA.json",
+    "research/evidence/2026-11-25/collections/075932-464667/yahoo-QQQ.json",
+    "research/evidence/2026-11-25/collections/075932-464667/yahoo-SMH.json",
+    "research/evidence/2026-11-25/collections/075932-464667/yahoo-SOXX.json",
+    "research/evidence/2026-11-25/collections/075932-464667/yahoo-TQQQ.json",
+    "research/evidence/2026-11-25/extras/after-AMD.json",
+    "research/evidence/2026-11-25/extras/after-AVGO.json",
+    "research/evidence/2026-11-25/extras/after-DELL.json",
+    "research/evidence/2026-11-25/extras/after-MU.json",
+    "research/evidence/2026-11-25/extras/after-NVDA.json",
+    "research/evidence/2026-11-25/extras/after-QQQ.json",
+    "research/evidence/2026-11-25/extras/after-SMH.json",
+    "research/evidence/2026-11-25/extras/after-SOXX.json",
+    "research/evidence/2026-11-25/extras/after-TQQQ.json",
+    "research/evidence/2026-11-25/extras/kosdaq-basic.json",
+    "research/evidence/2026-11-25/extras/kosdaq-history.json"
+  ]
+}

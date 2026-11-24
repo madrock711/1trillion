@@ -1,0 +1,277 @@
+{
+  "schemaVersion": 1,
+  "headline": "미국 반도체주 반락, 코스피 5,000선 지킬까",
+  "summary": "전날 6.32% 오른 코스피가 미국 반도체 매도세를 마주했습니다. 코스피 4,880선과 외국인·프로그램 수급에서 전날 반등의 지속성을 확인합니다.",
+  "markets": [
+    {
+      "id": "KOSPI",
+      "label": "KOSPI",
+      "symbol": "K",
+      "flows": []
+    },
+    {
+      "id": "KOSDAQ",
+      "label": "KOSDAQ",
+      "symbol": "Q",
+      "open": 654.31,
+      "high": 670.95,
+      "low": 652.21,
+      "value": 665.88,
+      "changePercent": 4.79,
+      "previousClose": 635.45,
+      "asOf": "2026-11-24T15:30:00+09:00",
+      "asOfLabel": "2026-11-24T15:30:00+09:00",
+      "stateLabel": "전일 종가",
+      "flows": []
+    }
+  ],
+  "stance": {
+    "label": "전날 저가와 외국인 수급 주목",
+    "note": "4,880선이 지지되는지, 외국인과 비차익 프로그램 매수가 이어지는지 봅니다.",
+    "attack": 10,
+    "wait": 50,
+    "defense": 40
+  },
+  "checkpoints": [],
+  "changes": [
+    {
+      "label": "전일 코스피 종가",
+      "before": "4,708.54",
+      "after": "5,006.03",
+      "meaning": "반도체주와 외국인 매수에 6.32% 상승"
+    }
+  ],
+  "factors": [
+    {
+      "label": "미국 반도체",
+      "metric": "SOXX −8.27%",
+      "detail": "11/24 미국 정규장. 엔비디아 −5.86%, 마이크론 −11.01%.",
+      "tone": "negative"
+    },
+    {
+      "label": "델 AI 서버",
+      "metric": "연간 전망 780억 달러",
+      "detail": "11/24 미국 장후 발표. 기존 전망 740억 달러에서 상향.",
+      "tone": "positive"
+    },
+    {
+      "label": "미국 10년물",
+      "metric": "4.91%",
+      "detail": "11/24 미 재무부 기준. 전 거래일 대비 1bp 하락.",
+      "tone": "neutral"
+    }
+  ],
+  "flows": {
+    "program": {
+      "arbitrage": null,
+      "nonArbitrage": null,
+      "total": null,
+      "unit": "억원",
+      "asOfLabel": "개장 전"
+    },
+    "kospi200FuturesForeign": null,
+    "futuresUnit": "억원",
+    "futuresAsOfLabel": "개장 전"
+  },
+  "memory": [
+    {
+      "label": "DDR5 16Gb",
+      "value": "$60.833",
+      "change": "11/24 현물 +0.22%"
+    },
+    {
+      "label": "DDR4 16Gb",
+      "value": "$78.25",
+      "change": "11/24 현물 −0.32%"
+    },
+    {
+      "label": "낸드 계약가격",
+      "value": "−5~0%",
+      "change": "2027년 1분기 전분기 대비 전망"
+    }
+  ],
+  "events": [
+    {
+      "time": "11월 25일 22:30 KST",
+      "name": "미국 PCE 물가·GDP",
+      "path": "미 국채 금리와 달러"
+    },
+    {
+      "time": "11월 26일",
+      "name": "한국은행 금통위",
+      "path": "국내 금리와 원화"
+    },
+    {
+      "time": "11월 26일 미국 현지",
+      "name": "추수감사절 증시 휴장",
+      "path": "27일 오후 1시 ET 조기 종료"
+    }
+  ],
+  "strategyLevels": [
+    {
+      "asset": "KOSPI",
+      "support": "4,880.16",
+      "pivot": "5,006.03",
+      "resistance": "5,065.74"
+    },
+    {
+      "asset": "KODEX 레버리지",
+      "support": "51,585원",
+      "pivot": "52,935원",
+      "resistance": "54,360원"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "open",
+      "label": "09:30 외국인 현물과 비차익 프로그램"
+    },
+    {
+      "id": "memory",
+      "label": "10:30 반도체주 개장 저점과 상승 종목 수"
+    },
+    {
+      "id": "late",
+      "label": "14:00 이후 외국인 순매도 확대 여부"
+    }
+  ],
+  "sources": [
+    {
+      "label": "미국장 마감",
+      "href": "https://apnews.com/article/6cc4e580290aadf304ee316d6d46dd81"
+    },
+    {
+      "label": "SOXX 정규장",
+      "href": "https://finance.yahoo.com/quote/SOXX/history/"
+    },
+    {
+      "label": "델 실적",
+      "href": "https://investors.delltechnologies.com/news-events/press-releases/detail/1665/dell-technologies-delivers-third-quarter-fiscal-2027-financial-results"
+    },
+    {
+      "label": "코스피 일봉",
+      "href": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1"
+    },
+    {
+      "label": "코스피 수급",
+      "href": "https://m.stock.naver.com/api/index/KOSPI/integration"
+    },
+    {
+      "label": "DRAM 현물",
+      "href": "https://www.trendforce.com/price/dram/dram_spot"
+    },
+    {
+      "label": "낸드 전망",
+      "href": "https://www.trendforce.com/presscenter/news/20261119-13314.html"
+    },
+    {
+      "label": "미 국채",
+      "href": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value_month=202611"
+    },
+    {
+      "label": "미 소비자신뢰",
+      "href": "https://www.conference-board.org/topics/consumer-confidence/"
+    },
+    {
+      "label": "BEA 일정",
+      "href": "https://www.bea.gov/index.php/news/schedule/full"
+    },
+    {
+      "label": "한국은행 금통위",
+      "href": "https://www.bok.or.kr/portal/singl/crncyPolicyDrcMtg/listYear.do?menuNo=200755&mtgSe=A&syear=2026"
+    },
+    {
+      "label": "미국 증시 휴장",
+      "href": "https://www.nyse.com/trade/hours-calendars"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "bull",
+      "label": "강세 · 15%",
+      "range": "KOSPI 5,020 초과~5,150",
+      "summary": "외국인과 프로그램 매수가 겹치며 5,020을 넘어섭니다.",
+      "conditions": [
+        "코스피 5,020 상회",
+        "외국인 현물 순매수",
+        "프로그램 순매수"
+      ],
+      "invalidation": "5,020 이하로 돌아가거나 두 수급 중 하나가 순매수를 멈춥니다."
+    },
+    {
+      "id": "base",
+      "label": "기본 · 55%",
+      "range": "KOSPI 4,850~5,020",
+      "summary": "반도체주가 주춤하는 가운데 외국인 매도 규모가 제한됩니다.",
+      "conditions": [
+        "코스피 4,850 이상",
+        "코스피 5,020 이하",
+        "외국인 현물 순매도 6,000억원 이내"
+      ],
+      "invalidation": "범위를 벗어나거나 외국인 순매도가 6,000억원을 넘습니다."
+    },
+    {
+      "id": "bear",
+      "label": "약세 · 30%",
+      "range": "KOSPI 4,690~4,850 미만",
+      "summary": "외국인과 프로그램이 함께 팔며 전날 상승분이 줄어듭니다.",
+      "conditions": [
+        "코스피 4,850 하회",
+        "외국인 현물 순매도",
+        "프로그램 순매도"
+      ],
+      "invalidation": "4,850을 회복하거나 두 수급 중 하나가 순매도를 멈춥니다."
+    }
+  ],
+  "technical": {
+    "note": "11월 24일 정규장 가격을 바탕으로 잡은 오늘의 지지와 저항입니다.",
+    "instruments": [
+      {
+        "id": "KOSPI",
+        "label": "KOSPI",
+        "unit": "pt",
+        "asOf": "2026-11-24T15:30:00+09:00",
+        "asOfLabel": "전일 종가",
+        "points": [],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 4880.16
+          },
+          {
+            "label": "반등 기준",
+            "value": 5006.03
+          },
+          {
+            "label": "저항",
+            "value": 5065.74
+          }
+        ],
+        "interpretation": "전날 저가를 지키는지, 종가 5,006.03을 회복하는지 봅니다."
+      },
+      {
+        "id": "KODEX",
+        "label": "KODEX 레버리지",
+        "unit": "원",
+        "asOf": "2026-11-24T15:30:00+09:00",
+        "asOfLabel": "전일 종가",
+        "points": [],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 51585
+          },
+          {
+            "label": "반등 기준",
+            "value": 52935
+          },
+          {
+            "label": "저항",
+            "value": 54360
+          }
+        ],
+        "interpretation": "51,585원이 첫 지지입니다. 52,935원을 회복해 지지하면 54,360원이 다음 저항입니다."
+      }
+    ]
+  }
+}

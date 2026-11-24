@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-11-24",
+  "bizdate": "20261124",
+  "fetchedAt": "2026-11-25T07:59:32.793768+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 4880.16,
+    "high": 5065.74,
+    "low": 4880.16,
+    "close": 5006.03,
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1",
+    "rawHash": "aa2fbec881893d496745b1aa4ad89394b204a9557f2ac2c16f0de10f68d42d73",
+    "asOf": "2026-11-24T15:30:00+09:00"
+  },
+  "closeSnapshot": {
+    "kodex": {
+      "open": 52965.0,
+      "high": 54360.0,
+      "low": 51585.0,
+      "close": 52935.0,
+      "source": "https://m.stock.naver.com/api/stock/122630/price?pageSize=10&page=1",
+      "rawHash": "1cd03f226e50f73318709b895e8547cd2e131b308b9aaa2abb49f3f9adc7f758",
+      "asOf": "2026-11-24T15:30:00+09:00",
+      "volume": 26832640
+    },
+    "cashFlow": {
+      "foreign": 8130.0,
+      "institution": 8734.0,
+      "personal": -21350.0,
+      "unit": "억원",
+      "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+      "rawHash": "82bd748348825a9872cf174f0dec27f59d60b52a8d480d2129e3d933812f4305",
+      "asOf": "2026-11-24T20:15:00+09:00"
+    },
+    "program": {
+      "arbitrage": 519.0,
+      "nonArbitrage": 3360.0,
+      "total": 3879.0,
+      "unit": "억원",
+      "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+      "rawHash": "82bd748348825a9872cf174f0dec27f59d60b52a8d480d2129e3d933812f4305",
+      "asOf": "2026-11-24T20:15:00+09:00"
+    },
+    "breadth": {
+      "up": 799,
+      "down": 94,
+      "flat": 19,
+      "unit": "종목",
+      "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+      "rawHash": "82bd748348825a9872cf174f0dec27f59d60b52a8d480d2129e3d933812f4305",
+      "asOf": "2026-11-24T20:15:00+09:00"
+    }
+  },
+  "flowTrajectory": {
+    "contract": "flow_trajectory_v1",
+    "unit": "억원",
+    "anchors": {
+      "open30": {
+        "status": "missing",
+        "expectedAsOf": "2026-11-24T09:30:00+09:00",
+        "attemptedAt": "2026-11-25T07:59:32.793768+09:00",
+        "sourceStatus": "unavailable",
+        "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+        "rawHash": "82bd748348825a9872cf174f0dec27f59d60b52a8d480d2129e3d933812f4305",
+        "missingReason": "공개 1분봉에 해당 시점의 외국인·프로그램 수급이 없다. 네이버 장후 집계는 종가 수급이다."
+      },
+      "open60": {
+        "status": "missing",
+        "expectedAsOf": "2026-11-24T10:00:00+09:00",
+        "attemptedAt": "2026-11-25T07:59:32.793768+09:00",
+        "sourceStatus": "unavailable",
+        "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+        "rawHash": "82bd748348825a9872cf174f0dec27f59d60b52a8d480d2129e3d933812f4305",
+        "missingReason": "공개 1분봉에 해당 시점의 외국인·프로그램 수급이 없다. 네이버 장후 집계는 종가 수급이다."
+      },
+      "at1400": {
+        "status": "missing",
+        "expectedAsOf": "2026-11-24T14:00:00+09:00",
+        "attemptedAt": "2026-11-25T07:59:32.793768+09:00",
+        "sourceStatus": "unavailable",
+        "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+        "rawHash": "82bd748348825a9872cf174f0dec27f59d60b52a8d480d2129e3d933812f4305",
+        "missingReason": "공개 1분봉에 해당 시점의 외국인·프로그램 수급이 없다. 네이버 장후 집계는 종가 수급이다."
+      },
+      "close": {
+        "status": "available",
+        "asOf": "2026-11-24T15:30:00+09:00",
+        "foreignCash": 8130.0,
+        "programNonArbitrage": 3360.0,
+        "programTotal": 3879.0,
+        "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+        "rawHash": "82bd748348825a9872cf174f0dec27f59d60b52a8d480d2129e3d933812f4305"
+      }
+    }
+  }
+}
