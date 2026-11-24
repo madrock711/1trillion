@@ -15,6 +15,7 @@ sys.path.insert(0,str(ROOT/'scripts'))
 spec=importlib.util.spec_from_file_location('publication',ROOT/'scripts/publish_market_research.py')
 module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
 from market_research_indicators import MARKET_INDEXES, market_history_url
+from market_news_sentiment_chart import market_closes
 
 
 class PublicationTests(unittest.TestCase):
@@ -93,8 +94,33 @@ class PublicationTests(unittest.TestCase):
         panel = '<!-- market-news-sentiment:start -->\n<!-- market-news-sentiment:end -->'
         rendered = module.update_news_sentiment_panel(panel, figure)
         self.assertIn(f'src="../{chart_path}"', rendered)
-        self.assertIn('공통 50주', rendered)
+        self.assertIn('뉴스심리 기준 50주', rendered)
+        self.assertIn('−1주는 뉴스심리 기준 주보다 한 주 앞선 주가 수익률', rendered)
         self.assertNotIn(chart_path, module.update_news_sentiment_panel(rendered, ''))
+
+        session = end + dt.timedelta(days=1)
+        next_morning = dt.datetime.fromisoformat(f'{session + dt.timedelta(days=1)}T08:05:00+09:00')
+        for record in evidence['marketHistory'].values():
+            record['fetchedAt'] = next_morning.isoformat()
+        refreshed = module.news_market_comparison(
+            evidence, rows, next_morning, verified_kospi_close=(session, 3100)
+        )
+        self.assertEqual((session, 3100), refreshed['latest']['kospi'])
+        self.assertTrue(refreshed['kospi_close_supplemented'])
+        self.assertIn('코스피 전일 종가', module.news_sentiment_figure(chart_path, refreshed))
+
+    def test_today_daily_bar_requires_a_post_close_fetch(self):
+        session = dt.date(2026, 11, 24)
+        history = {
+            'status': 'verified', 'symbol': '^KS11', 'sourceUrl': market_history_url('kospi'),
+            'rawHash': 'b' * 64, 'fetchedAt': '2026-11-24T14:00:00+09:00',
+            'observations': [{'period': session.isoformat(), 'value': 5006.03}],
+        }
+        evidence = {'marketHistory': {'kospi': history}}
+        review = dt.datetime.fromisoformat('2026-11-24T20:16:00+09:00')
+        self.assertEqual({}, market_closes(evidence, 'kospi', review))
+        history['fetchedAt'] = '2026-11-24T20:15:00+09:00'
+        self.assertEqual({session: 5006.03}, market_closes(evidence, 'kospi', review))
 
     def test_dashboard_copy_does_not_rewrite_historical_article(self):
         historical='<article>AMD yesterday</article>'

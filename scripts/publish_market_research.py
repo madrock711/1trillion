@@ -197,7 +197,7 @@ class Publisher:
         self.stage('finalQuery', path=self.s['quoteDir'], cutoff=self.s['cutoff'])
         return ev
 
-    def research_indicators(self, cutoff):
+    def research_indicators(self, cutoff, *, verified_kospi_close=None):
         path = self.p.get('researchIndicatorsPath')
         if not path:
             return [], [], None
@@ -211,7 +211,10 @@ class Publisher:
             return [], [], None
         cutoff = dt.datetime.fromisoformat(cutoff)
         rows = indicator_rows(data, cutoff)
-        return rows, [evidence.relative_to(ROOT).as_posix()], news_market_comparison(data, rows, cutoff)
+        comparison = news_market_comparison(
+            data, rows, cutoff, verified_kospi_close=verified_kospi_close
+        )
+        return rows, [evidence.relative_to(ROOT).as_posix()], comparison
 
     def artifact(self, path, value):
         if (ROOT/path).exists(): raise ValueError('기존 불변 산출물 덮어쓰기 금지: '+str(path))
@@ -262,12 +265,13 @@ class Publisher:
         markdown = '|항목|값|원천 기준 시각|\n|---|---:|---|\n'+'\n'.join('|'+ '|'.join(row)+'|' for row in rows)
         rp = f'reports/{date}.md'; ap = f'articles/market-{date}.html'
         if (ROOT/rp).exists() and not self.s.get('sealed'): raise ValueError('기존 일별 보고서 덮어쓰기 금지')
-        indicators, indicator_files, comparison = self.research_indicators(cutoff)
+        previous_close = dt.date.fromisoformat(p['previousSessionDate']), num(prev['closePrice'])
+        indicators, indicator_files, comparison = self.research_indicators(
+            cutoff, verified_kospi_close=previous_close
+        )
         indicator_html, indicator_markdown = render_indicator_block(indicators)
         sentiment_chart, sentiment_figure = None, None
-        if comparison and comparison['latest']['kospi'] == (
-            dt.date.fromisoformat(p['previousSessionDate']), num(prev['closePrice'])
-        ):
+        if comparison and comparison['latest']['kospi'] == previous_close:
             sentiment_chart = f'charts/korea_news_sentiment_markets_{date}.png'
             self.artifact(sentiment_chart, render_news_sentiment_chart(comparison))
             sentiment_figure = news_sentiment_figure(sentiment_chart, comparison)

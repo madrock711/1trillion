@@ -14,7 +14,7 @@ from market_research_indicators import BOK_PAGE, BOK_SERIES, MARKET_INDEXES, TZ,
 from update_yield_spreads import load_font
 
 
-WIDTH, HEIGHT = 900, 836
+WIDTH, HEIGHT = 900, 856
 PANEL_START = '<!-- market-news-sentiment:start -->'
 PANEL_END = '<!-- market-news-sentiment:end -->'
 WEEK = dt.timedelta(days=7)
@@ -68,12 +68,11 @@ def market_closes(evidence, index, cutoff):
             return {}
     except (KeyError, TypeError, ValueError):
         return {}
-    # At 08:00 KST both prior trading sessions have closed. Also exclude a
-    # partially completed US session if this is run earlier in the morning.
+    # A daily bar is usable only if its session had closed when it was fetched.
     close_time = dt.time(21 if index == 'nasdaq' else 6, 0 if index == 'nasdaq' else 30, tzinfo=dt.timezone.utc)
     return {
         day: value for day, value in observations(record).items()
-        if day < cutoff.astimezone(TZ).date() and dt.datetime.combine(day, close_time) <= cutoff
+        if dt.datetime.combine(day, close_time) <= fetched
     }
 
 
@@ -90,9 +89,15 @@ def weekly_moves(points, *, market=False):
     }
 
 
-def news_market_comparison(evidence, indicator_rows, cutoff):
+def news_market_comparison(evidence, indicator_rows, cutoff, *, verified_kospi_close=None):
     sentiment = news_sentiment_points(evidence, indicator_rows)
     closes = {index: market_closes(evidence, index, cutoff) for index in MARKET_INDEXES}
+    supplemented = False
+    if verified_kospi_close is not None:
+        session, value = verified_kospi_close
+        if session < cutoff.astimezone(TZ).date() and math.isfinite(value) and value > 0:
+            supplemented = closes['kospi'].get(session) != value
+            closes['kospi'][session] = value
     if not sentiment or any(not values for values in closes.values()):
         return None
     end = max(sentiment)
@@ -137,6 +142,7 @@ def news_market_comparison(evidence, indicator_rows, cutoff):
         'latest': {index: (max(values), values[max(values)]) for index, values in levels.items()},
         'correlations': correlations, 'market_correlation': market_correlation,
         'weeks': anchors,
+        'kospi_close_supplemented': supplemented,
     }
 
 
@@ -187,6 +193,7 @@ def render_news_sentiment_chart(comparison):
 
     draw.line((left, 476, right, 476), fill=grid, width=2)
     draw.text((left, 492), '주간 변화의 시차별 상관계수', fill=ink, font=title)
+    draw.text((left, 536), '뉴스심리 변화가 속한 주를 0으로 둡니다.', fill=muted, font=font)
     correlations = comparison['correlations']
     maximum = max(abs(r) for series in correlations.values() for r in series.values())
     bound = max(.4, min(1, math.ceil(maximum * 5) / 5))
@@ -195,7 +202,7 @@ def render_news_sentiment_chart(comparison):
         return left + (lag + 4) * (right - left) / 8
 
     def y_r(value):
-        return 643 - value * 98 / bound
+        return 655 - value * 80 / bound
 
     for value in (-bound, -bound / 2, 0, bound / 2, bound):
         y = y_r(value)
@@ -205,9 +212,10 @@ def render_news_sentiment_chart(comparison):
     for index, values in correlations.items():
         draw_line(draw, [(x_lag(lag), y_r(r)) for lag, r in values.items()], STYLES[index][1], markers=True)
     for lag in LAGS:
-        draw.text((x_lag(lag), 753), f'{lag:+d}' if lag else '0', fill=muted, font=font, anchor='mt')
-    draw.text((left, 796), '주가가 먼저', fill=muted, font=font)
-    draw.text((right, 796), '뉴스심리가 먼저', fill=muted, font=font, anchor='ra')
+        label = (f'{lag:+d}' if lag else '0') + '주'
+        draw.text((x_lag(lag), 753), label, fill=muted, font=font, anchor='mt')
+    draw.text(((left + right) / 2, 808), '주가 수익률의 시차 (뉴스심리 기준)',
+              fill=ink, font=font, anchor='mt')
 
     output = io.BytesIO()
     image.save(output, format='PNG', optimize=True)
@@ -216,30 +224,39 @@ def render_news_sentiment_chart(comparison):
 
 def news_sentiment_figure(chart_path, comparison):
     nsi_date, nsi_value = comparison['latest']['nsi']
-    nasdaq_date, _ = comparison['latest']['nasdaq']
-    kospi_date, _ = comparison['latest']['kospi']
+    nasdaq_date, nasdaq_close = comparison['latest']['nasdaq']
+    kospi_date, kospi_close = comparison['latest']['kospi']
     weeks = comparison['weeks']
     correlations = comparison['correlations']
     nasdaq = correlations['nasdaq'][0]
     kospi = correlations['kospi'][0]
     both = comparison['market_correlation']
+    kospi_daily = (
+        ' · <a href="https://finance.naver.com/sise/sise_index_day.naver?code=KOSPI">코스피 전일 종가</a>'
+        if comparison['kospi_close_supplemented'] else ''
+    )
     return (
         '<figure class="market-news-sentiment-figure" style="margin: 1rem 0 0">\n'
         f'    <img src="../{html.escape(chart_path)}" width="{WIDTH}" height="{HEIGHT}" '
         'style="display: block; width: 100%; height: auto" loading="lazy" decoding="async" '
         'alt="뉴스심리·나스닥 종합·코스피의 일별 비교와 주간 변화의 시차별 상관계수 차트. '
-        '양의 시차는 뉴스심리 관측주가 먼저인 경우입니다.">\n'
+        '주가 수익률은 0주면 같은 주, 음수면 앞선 주, 양수면 뒤의 주를 뜻합니다.">\n'
         '    <figcaption>'
-        f'<p>{comparison["base"]:%Y.%m.%d}을 100으로 맞췄습니다. '
-        f'뉴스심리 마지막 관측은 {nsi_date:%m.%d} <strong>{nsi_value:.2f}</strong>이며 '
-        f'나스닥 종합은 {nasdaq_date:%m.%d}, 코스피는 {kospi_date:%m.%d} 정규장 종가까지 표시했습니다.</p>'
-        f'<p>동일 주 상관계수는 뉴스심리·나스닥 {nasdaq:+.2f}, 뉴스심리·코스피 {kospi:+.2f}, '
+        f'<p>세 지표는 {comparison["base"]:%Y.%m.%d} 기준으로 100에서 시작합니다. '
+        f'뉴스심리 최신 관측치는 {nsi_date:%m.%d} <strong>{nsi_value:.2f}</strong>입니다. '
+        f'최신 정규장 종가는 나스닥 종합 {nasdaq_date:%m.%d} {nasdaq_close:,.2f}, '
+        f'코스피 {kospi_date:%m.%d} {kospi_close:,.2f}입니다.</p>'
+        '<p>한 주는 월요일부터 일요일까지입니다. 뉴스심리는 일요일 지수에서 전주 일요일 지수를 뺀 값, '
+        '주가는 그 주 마지막 거래일 종가의 전주 대비 수익률을 씁니다. '
+        '−1주는 뉴스심리 기준 주보다 한 주 앞선 주가 수익률, 0주는 같은 주, +1주는 한 주 뒤 수익률과 비교합니다.</p>'
+        f'<p>같은 주의 피어슨 상관계수는 뉴스심리·나스닥 {nasdaq:+.2f}, 뉴스심리·코스피 {kospi:+.2f}, '
         f'나스닥·코스피 {both:+.2f}입니다. {weeks[0]:%Y.%m.%d}~{weeks[-1]:%Y.%m.%d} '
-        f'공통 {len(weeks)}주에서 뉴스심리의 전주 대비 변화와 각 지수의 주간 수익률을 비교했습니다. '
-        '시차는 뉴스심리 관측주 기준이며 공표 시각에 따른 예측력은 별도 검증이 필요합니다.</p>'
+        f'뉴스심리 기준 {len(weeks)}주를 비교했습니다. 시차별로 같은 표본을 쓰기 위해 '
+        '앞뒤 4주 주가 자료가 모두 있는 기준 주를 골랐습니다. 시차는 뉴스심리 관측 주를 기준으로 계산했습니다.</p>'
         f'<p><a href="{BOK_PAGE}">한국은행</a> · '
         '<a href="https://finance.yahoo.com/quote/%5EIXIC/history/">나스닥 종합 종가</a> · '
-        '<a href="https://finance.yahoo.com/quote/%5EKS11/history/">코스피 종가</a></p></figcaption>\n'
+        '<a href="https://finance.yahoo.com/quote/%5EKS11/history/">코스피 종가</a>'
+        f'{kospi_daily}</p></figcaption>\n'
         '</figure>'
     )
 
