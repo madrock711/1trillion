@@ -1,4 +1,4 @@
-"""Render the daily market comparison and weekly news-sentiment cross-correlations."""
+"""Render daily levels and aligned weekly changes and correlations."""
 
 import datetime as dt
 import html
@@ -14,16 +14,21 @@ from market_research_indicators import BOK_PAGE, BOK_SERIES, MARKET_INDEXES, TZ,
 from update_yield_spreads import load_font
 
 
-WIDTH, HEIGHT = 900, 856
+WIDTH, HEIGHT = 900, 1322
 PANEL_START = '<!-- market-news-sentiment:start -->'
 PANEL_END = '<!-- market-news-sentiment:end -->'
 WEEK = dt.timedelta(days=7)
-LAGS = range(-4, 5)
+CORRELATION_WEEKS = 12
 STYLES = {
     'nsi': ('뉴스심리', '#2458C6'),
     'nasdaq': ('나스닥 종합', '#B64C17'),
     'kospi': ('코스피', '#087E69'),
 }
+CORRELATION_PAIRS = (
+    ('nsi', 'nasdaq', '뉴스심리·나스닥', '#B64C17'),
+    ('nsi', 'kospi', '뉴스심리·코스피', '#087E69'),
+    ('nasdaq', 'kospi', '나스닥·코스피', '#6B50A0'),
+)
 
 
 def observations(record):
@@ -89,6 +94,24 @@ def weekly_moves(points, *, market=False):
     }
 
 
+def rolling_weekly_correlations(moves, weeks):
+    correlations = {(first, second): {} for first, second, _, _ in CORRELATION_PAIRS}
+    for end in weeks:
+        window = [end - WEEK * offset for offset in reversed(range(CORRELATION_WEEKS))]
+        dates = set(window)
+        if not all(dates <= values.keys() for values in moves.values()):
+            continue
+        for (first, second), values in correlations.items():
+            try:
+                values[end] = statistics.correlation(
+                    [moves[first][date] for date in window],
+                    [moves[second][date] for date in window],
+                )
+            except statistics.StatisticsError:
+                continue
+    return correlations
+
+
 def news_market_comparison(evidence, indicator_rows, cutoff, *, verified_kospi_close=None):
     sentiment = news_sentiment_points(evidence, indicator_rows)
     closes = {index: market_closes(evidence, index, cutoff) for index in MARKET_INDEXES}
@@ -114,34 +137,26 @@ def news_market_comparison(evidence, indicator_rows, cutoff, *, verified_kospi_c
         index: [(day, 100 * value / values[base]) for day, value in sorted(values.items()) if day >= base]
         for index, values in levels.items()
     }
-    nsi_moves = weekly_moves(sentiment)
-    # Only use complete weeks in the comparison period. Markets can extend
-    # beyond the last published sentiment observation in the daily plot.
+    # Share actual weekly dates. The daily plot may include a later partial week.
     last_week = end - dt.timedelta(days=(end.weekday() + 1) % 7)
-    prices = {index: weekly_moves({d: v for d, v in values.items() if d <= last_week}, market=True)
-              for index, values in closes.items()}
-    anchors = sorted(day for day in nsi_moves if all(
-        day + lag * WEEK in moves for moves in prices.values() for lag in LAGS
-    ))
-    if len(anchors) < 20:
-        return None
-    changes = [nsi_moves[day] for day in anchors]
-    try:
-        correlations = {
-            index: {lag: statistics.correlation(changes, [moves[day + lag * WEEK] for day in anchors])
-                    for lag in LAGS}
-            for index, moves in prices.items()
-        }
-        market_correlation = statistics.correlation(
-            [prices['nasdaq'][day] for day in anchors], [prices['kospi'][day] for day in anchors]
-        )
-    except statistics.StatisticsError:
+    moves = {'nsi': weekly_moves(sentiment)}
+    moves.update({
+        index: weekly_moves({day: value for day, value in values.items() if day <= last_week}, market=True)
+        for index, values in closes.items()
+    })
+    weekly_lines = {
+        index: {day: value for day, value in values.items() if base <= day <= last_week}
+        for index, values in moves.items()
+    }
+    weeks = sorted({day for values in weekly_lines.values() for day in values})
+    if len(weeks) < 2 or any(not values for values in weekly_lines.values()):
         return None
     return {
         'lines': lines, 'base': base, 'end': max(end, *(max(values) for values in closes.values())),
         'latest': {index: (max(values), values[max(values)]) for index, values in levels.items()},
-        'correlations': correlations, 'market_correlation': market_correlation,
-        'weeks': anchors,
+        'weekly_lines': weekly_lines,
+        'weekly_correlations': rolling_weekly_correlations(moves, weeks),
+        'weeks': weeks,
         'kospi_close_supplemented': supplemented,
     }
 
@@ -192,30 +207,54 @@ def render_news_sentiment_chart(comparison):
                   max_gap=(right - left) / days * (1.01 if index == 'nsi' else 7.01))
 
     draw.line((left, 476, right, 476), fill=grid, width=2)
-    draw.text((left, 492), '주간 변화의 시차별 상관계수', fill=ink, font=title)
-    draw.text((left, 536), '뉴스심리 변화가 속한 주를 0으로 둡니다.', fill=muted, font=font)
-    correlations = comparison['correlations']
-    maximum = max(abs(r) for series in correlations.values() for r in series.values())
-    bound = max(.4, min(1, math.ceil(maximum * 5) / 5))
+    draw.text((left, 492), '주간 변화와 상관계수', fill=ink, font=title)
+    draw.text((left, 535), '같은 세로선은 같은 주를 가리킵니다.', fill=muted, font=font)
+    weeks = comparison['weeks']
+    weekly = comparison['weekly_lines']
+    week_span = (weeks[-1] - weeks[0]).days
+    tick_intervals = min(4, len(weeks) - 1)
+    date_ticks = [weeks[round((len(weeks) - 1) * step / tick_intervals)]
+                  for step in range(tick_intervals + 1)]
 
-    def x_lag(lag):
-        return left + (lag + 4) * (right - left) / 8
+    def x_week(day):
+        return left + (day - weeks[0]).days * (right - left) / week_span
 
-    def y_r(value):
-        return 655 - value * 80 / bound
+    for week in date_ticks:
+        x = x_week(week)
+        draw.line((x, 627, x, 1237), fill=grid, width=1)
+        draw.text((x, 1255), f'{week:%m.%d}', fill=muted, font=font, anchor='mt')
 
-    for value in (-bound, -bound / 2, 0, bound / 2, bound):
-        y = y_r(value)
-        draw.line((left, y, right, y), fill=axis if value == 0 else grid, width=2 if value == 0 else 1)
-        draw.text((left - 12, y), f'{value:.1f}', fill=muted, font=font, anchor='rm')
-    draw.line((x_lag(0), y_r(-bound), x_lag(0), y_r(bound)), fill=axis, width=2)
-    for index, values in correlations.items():
-        draw_line(draw, [(x_lag(lag), y_r(r)) for lag, r in values.items()], STYLES[index][1], markers=True)
-    for lag in LAGS:
-        label = (f'{lag:+d}' if lag else '0') + '주'
-        draw.text((x_lag(lag), 753), label, fill=muted, font=font, anchor='mt')
-    draw.text(((left + right) / 2, 808), '주가 수익률의 시차 (뉴스심리 기준)',
-              fill=ink, font=font, anchor='mt')
+    def draw_week_panel(top, bottom, bound, series):
+        def y(value):
+            return (top + bottom) / 2 - value / bound * (bottom - top) / 2
+
+        for level in (-bound, 0, bound):
+            draw.line((left, y(level), right, y(level)), fill=axis if level == 0 else grid,
+                      width=2 if level == 0 else 1)
+            draw.text((left - 12, y(level)), f'{level:g}', fill=muted, font=font, anchor='rm')
+        for values, color in series:
+            points = [(x_week(day), y(value)) for day, value in sorted(values.items())]
+            draw_line(draw, points, color, max_gap=(right - left) * 7.01 / week_span, markers=True)
+
+    equity_bound = 5 * max(1, math.ceil(max(abs(value) for key in MARKET_INDEXES
+                                             for value in weekly[key].values()) / 5))
+    sentiment_bound = 5 * max(1, math.ceil(max(abs(value) for value in weekly['nsi'].values()) / 5))
+    for (index, (name, color)), top in zip(STYLES.items(), (627, 777, 927)):
+        is_sentiment = index == 'nsi'
+        unit = 'p' if is_sentiment else '%'
+        draw.text((left + 8, top - 31), f'{name} ({unit})', fill=color, font=strong, anchor='lm')
+        draw_week_panel(top, top + 102, sentiment_bound if is_sentiment else equity_bound,
+                        [(weekly[index], color)])
+
+    draw.text((left + 8, 1074), f'최근 {CORRELATION_WEEKS}주 상관계수', fill=ink, font=strong, anchor='lm')
+    legend_font = load_font(22)
+    for x, (_, _, label, color) in zip((left, 339, 597), CORRELATION_PAIRS):
+        draw.line((x + 8, 1113, x + 32, 1113), fill=color, width=4)
+        draw.text((x + 41, 1113), label, fill=ink, font=legend_font, anchor='lm')
+    correlations = comparison['weekly_correlations']
+    draw_week_panel(1138, 1237, 1, [(correlations[first, second], color)
+                                  for first, second, _, color in CORRELATION_PAIRS])
+    draw.text(((left + right) / 2, 1290), '각 주의 일요일 날짜', fill=ink, font=font, anchor='mt')
 
     output = io.BytesIO()
     image.save(output, format='PNG', optimize=True)
@@ -227,10 +266,21 @@ def news_sentiment_figure(chart_path, comparison):
     nasdaq_date, nasdaq_close = comparison['latest']['nasdaq']
     kospi_date, kospi_close = comparison['latest']['kospi']
     weeks = comparison['weeks']
-    correlations = comparison['correlations']
-    nasdaq = correlations['nasdaq'][0]
-    kospi = correlations['kospi'][0]
-    both = comparison['market_correlation']
+    weekly = comparison['weekly_lines']
+    correlations = comparison['weekly_correlations']
+    columns = [(weekly[index], unit) for index, unit in (('nsi', 'p'), ('nasdaq', '%'), ('kospi', '%'))]
+    columns.extend((correlations[first, second], '') for first, second, _, _ in CORRELATION_PAIRS)
+    headings = ('주 종료일', '뉴스심리 변화', '나스닥 수익률', '코스피 수익률',
+                *(label for _, _, label, _ in CORRELATION_PAIRS))
+    table_head = ''.join(f'<th scope="col">{label}</th>' for label in headings)
+    table_rows = []
+    for week in reversed(weeks):
+        cells = [
+            f'{values[week]:+.2f}{unit}' if week in values else '—'
+            for values, unit in columns
+        ]
+        table_rows.append(f'<tr><th scope="row">{week:%Y.%m.%d}</th>'
+                          + ''.join(f'<td>{cell}</td>' for cell in cells) + '</tr>')
     kospi_daily = (
         ' · <a href="https://finance.naver.com/sise/sise_index_day.naver?code=KOSPI">코스피 전일 종가</a>'
         if comparison['kospi_close_supplemented'] else ''
@@ -239,25 +289,26 @@ def news_sentiment_figure(chart_path, comparison):
         '<figure class="market-news-sentiment-figure" style="margin: 1rem 0 0">\n'
         f'    <img src="../{html.escape(chart_path)}" width="{WIDTH}" height="{HEIGHT}" '
         'style="display: block; width: 100%; height: auto" loading="lazy" decoding="async" '
-        'alt="뉴스심리·나스닥 종합·코스피의 일별 비교와 주간 변화의 시차별 상관계수 차트. '
-        '주가 수익률은 0주면 같은 주, 음수면 앞선 주, 양수면 뒤의 주를 뜻합니다.">\n'
+        'alt="뉴스심리·나스닥 종합·코스피의 일별 추이와 실제 날짜에 맞춘 주간 변화 및 상관계수.">\n'
         '    <figcaption>'
         f'<p>세 지표는 {comparison["base"]:%Y.%m.%d} 기준으로 100에서 시작합니다. '
         f'뉴스심리 최신 관측치는 {nsi_date:%m.%d} <strong>{nsi_value:.2f}</strong>입니다. '
         f'최신 정규장 종가는 나스닥 종합 {nasdaq_date:%m.%d} {nasdaq_close:,.2f}, '
         f'코스피 {kospi_date:%m.%d} {kospi_close:,.2f}입니다.</p>'
         '<p>한 주는 월요일부터 일요일까지입니다. 뉴스심리는 일요일 지수에서 전주 일요일 지수를 뺀 값, '
-        '주가는 그 주 마지막 거래일 종가의 전주 대비 수익률을 씁니다. '
-        '−1주는 뉴스심리 기준 주보다 한 주 앞선 주가 수익률, 0주는 같은 주, +1주는 한 주 뒤 수익률과 비교합니다.</p>'
-        f'<p>같은 주의 피어슨 상관계수는 뉴스심리·나스닥 {nasdaq:+.2f}, 뉴스심리·코스피 {kospi:+.2f}, '
-        f'나스닥·코스피 {both:+.2f}입니다. {weeks[0]:%Y.%m.%d}~{weeks[-1]:%Y.%m.%d} '
-        f'뉴스심리 기준 {len(weeks)}주를 비교했습니다. 시차별로 같은 표본을 쓰기 위해 '
-        '앞뒤 4주 주가 자료가 모두 있는 기준 주를 골랐습니다. 시차는 뉴스심리 관측 주를 기준으로 계산했습니다.</p>'
+        '주가는 그 주 마지막 거래일 종가의 전주 대비 수익률을 씁니다.</p>'
+        f'<p>각 날짜의 피어슨 상관계수는 그 주까지의 최근 {CORRELATION_WEEKS}주를 같은 주끼리 '
+        f'짝지어 계산했습니다. 아래 표의 한 행에서 세 지표의 주간 변화와 세 쌍의 상관계수를 함께 읽을 수 있습니다.</p>'
         f'<p><a href="{BOK_PAGE}">한국은행</a> · '
         '<a href="https://finance.yahoo.com/quote/%5EIXIC/history/">나스닥 종합 종가</a> · '
         '<a href="https://finance.yahoo.com/quote/%5EKS11/history/">코스피 종가</a>'
         f'{kospi_daily}</p></figcaption>\n'
-        '</figure>'
+        '</figure>\n'
+        '<details open style="margin-top: 1rem"><summary>날짜별 주간 변화와 상관계수</summary>'
+        '<div class="article-table-wrap" role="region" aria-label="날짜별 주간 변화와 상관계수" '
+        'tabindex="0" style="overflow-x: auto">'
+        f'<table class="article-data-table"><thead><tr>{table_head}</tr></thead>'
+        f'<tbody>{"".join(table_rows)}</tbody></table></div></details>'
     )
 
 

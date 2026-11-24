@@ -15,7 +15,7 @@ sys.path.insert(0,str(ROOT/'scripts'))
 spec=importlib.util.spec_from_file_location('publication',ROOT/'scripts/publish_market_research.py')
 module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
 from market_research_indicators import MARKET_INDEXES, market_history_url
-from market_news_sentiment_chart import market_closes
+from market_news_sentiment_chart import CORRELATION_WEEKS, market_closes, rolling_weekly_correlations
 
 
 class PublicationTests(unittest.TestCase):
@@ -48,7 +48,7 @@ class PublicationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, '당일 수집 경로'):
             publisher.research_indicators(cutoff)
 
-    def test_news_market_plot_compares_same_weeks_and_labels_positive_lag(self):
+    def test_news_market_plot_aligns_weekly_changes_and_correlations(self):
         initial = dt.date(2025, 10, 5)
         week = dt.timedelta(days=7)
         end = initial + 58 * week
@@ -81,9 +81,11 @@ class PublicationTests(unittest.TestCase):
         rows = [{'source': 'https://snapshot.bok.or.kr/dashboard/C8'}]
         cutoff = dt.datetime.fromisoformat(captured)
         comparison = module.news_market_comparison(evidence, rows, cutoff)
-        self.assertAlmostEqual(1, comparison['correlations']['nasdaq'][+1])
-        self.assertAlmostEqual(1, comparison['correlations']['kospi'][0])
-        self.assertEqual(50, len(comparison['weeks']))
+        self.assertEqual(end, comparison['weeks'][-1])
+        self.assertAlmostEqual(changes[-1], comparison['weekly_lines']['nsi'][end])
+        self.assertAlmostEqual(changes[-2], comparison['weekly_lines']['nasdaq'][end])
+        self.assertAlmostEqual(changes[-1], comparison['weekly_lines']['kospi'][end])
+        self.assertAlmostEqual(1, comparison['weekly_correlations']['nsi', 'kospi'][end])
         self.assertEqual([100, 100, 100], [round(points[0][1], 2) for points in comparison['lines'].values()])
         self.assertIsNone(module.news_market_comparison(evidence, [], cutoff))
         with Image.open(io.BytesIO(module.render_news_sentiment_chart(comparison))) as chart:
@@ -94,8 +96,10 @@ class PublicationTests(unittest.TestCase):
         panel = '<!-- market-news-sentiment:start -->\n<!-- market-news-sentiment:end -->'
         rendered = module.update_news_sentiment_panel(panel, figure)
         self.assertIn(f'src="../{chart_path}"', rendered)
-        self.assertIn('뉴스심리 기준 50주', rendered)
-        self.assertIn('−1주는 뉴스심리 기준 주보다 한 주 앞선 주가 수익률', rendered)
+        self.assertIn('최근 12주', rendered)
+        self.assertIn('날짜별 주간 변화와 상관계수', rendered)
+        self.assertIn(f'<th scope="row">{end:%Y.%m.%d}</th>', rendered)
+        self.assertNotIn('시차', rendered)
         self.assertNotIn(chart_path, module.update_news_sentiment_panel(rendered, ''))
 
         session = end + dt.timedelta(days=1)
@@ -106,8 +110,26 @@ class PublicationTests(unittest.TestCase):
             evidence, rows, next_morning, verified_kospi_close=(session, 3100)
         )
         self.assertEqual((session, 3100), refreshed['latest']['kospi'])
+        self.assertEqual(end, refreshed['weeks'][-1])
         self.assertTrue(refreshed['kospi_close_supplemented'])
         self.assertIn('코스피 전일 종가', module.news_sentiment_figure(chart_path, refreshed))
+
+    def test_rolling_correlation_uses_only_trailing_consecutive_weeks(self):
+        first = dt.date(2026, 8, 2)
+        weeks = [first + dt.timedelta(weeks=i) for i in range(CORRELATION_WEEKS + 2)]
+        levels = {
+            'nsi': {week: float(i) for i, week in enumerate(weeks)},
+            'nasdaq': {week: float(i) for i, week in enumerate(weeks)},
+            'kospi': {week: -float(i) for i, week in enumerate(weeks)},
+        }
+        levels['nasdaq'][weeks[-1]] = -1000
+        result = rolling_weekly_correlations(levels, weeks)
+        self.assertNotIn(weeks[10], result['nsi', 'nasdaq'])
+        self.assertAlmostEqual(1, result['nsi', 'nasdaq'][weeks[-2]])
+        self.assertLess(result['nsi', 'nasdaq'][weeks[-1]], 0)
+        self.assertAlmostEqual(-1, result['nsi', 'kospi'][weeks[-1]])
+        del levels['kospi'][weeks[4]]
+        self.assertEqual({}, rolling_weekly_correlations(levels, weeks)['nsi', 'nasdaq'])
 
     def test_today_daily_bar_requires_a_post_close_fetch(self):
         session = dt.date(2026, 11, 24)
