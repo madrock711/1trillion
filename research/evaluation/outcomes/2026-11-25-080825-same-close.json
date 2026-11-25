@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-11-25-080825-same-close",
+  "actualRef": "2026-11-25",
+  "recordedAt": "2026-11-26T08:11:29.839290+09:00",
+  "realizedScenario": "bear",
+  "errorCodes": [],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "not_observed",
+      "observedAt": "2026-11-25T15:20:00+09:00",
+      "observedValue": 4699.1,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "bull-foreign",
+      "status": "unavailable",
+      "reason": "15:20 외국인 현물 및 프로그램 집계 미확보. 15:40 마감 집계는 별도."
+    },
+    {
+      "id": "bull-program",
+      "status": "unavailable",
+      "reason": "15:20 외국인 현물 및 프로그램 집계 미확보. 15:40 마감 집계는 별도."
+    },
+    {
+      "id": "base-floor",
+      "status": "not_observed",
+      "observedAt": "2026-11-25T15:20:00+09:00",
+      "observedValue": 4699.1,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "base-cap",
+      "status": "observed",
+      "observedAt": "2026-11-25T15:20:00+09:00",
+      "observedValue": 4699.1,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "base-foreign",
+      "status": "unavailable",
+      "reason": "15:20 외국인 현물 및 프로그램 집계 미확보. 15:40 마감 집계는 별도."
+    },
+    {
+      "id": "bear-price",
+      "status": "observed",
+      "observedAt": "2026-11-25T15:20:00+09:00",
+      "observedValue": 4699.1,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "bear-foreign",
+      "status": "unavailable",
+      "reason": "15:20 외국인 현물 및 프로그램 집계 미확보. 15:40 마감 집계는 별도."
+    },
+    {
+      "id": "bear-program",
+      "status": "unavailable",
+      "reason": "15:20 외국인 현물 및 프로그램 집계 미확보. 15:40 마감 집계는 별도."
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "chip-pullback",
+      "status": "partial"
+    },
+    {
+      "id": "domestic-flow",
+      "status": "partial"
+    },
+    {
+      "id": "dell-server",
+      "status": "partial"
+    }
+  ],
+  "hypothesisTests": []
+}

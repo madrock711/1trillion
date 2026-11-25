@@ -1,0 +1,288 @@
+{
+  "url": "https://api.stock.naver.com/stock/DELL.K/basic",
+  "fetchedAt": "2026-11-26T08:06:59.709874+09:00",
+  "rawHash": "5baaa6ef0335267ac7b1b33e651b6d54c1a9982d0f21222f06346d96498e91a0",
+  "data": {
+    "stockEndType": "stock",
+    "reutersCode": "DELL.K",
+    "stockName": "델테크놀로지",
+    "stockNameEng": "Dell Technologies Inc",
+    "itemLogoUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/stock/StockDELL.K.svg",
+    "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/stock/StockDELL.K.png",
+    "symbolCode": "DELL",
+    "tradeStopType": {
+      "code": "1",
+      "text": "운영.Trading",
+      "name": "TRADING"
+    },
+    "stockExchangeType": {
+      "code": "NYS",
+      "zoneId": "EST5EDT",
+      "nationType": "USA",
+      "delayTime": 0,
+      "startTime": "0930",
+      "endTime": "1600",
+      "closePriceSendTime": "2031",
+      "nameKor": "뉴욕 거래소",
+      "nameEng": "New York Stock Exchange",
+      "nationCode": "USA",
+      "name": "NYSE",
+      "stockType": "worldstock",
+      "nationName": "미국"
+    },
+    "stockExchangeName": "NYSE",
+    "industryCodeType": {
+      "code": "57106010",
+      "industryGroupKor": "컴퓨터 하드웨어",
+      "name": "INDUSTRY57106010"
+    },
+    "delayTime": 0,
+    "delayTimeName": "실시간",
+    "compareToPreviousPrice": {
+      "code": "2",
+      "text": "상승",
+      "name": "RISING"
+    },
+    "closePrice": "297.06",
+    "compareToPreviousClosePrice": "1.78",
+    "fluctuationsRatio": "0.60",
+    "localTradedAt": "2026-11-25T16:00:00-05:00",
+    "marketStatus": "CLOSE",
+    "overMarketPriceInfo": {
+      "tradingSessionType": "AFTER_MARKET",
+      "overMarketStatus": "OPEN",
+      "overPrice": "293.65",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "compareToPreviousClosePrice": "-3.41",
+      "fluctuationsRatio": "-1.15",
+      "localTradedAt": "2026-11-25T18:06:54-05:00",
+      "tradeStopType": null,
+      "tradableStatus": null,
+      "tradableStatusCode": null,
+      "tradableStatusUpdatedAt": null,
+      "overPriceRaw": "293.65",
+      "fluctuationsRatioRaw": "-1.15",
+      "compareToPreviousClosePriceRaw": "-3.41"
+    },
+    "imageCharts": {
+      "candleDay": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/day/DELL.K_end.png",
+      "candleMonth": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/month/DELL.K_end.png",
+      "areaMonthThree": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/month3/DELL.K_end.png",
+      "transparent": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/DELL.K_transparent.png",
+      "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/DELL.K_end.png",
+      "day_up": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/DELL.K_end_up.png",
+      "candleWeek": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/week/DELL.K_end.png",
+      "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year3/DELL.K_end.png",
+      "areaYear": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year/DELL.K_end.png",
+      "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year10/DELL.K_end.png",
+      "day_up_tablet": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/DELL.K_end_up_tablet.png"
+    },
+    "imageChartUrlInfo": {
+      "line": {
+        "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/DELL.K_end.png",
+        "month3": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/month3/DELL.K_end.png",
+        "year": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year/DELL.K_end.png",
+        "year3": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year3/DELL.K_end.png",
+        "year5": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year5/DELL.K_end.png",
+        "year10": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year10/DELL.K_end.png"
+      },
+      "candle": {
+        "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/day/DELL.K_end.png",
+        "week": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/week/DELL.K_end.png",
+        "month": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/month/DELL.K_end.png"
+      },
+      "mini": {
+        "transparent": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/DELL.K_transparent.png",
+        "dayUp": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/DELL.K_end_up.png",
+        "dayUpTablet": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/DELL.K_end_up_tablet.png"
+      }
+    },
+    "scriptChartTypes": [
+      "candleMinuteFive",
+      "candleDay",
+      "candleWeek",
+      "candleMonth",
+      "day",
+      "areaMonthThree",
+      "areaYear",
+      "areaYearThree",
+      "areaYearTen"
+    ],
+    "currencyType": {
+      "code": "USD",
+      "text": "US dollar",
+      "name": "USD"
+    },
+    "countOfListedStock": 635812750,
+    "marketValueKrwRaw": "254130687535433",
+    "accumulatedTradingValueKrwRaw": "10026726547500",
+    "indexOrEtfToolTip": null,
+    "endUrl": "https://m.stock.naver.com/worldstock/stock/DELL.K",
+    "newPcUrl": "https://stock.naver.com/worldstock/stock/DELL.K",
+    "chartIqEndUrl": "https://m.stock.naver.com/fchart/foreign/stock/DELL.K",
+    "stockItemTotalInfos": [
+      {
+        "code": "basePrice",
+        "key": "전일",
+        "value": "295.28"
+      },
+      {
+        "code": "openPrice",
+        "key": "시가",
+        "value": "267.57",
+        "compareToPreviousPrice": {
+          "code": "5",
+          "text": "하락",
+          "name": "FALLING"
+        }
+      },
+      {
+        "code": "highPrice",
+        "key": "고가",
+        "value": "297.89",
+        "compareToPreviousPrice": {
+          "code": "2",
+          "text": "상승",
+          "name": "RISING"
+        }
+      },
+      {
+        "code": "lowPrice",
+        "key": "저가",
+        "value": "265.00",
+        "compareToPreviousPrice": {
+          "code": "5",
+          "text": "하락",
+          "name": "FALLING"
+        }
+      },
+      {
+        "code": "accumulatedTradingVolume",
+        "key": "거래량",
+        "value": "26,428,746"
+      },
+      {
+        "code": "accumulatedTradingValue",
+        "key": "대금",
+        "value": "74.5억 USD",
+        "valueDesc": "10조 267억원"
+      },
+      {
+        "code": "marketValue",
+        "key": "시총",
+        "value": "1,889억 USD",
+        "valueDesc": "254조 1,307억원"
+      },
+      {
+        "code": "industryGroupKor",
+        "key": "업종",
+        "value": "컴퓨터 하드웨어"
+      },
+      {
+        "code": "highPriceOf52Weeks",
+        "key": "52주 최고",
+        "keyDesc": "2026.09.18.",
+        "value": "595.51"
+      },
+      {
+        "code": "lowPriceOf52Weeks",
+        "key": "52주 최저",
+        "keyDesc": "2026.01.21.",
+        "value": "110.22"
+      },
+      {
+        "code": "per",
+        "key": "PER",
+        "keyDesc": "2026.07.",
+        "value": "16.30배"
+      },
+      {
+        "code": "eps",
+        "key": "EPS",
+        "keyDesc": "2026.07.",
+        "value": "18.22"
+      },
+      {
+        "code": "pbr",
+        "key": "PBR",
+        "keyDesc": "2026.07.",
+        "value": "-133.23배"
+      },
+      {
+        "code": "bps",
+        "key": "BPS",
+        "keyDesc": "2026.07.",
+        "value": "-2.23"
+      },
+      {
+        "code": "dividend",
+        "key": "주당배당금",
+        "keyDesc": "2026.10.",
+        "value": "2.52"
+      },
+      {
+        "code": "dividendYieldRatio",
+        "key": "배당수익률",
+        "keyDesc": "2026.10.",
+        "value": "0.85%"
+      },
+      {
+        "code": "dividendAt",
+        "key": "배당일",
+        "value": "2026.10.30."
+      },
+      {
+        "code": "exDividendAt",
+        "key": "배당락일",
+        "value": "2026.10.20."
+      },
+      {
+        "code": "faceValueDivisionRate",
+        "key": "액면변경",
+        "value": "N/A"
+      },
+      {
+        "code": "faceValue",
+        "key": "액면가",
+        "value": "N/A"
+      }
+    ],
+    "etfThemaInfos": null,
+    "isEtf": false,
+    "isEtfAmerica": false,
+    "isFinanceSummary": true,
+    "hasNews": true,
+    "researchs": [],
+    "nationType": "USA",
+    "nationName": "미국",
+    "newlyListed": false,
+    "stockCodeClassificationType": "ORD",
+    "stockEndUrl": "https://m.stock.naver.com/worldstock/stock/DELL.K",
+    "compareToPreviousClosePriceRaw": "1.78",
+    "closePriceRaw": "297.06",
+    "fluctuationsRatioRaw": "0.60",
+    "openPriceRaw": "267.57",
+    "highPriceRaw": "297.89",
+    "lowPriceRaw": "265.00",
+    "accumulatedTradingVolumeRaw": "26428746",
+    "accumulatedTradingValueRaw": "7452045000",
+    "isWtsOrderable": true,
+    "marketOperatingTimeInfo": {
+      "zoneId": "EST5EDT",
+      "zoneName": "미국(동부)",
+      "isDst": false,
+      "preMarketOpeningTime": "2026-11-25T04:00:00-05:00",
+      "preMarketClosingTime": "2026-11-25T09:30:00-05:00",
+      "regularMarketOpeningTime": "2026-11-25T09:30:00-05:00",
+      "regularMarketClosingTime": "2026-11-25T16:00:00-05:00",
+      "afterMarketOpeningTime": "2026-11-25T16:00:00-05:00",
+      "afterMarketClosingTime": "2026-11-25T20:00:00-05:00"
+    },
+    "marketValueFullRaw": "188874535515",
+    "exchangeOperatingTime": false
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-11-25",
+  "bizdate": "20261125",
+  "fetchedAt": "2026-11-26T08:11:29.839290+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 4809.0,
+    "high": 4823.36,
+    "low": 4672.55,
+    "close": 4697.51,
+    "source": "https://m.stock.naver.com/api/index/KOSPI/price?pageSize=50&page=1",
+    "rawHash": "0f090a76d7e0b66bcbd881e7f65f2b292fb040e251aa77080e999f9c85ac6a72",
+    "asOf": "2026-11-25T15:30:00+09:00"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "26일 아침의 통합 응답은 26일 장전 초기값이다. 25일 15:40 삼성증권 수급은 장중 앵커를 포함하지 않는다.",
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-11-25T15:30:00+09:00",
+    "fetchedAt": "2026-11-26T08:05:58.084199+09:00",
+    "missingReason": "26일 아침의 통합 응답은 26일 장전 초기값이다. 25일 15:40 삼성증권 수급은 장중 앵커를 포함하지 않는다.",
+    "rawHash": "14d35a33c7517709ba68f612f763267711a0da1cb6cb15aa5a94e9e6e967af53"
+  }
+}

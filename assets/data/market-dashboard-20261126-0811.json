@@ -1,0 +1,380 @@
+{
+  "schemaVersion": 1,
+  "headline": "미국 반도체주 낙폭 줄여 마감, 코스피는 금통위 앞두고 4,700선 시험",
+  "summary": "전날 6.16% 내린 코스피가 한국은행의 금리 결정을 앞뒀습니다. 반도체주가 전날 저점을 지키고 외국인 매도가 줄어드는지가 반등의 관건입니다.",
+  "markets": [
+    {
+      "id": "KOSPI",
+      "label": "KOSPI",
+      "symbol": "K",
+      "flows": [],
+      "value": 4697.51,
+      "changePercent": -6.16,
+      "previousClose": 5006.030000000001,
+      "open": 4809.0,
+      "high": 4823.36,
+      "low": 4672.55,
+      "asOf": "2026-11-25T15:30:00+09:00",
+      "asOfLabel": "2026-11-25T15:30:00+09:00",
+      "stateLabel": "전일 종가"
+    },
+    {
+      "id": "KOSDAQ",
+      "label": "KOSDAQ",
+      "symbol": "Q",
+      "open": 654.21,
+      "high": 658.67,
+      "low": 641.08,
+      "value": 650.64,
+      "changePercent": -2.29,
+      "previousClose": 665.88,
+      "asOf": "2026-11-25T15:30:00+09:00",
+      "asOfLabel": "전일 종가",
+      "stateLabel": "전일 종가",
+      "flows": []
+    }
+  ],
+  "stance": {
+    "label": "4,672.55 지지와 금통위 이후 원화 주목",
+    "note": "전날 저가를 지키고 외국인 매도 규모가 줄어드는지 봅니다.",
+    "attack": 20,
+    "wait": 55,
+    "defense": 25
+  },
+  "checkpoints": [
+    {
+      "label": "NXT",
+      "value": "유효 가격 없음",
+      "detail": "원천 시각·상태 검증 실패",
+      "tone": "neutral"
+    },
+    {
+      "label": "USD/KRW 하나은행 고시",
+      "value": "1,345.50원",
+      "detail": "2026-11-26T07:44:36+09:00",
+      "tone": "neutral"
+    },
+    {
+      "label": "NQF 최근 거래",
+      "value": "26,017.25",
+      "detail": "2026-11-26T08:01:42+09:00",
+      "tone": "neutral"
+    },
+    {
+      "label": "ESF 최근 거래",
+      "value": "7,187.50",
+      "detail": "2026-11-26T08:01:44+09:00",
+      "tone": "neutral"
+    },
+    {
+      "label": "BZF 최근 거래",
+      "value": "90.82",
+      "detail": "2026-11-26T06:59:56+09:00",
+      "tone": "neutral"
+    },
+    {
+      "label": "CLF 최근 거래",
+      "value": "84.07",
+      "detail": "2026-11-26T08:01:25+09:00",
+      "tone": "neutral"
+    },
+    {
+      "label": "한국은행 뉴스심리지수",
+      "value": "91.07",
+      "detail": "2026-11-22 관측 · 주간 공표 · 7일 전보다 8.02포인트 하락",
+      "tone": "neutral"
+    },
+    {
+      "label": "뉴스심리지수 3개월 평균",
+      "value": "100.76",
+      "detail": "2026-10까지 3개월 · 일별 지수의 월평균 사용 · 한 달 전 3개월 평균보다 1.51포인트 하락",
+      "tone": "neutral"
+    },
+    {
+      "label": "경기선행종합지수 순환변동치",
+      "value": "104.1",
+      "detail": "2026-09 기준 · 전월보다 0.1포인트 하락",
+      "tone": "neutral"
+    }
+  ],
+  "changes": [
+    {
+      "label": "코스피 전일 종가",
+      "before": "5,006.03",
+      "after": "4,697.51",
+      "meaning": "반도체 대형주 하락과 외국인 매도로 6.16% 하락"
+    }
+  ],
+  "factors": [
+    {
+      "label": "미국 반도체",
+      "metric": "SOXX −0.50%",
+      "detail": "장중 −8.12%에서 낙폭 축소. 마이크론 −4.53%.",
+      "tone": "negative"
+    },
+    {
+      "label": "한국은행 금통위",
+      "metric": "11월 26일",
+      "detail": "직전 기준금리 3.00%. 발표 뒤 원화와 외국인 수급 확인.",
+      "tone": "neutral"
+    },
+    {
+      "label": "미국 10년물",
+      "metric": "4.85%",
+      "detail": "11월 25일 미 재무부. 전 거래일 대비 6bp 하락.",
+      "tone": "neutral"
+    }
+  ],
+  "flows": {
+    "program": {
+      "arbitrage": null,
+      "nonArbitrage": null,
+      "total": null,
+      "unit": "억원",
+      "asOfLabel": "개장 전"
+    },
+    "kospi200FuturesForeign": -487,
+    "futuresUnit": "억원",
+    "futuresAsOfLabel": "11/25 15:40 집계"
+  },
+  "memory": [
+    {
+      "label": "DDR5 16Gb",
+      "value": "$60.767",
+      "change": "11/25 현물 −0.11%"
+    },
+    {
+      "label": "DDR4 16Gb",
+      "value": "$77.75",
+      "change": "11/25 현물 −0.64%"
+    },
+    {
+      "label": "낸드 계약가격",
+      "value": "내년 1분기 −5~0%",
+      "change": "트렌드포스 11/19 전망"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "open",
+      "label": "09:30 외국인 현물과 비차익 프로그램"
+    },
+    {
+      "id": "bok",
+      "label": "금통위 발표 뒤 원화와 반도체 두 종목"
+    },
+    {
+      "id": "late",
+      "label": "14:00 이후 외국인 매도 규모와 4,672.55 지지"
+    }
+  ],
+  "sources": [
+    {
+      "label": "미국장 마감",
+      "href": "https://apnews.com/article/94fdb0ecb060ec65c0b02879ce0d2d09"
+    },
+    {
+      "label": "SOXX 일봉",
+      "href": "https://finance.yahoo.com/quote/SOXX/history/"
+    },
+    {
+      "label": "미국 관세 제안",
+      "href": "https://www.ustr.gov/about/policy-offices/press-office/press-releases/2026/november/ustr-makes-determinations-and-proposes-actions-14-section-301-investigations-relating-structural"
+    },
+    {
+      "label": "한국은행 금통위",
+      "href": "https://www.bok.or.kr/portal/singl/crncyPolicyDrcMtg/listYear.do?menuNo=200755&mtgSe=A&syear=2026"
+    },
+    {
+      "label": "미국 PCE",
+      "href": "https://www.bea.gov/sites/default/files/2026-11/pi1026.pdf"
+    },
+    {
+      "label": "미국 GDP",
+      "href": "https://www.bea.gov/sites/default/files/2026-11/gdp3q26-2nd.pdf"
+    },
+    {
+      "label": "미 국채",
+      "href": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value_month=202611"
+    },
+    {
+      "label": "삼성증권 수급",
+      "href": "https://www.samsungpop.com/common.do?cmd=down&contentType=application%2Fpdf&fileName=4020%2F2026112515475228K_02_01.pdf&inlineYn=Y&saveKey=research.pdf"
+    },
+    {
+      "label": "D램 현물",
+      "href": "https://www.trendforce.com/price/dram/dram_spot"
+    },
+    {
+      "label": "낸드 전망",
+      "href": "https://www.trendforce.com/presscenter/news/20261119-13314.html"
+    },
+    {
+      "label": "한국은행 뉴스심리지수",
+      "href": "https://snapshot.bok.or.kr/dashboard/C8"
+    },
+    {
+      "label": "경기선행종합지수 순환변동치",
+      "href": "https://kosis.kr/visual/economyBoard/economyJipyo.do?lang=ko&listId=130&unitySrvcId=641"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "bull",
+      "label": "강세 · 25%",
+      "range": "KOSPI 4,810 초과~4,970",
+      "summary": "외국인과 프로그램이 함께 순매수하면서 4,810을 넘어섭니다.",
+      "conditions": [
+        "코스피 4,810 상회",
+        "외국인 현물 순매수",
+        "프로그램 순매수"
+      ],
+      "invalidation": "4,810 이하로 내려가거나 한쪽이 순매수를 멈춥니다."
+    },
+    {
+      "id": "base",
+      "label": "기본 · 55%",
+      "range": "KOSPI 4,600~4,810",
+      "summary": "전날 종가 전후에서 외국인 매도가 잦아듭니다.",
+      "conditions": [
+        "코스피 4,600 이상",
+        "코스피 4,810 이하",
+        "외국인 현물 순매도 8,000억원 이내"
+      ],
+      "invalidation": "범위를 벗어나거나 외국인 순매도가 8,000억원을 넘습니다."
+    },
+    {
+      "id": "bear",
+      "label": "약세 · 20%",
+      "range": "KOSPI 4,440~4,600 미만",
+      "summary": "외국인과 프로그램 매도가 겹쳐 4,600을 밑돕니다.",
+      "conditions": [
+        "코스피 4,600 하회",
+        "외국인 현물 순매도",
+        "프로그램 순매도"
+      ],
+      "invalidation": "4,600을 되찾거나 한쪽이 순매도를 멈춥니다."
+    }
+  ],
+  "technical": {
+    "note": "11월 25일 정규장 가격으로 잡은 지지와 저항입니다.",
+    "instruments": [
+      {
+        "id": "KOSPI",
+        "label": "KOSPI",
+        "unit": "pt",
+        "asOf": "2026-11-25T15:30:00+09:00",
+        "asOfLabel": "장전 기준",
+        "points": [
+          {
+            "label": "시가",
+            "value": 4809.0
+          },
+          {
+            "label": "고가",
+            "value": 4823.36
+          },
+          {
+            "label": "저가",
+            "value": 4672.55
+          },
+          {
+            "label": "종가",
+            "value": 4697.51
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 4672.55
+          },
+          {
+            "label": "반등 기준",
+            "value": 4697.51
+          },
+          {
+            "label": "저항",
+            "value": 4823.36
+          }
+        ],
+        "interpretation": "전날 저가 4,672.55를 지키고 종가 4,697.51을 되찾는지 봅니다."
+      },
+      {
+        "id": "KODEX",
+        "label": "KODEX 레버리지",
+        "unit": "원",
+        "asOf": "2026-11-25T15:30:00+09:00",
+        "asOfLabel": "장전 기준",
+        "points": [
+          {
+            "label": "시가",
+            "value": 48350.0
+          },
+          {
+            "label": "고가",
+            "value": 48665.0
+          },
+          {
+            "label": "저가",
+            "value": 44895.0
+          },
+          {
+            "label": "종가",
+            "value": 45430.0
+          }
+        ],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 44895
+          },
+          {
+            "label": "반등 기준",
+            "value": 45430
+          },
+          {
+            "label": "저항",
+            "value": 48665
+          }
+        ],
+        "interpretation": "44,895원이 첫 지지입니다. 45,430원 위에서 버티면 48,665원이 다음 저항입니다."
+      }
+    ]
+  },
+  "snapshotId": "20261126-0811",
+  "generatedAt": "2026-11-26T08:11:45.390187+09:00",
+  "asOf": "2026-11-26T08:11:45.265809+09:00",
+  "asOfDisplay": "2026-11-26T08:11:45.265809+09:00",
+  "marketState": "한국 장전",
+  "sourceLabel": "미국 2026-11-25 정규장 · 한국 2026-11-26 장전",
+  "latestArticle": {
+    "title": "미국 반도체주 낙폭 줄여 마감, 코스피는 금통위 앞두고 4,700선 시험",
+    "href": "market-2026-11-26.html"
+  },
+  "strategyLevels": [
+    {
+      "asset": "KOSPI",
+      "support": "4,672.55",
+      "pivot": "4,697.51",
+      "resistance": "4,823.36"
+    },
+    {
+      "asset": "KODEX 레버리지",
+      "support": "44,895원",
+      "pivot": "45,430원",
+      "resistance": "48,665원"
+    }
+  ],
+  "events": [
+    {
+      "time": "11월 26일",
+      "name": "한국은행 금통위",
+      "path": "국내 금리와 원화"
+    },
+    {
+      "time": "11월 26일 미국 현지",
+      "name": "추수감사절 증시 휴장",
+      "path": "27일 오후 1시 ET 조기 종료"
+    }
+  ]
+}

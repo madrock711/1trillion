@@ -1,0 +1,281 @@
+{
+  "url": "https://api.stock.naver.com/stock/SMH.O/basic",
+  "fetchedAt": "2026-11-26T08:06:59.687069+09:00",
+  "rawHash": "394edb8172eff85db6a2a9bbb7ff4a41c96b41965ab04654369c6052387542db",
+  "data": {
+    "stockEndType": "etf",
+    "reutersCode": "SMH.O",
+    "stockName": "VanEck Semiconductor ETF",
+    "stockNameEng": "VanEck Semiconductor ETF",
+    "itemLogoUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/brand/foreign/StockBRANDVanEck.svg",
+    "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/brand/foreign/StockBRANDVanEck.png",
+    "symbolCode": "SMH",
+    "tradeStopType": {
+      "code": "1",
+      "text": "운영.Trading",
+      "name": "TRADING"
+    },
+    "stockExchangeType": {
+      "code": "NSQ",
+      "zoneId": "EST5EDT",
+      "nationType": "USA",
+      "delayTime": 0,
+      "startTime": "0930",
+      "endTime": "1600",
+      "closePriceSendTime": "2031",
+      "nameKor": "나스닥 증권거래소",
+      "nameEng": "NASDAQ Stock Exchange",
+      "nationName": "미국",
+      "nationCode": "USA",
+      "stockType": "worldstock",
+      "name": "NASDAQ"
+    },
+    "stockExchangeName": "NASDAQ",
+    "industryCodeType": null,
+    "delayTime": 0,
+    "delayTimeName": "실시간",
+    "compareToPreviousPrice": {
+      "code": "5",
+      "text": "하락",
+      "name": "FALLING"
+    },
+    "closePrice": "422.46",
+    "compareToPreviousClosePrice": "-4.29",
+    "fluctuationsRatio": "-1.01",
+    "localTradedAt": "2026-11-25T16:00:00-05:00",
+    "marketStatus": "CLOSE",
+    "overMarketPriceInfo": {
+      "tradingSessionType": "AFTER_MARKET",
+      "overMarketStatus": "OPEN",
+      "overPrice": "421.24",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "compareToPreviousClosePrice": "-1.22",
+      "fluctuationsRatio": "-0.29",
+      "localTradedAt": "2026-11-25T18:06:25-05:00",
+      "tradeStopType": null,
+      "tradableStatus": null,
+      "tradableStatusCode": null,
+      "tradableStatusUpdatedAt": null,
+      "overPriceRaw": "421.24",
+      "fluctuationsRatioRaw": "-0.29",
+      "compareToPreviousClosePriceRaw": "-1.22"
+    },
+    "imageCharts": {
+      "areaYear": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year/SMH.O_end.png",
+      "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year10/SMH.O_end.png",
+      "areaMonthThree": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/month3/SMH.O_end.png",
+      "candleMonth": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/month/SMH.O_end.png",
+      "candleDay": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/day/SMH.O_end.png",
+      "candleWeek": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/week/SMH.O_end.png",
+      "day_up_tablet": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/SMH.O_end_up_tablet.png",
+      "transparent": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/SMH.O_transparent.png",
+      "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year3/SMH.O_end.png",
+      "day_up": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/SMH.O_end_up.png",
+      "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/SMH.O_end.png"
+    },
+    "imageChartUrlInfo": {
+      "line": {
+        "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/SMH.O_end.png",
+        "month3": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/month3/SMH.O_end.png",
+        "year": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year/SMH.O_end.png",
+        "year3": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year3/SMH.O_end.png",
+        "year5": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year5/SMH.O_end.png",
+        "year10": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year10/SMH.O_end.png"
+      },
+      "candle": {
+        "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/day/SMH.O_end.png",
+        "week": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/week/SMH.O_end.png",
+        "month": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/month/SMH.O_end.png"
+      },
+      "mini": {
+        "transparent": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/SMH.O_transparent.png",
+        "dayUp": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/SMH.O_end_up.png",
+        "dayUpTablet": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/SMH.O_end_up_tablet.png"
+      }
+    },
+    "scriptChartTypes": [
+      "candleMinuteFive",
+      "candleDay",
+      "candleWeek",
+      "candleMonth",
+      "day",
+      "areaMonthThree",
+      "areaYear",
+      "areaYearThree",
+      "areaYearTen"
+    ],
+    "currencyType": {
+      "code": "USD",
+      "text": "US dollar",
+      "name": "USD"
+    },
+    "countOfListedStock": 130341874,
+    "marketValueKrwRaw": null,
+    "accumulatedTradingValueKrwRaw": "7484058504000",
+    "indexOrEtfToolTip": null,
+    "endUrl": "https://m.stock.naver.com/worldstock/etf/SMH.O",
+    "newPcUrl": "https://stock.naver.com/worldstock/etf/SMH.O",
+    "chartIqEndUrl": "https://m.stock.naver.com/fchart/foreign/stock/SMH.O",
+    "stockItemTotalInfos": [
+      {
+        "code": "basePrice",
+        "key": "전일",
+        "value": "426.75"
+      },
+      {
+        "code": "openPrice",
+        "key": "시가",
+        "value": "402.67",
+        "compareToPreviousPrice": {
+          "code": "5",
+          "text": "하락",
+          "name": "FALLING"
+        }
+      },
+      {
+        "code": "highPrice",
+        "key": "고가",
+        "value": "422.97",
+        "compareToPreviousPrice": {
+          "code": "5",
+          "text": "하락",
+          "name": "FALLING"
+        }
+      },
+      {
+        "code": "lowPrice",
+        "key": "저가",
+        "value": "393.88",
+        "compareToPreviousPrice": {
+          "code": "5",
+          "text": "하락",
+          "name": "FALLING"
+        }
+      },
+      {
+        "code": "accumulatedTradingVolume",
+        "key": "거래량",
+        "value": "13,689,721"
+      },
+      {
+        "code": "accumulatedTradingValue",
+        "key": "대금",
+        "value": "55.6억 USD",
+        "valueDesc": "7조 4,841억원"
+      },
+      {
+        "code": "marketValue",
+        "key": "시총",
+        "value": "551억 USD",
+        "valueDesc": "74조 889억원"
+      },
+      {
+        "code": "industryGroupKor",
+        "key": "업종",
+        "value": "-"
+      },
+      {
+        "code": "highPriceOf52Weeks",
+        "key": "52주 최고",
+        "keyDesc": "2026.06.22.",
+        "value": "671.83"
+      },
+      {
+        "code": "lowPriceOf52Weeks",
+        "key": "52주 최저",
+        "keyDesc": "2025.11.25.",
+        "value": "327.35"
+      },
+      {
+        "code": "per",
+        "key": "PER",
+        "value": "N/A"
+      },
+      {
+        "code": "eps",
+        "key": "EPS",
+        "value": "N/A"
+      },
+      {
+        "code": "pbr",
+        "key": "PBR",
+        "value": "N/A"
+      },
+      {
+        "code": "bps",
+        "key": "BPS",
+        "value": "N/A"
+      },
+      {
+        "code": "dividend",
+        "key": "주당배당금",
+        "keyDesc": "2025.12.",
+        "value": "1.10"
+      },
+      {
+        "code": "dividendYieldRatio",
+        "key": "배당수익률",
+        "keyDesc": "2025.12.",
+        "value": "0.26%"
+      },
+      {
+        "code": "dividendAt",
+        "key": "배당일",
+        "value": "2025.12.26."
+      },
+      {
+        "code": "exDividendAt",
+        "key": "배당락일",
+        "value": "2025.12.22."
+      },
+      {
+        "code": "faceValueDivisionRate",
+        "key": "액면변경",
+        "keyDesc": "2023.05.05.",
+        "value": "1:2 분할"
+      },
+      {
+        "code": "faceValue",
+        "key": "액면가",
+        "value": "N/A"
+      }
+    ],
+    "etfThemaInfos": null,
+    "isEtf": true,
+    "isEtfAmerica": true,
+    "isFinanceSummary": false,
+    "hasNews": true,
+    "researchs": [],
+    "nationType": "USA",
+    "nationName": "미국",
+    "newlyListed": false,
+    "stockCodeClassificationType": "ETFE",
+    "stockEndUrl": "https://m.stock.naver.com/worldstock/etf/SMH.O",
+    "exchangeOperatingTime": false,
+    "closePriceRaw": "422.46",
+    "fluctuationsRatioRaw": "-1.01",
+    "openPriceRaw": "402.67",
+    "highPriceRaw": "422.97",
+    "lowPriceRaw": "393.88",
+    "accumulatedTradingVolumeRaw": "13689721",
+    "compareToPreviousClosePriceRaw": "-4.29",
+    "accumulatedTradingValueRaw": "5562288000",
+    "isWtsOrderable": true,
+    "marketOperatingTimeInfo": {
+      "zoneId": "EST5EDT",
+      "zoneName": "미국(동부)",
+      "isDst": false,
+      "preMarketOpeningTime": "2026-11-25T04:00:00-05:00",
+      "preMarketClosingTime": "2026-11-25T09:30:00-05:00",
+      "regularMarketOpeningTime": "2026-11-25T09:30:00-05:00",
+      "regularMarketClosingTime": "2026-11-25T16:00:00-05:00",
+      "afterMarketOpeningTime": "2026-11-25T16:00:00-05:00",
+      "afterMarketClosingTime": "2026-11-25T20:00:00-05:00"
+    },
+    "marketValueFullRaw": "55064228090"
+  }
+}

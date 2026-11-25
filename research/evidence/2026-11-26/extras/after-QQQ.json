@@ -1,0 +1,284 @@
+{
+  "url": "https://api.stock.naver.com/stock/QQQ.O/basic",
+  "fetchedAt": "2026-11-26T08:06:59.691623+09:00",
+  "rawHash": "1edda9cd5ff5119c64fa369dc1cddda4247bbe8a385ec35a2f391bde61bd7ebb",
+  "data": {
+    "stockEndType": "etf",
+    "reutersCode": "QQQ.O",
+    "stockName": "Invesco QQQ Trust  Series 1",
+    "stockNameEng": "Invesco QQQ Trust  Series 1",
+    "itemLogoUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/brand/foreign/StockBRANDInvesco.svg",
+    "itemLogoPngUrl": "https://ssl.pstatic.net/imgstock/fn/real/logo/png/brand/foreign/StockBRANDInvesco.png",
+    "symbolCode": "QQQ",
+    "tradeStopType": {
+      "code": "1",
+      "text": "운영.Trading",
+      "name": "TRADING"
+    },
+    "stockExchangeType": {
+      "code": "NSQ",
+      "zoneId": "EST5EDT",
+      "nationType": "USA",
+      "delayTime": 0,
+      "startTime": "0930",
+      "endTime": "1600",
+      "closePriceSendTime": "2031",
+      "nameKor": "나스닥 증권거래소",
+      "nameEng": "NASDAQ Stock Exchange",
+      "nationCode": "USA",
+      "stockType": "worldstock",
+      "nationName": "미국",
+      "name": "NASDAQ"
+    },
+    "stockExchangeName": "NASDAQ",
+    "industryCodeType": {
+      "code": "55102020",
+      "industryGroupKor": "투자 관리 및 펀드 운영",
+      "name": "INDUSTRY55102020"
+    },
+    "delayTime": 0,
+    "delayTimeName": "실시간",
+    "compareToPreviousPrice": {
+      "code": "5",
+      "text": "하락",
+      "name": "FALLING"
+    },
+    "closePrice": "633.93",
+    "compareToPreviousClosePrice": "-4.17",
+    "fluctuationsRatio": "-0.65",
+    "localTradedAt": "2026-11-25T16:00:00-05:00",
+    "marketStatus": "CLOSE",
+    "overMarketPriceInfo": {
+      "tradingSessionType": "AFTER_MARKET",
+      "overMarketStatus": "OPEN",
+      "overPrice": "631.53",
+      "compareToPreviousPrice": {
+        "code": "5",
+        "text": "하락",
+        "name": "FALLING"
+      },
+      "compareToPreviousClosePrice": "-2.40",
+      "fluctuationsRatio": "-0.38",
+      "localTradedAt": "2026-11-25T18:06:44-05:00",
+      "tradeStopType": null,
+      "tradableStatus": null,
+      "tradableStatusCode": null,
+      "tradableStatusUpdatedAt": null,
+      "overPriceRaw": "631.53",
+      "fluctuationsRatioRaw": "-0.38",
+      "compareToPreviousClosePriceRaw": "-2.40"
+    },
+    "imageCharts": {
+      "candleWeek": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/week/QQQ.O_end.png",
+      "transparent": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/QQQ.O_transparent.png",
+      "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/QQQ.O_end.png",
+      "areaYearTen": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year10/QQQ.O_end.png",
+      "day_up_tablet": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/QQQ.O_end_up_tablet.png",
+      "day_up": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/QQQ.O_end_up.png",
+      "areaYear": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year/QQQ.O_end.png",
+      "candleMonth": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/month/QQQ.O_end.png",
+      "candleDay": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/day/QQQ.O_end.png",
+      "areaYearThree": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year3/QQQ.O_end.png",
+      "areaMonthThree": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/month3/QQQ.O_end.png"
+    },
+    "imageChartUrlInfo": {
+      "line": {
+        "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/QQQ.O_end.png",
+        "month3": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/month3/QQQ.O_end.png",
+        "year": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year/QQQ.O_end.png",
+        "year3": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year3/QQQ.O_end.png",
+        "year5": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year5/QQQ.O_end.png",
+        "year10": "https://financial-vn.pstatic.net/chart/mobile/world/item/area/year10/QQQ.O_end.png"
+      },
+      "candle": {
+        "day": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/day/QQQ.O_end.png",
+        "week": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/week/QQQ.O_end.png",
+        "month": "https://financial-vn.pstatic.net/chart/mobile/world/item/candle/month/QQQ.O_end.png"
+      },
+      "mini": {
+        "transparent": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/QQQ.O_transparent.png",
+        "dayUp": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/QQQ.O_end_up.png",
+        "dayUpTablet": "https://financial-vn.pstatic.net/chart/mobile/world/item/day/QQQ.O_end_up_tablet.png"
+      }
+    },
+    "scriptChartTypes": [
+      "candleMinuteFive",
+      "candleDay",
+      "candleWeek",
+      "candleMonth",
+      "day",
+      "areaMonthThree",
+      "areaYear",
+      "areaYearThree",
+      "areaYearTen"
+    ],
+    "currencyType": {
+      "code": "USD",
+      "text": "US dollar",
+      "name": "USD"
+    },
+    "countOfListedStock": 692250000,
+    "marketValueKrwRaw": null,
+    "accumulatedTradingValueKrwRaw": "67376359206000",
+    "indexOrEtfToolTip": null,
+    "endUrl": "https://m.stock.naver.com/worldstock/etf/QQQ.O",
+    "newPcUrl": "https://stock.naver.com/worldstock/etf/QQQ.O",
+    "chartIqEndUrl": "https://m.stock.naver.com/fchart/foreign/stock/QQQ.O",
+    "stockItemTotalInfos": [
+      {
+        "code": "basePrice",
+        "key": "전일",
+        "value": "638.10"
+      },
+      {
+        "code": "openPrice",
+        "key": "시가",
+        "value": "617.10",
+        "compareToPreviousPrice": {
+          "code": "5",
+          "text": "하락",
+          "name": "FALLING"
+        }
+      },
+      {
+        "code": "highPrice",
+        "key": "고가",
+        "value": "634.89",
+        "compareToPreviousPrice": {
+          "code": "5",
+          "text": "하락",
+          "name": "FALLING"
+        }
+      },
+      {
+        "code": "lowPrice",
+        "key": "저가",
+        "value": "607.74",
+        "compareToPreviousPrice": {
+          "code": "5",
+          "text": "하락",
+          "name": "FALLING"
+        }
+      },
+      {
+        "code": "accumulatedTradingVolume",
+        "key": "거래량",
+        "value": "80,367,180"
+      },
+      {
+        "code": "accumulatedTradingValue",
+        "key": "대금",
+        "value": "501억 USD",
+        "valueDesc": "67조 3,764억원"
+      },
+      {
+        "code": "marketValue",
+        "key": "시총",
+        "value": "4,388억 USD",
+        "valueDesc": "590조 4,566억원"
+      },
+      {
+        "code": "industryGroupKor",
+        "key": "업종",
+        "value": "투자 관리 및 펀드 운영"
+      },
+      {
+        "code": "highPriceOf52Weeks",
+        "key": "52주 최고",
+        "keyDesc": "2026.10.06.",
+        "value": "762.86"
+      },
+      {
+        "code": "lowPriceOf52Weeks",
+        "key": "52주 최저",
+        "keyDesc": "2026.03.30.",
+        "value": "555.60"
+      },
+      {
+        "code": "per",
+        "key": "PER",
+        "value": "N/A"
+      },
+      {
+        "code": "eps",
+        "key": "EPS",
+        "value": "N/A"
+      },
+      {
+        "code": "pbr",
+        "key": "PBR",
+        "value": "N/A"
+      },
+      {
+        "code": "bps",
+        "key": "BPS",
+        "value": "N/A"
+      },
+      {
+        "code": "dividend",
+        "key": "주당배당금",
+        "keyDesc": "2026.10.",
+        "value": "3.09"
+      },
+      {
+        "code": "dividendYieldRatio",
+        "key": "배당수익률",
+        "keyDesc": "2026.10.",
+        "value": "0.48%"
+      },
+      {
+        "code": "dividendAt",
+        "key": "배당일",
+        "value": "2026.10.08."
+      },
+      {
+        "code": "exDividendAt",
+        "key": "배당락일",
+        "value": "2026.09.21."
+      },
+      {
+        "code": "faceValueDivisionRate",
+        "key": "액면변경",
+        "value": "N/A"
+      },
+      {
+        "code": "faceValue",
+        "key": "액면가",
+        "value": "N/A"
+      }
+    ],
+    "etfThemaInfos": null,
+    "isEtf": true,
+    "isEtfAmerica": true,
+    "isFinanceSummary": false,
+    "hasNews": true,
+    "researchs": [],
+    "nationType": "USA",
+    "nationName": "미국",
+    "newlyListed": false,
+    "stockCodeClassificationType": "ETFE",
+    "stockEndUrl": "https://m.stock.naver.com/worldstock/etf/QQQ.O",
+    "exchangeOperatingTime": false,
+    "compareToPreviousClosePriceRaw": "-4.17",
+    "closePriceRaw": "633.93",
+    "fluctuationsRatioRaw": "-0.65",
+    "openPriceRaw": "617.10",
+    "highPriceRaw": "634.89",
+    "lowPriceRaw": "607.74",
+    "accumulatedTradingVolumeRaw": "80367180",
+    "accumulatedTradingValueRaw": "50075332000",
+    "isWtsOrderable": true,
+    "marketOperatingTimeInfo": {
+      "zoneId": "EST5EDT",
+      "zoneName": "미국(동부)",
+      "isDst": false,
+      "preMarketOpeningTime": "2026-11-25T04:00:00-05:00",
+      "preMarketClosingTime": "2026-11-25T09:30:00-05:00",
+      "regularMarketOpeningTime": "2026-11-25T09:30:00-05:00",
+      "regularMarketClosingTime": "2026-11-25T16:00:00-05:00",
+      "afterMarketOpeningTime": "2026-11-25T16:00:00-05:00",
+      "afterMarketClosingTime": "2026-11-25T20:00:00-05:00"
+    },
+    "marketValueFullRaw": "438838042500"
+  }
+}
