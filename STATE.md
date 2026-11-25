@@ -7,3 +7,4 @@
 - 금리차 charts/us_yield_spreads_long_term_2026-11-26.png · charts/us_yield_spreads_90d_2026-11-26.png.
 - 작성 2026-11-26T08:11:45.390187+09:00, 데이터 최종 확인 2026-11-26T08:11:45.265809+09:00, 한국 장전.
 - reports/2026-11-26.md · assets/data/market-dashboard-20261126-0811.json · research/evaluation/forecasts/2026-11-26-081145-same-close.json.
+- 최초 공개 2026-11-26T08:13:40.120000+09:00 · 콘텐츠 e7501c8c7c4c3b830284ae80f1209bee47c7b622 · Amplify 801.
