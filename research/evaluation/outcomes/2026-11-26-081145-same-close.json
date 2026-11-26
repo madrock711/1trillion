@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "forecastId": "2026-11-26-081145-same-close",
+  "actualRef": "2026-11-26",
+  "recordedAt": "2026-11-27T08:07:41.215187+09:00",
+  "realizedScenario": "base",
+  "errorCodes": [],
+  "triggerResults": [
+    {
+      "id": "bull-price",
+      "status": "not_observed",
+      "observedAt": "2026-11-26T15:20:00+09:00",
+      "observedValue": 4710.65,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "bull-foreign",
+      "status": "unavailable",
+      "reason": "거래일 분봉에는 수급 관측이 없다. 다음 날 통합 응답은 27일 장전이며 26일 15:20 외국인·프로그램 집계를 제공하지 않는다."
+    },
+    {
+      "id": "bull-program",
+      "status": "unavailable",
+      "reason": "거래일 분봉에는 수급 관측이 없다. 다음 날 통합 응답은 27일 장전이며 26일 15:20 외국인·프로그램 집계를 제공하지 않는다."
+    },
+    {
+      "id": "base-floor",
+      "status": "observed",
+      "observedAt": "2026-11-26T15:20:00+09:00",
+      "observedValue": 4710.65,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "base-cap",
+      "status": "observed",
+      "observedAt": "2026-11-26T15:20:00+09:00",
+      "observedValue": 4710.65,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "base-foreign",
+      "status": "unavailable",
+      "reason": "거래일 분봉에는 수급 관측이 없다. 다음 날 통합 응답은 27일 장전이며 26일 15:20 외국인·프로그램 집계를 제공하지 않는다."
+    },
+    {
+      "id": "bear-price",
+      "status": "not_observed",
+      "observedAt": "2026-11-26T15:20:00+09:00",
+      "observedValue": 4710.65,
+      "source": "Naver Finance KOSPI"
+    },
+    {
+      "id": "bear-foreign",
+      "status": "unavailable",
+      "reason": "거래일 분봉에는 수급 관측이 없다. 다음 날 통합 응답은 27일 장전이며 26일 15:20 외국인·프로그램 집계를 제공하지 않는다."
+    },
+    {
+      "id": "bear-program",
+      "status": "unavailable",
+      "reason": "거래일 분봉에는 수급 관측이 없다. 다음 날 통합 응답은 27일 장전이며 26일 15:20 외국인·프로그램 집계를 제공하지 않는다."
+    }
+  ],
+  "driverAssessment": [
+    {
+      "id": "chip-recovery",
+      "status": "partial"
+    },
+    {
+      "id": "bok-krw",
+      "status": "partial"
+    },
+    {
+      "id": "tariff-proposal",
+      "status": "partial"
+    }
+  ],
+  "hypothesisTests": []
+}

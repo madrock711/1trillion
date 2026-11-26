@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-11-26",
+  "bizdate": "20261126",
+  "fetchedAt": "2026-11-27T08:01:55.256083+09:00",
+  "marketStatus": "CLOSE",
+  "kospi": {
+    "open": 4745.1,
+    "high": 4817.77,
+    "low": 4704.65,
+    "close": 4711.21,
+    "source": "https://api.stock.naver.com/chart/domestic/index/KOSPI?periodType=dayCandle",
+    "rawHash": "dfb0e7c8b7aed1a65ea293947a67b80d9738f6c695304f377bf38c78b2820485",
+    "asOf": "2026-11-26T15:30:00+09:00"
+  },
+  "closeSnapshot": null,
+  "closeSnapshotMissingReason": "거래일 분봉에는 수급 관측이 없다. 다음 날 통합 응답은 27일 장전이며 26일 15:20 외국인·프로그램 집계를 제공하지 않는다.",
+  "flowTrajectoryMissingEvidence": {
+    "sourceStatus": "unavailable",
+    "source": "https://m.stock.naver.com/api/index/KOSPI/integration",
+    "asOf": "2026-11-26T15:30:00+09:00",
+    "fetchedAt": "2026-11-27T08:01:55.256083+09:00",
+    "missingReason": "거래일 분봉에는 수급 관측이 없다. 다음 날 통합 응답은 27일 장전이며 26일 15:20 외국인·프로그램 집계를 제공하지 않는다.",
+    "rawHash": "473e771f02a9cd06fed8956b59972c42e880120ca9a5b2a0646529b83ce88987"
+  }
+}

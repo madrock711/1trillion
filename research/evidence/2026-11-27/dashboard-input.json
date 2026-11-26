@@ -1,0 +1,248 @@
+{
+  "schemaVersion": 1,
+  "headline": "장중 4,800선 내준 코스피, 외국인 매수 돌아올까",
+  "summary": "한국은행이 기준금리를 3.25%로 올린 날 코스피는 장중 상승분을 대부분 반납했습니다. 미국 증시가 쉰 사이 외국인 현물 수급과 4,700선 방어가 중요해졌습니다.",
+  "markets": [
+    {
+      "id": "KOSPI",
+      "label": "KOSPI",
+      "symbol": "K",
+      "flows": []
+    },
+    {
+      "id": "KOSDAQ",
+      "label": "KOSDAQ",
+      "symbol": "Q",
+      "open": 658.46,
+      "high": 673.57,
+      "low": 654.8,
+      "value": 655.71,
+      "changePercent": 0.78,
+      "previousClose": 650.64,
+      "asOf": "2026-11-26T15:30:00+09:00",
+      "asOfLabel": "전일 종가",
+      "stateLabel": "전일 종가",
+      "flows": []
+    }
+  ],
+  "stance": {
+    "label": "4,700선 방어와 현물 수급에 주목",
+    "note": "외국인 순매도가 줄고 삼성전자와 SK하이닉스에 함께 매수세가 들어오는지 봅니다.",
+    "attack": 15,
+    "wait": 55,
+    "defense": 30
+  },
+  "checkpoints": [],
+  "changes": [
+    {
+      "label": "코스피 전일 종가",
+      "before": "4,697.51",
+      "after": "4,711.21",
+      "meaning": "장중 4,817.77까지 오른 뒤 상승폭 축소"
+    }
+  ],
+  "factors": [
+    {
+      "label": "한국은행",
+      "metric": "3.25%",
+      "detail": "기준금리 0.25%p 인상. 내년 성장률 4.1% 전망.",
+      "tone": "neutral"
+    },
+    {
+      "label": "외국인 수급",
+      "metric": "현물 −1,095억원",
+      "detail": "코스피200 선물은 1,389억원 순매수.",
+      "tone": "negative"
+    },
+    {
+      "label": "미국 주식",
+      "metric": "추수감사절 휴장",
+      "detail": "27일 정규장 재개 후 28일 03:00 KST 조기 종료.",
+      "tone": "neutral"
+    }
+  ],
+  "flows": {
+    "program": {
+      "arbitrage": null,
+      "nonArbitrage": null,
+      "total": 1724,
+      "unit": "억원",
+      "asOfLabel": "11/26 마감 잠정"
+    },
+    "kospi200FuturesForeign": 1389,
+    "futuresUnit": "억원",
+    "futuresAsOfLabel": "11/26 15:40 집계"
+  },
+  "memory": [
+    {
+      "label": "DDR5 16Gb",
+      "value": "$60.767",
+      "change": "11/26 현물 보합"
+    },
+    {
+      "label": "DDR4 16Gb",
+      "value": "$77.50",
+      "change": "11/26 현물 −0.32%"
+    },
+    {
+      "label": "낸드 계약가격",
+      "value": "내년 1분기 −5~0%",
+      "change": "트렌드포스 11/19 전망"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "open",
+      "label": "09:30 외국인 현물과 두 반도체주 개장 저점"
+    },
+    {
+      "id": "fx",
+      "label": "4,700선 부근 원/달러와 프로그램 수급"
+    },
+    {
+      "id": "late",
+      "label": "14:00 이후 외국인과 상승 종목 수"
+    }
+  ],
+  "sources": [
+    {
+      "label": "한국은행 통화정책방향",
+      "href": "https://www.bok.or.kr/portal/bbs/P0000559/view.do?menuNo=200690&nttId=11067084"
+    },
+    {
+      "label": "삼성증권 마감",
+      "href": "https://www.samsungpop.com/common.do?cmd=down&contentType=application%2Fpdf&fileName=4020%2F2026112616180917K_02_02.pdf&inlineYn=Y&saveKey=research.pdf"
+    },
+    {
+      "label": "키오시아 SSD 실증",
+      "href": "https://www.kioxia.com/en-jp/business/news/2026/20261126-1.html"
+    },
+    {
+      "label": "D램 현물",
+      "href": "https://www.trendforce.com/price/dram/dram_spot"
+    },
+    {
+      "label": "낸드 전망",
+      "href": "https://www.trendforce.com/presscenter/news/20261119-13314.html"
+    },
+    {
+      "label": "NYSE 일정",
+      "href": "https://www.nyse.com/trade/hours-calendars"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "bull",
+      "label": "강세 · 20%",
+      "range": "KOSPI 4,800 초과~4,940",
+      "summary": "외국인과 프로그램이 함께 순매수하면서 4,800을 넘어섭니다.",
+      "conditions": [
+        "코스피 4,800 상회",
+        "외국인 현물 순매수",
+        "프로그램 순매수"
+      ],
+      "invalidation": "4,800 이하로 내려가거나 한쪽이 순매수를 멈춥니다."
+    },
+    {
+      "id": "base",
+      "label": "기본 · 55%",
+      "range": "KOSPI 4,650~4,800",
+      "summary": "외국인 매도가 전날 종가 부근에서 잦아듭니다.",
+      "conditions": [
+        "코스피 4,650 이상",
+        "코스피 4,800 이하",
+        "외국인 현물 순매도 5,000억원 이내"
+      ],
+      "invalidation": "범위를 벗어나거나 외국인 순매도가 5,000억원을 넘습니다."
+    },
+    {
+      "id": "bear",
+      "label": "약세 · 25%",
+      "range": "KOSPI 4,500~4,650 미만",
+      "summary": "외국인과 프로그램 매도가 겹쳐 4,650을 밑돕니다.",
+      "conditions": [
+        "코스피 4,650 하회",
+        "외국인 현물 순매도",
+        "프로그램 순매도"
+      ],
+      "invalidation": "4,650을 되찾거나 한쪽이 순매도를 멈춥니다."
+    }
+  ],
+  "technical": {
+    "note": "11월 26일 정규장 가격으로 본 지지와 저항입니다.",
+    "instruments": [
+      {
+        "id": "KOSPI",
+        "label": "KOSPI",
+        "unit": "pt",
+        "asOf": "2026-11-26T15:30:00+09:00",
+        "asOfLabel": "전일 종가",
+        "points": [],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 4704.65
+          },
+          {
+            "label": "반등 기준",
+            "value": 4711.21
+          },
+          {
+            "label": "저항",
+            "value": 4817.77
+          }
+        ],
+        "interpretation": "전일 저가를 지키고 4,711.21을 웃도는지 봅니다."
+      },
+      {
+        "id": "KODEX",
+        "label": "KODEX 레버리지",
+        "unit": "원",
+        "asOf": "2026-11-26T15:30:00+09:00",
+        "asOfLabel": "전일 종가",
+        "points": [],
+        "levels": [
+          {
+            "label": "1차 지지",
+            "value": 45585
+          },
+          {
+            "label": "반등 기준",
+            "value": 45885
+          },
+          {
+            "label": "저항",
+            "value": 48085
+          }
+        ],
+        "interpretation": "45,585원이 첫 지지입니다. 45,885원을 웃돌면 48,085원이 다음 저항입니다."
+      }
+    ]
+  },
+  "strategyLevels": [
+    {
+      "asset": "KOSPI",
+      "support": "4,704.65",
+      "pivot": "4,711.21",
+      "resistance": "4,817.77"
+    },
+    {
+      "asset": "KODEX 레버리지",
+      "support": "45,585원",
+      "pivot": "45,885원",
+      "resistance": "48,085원"
+    }
+  ],
+  "events": [
+    {
+      "time": "11/27 23:30~11/28 03:00 KST",
+      "name": "미국 주식시장 재개·조기 종료",
+      "path": "미국 반도체주와 거래량"
+    },
+    {
+      "time": "11/30",
+      "name": "한국 10월 산업활동동향",
+      "path": "생산·소비·투자"
+    }
+  ]
+}
